@@ -1,0 +1,7 @@
+deploy:
+  provider: heroku
+  api_key:
+    secure: U5Cs8z7k4GsipZOD0BqIsHvhMCXU7/naBbAvjRTIGrE011ldEzGIVwgMBC7SlGDwmJSfzCWu4yT/pzvXzQacvJUrgezpNuZgWlrAAnQo3bNrev8dS0kxNXD000gPnz9TOD38kIVg8tZsxub9X2zoU/MZPG5nndzQWe8tRXHaIsg=
+  app: bunker-chat
+  on:
+    repo: angular-resource-sails/bunker
