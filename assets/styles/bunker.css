@@ -1,6 +1,9 @@
 body {
     padding-top: 50px;
 }
-[fill] {
-    background: #efefef;
+[fill], .fill {
+    overflow: hidden;
+}
+.message-list {
+    overflow-y: auto;
 }

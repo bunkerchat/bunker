@@ -25,10 +25,10 @@
             </div>
         </nav>
 
-        <div class="container-fluid" fill margin-bottom="34" ng-controller="MessageLogController as log">
+        <div class="container-fluid" ng-controller="MessageLogController as log">
             <div class="row">
                 <div class="col-md-10">
-                    <ol class="list-unstyled">
+                    <ol class="list-unstyled message-list" fill auto-scroll margin-bottom="34">
                         <li ng-repeat="message in log.messages | orderBy:'createdAt'">
                             {{message.text}}
                         </li>
@@ -36,7 +36,7 @@
                 </div>
                 <div class="col-md-2">
                     <ul class="list-group">
-
+                        <li>&nbsp;</li>
                     </ul>
                 </div>
             </div>
