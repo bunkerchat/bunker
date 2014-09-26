@@ -1,13 +1,14 @@
 
 module.exports = {
-
   attributes: {
-      // TODO author
+      author: {
+          model: 'User',
+          required: true
+      },
       text: {
           type: 'string',
           required: true,
           minLength: 1
       }
   }
-
 };

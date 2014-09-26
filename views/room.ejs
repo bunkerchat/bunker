@@ -29,8 +29,13 @@
             <div class="row">
                 <div class="col-md-10">
                     <ol class="list-unstyled message-list" fill auto-scroll margin-bottom="34">
-                        <li ng-repeat="message in log.messages | orderBy:'createdAt'">
-                            {{message.text}}
+                        <li class="row" ng-repeat="message in log.messages | orderBy:'createdAt'">
+                            <div class="bg-info col-xs-2">
+                                {{message.author.nick || message.author}}
+                            </div>
+                            <div class="col-xs-10">
+                                {{message.text}}
+                            </div>
                         </li>
                     </ol>
                 </div>
