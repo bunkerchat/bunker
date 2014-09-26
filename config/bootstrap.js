@@ -31,22 +31,20 @@ module.exports.bootstrap = function (cb) {
 		function (identifier, profile, done) {
 			User.findOne({openId: identifier}).exec(function (error, user) {
 				if (user) {
-					done(error, user);
-					return;
+                    done(error, user);
 				}
-
-				User.create({
-					openId: identifier,
-					nick: profile.displayName,
-					email: profile.emails[0].value
-				}).exec(function (error, user) {
-					done(error, user);
-				});
+                else {
+                    User.create({
+                        openId: identifier,
+                        nick: profile.displayName,
+                        email: profile.emails[0].value
+                    }).exec(function (error, user) {
+                        done(error, user);
+                    });
+                }
 			});
 		}
 	));
 
-	// It's very important to trigger this callback method when you are finished
-	// with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 	cb();
 };

@@ -32,9 +32,9 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': {
-    view: 'room'
-  }
+    '/': 'ViewController.index',
+    '/login': 'ViewController.login',
+    '/logout': 'AuthController.logout'
 
   /***************************************************************************
   *                                                                          *
