@@ -10,7 +10,8 @@
  */
 
 var passport = require('passport'),
-	GoogleStrategy = require('passport-google').Strategy;
+	GoogleStrategy = require('passport-google').Strategy,
+	LocalStrategy = require('passport-local').Strategy;
 
 module.exports.bootstrap = function (cb) {
 
@@ -24,9 +25,22 @@ module.exports.bootstrap = function (cb) {
 		});
 	});
 
+	passport.use(new LocalStrategy(
+		function(username, password, done) {
+			User.findOne({ username: username }, function(err, user) {
+				if (err) { return done(err); }
+				if (!user || !user.validPassword(password)) {
+					return done(null, false, { message: 'Incorrect username or password' });
+				}
+
+				return done(null, user);
+			});
+		}
+	));
+
 	passport.use(new GoogleStrategy({
-			returnURL: sails.getBaseurl() + '/auth/googleReturn',
-			realm: sails.getBaseurl()
+			returnURL: sails.config.url + '/auth/googleReturn',
+			realm: sails.config.url
 		},
 		function (identifier, profile, done) {
 			User.findOne({openId: identifier}).exec(function (error, user) {
