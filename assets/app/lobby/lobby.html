@@ -1,15 +1,31 @@
-<div>
-    <h1>Lobby</h1>
-    <form ng-submit="lobby.joinRoom(roomName)">
-        <input type="text" class="form-control" ng-model="roomName" placeholder="Room name"/>
-        <div>
-            <button class="btn btn-success">Join</button>
-        </div>
-    </form>
-    <form ng-submit="lobby.createRoom(roomName)">
-        <input type="text" class="form-control" ng-model="roomName" placeholder="Room name"/>
-        <div>
-            <button class="btn btn-success">Create</button>
-        </div>
-    </form>
+<div class="container-fluid">
+    <div class="row">
+        <h2>Rooms</h2>
+        <ul class="list-unstyled">
+            <li class="panel panel-default col-md-2" ng-repeat="room in lobby.user.rooms">
+                <div class="panel-heading">
+                    <a ui-sref="room({roomId: room.id})">
+                        <h4>{{room.name}}</h4>
+                    </a>
+                </div>
+                <div class="panel-body">
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <ul class="list-unstyled">
+            <li class="panel panel-default col-md-2">
+                <div class="panel-heading">
+                    <h4>New room</h4>
+                </div>
+                <form class="panel-body" ng-submit="lobby.createRoom(newRoomName)">
+                    <input type="text" class="form-control" ng-model="newRoomName" placeholder="New room name"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-success">Create</button>
+                    </span>
+                </form>
+            </li>
+        </ul>
+    </div>
 </div>

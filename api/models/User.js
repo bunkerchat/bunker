@@ -11,7 +11,10 @@ module.exports = {
           minLength: 1
       },
       email: 'email',
-	  rooms: 'array'
+	  rooms: {
+		  collection: 'Room',
+		  via: 'members'
+	  }
   }
 };
 

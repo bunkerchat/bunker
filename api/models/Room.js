@@ -15,13 +15,12 @@ module.exports = {
 		topic: 'string',
 		isPrivate: {
 			type: 'boolean',
-			defaultsTo: true
-		},
-		owners: {
-			collection: 'User'
+			defaultsTo: false // TODO make this true when privacy controls are in place
 		},
 		members: {
-			collection: 'User'
+			collection: 'User',
+			via: 'rooms',
+			dominant: true
 		}
 	}
 };

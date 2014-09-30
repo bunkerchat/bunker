@@ -44,15 +44,18 @@ module.exports.bootstrap = function (cb) {
 			callbackURL: sails.config.url + '/auth/googleReturn'
 		},
 		function (accessToken, refreshToken, profile, done) {
-			User.findOne({token: accessToken}).exec(function (error, user) {
+			var email = profile.emails[0].value;
+			User.findOne({email: email}).exec(function (error, user) {
 				if (user) {
-                    done(error, user);
+					User.update(user.id, {token: accessToken}).exec(function(error, user) {
+						done(error, user[0]);
+					});
 				}
                 else {
                     User.create({
                         token: accessToken,
                         nick: profile.displayName,
-                        email: profile.emails[0].value
+                        email: email
                     }).exec(function (error, user) {
                         done(error, user);
                     });
