@@ -1,7 +1,7 @@
 
 module.exports = {
 	index: function(request, response) {
-		response.view('room');
+		response.view('index');
 	},
 	login: function(request, response) {
 		response.view('login');
