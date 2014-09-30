@@ -10,6 +10,8 @@
  *
  */
 
+console.log('env', process.env.google_clientID, process.env.google_clientSecret);
+
 module.exports = {
 
 	url: 'http://bunker-chat.herokuapp.com',

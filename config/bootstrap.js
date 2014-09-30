@@ -26,11 +26,13 @@ module.exports.bootstrap = function (cb) {
 	});
 
 	passport.use(new LocalStrategy(
-		function(username, password, done) {
-			User.findOne({ username: username }, function(err, user) {
-				if (err) { return done(err); }
+		function (username, password, done) {
+			User.findOne({username: username}, function (err, user) {
+				if (err) {
+					return done(err);
+				}
 				if (!user || !user.validPassword(password)) {
-					return done(null, false, { message: 'Incorrect username or password' });
+					return done(null, false, {message: 'Incorrect username or password'});
 				}
 
 				return done(null, user);
@@ -38,25 +40,27 @@ module.exports.bootstrap = function (cb) {
 		}
 	));
 
+	console.log('googleStrategy', sails.config.google.clientID, sails.config.google.clientSecret);
+
 	passport.use(new GoogleStrategy({
-            clientID: sails.config.google.clientID,
-            clientSecret: sails.config.google.clientSecret,
+			clientID: sails.config.google.clientID,
+			clientSecret: sails.config.google.clientSecret,
 			callbackURL: sails.config.url + '/auth/googleReturn'
 		},
 		function (accessToken, refreshToken, profile, done) {
 			User.findOne({token: accessToken}).exec(function (error, user) {
 				if (user) {
-                    done(error, user);
+					done(error, user);
 				}
-                else {
-                    User.create({
-                        token: accessToken,
-                        nick: profile.displayName,
-                        email: profile.emails[0].value
-                    }).exec(function (error, user) {
-                        done(error, user);
-                    });
-                }
+				else {
+					User.create({
+						token: accessToken,
+						nick: profile.displayName,
+						email: profile.emails[0].value
+					}).exec(function (error, user) {
+						done(error, user);
+					});
+				}
 			});
 		}
 	));
