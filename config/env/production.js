@@ -12,7 +12,11 @@
 
 module.exports = {
 
-	url: 'http://bunker-chat.herokuapp.com'
+	url: 'http://bunker-chat.herokuapp.com',
+    google: {
+        clientID: process.env.google_clientID,
+        clientSecret: process.env.google_clientSecret
+    }
   /***************************************************************************
    * Set the default database connection for models in the production        *
    * environment (see config/connections.js and config/models.js )           *

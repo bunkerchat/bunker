@@ -10,7 +10,7 @@
  */
 
 var passport = require('passport'),
-	GoogleStrategy = require('passport-google').Strategy,
+	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
 	LocalStrategy = require('passport-local').Strategy;
 
 module.exports.bootstrap = function (cb) {
@@ -39,17 +39,18 @@ module.exports.bootstrap = function (cb) {
 	));
 
 	passport.use(new GoogleStrategy({
-			returnURL: sails.config.url + '/auth/googleReturn',
-			realm: sails.config.url
+            clientID: sails.config.google.clientID,
+            clientSecret: sails.config.google.clientSecret,
+			callbackURL: sails.config.url + '/auth/googleReturn'
 		},
-		function (identifier, profile, done) {
-			User.findOne({openId: identifier}).exec(function (error, user) {
+		function (accessToken, refreshToken, profile, done) {
+			User.findOne({token: accessToken}).exec(function (error, user) {
 				if (user) {
                     done(error, user);
 				}
                 else {
                     User.create({
-                        openId: identifier,
+                        token: accessToken,
                         nick: profile.displayName,
                         email: profile.emails[0].value
                     }).exec(function (error, user) {
