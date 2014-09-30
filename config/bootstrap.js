@@ -44,8 +44,7 @@ module.exports.bootstrap = function (cb) {
 			callbackURL: sails.config.url + '/auth/googleReturn'
 		},
 		function (accessToken, refreshToken, profile, done) {
-			var email = profile.emails[0].value;
-			User.findOne({email: email}).exec(function (error, user) {
+			User.findOne({token: accessToken}).exec(function (error, user) {
 				if (user) {
 					User.update(user.id, {token: accessToken}).exec(function(error, user) {
 						done(error, user[0]);
