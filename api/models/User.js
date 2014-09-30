@@ -1,7 +1,9 @@
 module.exports = {
   attributes: {
-      openId: {
-          type: 'string'
+      token: {
+          type: 'string',
+          required: true,
+          minLength: 20
       },
       nick: {
           type: 'string',
