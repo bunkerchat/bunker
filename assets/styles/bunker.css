@@ -7,3 +7,7 @@ body {
 .message-list {
     overflow-y: auto;
 }
+.message-input {
+    position: fixed;
+    bottom: 0;
+}

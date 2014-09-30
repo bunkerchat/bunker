@@ -7,58 +7,22 @@
 
 	<script src="/vendor/jquery/dist/jquery.js"></script>
 	<script src="/vendor/angular/angular.js"></script>
+	<script src="/vendor/angular-ui-router/release/angular-ui-router.js"></script>
 	<script src="/vendor/bootstrap/dist/js/bootstrap.js"></script>
 	<script src="/vendor/sails.io.js/dist/sails.io.js"></script>
 	<script src="/vendor/angular-resource-sails/src/sailsResource.js"></script>
 	<script src="/app/bunker.js"></script>
 	<script src="/app/bunkerApi.js"></script>
+	<script src="/app/header/HeaderController.js"></script>
+	<script src="/app/lobby/LobbyController.js"></script>
+	<script src="/app/room/RoomController.js"></script>
 	<script src="/app/room/MessageLogController.js"></script>
 	<script src="/app/room/InputController.js"></script>
 </head>
 <body>
 
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-	<div class="container-fluid">
-		<div class="navbar-header">
-			<span class="navbar-brand">Bunker</span>
-		</div>
-	</div>
-</nav>
-
-<div class="container-fluid" ng-controller="MessageLogController as log">
-	<div class="row">
-		<div class="col-md-10 col-xs-12">
-			<ol class="list-unstyled message-list" fill auto-scroll margin-bottom="34">
-				<li class="row" ng-repeat="message in log.messages | orderBy:'createdAt'">
-					<div class="bg-info col-xs-2">
-						{{message.author.nick || message.author}}
-					</div>
-					<div class="col-xs-10">
-						{{message.text}}
-					</div>
-				</li>
-			</ol>
-		</div>
-		<div class="col-md-2 hidden-xs">
-			<ul class="list-group">
-				<li>&nbsp;</li>
-			</ul>
-		</div>
-	</div>
-</div>
-
-<div class="container-fluid" ng-controller="InputController as input">
-	<div class="row">
-		<form class="col-md-10" style="padding-left: 0" ng-submit="input.sendMessage()">
-			<div class="input-group">
-				<input type="text" class="form-control" ng-model="input.messageText"/>
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-success">Send</button>
-                        </span>
-			</div>
-		</form>
-	</div>
-</div>
+<div ng-include="'/app/header/header.html'"></div>
+<div ui-view></div>
 
 </body>
 </html>

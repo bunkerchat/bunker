@@ -1,4 +1,18 @@
-window.app = angular.module('bunker', ['sailsResource']);
+window.app = angular.module('bunker', ['sailsResource', 'ui.router'])
+	.config(function($stateProvider, $urlRouterProvider) {
+		$urlRouterProvider.otherwise('/');
+		$stateProvider
+			.state('lobby', {
+				url: '/',
+				templateUrl: '/app/lobby/lobby.html',
+				controller: 'LobbyController as lobby'
+			})
+			.state('room', {
+				url: '/rooms/{roomId}',
+				templateUrl: '/app/room/room.html',
+				controller: 'RoomController as room'
+			});
+	});
 
 app.directive('fill', function ($window, $timeout) {
 	return {

@@ -10,7 +10,8 @@ module.exports = {
           required: true,
           minLength: 1
       },
-      email: 'email'
+      email: 'email',
+	  rooms: 'array'
   }
 };
 

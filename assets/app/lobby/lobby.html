@@ -1,0 +1,15 @@
+<div>
+    <h1>Lobby</h1>
+    <form ng-submit="lobby.joinRoom(roomName)">
+        <input type="text" class="form-control" ng-model="roomName" placeholder="Room name"/>
+        <div>
+            <button class="btn btn-success">Join</button>
+        </div>
+    </form>
+    <form ng-submit="lobby.createRoom(roomName)">
+        <input type="text" class="form-control" ng-model="roomName" placeholder="Room name"/>
+        <div>
+            <button class="btn btn-success">Create</button>
+        </div>
+    </form>
+</div>

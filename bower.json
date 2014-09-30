@@ -15,6 +15,7 @@
   "dependencies": {
     "angular": "~1.2.25",
     "bootstrap": "~3.2.0",
-    "angular-resource-sails": "*"
+    "angular-resource-sails": "*",
+    "angular-ui-router": "~0.2.11"
   }
 }
