@@ -1,10 +1,13 @@
 
 module.exports = function(request, response, next) {
-    if(!request.user) {
-        response.redirect('/login');
-    }
+	if(request.session.user) {
+		next();
+	}
+	else if(request.user) {
+		request.session.user = request.user; // user won't be available in socket calls without this
+		next();
+	}
     else {
-        request.session.user = request.user; // user won't be available in socket calls without this
-        next();
+        response.redirect('/login');
     }
 };

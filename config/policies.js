@@ -31,7 +31,14 @@ module.exports.policies = {
         '*': 'isLoggedIn',
         'login': true,
         'logout': true
-    }
+    },
+	'RoomController': {
+		'*': 'isLoggedIn'
+	},
+	'MessageController': {
+		'*': 'isLoggedIn',
+		'latest': ['isLoggedIn', 'isMemberOf']
+	}
 
   /***************************************************************************
   *                                                                          *

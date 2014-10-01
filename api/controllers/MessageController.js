@@ -29,16 +29,9 @@ module.exports.latest = function (req, res) {
 	var user = req.session.user;
 	// TODO check for roomId and user values
 
-	Room.findOne(roomId).populateAll().exec(function(error, room) {
-		if(_.any(room.members, {id: user.id})) { // Make sure user is a member
-			Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).populateAll().exec(function (error, message) {
-				sails.sockets.join(req.socket, 'room.' + roomId);
-				res.json(message);
-			});
-		}
-		else {
-			res.forbidden();
-		}
+	Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).populateAll().exec(function (error, message) {
+		sails.sockets.join(req.socket, 'room.' + roomId);
+		res.json(message);
 	});
 };
 
