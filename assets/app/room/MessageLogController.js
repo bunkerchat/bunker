@@ -1,6 +1,8 @@
 app.controller('MessageLogController', function($rootScope, $stateParams, bunkerApi) {
     var self = this;
-	this.messages = bunkerApi.message.query({roomId: $stateParams.roomId, sort: 'createdAt', limit: 50});
+	this.messages = bunkerApi.message.query({roomId: $stateParams.roomId, sort: 'createdAt DESC', limit: 50}, function() {
+		self.messages = _.sortBy(self.messages, 'createdAt');
+	});
 
 	// Handle incoming messages
     $rootScope.$on('$sailsResourceCreated', function(evt, resource) {
