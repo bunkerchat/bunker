@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-10 col-xs-12 no-gutter">
             <ol class="list-unstyled message-list" fill auto-scroll margin-bottom="34">
-                <li class="row" ng-repeat="message in log.messages | orderBy:'createdAt'">
+                <li class="row" ng-repeat="message in log.messages">
                     <div class="col-xs-2 bg-info message-author">
                         <div ng-if="log.messages[$index-1].author.id != message.author.id">
                             <img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
