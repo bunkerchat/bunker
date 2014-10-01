@@ -4,6 +4,7 @@
             <ol class="list-unstyled message-list" fill auto-scroll margin-bottom="34">
                 <li class="row" ng-repeat="message in log.messages | orderBy:'createdAt'">
                     <div class="bg-info col-xs-2">
+                        <img gravatar-src-once="message.author.email | lowercase" gravatar-size="18"/>
                         {{message.author.nick || message.author}}
                     </div>
                     <div class="col-xs-10">
