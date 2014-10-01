@@ -10,6 +10,9 @@ body {
 .message-list {
     overflow-y: auto;
 }
+.message-author {
+    height: 20px;
+}
 .message-author img {
     margin-left: 5px;
 }
