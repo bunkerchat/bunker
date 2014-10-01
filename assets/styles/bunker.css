@@ -1,11 +1,17 @@
 body {
     padding-top: 50px;
 }
+.no-gutter {
+    padding-left: 0;
+}
 [fill], .fill {
     overflow: hidden;
 }
 .message-list {
     overflow-y: auto;
+}
+.message-author img {
+    margin-left: 5px;
 }
 .message-input {
     position: fixed;

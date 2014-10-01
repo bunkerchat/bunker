@@ -8,7 +8,7 @@ app.controller('RoomController', function ($state, $stateParams, bunkerApi, user
 			}
 			else {
 				// join as a member
-				room.members.push(user.id);
+				room.members.push(user);
 				room.$save(function () {
 					user.rooms.push(room);
 				});
