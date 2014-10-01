@@ -5,26 +5,40 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-module.exports = {
-	create: function(request, response) {
+module.exports.create = function (req, res) {
+	var author = req.session.user;
+	var roomId = req.body.room;
+	// TODO if author is not a member of the roomId, cancel
+	var text = req.body.text;
+	// TODO format text, parse out bad things, do commands?
 
-		var author = request.session.user;
-		var roomId = request.body.roomId;
-		// TODO if author is not a member of the roomId, cancel
-		var text = request.body.text;
-		// TODO format text, parse out bad things, do commands?
+	Message.create({
+		room: roomId,
+		author: author.id,
+		text: text
+	}).exec(function (error, message) {
+		Message.findOne(message.id).populateAll().exec(function(error, message) {
+			sails.sockets.broadcast('room.' + roomId, 'message', {verb: 'created', model: 'message', id: message.id, data: message}, req.socket);
+			res.json(message);
+		});
+	});
+};
 
-        Message.create({
-			roomId: roomId,
-            author: author.id,
-            text: text
-        }).exec(function(error, message) {
-            Message.findOne(message.id).populateAll().exec(function(error, message) {
-				// TODO only publish create to the appropriate clients
-                Message.publishCreate(message, request);
-                response.json(message);
-            });
-        });
-    }
+module.exports.latest = function (req, res) {
+	var roomId = req.param('roomId');
+	var user = req.session.user;
+	// TODO check for roomId and user values
+
+	Room.findOne(roomId).populateAll().exec(function(error, room) {
+		if(_.any(room.members, {id: user.id})) { // Make sure user is a member
+			Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).populateAll().exec(function (error, message) {
+				sails.sockets.join(req.socket, 'room.' + roomId);
+				res.json(message);
+			});
+		}
+		else {
+			res.forbidden();
+		}
+	});
 };
 

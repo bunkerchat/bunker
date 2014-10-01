@@ -1,14 +1,11 @@
 
 module.exports = {
   attributes: {
-	  roomId: {
-		  type: 'string',
-		  required: true,
-		  index: true
+	  room: {
+		  model: 'Room'
 	  },
       author: {
-          model: 'User',
-          required: true
+          model: 'User'
       },
       text: {
           type: 'string',

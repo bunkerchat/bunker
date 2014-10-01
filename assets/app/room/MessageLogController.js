@@ -1,12 +1,12 @@
 app.controller('MessageLogController', function($rootScope, $stateParams, bunkerApi) {
     var self = this;
-	this.messages = bunkerApi.message.query({roomId: $stateParams.roomId, sort: 'createdAt DESC', limit: 50}, function() {
-		self.messages = _.sortBy(self.messages, 'createdAt');
+	bunkerApi.message.query({id: 'latest', roomId: $stateParams.roomId}, function(messages) {
+		self.messages = _.sortBy(messages, 'createdAt');
 	});
 
 	// Handle incoming messages
     $rootScope.$on('$sailsResourceCreated', function(evt, resource) {
-        if(resource.model == 'message' && resource.data.roomId == $stateParams.roomId) {
+        if(resource.model == 'message' && resource.data.room.id == $stateParams.roomId) {
             self.messages.push(resource.data);
         }
     });
