@@ -32,7 +32,7 @@ app.directive('autoScroll', function () {
 		});
 	};
 });
-app.directive('bunkerMessage', function ($sce, emoticons) {
+app.directive('bunkerMessage', function ($sce) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
 		scope: {
@@ -40,18 +40,7 @@ app.directive('bunkerMessage', function ($sce, emoticons) {
 		},
 		link: function (scope) {
 			scope.$watch('text', function (text) {
-				var formatted = text; // Start with text
-
-				// Parse emoticons
-				var emoticonTexts = /:\w+:/.exec(formatted);
-				angular.forEach(emoticonTexts, function(emoticonText) {
-					var knownEmoticon = _.find(emoticons, function(known) { return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');});
-					if(knownEmoticon) {
-						formatted = formatted.replace(emoticonText, '<img class="emoticon" src="/images/emoticons/' + knownEmoticon + '"/>');
-					}
-				});
-
-				scope.formatted = $sce.trustAsHtml(formatted);
+				scope.formatted = $sce.trustAsHtml(text);
 			});
 		}
 	}

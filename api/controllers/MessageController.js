@@ -9,8 +9,11 @@ module.exports.create = function (req, res) {
 	var author = req.session.user;
 	var roomId = req.body.room;
 	// TODO if author is not a member of the roomId, cancel
-	var text = req.body.text;
-	// TODO format text, parse out bad things, do commands?
+	var text = formatMessage(req.body.text);
+	if(!text || !text.length) {
+		res.badRequest();
+		return;
+	}
 
 	Message.create({
 		room: roomId,
@@ -18,10 +21,7 @@ module.exports.create = function (req, res) {
 		text: text
 	}).exec(function (error, message) {
 		Message.findOne(message.id).populateAll().exec(function(error, message) {
-			//sails.sockets.broadcast('room.' + roomId, 'message', {verb: 'created', model: 'message', id: message.id, data: message}, req.socket);
-
 			Room.message(roomId, message);
-
 			res.ok(message);
 		});
 	});
@@ -38,3 +38,33 @@ module.exports.latest = function (req, res) {
 	});
 };
 
+// TODO put this somewhere nicer
+var knownEmoticons = [
+	'allthethings.png',
+	'doge.png',
+	'eel.png',
+	'hodor.png',
+	'mindblown.gif',
+	'okay.png',
+	'stare.png',
+	'tableflip.png',
+	'trollface.png',
+	'wat.png'];
+
+function formatMessage(original) {
+	if(!original || !original.length) return original;
+
+	var formatted = original;
+	// Parse emoticons
+	var emoticonTexts = /:\w+:/.exec(original);
+	_.each(emoticonTexts, function(emoticonText) {
+		var knownEmoticon = _.find(knownEmoticons, function(known) { return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');});
+		if(knownEmoticon) {
+			formatted = formatted.replace(emoticonText, '<img class="emoticon" src="/images/emoticons/' + knownEmoticon + '"/>');
+		}
+	});
+
+	return require('sanitize-html')(formatted, {
+		allowedTags: ['img']
+	});
+}
