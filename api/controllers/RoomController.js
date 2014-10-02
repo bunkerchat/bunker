@@ -17,8 +17,8 @@ module.exports.findOne = function (req, res) {
 	// TODO check for roomId and user values
 
 	Room.findOne(roomId).populateAll().exec(function (err, room) {
-		var inRoom = _.any(room.members, {id:user.id});
-		if(!inRoom){ // if user is not a current room member
+		var inRoom = _.any(room.members, {id: user.id});
+		if (!inRoom) { // if user is not a current room member
 			room.members.add(user.id); // make them one
 			room.save();
 		}

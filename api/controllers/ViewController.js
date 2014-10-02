@@ -1,9 +1,8 @@
-
 module.exports = {
-	index: function(request, response) {
+	index: function (request, response) {
 		response.view('index');
 	},
-	login: function(request, response) {
+	login: function (request, response) {
 		response.view('login');
 	}
 };

@@ -1,4 +1,3 @@
-
 // Authentication using passport, a node module
 var passport = require('passport');
 
@@ -15,7 +14,7 @@ exports.logout = function (req, res) {
 
 // for local logins
 exports.login = passport.authenticate('local', {
-    successRedirect: '/',
+	successRedirect: '/',
 	failureRedirect: '/login',
 	failureFlash: true
 });

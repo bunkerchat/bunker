@@ -11,7 +11,7 @@ module.exports.create = function (req, res) {
 	var roomId = req.body.room;
 	// TODO if author is not a member of the roomId, cancel
 	var text = formatMessage(req.body.text);
-	if(!text || !text.length) {
+	if (!text || !text.length) {
 		res.badRequest();
 		return;
 	}
@@ -23,7 +23,7 @@ module.exports.create = function (req, res) {
 		text: text
 	}).exec(function (error, message) {
 		// now that message has been created, get the populated version
-		Message.findOne(message.id).populateAll().exec(function(error, message) {
+		Message.findOne(message.id).populateAll().exec(function (error, message) {
 			Room.message(roomId, message); // message all subscribers of the room that with the new message as data
 			res.ok(message); // send back the message to the original caller
 		});
@@ -60,14 +60,16 @@ var knownEmoticons = [
 // Format a message
 // For now it does emoticons only
 function formatMessage(original) {
-	if(!original || !original.length) return original;
+	if (!original || !original.length) return original;
 
 	var formatted = original;
 	// Parse emoticons
 	var emoticonTexts = /:\w+:/.exec(original);
-	_.each(emoticonTexts, function(emoticonText) {
-		var knownEmoticon = _.find(knownEmoticons, function(known) { return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');});
-		if(knownEmoticon) {
+	_.each(emoticonTexts, function (emoticonText) {
+		var knownEmoticon = _.find(knownEmoticons, function (known) {
+			return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');
+		});
+		if (knownEmoticon) {
 			formatted = formatted.replace(emoticonText, '<img class="emoticon" src="/images/emoticons/' + knownEmoticon + '"/>');
 		}
 	});
