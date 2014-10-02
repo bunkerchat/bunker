@@ -12,6 +12,8 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.session.html
  */
 
+var mongoUrl =process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost:27017/bunker';
+
 module.exports.session = {
 
   /***************************************************************************
@@ -67,7 +69,8 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  // adapter: 'mongo',
+  adapter: 'mongo',
+	url:mongoUrl + '/bunker_user_sessions'
   // host: 'localhost',
   // port: 27017,
   // db: 'sails',
