@@ -18,8 +18,11 @@ module.exports.create = function (req, res) {
 		text: text
 	}).exec(function (error, message) {
 		Message.findOne(message.id).populateAll().exec(function(error, message) {
-			sails.sockets.broadcast('room.' + roomId, 'message', {verb: 'created', model: 'message', id: message.id, data: message}, req.socket);
-			res.json(message);
+			//sails.sockets.broadcast('room.' + roomId, 'message', {verb: 'created', model: 'message', id: message.id, data: message}, req.socket);
+
+			Room.message(roomId, message);
+
+			res.ok(message);
 		});
 	});
 };
@@ -30,8 +33,8 @@ module.exports.latest = function (req, res) {
 	// TODO check for roomId and user values
 
 	Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).populateAll().exec(function (error, message) {
-		sails.sockets.join(req.socket, 'room.' + roomId);
-		res.json(message);
+		//sails.sockets.join(req.socket, 'room.' + roomId);
+		res.ok(message);
 	});
 };
 

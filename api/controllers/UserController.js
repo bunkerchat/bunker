@@ -11,6 +11,6 @@ module.exports.current = function (req, res) {
 	User.findOne(req.session.user.id).populateAll().exec(function (error, user) {
 		User.subscribe(req, user);
 		actionUtil.subscribeDeep(req, user);
-		res.json(user);
+		res.ok(user);
 	});
 };
