@@ -9,6 +9,8 @@ module.exports.connectedMembers = function (req, res) {
 
 };
 
+// Find a single room, this will respond for GET /room/:roomId
+// This acts as the room join for now
 module.exports.findOne = function (req, res) {
 	var roomId = req.param('id');
 	var user = req.session.user;
@@ -16,17 +18,14 @@ module.exports.findOne = function (req, res) {
 
 	Room.findOne(roomId).populateAll().exec(function (err, room) {
 		var inRoom = _.any(room.members, {id:user.id});
-		if(!inRoom){
-			room.members.add(user.id);
+		if(!inRoom){ // if user is not a current room member
+			room.members.add(user.id); // make them one
 			room.save();
 		}
 
+		// Subscribe the socket to message and updates of this room
+		// Socket will now receive messages when a new message is created
 		Room.subscribe(req, roomId, ['message', 'update']);
 		res.ok(room);
 	});
-
-	//Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).populateAll().exec(function (error, message) {
-	//	//sails.sockets.join(req.socket, 'room.' + roomId);
-	//
-	//});
 };
