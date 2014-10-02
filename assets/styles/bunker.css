@@ -10,8 +10,11 @@ body {
 .message-list {
     overflow-y: auto;
 }
+.message {
+    height: 25px;
+}
 .message-author {
-    height: 20px;
+    height: 100%;
 }
 .message-author img {
     margin-left: 5px;
@@ -19,4 +22,7 @@ body {
 .message-input {
     position: fixed;
     bottom: 0;
+}
+.emoticon {
+    max-height: 100%;
 }

@@ -6,7 +6,6 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 
 	// Handle incoming messages
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		console.log(resource);
 		if (resource.model == 'room' && resource.id == $stateParams.roomId) {
 			self.messages.push(resource.data);
 		}
