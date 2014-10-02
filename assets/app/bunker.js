@@ -1,4 +1,4 @@
-window.app = angular.module('bunker', ['sailsResource', 'ui.router'])
+window.app = angular.module('bunker', ['sailsResource', 'ui.router', 'ui.gravatar'])
 	.config(function($stateProvider, $urlRouterProvider) {
 		$urlRouterProvider.otherwise('/');
 		$stateProvider

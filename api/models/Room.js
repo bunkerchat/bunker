@@ -21,6 +21,10 @@ module.exports = {
 			collection: 'User',
 			via: 'rooms',
 			dominant: true
+		},
+		messages: {
+			collection: 'Message',
+			via: 'room'
 		}
 	}
 };

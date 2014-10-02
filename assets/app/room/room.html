@@ -1,12 +1,15 @@
 <div class="container-fluid" ng-controller="MessageLogController as log">
     <div class="row">
-        <div class="col-md-10 col-xs-12">
+        <div class="col-md-10 col-xs-12 no-gutter">
             <ol class="list-unstyled message-list" fill auto-scroll margin-bottom="34">
-                <li class="row" ng-repeat="message in log.messages | orderBy:'createdAt'">
-                    <div class="bg-info col-xs-2">
-                        {{message.author.nick || message.author}}
+                <li class="row" ng-repeat="message in log.messages">
+                    <div class="col-xs-2 bg-info message-author">
+                        <div ng-if="log.messages[$index-1].author.id != message.author.id">
+                            <img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
+                            {{message.author.nick || message.author}}
+                        </div>
                     </div>
-                    <div class="col-xs-10">
+                    <div class="col-xs-10 message-text">
                         {{message.text}}
                     </div>
                 </li>
@@ -22,7 +25,7 @@
 
 <div class="container-fluid message-input" ng-controller="InputController as input">
     <div class="row">
-        <form class="col-md-10" style="padding-left: 0" ng-submit="input.sendMessage()">
+        <form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
             <div class="input-group">
                 <input type="text" class="form-control" ng-model="input.messageText"/>
                 <span class="input-group-btn">

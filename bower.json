@@ -17,6 +17,7 @@
     "bootstrap": "~3.2.0",
     "angular-resource-sails": "*",
     "angular-ui-router": "~0.2.11",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "angular-gravatar": "~0.2.1"
   }
 }

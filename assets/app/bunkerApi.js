@@ -4,6 +4,8 @@ app.factory('bunkerApi', function (sailsResource) {
 		message: sailsResource('message', {
 			query: {method: 'GET', isArray: true, cache: false}
 		}),
-		room: sailsResource('room')
+		room: sailsResource('room', {
+			join:{method:'POST'}
+		})
 	};
 });
