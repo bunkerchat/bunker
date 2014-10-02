@@ -14,6 +14,10 @@ module.exports = {
 	  rooms: {
 		  collection: 'Room',
 		  via: 'members'
+	  },
+	  connected: {
+		  type: 'boolean',
+		  defaultsTo: false
 	  }
   }
 };

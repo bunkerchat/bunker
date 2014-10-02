@@ -74,6 +74,9 @@ function formatMessage(original) {
 
 	// Sanitize what we've done so only img tags make it through
 	return require('sanitize-html')(formatted, {
-		allowedTags: ['img']
+		allowedTags: ['img'],
+		allowedAttributes: {
+			'img': ['src', 'class']
+		}
 	});
 }
