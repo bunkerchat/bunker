@@ -1,23 +1,23 @@
-app.controller('LobbyController', function($state, bunkerApi, user) {
+app.controller('LobbyController', function ($state, bunkerApi, user) {
 	this.user = user;
-	this.joinRoom = function(roomName) {
+	this.joinRoom = function (roomName) {
 		bunkerApi.room.get({name: roomName},
-			function(room) {
+			function (room) {
 				$state.go('room', {roomId: room.id});
 			},
-			function(error) {
+			function (error) {
 				// TODO show error
 			}
 		);
 	};
-	this.createRoom = function(roomName) {
+	this.createRoom = function (roomName) {
 		var newRoom = new bunkerApi.room();
 		newRoom.name = roomName;
 		newRoom.$save(
-			function(room) {
+			function (room) {
 				$state.go('room', {roomId: room.id});
 			},
-			function(error) {
+			function (error) {
 				// TODO show error
 			});
 	};
