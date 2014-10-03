@@ -11,13 +11,27 @@ body {
     overflow-y: auto;
 }
 .message {
+    position: relative;
     height: 25px;
+    line-height: 25px;
 }
 .message-author {
+    width: 180px;
     height: 100%;
 }
 .message-author img {
     margin-left: 5px;
+}
+.message-text {
+    height: 100%;
+    padding-left: 190px;
+    padding-right: 100px;
+    border-bottom: solid #eee 1px;
+}
+.message-timestamp {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 .message-input {
     position: fixed;

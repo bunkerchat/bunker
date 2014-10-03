@@ -2,14 +2,17 @@
 	<div class="row">
 		<div class="col-md-10 col-xs-12 no-gutter" ng-controller="MessageLogController as log">
 			<ol class="list-unstyled message-list" fill auto-scroll margin-bottom="34">
-				<li class="row message" ng-repeat="message in log.messages">
-					<div class="col-xs-2 bg-info message-author">
+				<li class="message" ng-repeat="message in log.messages">
+					<div class="bg-info message-author pull-left">
 						<div ng-if="log.messages[$index-1].author.id != message.author.id">
 							<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 							{{message.author.nick}}
 						</div>
 					</div>
-					<div class="col-xs-10 message-text" bunker-message="{{message.text}}">
+					<div class="message-text" bunker-message="{{message.text}}">
+					</div>
+					<div class="message-timestamp text-muted">
+						<small>{{message.createdAt | timestamp}}</small>
 					</div>
 				</li>
 			</ol>

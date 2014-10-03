@@ -45,3 +45,8 @@ app.directive('bunkerMessage', function ($sce) {
 		}
 	}
 });
+app.filter('timestamp', function() {
+	return function(original) {
+		return moment(original).format('h:mm:ssa')
+	}
+});
