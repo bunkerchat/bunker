@@ -68,7 +68,7 @@ app.directive('unreadMessages', function ($rootScope, $window) {
 		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
 			if (!hasFocus && resource.model == 'room') {
 				unreadMessages++;
-				el.text('(' + unreadMessages + ')' + original);
+				el.text('(' + unreadMessages + ') ' + original);
 			}
 		});
 	};
