@@ -34,7 +34,7 @@
 	<div class="row">
 		<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
 			<div class="input-group">
-				<input type="text" class="form-control" ng-model="input.messageText"/>
+				<input type="text" class="form-control" ng-model="input.messageText" ng-keydown="input.keyDown($event)"/>
 					<span class="input-group-btn">
 							<button type="submit" class="btn btn-success">Send</button>
 					</span>
