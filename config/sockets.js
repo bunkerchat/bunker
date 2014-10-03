@@ -22,13 +22,23 @@ module.exports.sockets = {
 	 *                                                                          *
 	 ***************************************************************************/
 	onConnect: function (session, socket) {
-		var socketId = sails.sockets.id(socket);
+		//var socketId = sails.sockets.id(socket);
 		var user = session.user;
-		console.log('connecting ' + user.nick);
-		User.update(user.id, {connected: true, socketId: socketId}).exec(function(error, users) {
-			if(error || !users || users.length > 1) return;
-			var dbUser = users[0];
-			// TODO publish an update to rooms somehow, informing them of the update???
+		if(!user) return;
+
+		//console.log('connecting ' + user.nick);
+		//console.log('connected rooms', sails.sockets.rooms());
+
+		User.update(user.id, {connected: true}).exec(function(error) {
+			if(error) return;
+			Room.find().populate('members').exec(function(error, rooms) {
+				if(error) return;
+				_.each(rooms, function(room) {
+					if(_.any(room.members, {id: user.id})) {
+						Room.publishUpdate(room.id, room);
+					}
+				});
+			});
 		});
 	},
 
@@ -41,11 +51,19 @@ module.exports.sockets = {
 	 ***************************************************************************/
 	onDisconnect: function (session, socket) {
 		var user = session.user;
+		if(!user) return;
+
 		console.log('disconnecting ' + user.nick);
-		User.update(user.id, {connected: false, socketId: null}).exec(function(error, users) {
-			if(error || !users || users.length > 1) return;
-			var dbUser = users[0];
-			// TODO publish an update to rooms somehow, informing them of the update???
+		User.update(user.id, {connected: false}).exec(function(error) {
+			if(error) return;
+			Room.find().populate('members').exec(function(error, rooms) {
+				if(error) return;
+				_.each(rooms, function(room) {
+					if(_.any(room.members, {id: user.id})) {
+						Room.publishUpdate(room.id, room);
+					}
+				});
+			});
 		});
 	},
 
@@ -73,7 +91,7 @@ module.exports.sockets = {
 	 *                                                                          *
 	 ***************************************************************************/
 
-	// adapter: 'memory',
+	adapter: 'memory',
 
 	/***************************************************************************
 	 *                                                                          *
@@ -156,7 +174,7 @@ module.exports.sockets = {
 	 *                                                                          *
 	 ***************************************************************************/
 
-	// authorization: false,
+	 authorization: true,
 
 	/***************************************************************************
 	 *                                                                          *
@@ -193,6 +211,10 @@ module.exports.sockets = {
 	 *                                                                          *
 	 ***************************************************************************/
 
-	// origins: '*:*',
-
+	origins: '*:*',
+	heartbeats: true,
+	'close timeout': 60,
+	'heartbeat timeout': 60,
+	'heartbeat interval': 25,
+	'polling duration': 20
 };

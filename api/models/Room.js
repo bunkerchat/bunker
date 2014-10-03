@@ -19,8 +19,7 @@ module.exports = {
 		},
 		members: {
 			collection: 'User',
-			via: 'rooms',
-			dominant: true
+			via: 'rooms'
 		},
 		messages: {
 			collection: 'Message',
