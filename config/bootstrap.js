@@ -15,9 +15,8 @@ var passport = require('passport'),
 
 module.exports.bootstrap = function (cb) {
 
-	// Set all users as connected false
-	User.update({}, {connected: false}).exec(function(error) {
-	});
+	// Clear user socket data
+	User.update({}, {socketId: null, connected: false}).exec(function(error) {});
 
 	passport.serializeUser(function (user, done) {
 		done(null, user.id);

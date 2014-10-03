@@ -47,12 +47,15 @@ module.exports.latest = function (req, res) {
 // TODO put this somewhere nicer
 var knownEmoticons = [
 	'allthethings.png',
+	'arya.png',
 	'doge.png',
 	'eel.png',
 	'hodor.png',
 	'mindblown.gif',
 	'okay.png',
+	'sadpanda.png',
 	'stare.png',
+	'successkid.png',
 	'tableflip.png',
 	'trollface.png',
 	'wat.png'];

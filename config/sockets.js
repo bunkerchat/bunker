@@ -22,14 +22,14 @@ module.exports.sockets = {
 	 *                                                                          *
 	 ***************************************************************************/
 	onConnect: function (session, socket) {
-		//var socketId = sails.sockets.id(socket);
+		var socketId = sails.sockets.id(socket);
 		var user = session.user;
 		if(!user) return;
 
-		//console.log('connecting ' + user.nick);
+		console.log('connecting ' + socketId + ' for ' + user.nick);
 		//console.log('connected rooms', sails.sockets.rooms());
 
-		User.update(user.id, {connected: true}).exec(function(error) {
+		User.update(user.id, {socketId: socketId, connected: true}).exec(function(error) {
 			if(error) return;
 			Room.find().populate('members').exec(function(error, rooms) {
 				if(error) return;
@@ -50,18 +50,21 @@ module.exports.sockets = {
 	 *                                                                          *
 	 ***************************************************************************/
 	onDisconnect: function (session, socket) {
+		var socketId = sails.sockets.id(socket);
 		var user = session.user;
 		if(!user) return;
 
-		console.log('disconnecting ' + user.nick);
-		User.update(user.id, {connected: false}).exec(function(error) {
+		console.log('disconnecting socketId, previously used by ' + user.nick);
+		User.update({socketId: socketId}, {socketId: null, connected: false}).exec(function(error, users) {
 			if(error) return;
-			Room.find().populate('members').exec(function(error, rooms) {
-				if(error) return;
-				_.each(rooms, function(room) {
-					if(_.any(room.members, {id: user.id})) {
-						Room.publishUpdate(room.id, room);
-					}
+			_.each(users, function(disconnectedUser) {
+				Room.find().populate('members').exec(function(error, rooms) {
+					if(error) return;
+					_.each(rooms, function(room) {
+						if(_.any(room.members, {id: disconnectedUser.id})) {
+							Room.publishUpdate(room.id, room);
+						}
+					});
 				});
 			});
 		});
