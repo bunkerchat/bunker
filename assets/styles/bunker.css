@@ -12,26 +12,28 @@ body {
 }
 .message {
     position: relative;
-    height: 25px;
+    overflow: hidden;
     line-height: 25px;
 }
 .message-author {
+    float: left;
     width: 180px;
-    height: 100%;
 }
 .message-author img {
     margin-left: 5px;
 }
-.message-text {
-    height: 100%;
-    padding-left: 190px;
-    padding-right: 100px;
+.message-body {
+    margin-left: 180px;
+    padding-left: 5px;
+    padding-right: 75px;
     border-bottom: solid #eee 1px;
+    background: #fff;
 }
 .message-timestamp {
     position: absolute;
     top: 0;
     right: 0;
+    padding-right: 5px;
 }
 .message-input {
     position: fixed;
