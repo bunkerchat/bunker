@@ -16,13 +16,16 @@ module.exports.findOne = function (req, res) {
 	var user = req.session.user;
 	// TODO check for roomId and user values
 
-	Room.findOne(roomId).populateAll().exec(function (err, room) {
+	Room.findOne(roomId).populateAll().exec(function (error, room) {
+		if(error) res.serverError();
+		if(!room) res.notFound();
+
 		var inRoom = _.any(room.members, {id: user.id});
 		if (!inRoom) { // if user is not a current room member
 			room.members.add(user.id); // make them one
 			room.save(function(memberAddError, updatedRoom) {
 				// repopulate and send update
-				Room.findOne(updatedRoom.id).populateAll().exec(function(err, populatedRoom) {
+				Room.findOne(updatedRoom.id).populateAll().exec(function(error, populatedRoom) {
 					Room.publishUpdate(populatedRoom.id, populatedRoom);
 				});
 			});

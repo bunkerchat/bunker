@@ -51,6 +51,7 @@ var knownEmoticons = [
 	'doge.png',
 	'eel.png',
 	'hodor.png',
+	'indeed.png',
 	'mindblown.gif',
 	'okay.png',
 	'sadpanda.png',

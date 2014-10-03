@@ -47,6 +47,32 @@ app.directive('bunkerMessage', function ($sce) {
 		}
 	};
 });
+app.directive('unreadMessages', function ($rootScope, $window) {
+	return function (scope, elem) {
+		var el = angular.element(elem);
+		var win = angular.element($window);
+
+		var original = el.text();
+		var unreadMessages = 0;
+		var hasFocus = true;
+
+		win.bind('focus', function () {
+			hasFocus = true;
+			unreadMessages = 0;
+			el.text(original);
+		});
+		win.bind('blur', function () {
+			hasFocus = false;
+		});
+
+		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
+			if (!hasFocus && resource.model == 'room') {
+				unreadMessages++;
+				el.text('(' + unreadMessages + ')' + original);
+			}
+		});
+	};
+});
 app.filter('timestamp', function () {
 	return function (original) {
 		return moment(original).format('h:mm:ss A')
