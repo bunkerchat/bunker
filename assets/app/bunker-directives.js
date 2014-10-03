@@ -43,10 +43,10 @@ app.directive('bunkerMessage', function ($sce) {
 				scope.formatted = $sce.trustAsHtml(text);
 			});
 		}
-	}
+	};
 });
 app.filter('timestamp', function() {
 	return function(original) {
-		return moment(original).format('h:mm:ssa')
-	}
+		return moment(original).format('h:mm:ss A')
+	};
 });
