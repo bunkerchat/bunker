@@ -20,7 +20,12 @@ module.exports.findOne = function (req, res) {
 		var inRoom = _.any(room.members, {id: user.id});
 		if (!inRoom) { // if user is not a current room member
 			room.members.add(user.id); // make them one
-			room.save();
+			room.save(function(memberAddError, updatedRoom) {
+				// repopulate and send update
+				Room.findOne(updatedRoom.id).populateAll().exec(function(err, populatedRoom) {
+					Room.publishUpdate(populatedRoom.id, populatedRoom);
+				});
+			});
 		}
 
 		// Subscribe the socket to message and updates of this room

@@ -22,13 +22,15 @@ app.directive('fill', function ($window, $timeout) {
 		}
 	}
 });
-app.directive('autoScroll', function () {
+app.directive('autoScroll', function ($timeout) {
 	return function (scope, elem) {
 		var el = angular.element(elem);
 		scope.$watch(function () {
 			return el.children().length;
 		}, function () {
-			el.scrollTop(el.prop('scrollHeight'));
+			$timeout(function () {
+				el.scrollTop(el.prop('scrollHeight'));
+			});
 		});
 	};
 });
@@ -45,8 +47,8 @@ app.directive('bunkerMessage', function ($sce) {
 		}
 	};
 });
-app.filter('timestamp', function() {
-	return function(original) {
+app.filter('timestamp', function () {
+	return function (original) {
 		return moment(original).format('h:mm:ss A')
 	};
 });
