@@ -1,8 +1,9 @@
 body {
-    padding-top: 50px;
+    padding-top: 63px;
 }
 .no-gutter {
     padding-left: 0;
+    padding-right: 0;
 }
 [fill], .fill {
     overflow: hidden;
@@ -13,7 +14,7 @@ body {
 .message {
     position: relative;
     overflow: hidden;
-    line-height: 25px;
+    line-height: 30px;
 }
 .message-author {
     float: left;
@@ -39,6 +40,17 @@ body {
     position: fixed;
     bottom: 0;
 }
+.message-input input[type=text],
+.message-input button {
+    border-radius: 0;
+}
 .emoticon {
     max-height: 100%;
+}
+
+/* member list */
+.member-list li.list-group-item {
+    border-radius: 0;
+    border-left-width: 0;
+    border-right-width: 0;
 }
