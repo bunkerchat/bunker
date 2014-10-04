@@ -36,6 +36,11 @@ module.exports.sockets = {
 				_.each(rooms, function(room) {
 					if(_.any(room.members, {id: user.id})) {
 						Room.publishUpdate(room.id, room);
+						Room.message(room.id, {
+							room: room,
+							text: user.nick + ' has joined the room',
+							createdAt: new Date().toISOString()
+						});
 					}
 				});
 			});
@@ -63,6 +68,11 @@ module.exports.sockets = {
 					_.each(rooms, function(room) {
 						if(_.any(room.members, {id: disconnectedUser.id})) {
 							Room.publishUpdate(room.id, room);
+							Room.message(room.id, {
+								room: room,
+								text: disconnectedUser.nick + ' has left the room',
+								createdAt: new Date().toISOString()
+							});
 						}
 					});
 				});
