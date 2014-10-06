@@ -10,12 +10,12 @@ window.app = angular.module('bunker', [
 		$stateProvider
 			.state('lobby', {
 				url: '/',
-				templateUrl: '/app/lobby/lobby.html',
+				templateUrl: '/assets/app/lobby/lobby.html',
 				controller: 'LobbyController as lobby'
 			})
 			.state('room', {
 				url: '/rooms/{roomId}',
-				templateUrl: '/app/room/room.html',
+				templateUrl: '/assets/app/room/room.html',
 				controller: 'RoomController as room'
 			});
 	})

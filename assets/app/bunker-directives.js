@@ -50,7 +50,7 @@ app.directive('bunkerMessage', function (emoticons) {
 						return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');
 					});
 					if (knownEmoticon) {
-						formatted = formatted.replace(emoticonText, '<img class="emoticon" title="'+emoticonText+'" src="/images/emoticons/' + knownEmoticon + '"/>');
+						formatted = formatted.replace(emoticonText, '<img class="emoticon" title="'+emoticonText+'" src="/assets/images/emoticons/' + knownEmoticon + '"/>');
 					}
 				});
 
