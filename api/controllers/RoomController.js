@@ -17,8 +17,8 @@ module.exports.findOne = function (req, res) {
 	// TODO check for roomId and user values
 
 	Room.findOne(roomId).exec(function (error, room) {
-		if (error) res.serverError();
-		if (!room) res.notFound();
+		if (error) return res.serverError();
+		if (!room) return res.notFound();
 
 		// always try to add room members
 		room.members.add(user.id);
