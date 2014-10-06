@@ -44,10 +44,9 @@ module.exports.latest = function (req, res) {
 	});
 };
 
-// Format a message
-// For now it does emoticons only
+// Sanitize a message, no tags allow currently
 function sanitizeMessage(original) {
 	return require('sanitize-html')(original, {
-		allowedTags: ['']
+		allowedTags: []
 	});
 }

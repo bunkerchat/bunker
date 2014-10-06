@@ -20,11 +20,10 @@ module.exports.findOne = function (req, res) {
 		if (error) return res.serverError();
 		if (!room) return res.notFound();
 
-		// always try to add room members
 		room.members.add(user.id);
-		room.save(function (memberAddError, updatedRoom) {
+		room.save().catch(function() {}).finally(function() {
 			// repopulate and send update
-			Room.findOne(room.id).populateAll().exec(function (error, populatedRoom) {
+			Room.findOne(room.id).populate('members').exec(function (error, populatedRoom) {
 				Room.publishUpdate(populatedRoom.id, populatedRoom);
 			});
 		});
