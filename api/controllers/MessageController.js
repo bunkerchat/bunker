@@ -10,7 +10,7 @@ module.exports.create = function (req, res) {
 	var author = req.session.user;
 	var roomId = req.body.room;
 	// TODO if author is not a member of the roomId, cancel
-	var text = req.body.text;
+	var text = sanitizeMessage(req.body.text);
 	if (!text || !text.length) {
 		res.badRequest();
 		return;
@@ -43,3 +43,11 @@ module.exports.latest = function (req, res) {
 		res.ok(messages); // send the messages
 	});
 };
+
+// Format a message
+// For now it does emoticons only
+function sanitizeMessage(original) {
+	return require('sanitize-html')(original, {
+		allowedTags: ['']
+	});
+}
