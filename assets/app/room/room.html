@@ -24,7 +24,8 @@
 							{{message.text}}
 						</div>
 						<span class="message-timestamp text-muted">
-							<small>{{message.createdAt | timestamp}}</small>
+							<small am-time-ago="message.createdAt" title="{{message.createdAt | date:'medium'}}">
+							</small>
 						</span>
 					</div>
 				</li>
