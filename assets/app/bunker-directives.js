@@ -42,15 +42,17 @@ app.directive('bunkerMessage', function (emoticons) {
 		},
 		link: function (scope) {
 			scope.$watch('text', function (text) {
-				var formatted = text;
+				var formatted = text,
+					replacedEmotes = { };
 
 				// Parse emoticons
 				_.each(text.match(/:\w+:/g), function (emoticonText) {
 					var knownEmoticon = _.find(emoticons.files, function (known) {
 						return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');
 					});
-					if (knownEmoticon) {
-						formatted = formatted.replace(emoticonText, '<img class="emoticon" title="'+emoticonText+'" src="/assets/images/emoticons/' + knownEmoticon + '"/>');
+					if (knownEmoticon && !replacedEmotes[knownEmoticon]) {
+						formatted = formatted.replace(new RegExp(emoticonText, 'g'), '<img class="emoticon" title="'+emoticonText+'" src="/assets/images/emoticons/' + knownEmoticon + '"/>');
+						replacedEmotes[knownEmoticon] = true;
 					}
 				});
 
