@@ -58,7 +58,7 @@ module.exports.connections = {
   ***************************************************************************/
   mongo: {
     adapter: 'sails-mongo',
-    url: process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost:27017/bunker'
+    url: process.env.MONGO_URL || process.env.MONGOHQ_URL || 'mongodb://localhost:27017/bunker?auto_reconnect=true'
   },
 
   /***************************************************************************
