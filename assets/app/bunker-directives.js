@@ -73,8 +73,3 @@ app.directive('unreadMessages', function ($rootScope, $window) {
 		});
 	};
 });
-app.filter('timestamp', function () {
-	return function (original) {
-		return moment(original).format('h:mm:ss A')
-	};
-});
