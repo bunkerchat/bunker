@@ -22,17 +22,17 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons) 
 		emoticonSearch = '';
 		emoticonSearchIndex = -1;
 	};
-	this.keyDown = function(evt) {
+	this.keyDown = function (evt) {
 		if (evt.keyCode == 9) { // tab
 			evt.preventDefault(); // prevent tabbing out of the text input
 
-			if(emoticonSearch) { // if we're in a search
+			if (emoticonSearch) { // if we're in a search
 
 				var matchingEmoticons = _.filter(emoticons.names, function (emoticon) {
 					return emoticon.indexOf(emoticonSearch) == 0
 				});
 
-				if(matchingEmoticons.length == 0) return; // no matches, nothing to do
+				if (matchingEmoticons.length == 0) return; // no matches, nothing to do
 
 				if (evt.shiftKey) { // shift modifier goes backwards through the matches
 					emoticonSearchIndex = emoticonSearchIndex > 0

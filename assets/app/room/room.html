@@ -2,20 +2,22 @@
 	<div class="row">
 		<div class="col-md-10 col-xs-12 no-gutter" ng-controller="MessageLogController as log">
 			<ol class="list-unstyled message-list" fill auto-scroll margin-bottom="45">
-				<li class="message" ng-switch="!!message.author" ng-repeat="message in log.messages track by message.id">
+				<li class="message" ng-switch="!!message.author"
+					ng-repeat="message in log.messages track by message.id">
 					<div ng-switch-when="true">
 						<div class="message-author">
 							<span ng-if="log.messages[$index-1].author.id != message.author.id">
 								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 								{{message.author.nick}}
-                                <span class="status"  ng-class="{ here: message.author.connected }"></span>
+                                <span class="status" ng-class="{ here: message.author.connected }"></span>
 							</span>
 						</div>
-                        <div class="message-caret" ng-if="log.messages[$index-1].author.id != message.author.id"></div>
+						<div class="message-caret" ng-if="log.messages[$index-1].author.id != message.author.id"></div>
 						<div class="{{log.messages[$index-1].author.id != message.author.id ? 'new-' : ''}}message-body">
 							<span bunker-message="{{message.text}}">
 							</span>
-							<span ng-if="log.messages[$index-1].author.id != message.author.id" class="message-timestamp text-muted">
+							<span ng-if="log.messages[$index-1].author.id != message.author.id"
+								  class="message-timestamp text-muted">
 								<small am-time-ago="message.createdAt" title="{{message.createdAt | date:'medium'}}">
 								</small>
 							</span>
@@ -38,7 +40,7 @@
 				<li class="list-group-item" ng-repeat="member in room.room.members | filter:{connected:true}">
 					<img gravatar-src-once="member.email | lowercase" gravatar-size="20"/>
 					{{member.nick}}
-                    <span class="status" ng-class="{ here: member.connected }"></span>
+					<span class="status" ng-class="{ here: member.connected }"></span>
 				</li>
 			</ul>
 		</div>
@@ -49,7 +51,8 @@
 	<div class="row">
 		<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
 			<div class="input-group">
-				<input type="text" class="form-control" ng-model="input.messageText" ng-keyup="input.keyUp($event)" ng-keydown="input.keyDown($event)"/>
+				<input type="text" class="form-control" ng-model="input.messageText" ng-keyup="input.keyUp($event)"
+					   ng-keydown="input.keyDown($event)"/>
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-success">Send</button>
 					</span>
