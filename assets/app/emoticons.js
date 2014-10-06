@@ -1,4 +1,4 @@
-app.factory('emoticons', function() {
+app.factory('emoticons', function () {
 	var files = [
 		'3.gif',
 		'allthethings.png',
@@ -34,7 +34,9 @@ app.factory('emoticons', function() {
 		'wat.png'];
 
 	return {
-		names: _.map(files, function(file) { return file.replace(/.\w+$/, ''); }),
+		names: _.map(files, function (file) {
+			return file.replace(/.\w+$/, '');
+		}),
 		files: files
 	};
 });
