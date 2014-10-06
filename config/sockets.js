@@ -9,6 +9,7 @@
  * For more information on sockets configuration, including advanced config options, see:
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.sockets.html
  */
+var uuid = require('node-uuid');
 
 module.exports.sockets = {
 
@@ -37,6 +38,7 @@ module.exports.sockets = {
 					if(_.any(room.members, {id: user.id})) {
 						Room.publishUpdate(room.id, room);
 						Room.message(room.id, {
+							id: uuid.v4(),
 							room: room,
 							text: user.nick + ' has joined the room',
 							createdAt: new Date().toISOString()
