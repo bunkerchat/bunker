@@ -24,32 +24,34 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons) 
 	};
 	this.keyDown = function(evt) {
 		if (evt.keyCode == 9) { // tab
-			evt.preventDefault();
+			evt.preventDefault(); // prevent tabbing out of the text input
 
-			if(emoticonSearch) {
+			if(emoticonSearch) { // if we're in a search
+
 				var matchingEmoticons = _.filter(emoticons.names, function (emoticon) {
 					return emoticon.indexOf(emoticonSearch) == 0
 				});
 
-				if (evt.shiftKey) {
-					emoticonSearchIndex = emoticonSearchIndex > 0 // TODO this is broken
+				if(matchingEmoticons.length == 0) return; // no matches, nothing to do
+
+				if (evt.shiftKey) { // shift modifier goes backwards through the matches
+					emoticonSearchIndex = emoticonSearchIndex > 0
 						? Math.max(emoticonSearchIndex - 1, 0)
 						: matchingEmoticons.length - 1;
 				}
-				else {
+				else { // cycle
 					emoticonSearchIndex = emoticonSearchIndex < matchingEmoticons.length - 1
 						? Math.min(emoticonSearchIndex + 1, matchingEmoticons.length - 1)
 						: 0;
 				}
 
+				// Replace the last emoticon text with a match
 				this.messageText = this.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
-				//console.log(_.last(lastEmoticon));
-				//console.log(emoticonSearch, emoticonSearchIndex, matchingEmoticons);
 			}
 		}
 	};
 	this.keyUp = function (evt) {
-		if (evt.keyCode == 38 || evt.keyCode == 40) { // up or down
+		if (evt.keyCode == 38 || evt.keyCode == 40) { // up or down, cycle through last messages
 			this.selectedMessageIndex += evt.keyCode == 38 ? 1 : -1;
 
 			if (this.selectedMessageIndex < 0) {
@@ -62,11 +64,9 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons) 
 			this.messageText = this.submittedMessages[this.selectedMessageIndex];
 		}
 		else if (/:\w+$/.test(this.messageText) && evt.keyCode != 9 && evt.keyCode != 16) {
-			//console.log('txt is', this.messageText, evt.keyCode);
+			// if an emoticon is at the end of the message, start the search
 			emoticonSearch = this.messageText.match(/:(\w+)$/)[1];
 			emoticonSearchIndex = -1;
-			//console.log(emoticonSearch);
 		}
-		//console.log(evt.keyCode, evt);
 	};
 });

@@ -45,8 +45,7 @@ app.directive('bunkerMessage', function (emoticons) {
 				var formatted = text;
 
 				// Parse emoticons
-				var emoticonTexts = /:\w+:/.exec(text);
-				_.each(emoticonTexts, function (emoticonText) {
+				_.each(text.match(/:\w+:/g), function (emoticonText) {
 					var knownEmoticon = _.find(emoticons.files, function (known) {
 						return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');
 					});
