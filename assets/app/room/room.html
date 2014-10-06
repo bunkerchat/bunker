@@ -2,14 +2,16 @@
 	<div class="row">
 		<div class="col-md-10 col-xs-12 no-gutter" ng-controller="MessageLogController as log">
 			<ol class="list-unstyled message-list" fill auto-scroll margin-bottom="45">
-				<li class="message bg-info" ng-switch="!!message.author" ng-repeat="message in log.messages track by message.id">
+				<li class="message" ng-switch="!!message.author" ng-repeat="message in log.messages track by message.id">
 					<div ng-switch-when="true">
 						<div class="message-author">
 							<span ng-if="log.messages[$index-1].author.id != message.author.id">
 								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 								{{message.author.nick}}
+                                <span class="status"  ng-class="{ here: message.author.connected }"></span>
 							</span>
 						</div>
+                        <div class="message-caret" ng-if="log.messages[$index-1].author.id != message.author.id"></div>
 						<div class="{{log.messages[$index-1].author.id != message.author.id ? 'new-' : ''}}message-body">
 							<span bunker-message="{{message.text}}">
 							</span>
@@ -36,6 +38,7 @@
 				<li class="list-group-item" ng-repeat="member in room.room.members | filter:{connected:true}">
 					<img gravatar-src-once="member.email | lowercase" gravatar-size="20"/>
 					{{member.nick}}
+                    <span class="status" ng-class="{ here: member.connected }"></span>
 				</li>
 			</ul>
 		</div>
