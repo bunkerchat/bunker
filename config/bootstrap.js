@@ -16,7 +16,8 @@ var passport = require('passport'),
 module.exports.bootstrap = function (cb) {
 
 	// Clear user socket data
-	User.update({}, {socketId: null, connected: false}).exec(function(error) {});
+	User.update({}, {socketId: null, connected: false}).exec(function (error) {
+	});
 
 	passport.serializeUser(function (user, done) {
 		done(null, user.id);
@@ -29,11 +30,13 @@ module.exports.bootstrap = function (cb) {
 	});
 
 	passport.use(new LocalStrategy(
-		function(username, password, done) {
-			User.findOne({ username: username }, function(err, user) {
-				if (err) { return done(err); }
+		function (username, password, done) {
+			User.findOne({username: username}, function (err, user) {
+				if (err) {
+					return done(err);
+				}
 				if (!user || !user.validPassword(password)) {
-					return done(null, false, { message: 'Incorrect username or password' });
+					return done(null, false, {message: 'Incorrect username or password'});
 				}
 
 				return done(null, user);
@@ -42,27 +45,28 @@ module.exports.bootstrap = function (cb) {
 	));
 
 	passport.use(new GoogleStrategy({
-            clientID: sails.config.google.clientID,
-            clientSecret: sails.config.google.clientSecret,
+			clientID: sails.config.google.clientID,
+			clientSecret: sails.config.google.clientSecret,
 			callbackURL: sails.config.url + '/auth/googleReturn'
 		},
 		function (accessToken, refreshToken, profile, done) {
 			var email = profile.emails[0].value;
 			User.findOne({email: email}).exec(function (error, user) {
 				if (user) {
-					User.update(user.id, {token: accessToken}).exec(function(error, user) {
+					User.update(user.id, {token: accessToken}).exec(function (error, user) {
 						done(error, user[0]);
 					});
 				}
-                else {
-                    User.create({
-                        token: accessToken,
-                        nick: profile.displayName,
-                        email: email
-                    }).exec(function (error, user) {
-                        done(error, user);
-                    });
-                }
+				else {
+					User.create({
+						token: accessToken,
+						// when no display name, get everything before @ in email
+						nick: profile.displayName || email.replace(/@.*/,""),
+						email: email
+					}).exec(function (error, user) {
+						done(error, user);
+					});
+				}
 			});
 		}
 	));

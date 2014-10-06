@@ -10,10 +10,10 @@
 								{{message.author.nick}}
 							</span>
 						</div>
-						<div class="message-body">
-							<span class="message-text" bunker-message="{{message.text}}">
+						<div class="{{log.messages[$index-1].author.id != message.author.id ? 'new-' : ''}}message-body">
+							<span bunker-message="{{message.text}}">
 							</span>
-							<span class="message-timestamp text-muted">
+							<span ng-if="log.messages[$index-1].author.id != message.author.id" class="message-timestamp text-muted">
 								<small am-time-ago="message.createdAt" title="{{message.createdAt | date:'medium'}}">
 								</small>
 							</span>

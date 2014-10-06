@@ -31,8 +31,14 @@ body {
     margin-left: 180px;
     padding-left: 5px;
     padding-right: 75px;
-    border-bottom: solid #eee 1px;
     background: #fff;
+}
+.new-message-body {
+	margin-left: 180px;
+	padding-left: 5px;
+	padding-right: 75px;
+	border-top: solid #eee 1px;
+	background: #fff;
 }
 .message-timestamp {
     position: absolute;
