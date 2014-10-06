@@ -9,9 +9,19 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.bootstrap.html
  */
 
-var passport = require('passport'),
+var express = require('../node_modules/sails/node_modules/express'),
+	passport = require('passport'),
 	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
 	LocalStrategy = require('passport-local').Strategy;
+
+
+module.exports.http = {
+	customMiddleware: function (app) {
+		app.use(express.compress());
+		app.use('/assets', express.static(__dirname + '/../assets/'));
+	}
+};
+
 
 module.exports.bootstrap = function (cb) {
 
@@ -61,7 +71,7 @@ module.exports.bootstrap = function (cb) {
 					User.create({
 						token: accessToken,
 						// when no display name, get everything before @ in email
-						nick: profile.displayName || email.replace(/@.*/,""),
+						nick: profile.displayName || email.replace(/@.*/, ""),
 						email: email
 					}).exec(function (error, user) {
 						done(error, user);
