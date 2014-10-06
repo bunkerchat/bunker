@@ -34,7 +34,7 @@ app.directive('autoScroll', function ($timeout) {
 		});
 	};
 });
-app.directive('bunkerMessage', function ($sce) {
+app.directive('bunkerMessage', function (emoticons) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
 		scope: {
@@ -42,7 +42,20 @@ app.directive('bunkerMessage', function ($sce) {
 		},
 		link: function (scope) {
 			scope.$watch('text', function (text) {
-				scope.formatted = $sce.trustAsHtml(text);
+				var formatted = text;
+
+				// Parse emoticons
+				var emoticonTexts = /:\w+:/.exec(text);
+				_.each(emoticonTexts, function (emoticonText) {
+					var knownEmoticon = _.find(emoticons.files, function (known) {
+						return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');
+					});
+					if (knownEmoticon) {
+						formatted = formatted.replace(emoticonText, '<img class="emoticon" src="/images/emoticons/' + knownEmoticon + '"/>');
+					}
+				});
+
+				scope.formatted = formatted;
 			});
 		}
 	};

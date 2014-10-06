@@ -10,7 +10,7 @@ module.exports.create = function (req, res) {
 	var author = req.session.user;
 	var roomId = req.body.room;
 	// TODO if author is not a member of the roomId, cancel
-	var text = formatMessage(req.body.text);
+	var text = req.body.text;
 	if (!text || !text.length) {
 		res.badRequest();
 		return;
@@ -43,52 +43,3 @@ module.exports.latest = function (req, res) {
 		res.ok(messages); // send the messages
 	});
 };
-
-// TODO put this somewhere nicer
-var knownEmoticons = [
-	'allthethings.png',
-	'arya.png',
-	'badass.png',
-	'dealwithit.gif',
-	'doge.png',
-	'eel.png',
-	'fwp.png',
-	'hodor.png',
-	'indeed.png',
-	'mindblown.gif',
-	'notbad.png',
-	'okay.png',
-	'orly.png',
-	'rageguy.png',
-	'sadpanda.png',
-	'stare.png',
-	'successkid.png',
-	'tableflip.png',
-	'trollface.png',
-	'wat.png'];
-
-// Format a message
-// For now it does emoticons only
-function formatMessage(original) {
-	if (!original || !original.length) return original;
-
-	var formatted = original;
-	// Parse emoticons
-	var emoticonTexts = /:\w+:/.exec(original);
-	_.each(emoticonTexts, function (emoticonText) {
-		var knownEmoticon = _.find(knownEmoticons, function (known) {
-			return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');
-		});
-		if (knownEmoticon) {
-			formatted = formatted.replace(emoticonText, '<img class="emoticon" src="/images/emoticons/' + knownEmoticon + '"/>');
-		}
-	});
-
-	// Sanitize what we've done so only img tags make it through
-	return require('sanitize-html')(formatted, {
-		allowedTags: ['img'],
-		allowedAttributes: {
-			'img': ['src', 'class']
-		}
-	});
-}
