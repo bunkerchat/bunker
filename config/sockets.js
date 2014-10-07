@@ -71,6 +71,7 @@ module.exports.sockets = {
 						if(_.any(room.members, {id: disconnectedUser.id})) {
 							Room.publishUpdate(room.id, room);
 							Room.message(room.id, {
+								id: uuid.v4(),
 								room: room,
 								text: disconnectedUser.nick + ' has left the room',
 								createdAt: new Date().toISOString()
