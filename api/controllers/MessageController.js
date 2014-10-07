@@ -11,6 +11,7 @@ var uuid = require('node-uuid');
 module.exports.create = function (req, res) {
 	var author = req.session.user;
 	var roomId = req.body.room;
+
 	// TODO if author is not a member of the roomId, cancel
 	var text = sanitizeMessage(req.body.text);
 	if (!text || !text.length) {
