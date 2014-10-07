@@ -1,4 +1,4 @@
-app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, user) {
+app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, user, uuid) {
 	var self = this;
 
 	this.user = user;
@@ -11,5 +11,9 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 		if (resource.model == 'room' && resource.id == $stateParams.roomId) {
 			self.messages.push(resource.data);
 		}
+	});
+
+	$rootScope.$on('$sailsDisconnected', function (evt, data) {
+		self.messages.push({text: 'Disconnected', id: uuid.v4(), createdAt: new Date().toISOString()});
 	});
 });

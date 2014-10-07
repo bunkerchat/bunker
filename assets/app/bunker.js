@@ -1,10 +1,10 @@
 window.app = angular.module('bunker', [
-		'ngSanitize',
-		'sailsResource',
-		'ui.router',
-		'ui.gravatar',
-		'angularMoment'
-	])
+	'ngSanitize',
+	'sailsResource',
+	'ui.router',
+	'ui.gravatar',
+	'angularMoment'
+])
 	.config(function ($stateProvider, $urlRouterProvider) {
 		$urlRouterProvider.otherwise('/');
 		$stateProvider
@@ -18,8 +18,7 @@ window.app = angular.module('bunker', [
 				templateUrl: '/assets/app/room/room.html',
 				controller: 'RoomController as room',
 				resolve: {
-					currentRoom: function($stateParams, bunkerApi, roomService, user) {
-
+					currentRoom: function ($stateParams, bunkerApi, roomService, user) {
 						var roomId = $stateParams.roomId;
 
 						return bunkerApi.room.get({id: roomId}, function (room) {
