@@ -59,12 +59,10 @@ nav,
     position: relative;
     overflow: hidden;
     line-height: 30px;
-    background-image: -webkit-gradient(linear,left top,right top,color-stop(0, #414B57),color-stop(1, #313946));
-    background-image: -o-linear-gradient(right, #414B57 0%, #313946 100%);
-    background-image: -moz-linear-gradient(right, #414B57 0%, #313946 100%);
-    background-image: -webkit-linear-gradient(right, #414B57 0%, #313946 100%);
-    background-image: -ms-linear-gradient(right, #414B57 0%, #313946 100%);
-    background-image: linear-gradient(to right, #414B57 0%, #313946 100%);
+    background-color: #414B57;
+}
+.message.local {
+    background-color: #596470;
 }
 .message-author {
     float: left;
