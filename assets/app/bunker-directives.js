@@ -56,6 +56,11 @@ app.directive('bunkerMessage', function (emoticons) {
 					}
 				});
 
+				// Open links in a new window
+				_.each(text.match(/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/gi), function (link) {
+					formatted = formatted.replace(new RegExp(link, 'g'), '<a href="' + link + '" target="_blank">' + link +'</a>');
+				});
+
 				scope.formatted = formatted;
 			});
 		}
