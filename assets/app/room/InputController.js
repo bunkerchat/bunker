@@ -1,6 +1,19 @@
-app.controller('InputController', function ($stateParams, bunkerApi, emoticons) {
+app.controller('InputController', function ($stateParams, bunkerApi, emoticons, room) {
+
+	var searchStates = {
+		NONE: 'none',
+		EMOTE: 'emote',
+		NICK: 'nick'
+	};
+
+	var searchState = searchStates.NONE;
+
 	var emoticonSearch = '';
 	var emoticonSearchIndex = -1;
+
+	var nickSearch = '';
+	var nickSearchIndex = -1;
+
 	this.messageText = '';
 	this.submittedMessages = [];
 	this.selectedMessageIndex = -1;
@@ -26,7 +39,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons) 
 		if (evt.keyCode == 9) { // tab
 			evt.preventDefault(); // prevent tabbing out of the text input
 
-			if (emoticonSearch) { // if we're in a search
+			if (searchState === searchStates.EMOTE) { // if we're in a search
 
 				var matchingEmoticons = _.filter(emoticons.names, function (emoticon) {
 					return emoticon.indexOf(emoticonSearch) == 0
@@ -48,6 +61,26 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons) 
 				// Replace the last emoticon text with a match
 				this.messageText = this.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
 			}
+			else if (searchState === searchStates.NICK) {
+				var matchingNames = _.filter(room.room && room.room.members, function(item) {
+					return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
+				});
+
+				if (matchingNames.length == 0) return;
+
+				if (evt.shiftKey) { // shift modifier goes backwards through the matches
+					nickSearchIndex = nickSearchIndex > 0
+						? Math.max(nickSearchIndex - 1, 0)
+						: matchingNames.length - 1;
+				}
+				else { // cycle
+					nickSearchIndex = nickSearchIndex < matchingNames.length - 1
+						? Math.min(nickSearchIndex + 1, matchingNames.length - 1)
+						: 0;
+				}
+
+				this.messageText = this.messageText.replace(/@[\w ]*?$/, '@' + matchingNames[nickSearchIndex].nick + ' ');
+			}
 		}
 	};
 	this.keyUp = function (evt) {
@@ -63,10 +96,21 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons) 
 
 			this.messageText = this.submittedMessages[this.selectedMessageIndex];
 		}
-		else if (/:\w+$/.test(this.messageText) && evt.keyCode != 9 && evt.keyCode != 16) {
-			// if an emoticon is at the end of the message, start the search
-			emoticonSearch = this.messageText.match(/:(\w+)$/)[1];
-			emoticonSearchIndex = -1;
+		else if (evt.keyCode != 9 && evt.keyCode != 16) {
+			if (/:\w+$/.test(this.messageText)) {
+				searchState = searchStates.EMOTE;
+				// if an emoticon is at the end of the message, start the search
+				emoticonSearch = this.messageText.match(/:(\w+)$/)[1];
+				emoticonSearchIndex = -1;
+			}
+			else if (/@\w*$/.test(this.messageText)) {
+				searchState = searchStates.NICK;
+				nickSearch = this.messageText.match(/@(\w*)$/)[1];
+				nickSearchIndex = -1;
+			}
+			else {
+				searchState = searchStates.NONE;
+			}
 		}
 	};
 });
