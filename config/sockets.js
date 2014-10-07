@@ -29,6 +29,8 @@ module.exports.sockets = {
 		//console.log('connected rooms', sails.sockets.rooms());
 
 		User.findOne(session.user.id).exec(function(error, user) {
+			if(user.connected)
+
 			console.log('connecting ' + socketId + ' for ' + user.nick);
 
 			user.socketId = socketId;
@@ -64,22 +66,20 @@ module.exports.sockets = {
 		var socketId = sails.sockets.id(socket);
 		if(!session.user) return;
 
-		User.findOne(session.user.id).exec(function(error, user) {
-			console.log('disconnecting socketId, previously used by ' + user.nick);
+		console.log('disconnecting ' + socketId);
 
-			user.socketId = null;
-			user.connected = false;
-			user.save().then(function() {
+		User.update({socketId: socketId}, {socketId: null, connected: false}).exec(function(error, users) {
+			if(error) return;
+			_.each(users, function(disconnectedUser) {
 				Room.find().populate('members').exec(function(error, rooms) {
 					if(error) return;
 					_.each(rooms, function(room) {
-						if(_.any(room.members, {id: user.id})) {
-
+						if(_.any(room.members, {id: disconnectedUser.id})) {
 							Room.publishUpdate(room.id, room);
 							Room.message(room.id, {
 								id: uuid.v4(),
 								room: room,
-								text: user.nick + ' has left the room',
+								text: disconnectedUser.nick + ' has left the room',
 								createdAt: new Date().toISOString()
 							});
 						}
