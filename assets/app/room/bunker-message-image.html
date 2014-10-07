@@ -1,0 +1,11 @@
+<div class="panel panel-default">
+	<div class="panel-heading" ng-click="visible = !visible">
+		{{link}}
+		<div class="pull-right">
+			Click to {{visible ? 'close' : 'open'}}
+		</div>
+	</div>
+	<div class="panel-body" ng-show="visible">
+		<img src="{{link}}"/>
+	</div>
+</div>

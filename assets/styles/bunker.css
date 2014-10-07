@@ -3,6 +3,9 @@
 body {
     padding-top: 40px;
 }
+a, [ng-click] {
+    cursor: pointer;
+}
 nav,
 .navbar,
 .navbar > .container-fluid .navbar-brand {
@@ -99,6 +102,13 @@ nav,
 }
 .new-message-body {
     border-top: solid #eee 1px;
+}
+.message-body img {
+    max-width: 100%;
+    max-height: 500px;
+}
+.message-body .panel {
+    margin: 0;
 }
 .message-timestamp {
     position: absolute;

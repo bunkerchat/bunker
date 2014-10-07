@@ -34,16 +34,17 @@ app.directive('autoScroll', function ($timeout) {
 		});
 	};
 });
-app.directive('bunkerMessage', function (emoticons) {
+app.directive('bunkerMessage', function ($compile, emoticons) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
 		scope: {
 			text: '@bunkerMessage'
 		},
-		link: function (scope) {
+		link: function (scope, elem) {
 			scope.$watch('text', function (text) {
 				var formatted = text,
-					replacedEmotes = { };
+					replacedEmotes = {},
+					replacedLinks = {};
 
 				// Parse emoticons
 				_.each(text.match(/:\w+:/g), function (emoticonText) {
@@ -56,13 +57,39 @@ app.directive('bunkerMessage', function (emoticons) {
 					}
 				});
 
-				// Open links in a new window
+				// Parse links
+				var attachedImage;
 				_.each(text.match(/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/gi), function (link) {
-					formatted = formatted.replace(new RegExp(link, 'g'), '<a href="' + link + '" target="_blank">' + link +'</a>');
+					if(/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedImage) {
+						// Image link
+						attachedImage = angular.element('<div bunker-message-image="' + link + '"></div>');
+					}
+
+					if(!replacedLinks[link]) {
+						formatted = formatted.replace(new RegExp(link, 'g'), '<a href="' + link + '" target="_blank">' + link + '</a>');
+						replacedLinks[link] = true;
+					}
 				});
+
+				// If we made an image, attach it now
+				if(attachedImage) {
+					angular.element(elem).append(attachedImage);
+					$compile(attachedImage)(scope.$new());
+				}
 
 				scope.formatted = formatted;
 			});
+		}
+	};
+});
+app.directive('bunkerMessageImage', function() {
+	return {
+		templateUrl: '/assets/app/room/bunker-message-image.html',
+		scope: {
+			link: '@bunkerMessageImage'
+		},
+		link: function(scope) {
+			scope.visible = true;
 		}
 	};
 });
