@@ -1,4 +1,5 @@
 /* boostrap overrides */
+
 body {
     padding-top: 40px;
 }
@@ -30,8 +31,8 @@ nav,
 }
 .navbar .nav > li > a {
     text-transform: none;
-    font-size: initial;
-    font-weight: initial;
+    font-size: 16px;
+    font-weight: normal;
     min-width: 100px;
     text-align: center;
     line-height: 4px;
@@ -39,6 +40,7 @@ nav,
 }
 
 /* augments */
+
 .no-gutter {
     padding-left: 0;
     padding-right: 0;
@@ -49,6 +51,7 @@ nav,
 }
 
 /* bunker stuff */
+
 [fill], .fill {
     overflow: hidden;
 }
@@ -88,6 +91,7 @@ nav,
     margin-left: 5px;
 }
 .message-body {
+    min-height: 30px;
     margin-left: 180px;
     padding-left: 10px;
     padding-right: 75px;
