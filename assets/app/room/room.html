@@ -13,7 +13,7 @@
 							</span>
 						</div>
 						<div class="message-caret" ng-if="log.messages[$index-1].author.id != message.author.id"></div>
-						<div class="{{log.messages[$index-1].author.id != message.author.id ? 'new-' : ''}}message-body">
+						<div class="message-body" class="{ 'new-message-body': log.messages[$index-1].author.id != message.author.id }">
 							<span bunker-message="{{message.text}}">
 							</span>
 							<span ng-if="log.messages[$index-1].author.id != message.author.id"
@@ -35,8 +35,8 @@
 				</li>
 			</ol>
 		</div>
-		<div class="col-md-2 hidden-xs no-gutter">
-			<ul class="list-group member-list">
+		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
+			<ul class="list-group">
 				<li class="list-group-item" ng-repeat="member in room.room.room.members | filter:{connected:true}">
 					<img gravatar-src-once="member.email | lowercase" gravatar-size="20"/>
 					{{member.nick}}
