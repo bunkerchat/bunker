@@ -8,7 +8,7 @@
 						<div class="message-author">
 							<span ng-if="log.messages[$index-1].author.id != message.author.id">
 								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
-								{{message.author.nick}}
+								<div class="name">{{message.author.nick}}</div>
                                 <span class="status" ng-class="{ here: message.author.connected }"></span>
 							</span>
 						</div>
@@ -18,8 +18,7 @@
 							</span>
 							<span ng-if="log.messages[$index-1].author.id != message.author.id"
 								  class="message-timestamp text-muted">
-								<small am-time-ago="message.createdAt" title="{{message.createdAt | date:'medium'}}">
-								</small>
+								<small am-time-ago="message.createdAt" title="{{message.createdAt | date:'medium'}}"></small>
 							</span>
 						</div>
 					</div>
@@ -40,7 +39,7 @@
 				<li class="list-group-item" ng-repeat="member in room.room.room.members | filter:{connected:true}">
 					<img gravatar-src-once="member.email | lowercase" gravatar-size="20"/>
 					{{member.nick}}
-					<span class="status" ng-class="{ here: member.connected }"></span>
+					<span class="status pull-right" ng-class="{ here: member.connected }"></span>
 				</li>
 			</ul>
 		</div>
