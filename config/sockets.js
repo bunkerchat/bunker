@@ -24,22 +24,21 @@ module.exports.sockets = {
 	 ***************************************************************************/
 	onConnect: function (session, socket) {
 		var socketId = sails.sockets.id(socket);
-		if(!session.user) return;
+		if (!session.user) return;
 
 		//console.log('connected rooms', sails.sockets.rooms());
 
-		User.findOne(session.user.id).exec(function(error, user) {
-			if(user.connected)
+		User.findOne(session.user.id).exec(function (error, user) {
 
 			console.log('connecting ' + socketId + ' for ' + user.nick);
 
 			user.socketId = socketId;
 			user.connected = true;
-			user.save().then(function() {
-				Room.find().populate('members').exec(function(error, rooms) {
-					if(error) return;
-					_.each(rooms, function(room) {
-						if(_.any(room.members, {id: user.id})) {
+			user.save().then(function () {
+				Room.find().populate('members').exec(function (error, rooms) {
+					if (error) return;
+					_.each(rooms, function (room) {
+						if (_.any(room.members, {id: user.id})) {
 
 							Room.publishUpdate(room.id, room);
 							Room.message(room.id, {
@@ -64,17 +63,18 @@ module.exports.sockets = {
 	 ***************************************************************************/
 	onDisconnect: function (session, socket) {
 		var socketId = sails.sockets.id(socket);
-		if(!session.user) return;
+		if (!session.user) return;
 
 		console.log('disconnecting ' + socketId);
 
-		User.update({socketId: socketId}, {socketId: null, connected: false}).exec(function(error, users) {
-			if(error) return;
-			_.each(users, function(disconnectedUser) {
-				Room.find().populate('members').exec(function(error, rooms) {
-					if(error) return;
-					_.each(rooms, function(room) {
-						if(_.any(room.members, {id: disconnectedUser.id})) {
+		User.update({socketId: socketId}, {socketId: null, connected: false}).exec(function (error, users) {
+			if (error || !users.length) return;
+
+			Room.find().populate('members').exec(function (error, rooms) {
+				if (error) return;
+				_.each(users, function (disconnectedUser) {
+					_.each(rooms, function (room) {
+						if (_.any(room.members, {id: disconnectedUser.id})) {
 							Room.publishUpdate(room.id, room);
 							Room.message(room.id, {
 								id: uuid.v4(),
@@ -196,7 +196,7 @@ module.exports.sockets = {
 	 *                                                                          *
 	 ***************************************************************************/
 
-	 authorization: true,
+	authorization: true,
 
 	/***************************************************************************
 	 *                                                                          *
