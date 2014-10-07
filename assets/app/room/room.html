@@ -37,7 +37,7 @@
 		</div>
 		<div class="col-md-2 hidden-xs no-gutter">
 			<ul class="list-group member-list">
-				<li class="list-group-item" ng-repeat="member in room.room.members | filter:{connected:true}">
+				<li class="list-group-item" ng-repeat="member in room.room.room.members | filter:{connected:true}">
 					<img gravatar-src-once="member.email | lowercase" gravatar-size="20"/>
 					{{member.nick}}
 					<span class="status" ng-class="{ here: member.connected }"></span>

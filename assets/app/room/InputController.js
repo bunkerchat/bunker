@@ -1,4 +1,4 @@
-app.controller('InputController', function ($stateParams, bunkerApi, emoticons) {
+app.controller('InputController', function ($stateParams, bunkerApi, emoticons, room) {
 
 	var searchStates = {
 		NONE: 'none',
@@ -17,25 +17,6 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons) 
 	this.messageText = '';
 	this.submittedMessages = [];
 	this.selectedMessageIndex = -1;
-
-	// TODO: move this to another file to clean up.  Also get real nicks.
-	var names = [
-		"brojetski",
-		"Slothboy",
-		"jpro",
-		"jmore",
-		"Drew G",
-		"Bill Gates"
-	];
-
-	names = _.chain(names)
-		.map(function(item) {
-			var normalizedName = item.replace(/\s/g, '');
-			return { lowerCase: normalizedName.toLowerCase(), normalizedName: normalizedName };
-		})
-		.sortBy('lowerCase')
-		.value();
-	// END TODO
 
 	this.sendMessage = function () {
 		if (!this.messageText) return;
@@ -81,8 +62,8 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons) 
 				this.messageText = this.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
 			}
 			else if (searchState === searchStates.NICK) {
-				var matchingNames = _.filter(names, function(item) {
-					return item.lowerCase.slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
+				var matchingNames = _.filter(room.room && room.room.members, function(item) {
+					return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
 				});
 
 				if (matchingNames.length == 0) return;
@@ -98,7 +79,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons) 
 						: 0;
 				}
 
-				this.messageText = this.messageText.replace(/@\w* ?$/, '@' + matchingNames[nickSearchIndex].normalizedName + ' ');
+				this.messageText = this.messageText.replace(/@[\w ]*?$/, '@' + matchingNames[nickSearchIndex].nick + ' ');
 			}
 		}
 	};
