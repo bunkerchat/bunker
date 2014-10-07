@@ -93,18 +93,20 @@ app.directive('bunkerMessageImage', function() {
 		}
 	};
 });
-app.directive('unreadMessages', function ($rootScope, $window) {
+app.directive('unreadMessages', function ($rootScope, $window, user) {
 	return function (scope, elem) {
 		var el = angular.element(elem);
 		var win = angular.element($window);
 
-		var original = el.text();
-		var unreadMessages = 0;
 		var hasFocus = true;
+		var unreadMessages = 0;
+		var mentioned = false;
+		var original = el.text();
 
 		win.bind('focus', function () {
 			hasFocus = true;
 			unreadMessages = 0;
+			mentioned = false;
 			el.text(original);
 		});
 		win.bind('blur', function () {
@@ -114,7 +116,16 @@ app.directive('unreadMessages', function ($rootScope, $window) {
 		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
 			if (!hasFocus && resource.model == 'room' && resource.data.author) {
 				unreadMessages++;
-				el.text('(' + unreadMessages + ') ' + original);
+				if(new RegExp(user.nick).test(resource.data.text)) {
+					// TODO this probably won't work if user changes their nick
+					mentioned = true;
+				}
+
+				var newTitle = [];
+				if(mentioned) newTitle.push('*');
+				newTitle.push('(' + unreadMessages + ') ');
+				newTitle.push(original);
+				el.text(newTitle.join(''));
 			}
 		});
 	};
