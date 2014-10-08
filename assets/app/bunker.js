@@ -1,10 +1,10 @@
 window.app = angular.module('bunker', [
-		'ngSanitize',
-		'sailsResource',
-		'ui.router',
-		'ui.gravatar',
-		'angularMoment'
-	])
+	'ngSanitize',
+	'sailsResource',
+	'ui.router',
+	'ui.gravatar',
+	'angularMoment'
+])
 	.config(function ($stateProvider, $urlRouterProvider) {
 
 
@@ -40,19 +40,19 @@ window.app = angular.module('bunker', [
 							def = $q.defer();
 
 						return currentUser()
-								.then(function() {
-									bunkerApi.room.get({id: roomId}, function (room) {
-										roomService.room = room;
-										def.resolve();
+							.then(function() {
+								bunkerApi.room.get({id: roomId}, function (room) {
+									roomService.room = room;
+									def.resolve();
 
-										var existingMember = _.any(currentUser.rooms, {id: roomId});
-										if (!existingMember) {
-											currentUser.rooms.push(room);
-										}
-									});
-
-									return def.promise;
+									var existingMember = _.any(currentUser.rooms, {id: roomId});
+									if (!existingMember) {
+										currentUser.rooms.push(room);
+									}
 								});
+
+								return def.promise;
+							});
 					},
 					bunkerApi: 'bunkerApi',
 					roomService: 'room'

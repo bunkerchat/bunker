@@ -27,15 +27,18 @@ module.exports.policies = {
 	 ***************************************************************************/
 
 	'*': true,
-	'ViewController': {
+	ViewController: {
 		'*': 'isLoggedIn',
 		'login': true,
 		'logout': true
 	},
-	'RoomController': {
+	UserController: {
 		'*': 'isLoggedIn'
 	},
-	'MessageController': {
+	RoomController: {
+		'*': 'isLoggedIn'
+	},
+	MessageController: {
 		'*': 'isLoggedIn'
 		//'latest': ['isLoggedIn', 'isMemberOf']
 	}

@@ -34,16 +34,17 @@ app.directive('autoScroll', function ($timeout) {
 		});
 	};
 });
-app.directive('bunkerMessage', function (emoticons) {
+app.directive('bunkerMessage', function ($compile, emoticons) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
 		scope: {
 			text: '@bunkerMessage'
 		},
-		link: function (scope) {
+		link: function (scope, elem) {
 			scope.$watch('text', function (text) {
 				var formatted = text,
-					replacedEmotes = { };
+					replacedEmotes = {},
+					replacedLinks = {};
 
 				// Parse emoticons
 				_.each(text.match(/:\w+:/g), function (emoticonText) {
@@ -56,23 +57,56 @@ app.directive('bunkerMessage', function (emoticons) {
 					}
 				});
 
+				// Parse links
+				var attachedImage;
+				_.each(text.match(/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/gi), function (link) {
+					if(/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedImage) {
+						// Image link
+						attachedImage = angular.element('<div bunker-message-image="' + link + '"></div>');
+					}
+
+					if(!replacedLinks[link]) {
+						formatted = formatted.replace(new RegExp(link, 'g'), '<a href="' + link + '" target="_blank">' + link + '</a>');
+						replacedLinks[link] = true;
+					}
+				});
+
+				// If we made an image, attach it now
+				if(attachedImage) {
+					angular.element(elem).append(attachedImage);
+					$compile(attachedImage)(scope.$new());
+				}
+
 				scope.formatted = formatted;
 			});
 		}
 	};
 });
-app.directive('unreadMessages', function ($rootScope, $window) {
+app.directive('bunkerMessageImage', function() {
+	return {
+		templateUrl: '/assets/app/room/bunker-message-image.html',
+		scope: {
+			link: '@bunkerMessageImage'
+		},
+		link: function(scope) {
+			scope.visible = true;
+		}
+	};
+});
+app.directive('unreadMessages', function ($rootScope, $window, user) {
 	return function (scope, elem) {
 		var el = angular.element(elem);
 		var win = angular.element($window);
 
-		var original = el.text();
-		var unreadMessages = 0;
 		var hasFocus = true;
+		var unreadMessages = 0;
+		var mentioned = false;
+		var original = el.text();
 
 		win.bind('focus', function () {
 			hasFocus = true;
 			unreadMessages = 0;
+			mentioned = false;
 			el.text(original);
 		});
 		win.bind('blur', function () {
@@ -82,7 +116,16 @@ app.directive('unreadMessages', function ($rootScope, $window) {
 		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
 			if (!hasFocus && resource.model == 'room' && resource.data.author) {
 				unreadMessages++;
-				el.text('(' + unreadMessages + ') ' + original);
+				if(new RegExp(user.nick).test(resource.data.text)) {
+					// TODO this probably won't work if user changes their nick
+					mentioned = true;
+				}
+
+				var newTitle = [];
+				if(mentioned) newTitle.push('*');
+				newTitle.push('(' + unreadMessages + ') ');
+				newTitle.push(original);
+				el.text(newTitle.join(''));
 			}
 		});
 	};

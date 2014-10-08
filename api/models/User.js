@@ -8,7 +8,8 @@ module.exports = {
 		nick: {
 			type: 'string',
 			required: true,
-			minLength: 1
+			minLength: 1,
+			maxLength: 20
 		},
 		email: 'email',
 		rooms: {

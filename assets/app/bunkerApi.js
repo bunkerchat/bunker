@@ -5,7 +5,7 @@ app.factory('bunkerApi', function (sailsResource) {
 			query: {method: 'GET', isArray: true, cache: false, fetchAfterReconnect: true}
 		}),
 		room: sailsResource('room', {
-			join: {method: 'POST'}
+			get: { method: 'GET', fetchAfterReconnect: true }
 		})
 	};
 });
