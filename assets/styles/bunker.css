@@ -60,6 +60,7 @@ nav,
 }
 .message-list {
     overflow-y: auto;
+    border-right: solid 1px #eee;
 }
 .message {
     position: relative;
@@ -150,14 +151,15 @@ nav,
 
 /* member list */
 
-.member-list {
-    border-left: solid 1px #eee;
-}
 .member-list li.list-group-item {
     border-radius: 0;
-    border-left-width: 0;
-    border-right-width: 0;
+    border-left: 0;
+    border-right: 0;
 }
+.member-list li.list-group-item:first-of-type {
+    border-top: none;
+}
+
 .status {
     width: 6px;
     height: 6px;
