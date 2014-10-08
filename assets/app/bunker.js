@@ -6,33 +6,56 @@ window.app = angular.module('bunker', [
 		'angularMoment'
 	])
 	.config(function ($stateProvider, $urlRouterProvider) {
+
+
+		var currentUser = function(bunkerApi, $q) {
+
+			var def = $q.defer();
+
+			bunkerApi.user.get({id: 'current'}, function (user) {
+				def.resolve();
+			});
+
+			return def.promise;
+		};
+
 		$urlRouterProvider.otherwise('/');
 		$stateProvider
 			.state('lobby', {
 				url: '/',
 				templateUrl: '/assets/app/lobby/lobby.html',
-				controller: 'LobbyController as lobby'
+				controller: 'LobbyController as lobby',
+				resolve: {
+					currentUser: currentUser
+				}
 			})
 			.state('room', {
 				url: '/rooms/{roomId}',
 				templateUrl: '/assets/app/room/room.html',
 				controller: 'RoomController as room',
 				resolve: {
-					currentRoom: function($stateParams, bunkerApi, roomService, user) {
+					currentRoom: function($stateParams, bunkerApi, roomService, $q) {
 
-						var roomId = $stateParams.roomId;
+						var roomId = $stateParams.roomId,
+							def = $q.defer();
 
-						return bunkerApi.room.get({id: roomId}, function (room) {
-							roomService.room = room;
-							var existingMember = _.any(user.rooms, {id: roomId});
-							if (!existingMember) {
-								user.rooms.push(room);
-							}
-						});
+						return currentUser()
+								.then(function() {
+									bunkerApi.room.get({id: roomId}, function (room) {
+										roomService.room = room;
+										def.resolve();
+
+										var existingMember = _.any(currentUser.rooms, {id: roomId});
+										if (!existingMember) {
+											currentUser.rooms.push(room);
+										}
+									});
+
+									return def.promise;
+								});
 					},
 					bunkerApi: 'bunkerApi',
-					roomService: 'room',
-					user: 'user'
+					roomService: 'room'
 				}
 			});
 	})
