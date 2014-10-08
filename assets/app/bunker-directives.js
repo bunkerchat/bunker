@@ -1,13 +1,11 @@
 app.directive('fill', function ($window, $timeout) {
 	return {
 		restrict: 'AC',
-		scope: {
-			marginBottom: '='
-		},
-		link: function (scope, elem) {
+		link: function (scope, elem, attrs) {
+			var options = scope.$eval(attrs.fill);
 			var windowEl = angular.element($window);
 			var el = angular.element(elem);
-			var marginBottom = scope.marginBottom || 0;
+			var marginBottom = options.marginBottom || 0;
 
 			windowEl.resize(function () {
 				var fillHeight = $window.innerHeight - el.offset().top - marginBottom - 1;
@@ -20,19 +18,27 @@ app.directive('fill', function ($window, $timeout) {
 				windowEl.resize();
 			}, 500);
 		}
-	}
+	};
 });
 app.directive('autoScroll', function ($timeout) {
-	return function (scope, elem) {
-		var el = angular.element(elem);
-		scope.$watch(function () {
-			return el.children().length;
-		}, function () {
-			$timeout(function () {
-				el.scrollTop(el.prop('scrollHeight'));
+	return {
+		scope: {
+			watching: '@autoScroll'
+		},
+		link: function (scope, elem) {
+			var el = angular.element(elem);
+			var firstTime = true;
+			scope.$watch('watching', function () {
+				// TODO why does height need a 1px tolerance?
+				var currentScroll = el.prop('scrollHeight') - el.prop('scrollTop');
+				if(firstTime || currentScroll == el.height() || currentScroll == el.height() + 1) {
+					$timeout(function () {
+						el.scrollTop(el.prop('scrollHeight'));
+					}, firstTime ? 500 : 0);
+					firstTime = false;
+				}
 			});
-		});
-	};
+		}};
 });
 app.directive('bunkerMessage', function ($compile, emoticons) {
 	return {
@@ -52,7 +58,8 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 						return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');
 					});
 					if (knownEmoticon && !replacedEmotes[knownEmoticon]) {
-						formatted = formatted.replace(new RegExp(emoticonText, 'g'), '<img class="emoticon" title="'+emoticonText+'" src="/assets/images/emoticons/' + knownEmoticon + '"/>');
+						formatted = formatted.replace(new RegExp(emoticonText, 'g'),
+								'<img class="emoticon" title="' + emoticonText + '" src="/assets/images/emoticons/' + knownEmoticon + '"/>');
 						replacedEmotes[knownEmoticon] = true;
 					}
 				});
@@ -60,19 +67,19 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 				// Parse links
 				var attachedImage;
 				_.each(text.match(/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/gi), function (link) {
-					if(/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedImage) {
+					if (/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedImage) {
 						// Image link
 						attachedImage = angular.element('<div bunker-message-image="' + link + '"></div>');
 					}
 
-					if(!replacedLinks[link]) {
+					if (!replacedLinks[link]) {
 						formatted = formatted.replace(new RegExp(link, 'g'), '<a href="' + link + '" target="_blank">' + link + '</a>');
 						replacedLinks[link] = true;
 					}
 				});
 
 				// If we made an image, attach it now
-				if(attachedImage) {
+				if (attachedImage) {
 					angular.element(elem).append(attachedImage);
 					$compile(attachedImage)(scope.$new());
 				}
@@ -82,13 +89,13 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 		}
 	};
 });
-app.directive('bunkerMessageImage', function() {
+app.directive('bunkerMessageImage', function () {
 	return {
 		templateUrl: '/assets/app/room/bunker-message-image.html',
 		scope: {
 			link: '@bunkerMessageImage'
 		},
-		link: function(scope) {
+		link: function (scope) {
 			scope.visible = true;
 		}
 	};
@@ -116,13 +123,13 @@ app.directive('unreadMessages', function ($rootScope, $window, user) {
 		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
 			if (!hasFocus && resource.model == 'room' && resource.data.author) {
 				unreadMessages++;
-				if(new RegExp(user.nick).test(resource.data.text)) {
+				if (new RegExp(user.nick).test(resource.data.text)) {
 					// TODO this probably won't work if user changes their nick
 					mentioned = true;
 				}
 
 				var newTitle = [];
-				if(mentioned) newTitle.push('*');
+				if (mentioned) newTitle.push('*');
 				newTitle.push('(' + unreadMessages + ') ');
 				newTitle.push(original);
 				el.text(newTitle.join(''));
