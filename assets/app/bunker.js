@@ -7,13 +7,11 @@ window.app = angular.module('bunker', [
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 
-
 		var currentUser = function(bunkerApi, $q) {
 
 			var def = $q.defer();
-
 			bunkerApi.user.get({id: 'current'}, function (user) {
-				def.resolve();
+				def.resolve(user);
 			});
 
 			return def.promise;
@@ -39,15 +37,15 @@ window.app = angular.module('bunker', [
 						var roomId = $stateParams.roomId,
 							def = $q.defer();
 
-						return currentUser()
-							.then(function() {
+						return currentUser(bunkerApi, $q)
+							.then(function(user) {
 								bunkerApi.room.get({id: roomId}, function (room) {
 									roomService.room = room;
 									def.resolve();
 
-									var existingMember = _.any(currentUser.rooms, {id: roomId});
+									var existingMember = _.any(user.rooms, {id: roomId});
 									if (!existingMember) {
-										currentUser.rooms.push(room);
+										user.rooms.push(room);
 									}
 								});
 
