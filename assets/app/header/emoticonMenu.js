@@ -7,8 +7,8 @@ app.directive('emoticonMenu', function($rootScope, $filter) {
 		},
 		link: function(scope) {
 			scope.emoticonMenuLists = [
-				_.initial(scope.emoticons.files, scope.emoticons.files.length/2),
-				_.rest(scope.emoticons.files, scope.emoticons.files.length/2)
+				_.initial(scope.emoticons.files, Math.floor(scope.emoticons.files.length/2)),
+				_.rest(scope.emoticons.files, Math.ceil(scope.emoticons.files.length/2))
 			];
 			scope.appendEmoticonToChat = function(emoticonFileName) {
 				var emoticonName = ':' + $filter('emoticonName')(emoticonFileName) + ':';
