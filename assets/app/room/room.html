@@ -12,14 +12,14 @@
 							<span ng-if="log.messages[$index-1].author.id != message.author.id">
 								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 								<div class="name">{{message.author.nick}}</div>
-                                <span class="status" ng-class="{ here: message.author.connected && !message.author.away, away:  message.author.connected && message.author.away}"></span>
-								{{ (room.current.members | filter:message.author.id).length ? (room.current.members | filter:message.author.id)[0].lastActivity  : '' }}
+                                <span status user="message.author"></span>
+								<!--<span>{{ message.author.lastActivity | away }}</span>-->
+								<!--{{ (room.current.members | filter:message.author.id).length ? (room.current.members | filter:message.author.id)[0].lastActivity  : '' }}-->
 							</span>
 						</div>
 						<div class="message-caret" ng-if="log.messages[$index-1].author.id != message.author.id"></div>
 						<div class="message-body" ng-class="{ 'new-message-body': log.messages[$index-1].author.id != message.author.id }">
-							<span bunker-message="{{message.text}}">
-							</span>
+							<span bunker-message="{{message.text}}"></span>
 							<span ng-if="log.messages[$index-1].author.id != message.author.id"
 								  class="message-timestamp text-muted">
 								<small am-time-ago="message.createdAt" title="{{message.createdAt | date:'medium'}}"></small>
@@ -47,7 +47,8 @@
 				<li class="list-group-item" ng-repeat="member in room.current.members | filter:{connected:true}">
 					<img gravatar-src-once="member.email | lowercase" gravatar-size="20"/>
 					{{member.nick}}
-					<span class="status pull-right" ng-class="{ here: member.connected && !member.away, away: member.connected && member.away }"></span>
+					<span class="pull-right" status user="member"></span>
+					<!-- <span class="status pull-right" ng-class="{ here: member.connected && !member.away, away: member.connected && member.away }"></span> -->
 				</li>
 			</ul>
 		</div>

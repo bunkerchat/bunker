@@ -137,3 +137,4 @@ app.directive('unreadMessages', function ($rootScope, $window, user) {
 		});
 	};
 });
+

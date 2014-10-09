@@ -17,9 +17,7 @@ nav,
     background-color: #969696;
     border-color: #A5A5A5;
 }
-.navbar-default .navbar-nav a {
-	padding: 5px 18px;
-}
+
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
@@ -38,8 +36,10 @@ nav,
     font-weight: normal;
     min-width: 100px;
     text-align: center;
-    line-height: 4px;
     color: #fff;
+	line-height: 40px;
+	padding: 0;
+
 }
 
 /* augments */
