@@ -1,5 +1,4 @@
 app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
-
 	var searchStates = {
 		NONE: 'none',
 		EMOTE: 'emote',
