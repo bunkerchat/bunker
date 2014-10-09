@@ -1,3 +1,5 @@
-/**
- * Created by a6000235 on 10/9/14.
- */
+app.controller('EmoticonsListController', function (emoticons) {
+	var self = this;
+
+	this.files = emoticons.files;
+});

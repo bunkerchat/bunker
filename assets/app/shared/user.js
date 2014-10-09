@@ -1,3 +1,5 @@
-/**
- * Created by a6000235 on 10/9/14.
- */
+app.factory('user', function(bunkerApi) {
+	return {
+		current: bunkerApi.user.get({id: 'current'})
+	}
+});

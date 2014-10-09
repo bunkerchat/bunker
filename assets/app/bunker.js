@@ -17,6 +17,11 @@ window.app = angular.module('bunker', [
 				url: '/rooms/{roomId}',
 				templateUrl: '/assets/app/room/room.html',
 				controller: 'RoomController as room'
+			})
+			.state('emoticons', {
+				url: '/emoticons',
+				templateUrl: '/assets/app/emoticons/emoticons.html',
+				controller: 'EmoticonsListController as emoticonsListCtrl'
 			});
 	})
 	.config(function ($compileProvider) {

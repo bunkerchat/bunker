@@ -18,7 +18,7 @@ nav,
     border-color: #A5A5A5;
 }
 .navbar-default .navbar-nav a {
-    padding: 18px;
+	padding: 5px 18px;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,

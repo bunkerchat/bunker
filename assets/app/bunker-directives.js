@@ -121,9 +121,9 @@ app.directive('unreadMessages', function ($rootScope, $window, user) {
 		});
 
 		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-			if (!hasFocus && resource.model == 'room' && resource.data.author) {
+			if (!hasFocus && resource.model == 'room' && resource.data.author && user.current.$resolved) {
 				unreadMessages++;
-				if (new RegExp(user.nick).test(resource.data.text)) {
+				if (new RegExp(user.current.nick).test(resource.data.text)) {
 					// TODO this probably won't work if user changes their nick
 					mentioned = true;
 				}
