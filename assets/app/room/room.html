@@ -47,8 +47,7 @@
 				<li class="list-group-item" ng-repeat="member in room.current.members | filter:{connected:true}">
 					<img gravatar-src-once="member.email | lowercase" gravatar-size="20"/>
 					{{member.nick}}
-					<span class="status pull-right" ng-class="{ here: member.connected }"></span>
-					{{ member.lastActivity }}
+					<span class="status pull-right" ng-class="{ here: member.connected && !member.away, away: member.connected && member.away }"></span>
 				</li>
 			</ul>
 		</div>
@@ -59,8 +58,7 @@
 	<div class="row">
 		<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
 			<div class="input-group">
-				<input type="text" class="form-control" ng-model="input.messageText" ng-keyup="input.keyUp($event)"
-							 ng-keydown="input.keyDown($event)"/>
+				<input type="text" class="form-control" ng-model="input.messageText" ng-keyup="input.keyUp($event)" ng-keydown="input.keyDown($event)"/>
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-success">Send</button>
 					</span>
