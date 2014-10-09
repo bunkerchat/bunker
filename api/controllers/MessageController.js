@@ -65,6 +65,21 @@ module.exports.create = function (req, res) {
 				res.ok(message); // send back the message to the original caller
 			});
 		});
+
+
+		User.update({ id: author.id}, { lastActivity: new Date().toISOString() }).exec(function(err, updated){
+			console.log("Updated user to have a last activity of " + updated[0].lastActivity);
+
+			Room.findOne(roomId).populate("members").exec(function(err, room){
+				Room.publishUpdate(roomId, room);
+			});
+
+			//Message.find({}).populate("authors").exec(function(err, messages){
+			//	Message.publishUpdate(messages);
+			//})
+		});
+
+
 	}
 };
 

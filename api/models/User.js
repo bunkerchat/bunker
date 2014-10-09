@@ -19,6 +19,9 @@ module.exports = {
 		connected: {
 			type: 'boolean',
 			defaultsTo: false
+		},
+		lastActivity: {
+			type: 'date'
 		}
 	}
 };

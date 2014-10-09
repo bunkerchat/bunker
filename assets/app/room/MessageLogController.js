@@ -1,8 +1,9 @@
-app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, user, uuid) {
+app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, rooms) {
 	var self = this;
 
-	this.user = user;
-	bunkerApi.message.query({id: 'latest', roomId: $stateParams.roomId}, function (messages) {
+	var roomId = $stateParams.roomId;
+
+	bunkerApi.message.query({id: 'latest', roomId: roomId}, function (messages) {
 		self.messages = _.sortBy(messages, 'createdAt');
 	});
 
@@ -13,7 +14,5 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 		}
 	});
 
-	$rootScope.$on('$sailsDisconnected', function (evt, data) {
-		self.messages.push({text: 'Disconnected', id: uuid.v4(), createdAt: new Date().toISOString()});
-	});
+	this.members = rooms(roomId).members;
 });
