@@ -90,3 +90,8 @@ app.factory('emoticons', function () {
 		files: files
 	};
 });
+app.filter('emoticonName', function() {
+	return function(file) {
+		return file.replace(/.\w+$/, '');
+	};
+});
