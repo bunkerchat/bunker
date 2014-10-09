@@ -2,7 +2,8 @@ app.directive('emoticonMenu', function($rootScope, $filter) {
 	return {
 		templateUrl: '/assets/app/header/emoticonMenu.html',
 		scope: {
-			emoticons: '=emoticonMenu'
+			emoticons: '=emoticonMenu',
+			visible: '=ngShow'
 		},
 		link: function(scope) {
 			scope.emoticonMenuLists = [
@@ -12,6 +13,11 @@ app.directive('emoticonMenu', function($rootScope, $filter) {
 			scope.appendEmoticonToChat = function(emoticonFileName) {
 				var emoticonName = ':' + $filter('emoticonName')(emoticonFileName) + ':';
 				$rootScope.$broadcast('inputText', emoticonName);
+
+				// Close window
+				if(typeof scope.visible !== 'undefined') {
+					scope.visible = false;
+				}
 			};
 		}
 	}

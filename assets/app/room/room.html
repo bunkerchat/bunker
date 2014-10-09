@@ -16,12 +16,15 @@
 							</span>
 						</div>
 						<div class="message-caret" ng-if="log.messages[$index-1].author.id != message.author.id"></div>
-						<div class="message-body" ng-class="{ 'new-message-body': log.messages[$index-1].author.id != message.author.id }" message-mention="{{log.user.nick}}" message-mention-text="{{message.text}}">
+						<div class="message-body"
+							 ng-class="{ 'new-message-body': log.messages[$index-1].author.id != message.author.id }"
+							 message-mention="{{log.user.nick}}" message-mention-text="{{message.text}}">
 							<span bunker-message="{{message.text}}">
 							</span>
 							<span ng-if="log.messages[$index-1].author.id != message.author.id"
 								  class="message-timestamp text-muted">
-								<small am-time-ago="message.createdAt" title="{{message.createdAt | date:'medium'}}"></small>
+								<small am-time-ago="message.createdAt"
+									   title="{{message.createdAt | date:'medium'}}"></small>
 							</span>
 						</div>
 					</div>
@@ -57,8 +60,11 @@
 	<div class="row">
 		<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
 			<div class="input-group">
-				<input type="text" class="form-control" ng-model="input.messageText" ng-keyup="input.keyUp($event)"
-							 ng-keydown="input.keyDown($event)"/>
+				<input type="text" class="form-control"
+					   ng-model="input.messageText"
+					   ng-keyup="input.keyUp($event)"
+					   ng-keydown="input.keyDown($event)"
+					   bunker-input="input.messageText" />
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-success">Send</button>
 					</span>

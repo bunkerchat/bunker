@@ -40,6 +40,21 @@ app.directive('autoScroll', function ($timeout) {
 			});
 		}};
 });
+app.directive('bunkerInput', function() {
+	return {
+		scope: {
+			text: '=bunkerInput'
+		},
+		link: function(scope, elem) {
+			scope.$on('inputText', function(evt, text) {
+				var append = scope.text.length ? ' ' : ''; // start with a space if message already started
+				append += text + ' ';
+				scope.text += append;
+				angular.element(elem).focus();
+			});
+		}
+	};
+});
 app.directive('bunkerMessage', function ($compile, emoticons) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',

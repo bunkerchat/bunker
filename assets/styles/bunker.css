@@ -74,6 +74,12 @@ nav,
 [emoticon-menu] .emoticon {
     width: 16px;
 }
+[emoticon-menu] a {
+    color: #333;
+}
+[emoticon-menu] a:hover {
+    text-decoration: none;
+}
 
 /* bunker stuff */
 
