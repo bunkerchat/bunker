@@ -13,9 +13,8 @@ app.directive('status', function ($timeout) {
 			});
 
 			function checkAway(user){
-				$scope.away = moment().diff(moment(user.lastActivity), "seconds") > 5;
+				$scope.away = moment().diff(moment(user.lastActivity), "minutes") > 5;
 			};
-
 
 			checkAway($scope.user);
 		}

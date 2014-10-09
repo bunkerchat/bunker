@@ -5,22 +5,15 @@ app.controller('RoomController', function ($scope, $stateParams, rooms) {
 
 	this.current = rooms(roomId);
 
+	//Tell the users lists about our update (away status) - DB
 	$scope.$watch(function(){
-			return JSON.stringify(awesomeWatch());
-		},
+		return JSON.stringify(resolvedRoom());
+	},
 	function(usersReducedJson, oldListJson){
-
-
 		if(usersReducedJson == "{}" || oldListJson == "{}") return;
 
 		var usersReduced = JSON.parse(usersReducedJson);
 		var oldList = JSON.parse(oldListJson);
-
-		console.log(usersReduced)
-		console.log(oldList);
-
-
-
 
 		_.each(usersReduced, function(user){
 			if(user.lastActivity != oldList[user.id].lastActivity){
@@ -30,7 +23,7 @@ app.controller('RoomController', function ($scope, $stateParams, rooms) {
 	});
 
 
-	function awesomeWatch(){
+	function resolvedRoom(){
 		if(!self.current.$resolved){
 			return {};
 		}
