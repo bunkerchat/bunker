@@ -111,6 +111,9 @@ nav,
 .message-body .panel {
     margin: 0;
 }
+.message-mention {
+    background-color: #faf2cc;
+}
 .message-timestamp {
     position: absolute;
     top: 0;

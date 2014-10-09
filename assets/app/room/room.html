@@ -16,7 +16,7 @@
 							</span>
 						</div>
 						<div class="message-caret" ng-if="log.messages[$index-1].author.id != message.author.id"></div>
-						<div class="message-body" ng-class="{ 'new-message-body': log.messages[$index-1].author.id != message.author.id }">
+						<div class="message-body" ng-class="{ 'new-message-body': log.messages[$index-1].author.id != message.author.id }" message-mention="{{log.user.nick}}" message-mention-text="{{message.text}}">
 							<span bunker-message="{{message.text}}">
 							</span>
 							<span ng-if="log.messages[$index-1].author.id != message.author.id"

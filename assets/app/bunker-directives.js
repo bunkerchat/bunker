@@ -100,6 +100,21 @@ app.directive('bunkerMessageImage', function () {
 		}
 	};
 });
+
+app.directive('messageMention', function() {
+	return {
+		scope: {
+			userNick: '@messageMention',
+			messageText: '@messageMentionText'
+		},
+		link: function(scope, elem) {
+			if (scope.messageText.indexOf(scope.userNick) > -1) {
+				elem.addClass('message-mention');
+			}
+		}
+	}
+});
+
 app.directive('unreadMessages', function ($rootScope, $window, user) {
 	return function (scope, elem) {
 		var el = angular.element(elem);
