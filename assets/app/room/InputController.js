@@ -1,5 +1,5 @@
-app.controller('InputController', function ($stateParams, bunkerApi, emoticons, room) {
-
+app.controller('InputController', function ($scope, $stateParams, bunkerApi, emoticons, room) {
+	var self = this;
 	var searchStates = {
 		NONE: 'none',
 		EMOTE: 'emote',
@@ -113,4 +113,8 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			}
 		}
 	};
+
+	$scope.$on('inputText', function(evt, text) {
+		self.messageText += text;
+	});
 });

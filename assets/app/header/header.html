@@ -18,13 +18,7 @@
 		</ul>
 	</div>
 
-	<div class="emoticon-list row" ng-show="header.emoticonMenu">
-		<ol class="col-md-6 list-unstyled" ng-repeat="list in header.emoticonLists">
-			<li ng-repeat="emoticon in list">
-				<img class="emoticon" src="/assets/images/emoticons/{{emoticon}}"/>
-				:{{emoticon|emoticonName}}:
-			</li>
-		</ol>
+	<div ng-show="header.emoticonMenu" emoticon-menu="header.emoticons">
 	</div>
 
 </nav>
