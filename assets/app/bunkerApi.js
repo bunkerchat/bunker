@@ -6,6 +6,6 @@ app.factory('bunkerApi', function (sailsResource) {
 		}),
 		room: sailsResource('room', {
 			get: { method: 'GET', fetchAfterReconnect: true }
-		})
+		}, { verbose: true })
 	};
 });

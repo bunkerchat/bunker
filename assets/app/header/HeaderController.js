@@ -1,3 +1,3 @@
-app.controller('HeaderController', function (user) {
-	this.user = user;
+app.controller('HeaderController', function (rooms) {
+	this.rooms = rooms();
 });

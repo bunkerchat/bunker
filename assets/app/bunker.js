@@ -16,24 +16,7 @@ window.app = angular.module('bunker', [
 			.state('room', {
 				url: '/rooms/{roomId}',
 				templateUrl: '/assets/app/room/room.html',
-				controller: 'RoomController as room',
-				resolve: {
-					currentRoom: function($stateParams, bunkerApi, roomService, user) {
-
-						var roomId = $stateParams.roomId;
-
-						return bunkerApi.room.get({id: roomId}, function (room) {
-							roomService.room = room;
-							var existingMember = _.any(user.rooms, {id: roomId});
-							if (!existingMember) {
-								user.rooms.push(room);
-							}
-						});
-					},
-					bunkerApi: 'bunkerApi',
-					roomService: 'room',
-					user: 'user'
-				}
+				controller: 'RoomController as room'
 			});
 	})
 	.config(function ($compileProvider) {
