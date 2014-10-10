@@ -1,10 +1,10 @@
 window.app = angular.module('bunker', [
-	'ngSanitize',
-	'sailsResource',
-	'ui.router',
-	'ui.gravatar',
-	'angularMoment'
-])
+		'ngSanitize',
+		'sailsResource',
+		'ui.router',
+		'ui.gravatar',
+		'angularMoment'
+	])
 	.config(function ($stateProvider, $urlRouterProvider) {
 		$urlRouterProvider.otherwise('/');
 		$stateProvider
@@ -16,23 +16,22 @@ window.app = angular.module('bunker', [
 			.state('room', {
 				url: '/rooms/{roomId}',
 				templateUrl: '/assets/app/room/room.html',
-				controller: 'RoomController as room',
+				controller: 'RoomController as roomCtrl',
 				resolve: {
-					currentRoom: function ($stateParams, bunkerApi, roomService, user) {
+					current: function($stateParams, bunkerApi, roomService) {
 						var roomId = $stateParams.roomId;
-
-						return bunkerApi.room.get({id: roomId}, function (room) {
-							roomService.room = room;
-							var existingMember = _.any(user.rooms, {id: roomId});
-							if (!existingMember) {
-								user.rooms.push(room);
-							}
-						});
+						return bunkerApi.room.get({id: roomId}, function(room){
+							roomService.current = room;
+						}).$promise;
 					},
 					bunkerApi: 'bunkerApi',
-					roomService: 'room',
-					user: 'user'
+					roomService: 'rooms'
 				}
+			})
+			.state('emoticons', {
+				url: '/emoticons',
+				templateUrl: '/assets/app/emoticons/emoticons.html',
+				controller: 'EmoticonsListController as emoticonsListCtrl'
 			});
 	})
 	.config(function ($compileProvider) {

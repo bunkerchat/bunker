@@ -65,6 +65,15 @@ module.exports.create = function (req, res) {
 				res.ok(message); // send back the message to the original caller
 			});
 		});
+
+		//broadcast the user update (away status, etc)
+		User.update({ id: author.id}, { lastActivity: new Date().toISOString() }).exec(function(err, updated){
+			Room.findOne(roomId).populate("members").exec(function(err, room){
+				Room.publishUpdate(roomId, room);
+			});
+		});
+
+
 	}
 };
 

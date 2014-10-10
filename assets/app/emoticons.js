@@ -46,7 +46,7 @@ app.factory('emoticons', function () {
 		'mindblown.gif',
 		'munch.gif',
 		'notbad.png',
-		'ohdear.gif',
+		'ohdear.png',
 		'okay.png',
 		'orly.png',
 		'parrot.gif',
@@ -88,5 +88,11 @@ app.factory('emoticons', function () {
 			return file.replace(/.\w+$/, '');
 		}),
 		files: files
+	};
+});
+
+app.filter("emoticonName", function(){
+	return function(input){
+		return input.replace(/.\w+$/, '');
 	};
 });

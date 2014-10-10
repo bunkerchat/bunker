@@ -1,0 +1,9 @@
+
+<div class="row">
+	<div class="col-xs-1" ng-repeat="emoticon in emoticonsListCtrl.files">
+		<div class="thumbnail">
+			<img class="emoticon" src="/assets/images/emoticons/{{emoticon}}" />
+			<span class="emoticon-name">:{{ emoticon | emoticonName }}:</span>
+		</div>
+	</div>
+</div>

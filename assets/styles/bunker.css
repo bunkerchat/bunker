@@ -1,81 +1,109 @@
 /* boostrap overrides */
 
 body {
-    padding-top: 40px;
+	padding-top: 40px;
 }
 a, [ng-click] {
-    cursor: pointer;
+	cursor: pointer;
 }
 nav,
 .navbar,
 .navbar > .container-fluid .navbar-brand {
-    min-height: 40px;
-    height: 40px;
-    margin-bottom: 0px;
+	min-height: 40px;
+	height: 40px;
+	margin-bottom: 0px;
 }
 .navbar-default {
-    background-color: #969696;
-    border-color: #A5A5A5;
+	background-color: #969696;
+	border-color: #A5A5A5;
 }
 .navbar-default .navbar-nav a {
-    padding: 18px;
+	padding: 18px;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-    background-color: #727272;
+	background-color: #727272;
 }
 .navbar-brand {
-    padding: 16px 15px;
+	padding: 16px 15px;
 }
 .nav,
 .navbar-brand {
-    line-height: 4px;
+	line-height: 4px;
 }
 .navbar .nav > li > a {
-    text-transform: none;
-    font-size: 16px;
-    font-weight: normal;
-    min-width: 100px;
-    text-align: center;
-    line-height: 4px;
-    color: #fff;
+	padding: 0;
+	text-transform: none;
+	font-size: 16px;
+	font-weight: normal;
+	min-width: 100px;
+	text-align: center;
+	line-height: 40px;
+	color: #fff;
 }
 
 /* augments */
 
 .no-gutter {
-    padding-left: 0;
-    padding-right: 0;
+	padding-left: 0;
+	padding-right: 0;
 }
 .col-center {
-    float: none;
-    margin: 0 auto;
+	float: none;
+	margin: 0 auto;
+}
+
+/* emoticon */
+
+[emoticon-menu] {
+	position: fixed;
+	top: 40px;
+	right: 0;
+	width: 300px;
+	height: 500px;
+	margin-left: -300px;
+	border: solid #ddd 3px;
+	border-width: 0 0 3px 3px;
+	border-bottom-left-radius: 4px;
+	background: #fff;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	font-size: 15px;
+}
+[emoticon-menu] .emoticon {
+	width: 16px;
+}
+[emoticon-menu] a {
+	color: #333;
+}
+[emoticon-menu] a:hover {
+	text-decoration: none;
 }
 
 /* bunker stuff */
 
 [fill], .fill {
-    overflow: hidden;
+	overflow: hidden;
 }
 .message-list {
-    overflow-y: auto;
-    border-right: solid 1px #eee;
+	overflow-y: auto;
+	border-right: solid 1px #eee;
 }
 .message {
-    position: relative;
-    overflow: hidden;
-    line-height: 30px;
-    background-color: #414B57;
+	position: relative;
+	overflow: hidden;
+	line-height: 30px;
+	background-color: #414B57;
 }
 .message.local {
-    background-color: #596470;
+	background-color: #596470;
 }
 .message-author {
-    float: left;
-    width: 180px;
-    color: white;
-    padding-left: 4px;
+	float: left;
+	width: 180px;
+	color: white;
+	padding-left: 4px;
 	height: 30px;
 	line-height: 30px;
 }
@@ -92,99 +120,102 @@ nav,
 	padding-left: 4px;
 }
 .message-author img {
-    margin-left: 5px;
+	margin-left: 5px;
 }
 .message-body {
-    min-height: 30px;
-    margin-left: 180px;
-    padding-left: 10px;
-    padding-right: 75px;
-    background: #fff;
+	min-height: 30px;
+	margin-left: 180px;
+	padding-left: 10px;
+	padding-right: 100px;
+	background: #fff;
 }
 .new-message-body {
-    border-top: solid #eee 1px;
+	border-top: solid #eee 1px;
 }
 .message-body img {
-    max-width: 100%;
-    max-height: 500px;
+	max-width: 100%;
+	max-height: 500px;
 }
 .message-body .panel {
-    margin: 0;
+	margin: 0;
+}
+.message-mention {
+	background-color: #faf2cc;
 }
 .message-timestamp {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding-right: 5px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding-right: 5px;
 }
 .message-input {
-    position: fixed;
-    bottom: 0;
+	position: fixed;
+	bottom: 0;
 }
 .message-input input[type=text],
 .message-input button {
-    border-radius: 0;
+	border-radius: 0;
 }
 .message-caret {
-    content: "";
-    position: absolute;
-    left: 172px;
-    top: 8px;
-    width: 0;
-    height: 0;
-    border-bottom: 8px solid #fff;
-    border-bottom: 8px solid rgba(255, 255, 255, 0);
-    border-top: 8px solid #fff;
-    border-top: 8px solid rgba(255, 255, 255, 0);
-    border-right: 8px solid #fff;
+	content: "";
+	position: absolute;
+	left: 172px;
+	top: 8px;
+	width: 0;
+	height: 0;
+	border-bottom: 8px solid #fff;
+	border-bottom: 8px solid rgba(255, 255, 255, 0);
+	border-top: 8px solid #fff;
+	border-top: 8px solid rgba(255, 255, 255, 0);
+	border-right: 8px solid #fff;
 }
 .alert-message {
-    margin: 0;
-    padding: 0 7px;
-    border-radius: 0;
-    background-color: lightyellow;
-    font-size: 12px;
+	margin: 0;
+	padding: 0 7px;
+	border-radius: 0;
+	background-color: lightyellow;
+	font-size: 12px;
 }
 img.emoticon {
-    max-height: 30px;
+	max-height: 30px;
 }
 
 /* member list */
 
 .member-list li.list-group-item {
-    border-radius: 0;
-    border-left: 0;
-    border-right: 0;
+	border-radius: 0;
+	border-left: 0;
+	border-right: 0;
 }
 .member-list li.list-group-item:first-of-type {
-    border-top: none;
+	border-top: none;
 }
 
 .status {
-    width: 6px;
-    height: 6px;
-    display: inline-block;
-    vertical-align: middle;
-    border-radius: 8px;
-    margin-left: 4px;
+	width: 6px;
+	height: 6px;
+	display: inline-block;
+	vertical-align: middle;
+	border-radius: 8px;
+	margin-left: 4px;
 }
 .status.here {
-    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #00FF00),color-stop(1, #00BD00));
-    background-image: -o-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
-    background-image: -moz-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
-    background-image: -webkit-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
-    background-image: -ms-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
-    background-image: linear-gradient(to bottom, #00FF00 0%, #00BD00 100%);
-    box-shadow: 0px 0px 2px #00BD00;
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #00FF00),color-stop(1, #00BD00));
+	background-image: -o-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
+	background-image: -moz-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
+	background-image: -webkit-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
+	background-image: -ms-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
+	background-image: linear-gradient(to bottom, #00FF00 0%, #00BD00 100%);
+	box-shadow: 0px 0px 2px #00BD00;
 }
 .status.away {
-    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FFFF00),color-stop(1, #D4D400));
-    background-image: -o-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
-    background-image: -moz-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
-    background-image: -webkit-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
-    background-image: -ms-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
-    background-image: linear-gradient(to bottom, #FFFF00 0%, #D4D400 100%);
-    box-shadow: 0px 0px 2px #D4D400;
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FFFF00),color-stop(1, #D4D400));
+	background-image: -o-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
+	background-image: -moz-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
+	background-image: -webkit-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
+	background-image: -ms-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
+	background-image: linear-gradient(to bottom, #FFFF00 0%, #D4D400 100%);
+	box-shadow: 0px 0px 2px #D4D400;
 }
 
 .member-list .status.pull-right{
