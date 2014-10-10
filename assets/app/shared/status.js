@@ -8,7 +8,7 @@ app.directive('status', function ($timeout) {
 		link: function ($scope) {
 			//Sorry josh, had to make it a function for it to pick up my messages updates.
 			$scope.away = function(){
-				return moment().diff(moment($scope.user.lastActivity), "seconds") > 5;
+				return moment().diff(moment($scope.user.lastActivity), "minutes") > 5;
 			}
 		}
 	};
