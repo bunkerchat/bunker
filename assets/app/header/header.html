@@ -5,7 +5,7 @@
 			<a class="navbar-brand" ui-sref="lobby">Bunker</a>
 		</div>
 		<ul class="nav navbar-nav hidden-xs">
-			<li ui-sref-active="active" ng-repeat="room in header.rooms">
+			<li ui-sref-active="active" ng-repeat="room in header.user.rooms">
 				<a ui-sref="room({roomId: room.id})">{{room.name}}</a>
 			</li>
 		</ul>

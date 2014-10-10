@@ -46,7 +46,7 @@ app.factory('emoticons', function () {
 		'mindblown.gif',
 		'munch.gif',
 		'notbad.png',
-		'ohdear.gif',
+		'ohdear.png',
 		'okay.png',
 		'orly.png',
 		'parrot.gif',

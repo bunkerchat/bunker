@@ -16,7 +16,17 @@ window.app = angular.module('bunker', [
 			.state('room', {
 				url: '/rooms/{roomId}',
 				templateUrl: '/assets/app/room/room.html',
-				controller: 'RoomController as room'
+				controller: 'RoomController as roomCtrl',
+				resolve: {
+					current: function($stateParams, bunkerApi, roomService) {
+						var roomId = $stateParams.roomId;
+						bunkerApi.room.get({id: roomId}, function(room){
+							roomService.current = room;
+						});
+					},
+					bunkerApi: 'bunkerApi',
+					roomService: 'rooms'
+				}
 			})
 			.state('emoticons', {
 				url: '/emoticons',

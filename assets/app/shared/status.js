@@ -6,17 +6,10 @@ app.directive('status', function ($timeout) {
 		},
 		templateUrl: "/assets/app/shared/status.html",
 		link: function ($scope) {
-			var self = this;
-
-			$scope.$on($scope.user.id, function(event, user){
-				checkAway(user);
-			});
-
-			function checkAway(user){
-				$scope.away = moment().diff(moment(user.lastActivity), "minutes") > 5;
-			};
-
-			checkAway($scope.user);
+			//Sorry josh, had to make it a function for it to pick up my messages updates.
+			$scope.away = function(){
+				return moment().diff(moment($scope.user.lastActivity), "seconds") > 5;
+			}
 		}
 	};
 });

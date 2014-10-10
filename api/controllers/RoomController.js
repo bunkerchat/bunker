@@ -36,4 +36,3 @@ module.exports.findOne = function (req, res) {
 		});
 	});
 };
-

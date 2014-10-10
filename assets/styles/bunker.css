@@ -90,6 +90,8 @@ nav,
 	overflow: hidden;
 	display: inline-block;
 	padding-left: 4px;
+	height: 32px;
+	white-space: nowrap;
 }
 .message-author img {
     margin-left: 5px;
@@ -189,4 +191,37 @@ img.emoticon {
 
 .member-list .status.pull-right{
 	margin-top: 8px;
+}
+
+
+.thumbnail {
+	margin: 12px;
+	min-height: 100px;
+	min-width: 100px;
+	position: relative;
+	text-align: center;
+	background-color: #eee;
+	border-color: #B0B0B0;
+}
+
+.thumbnail:hover{
+	cursor: pointer;
+	box-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+.thumbnail img{
+	margin-top: 12px;
+	margin-bottom: 12px;
+	max-width: 40px;
+	max-height: 40px;
+
+}
+
+.thumbnail .emoticon-name{
+	position: absolute;
+	bottom: 12px;
+	vertical-align: bottom;
+	left: 0px;
+	right: 0px;
+	cursor: text;
 }
