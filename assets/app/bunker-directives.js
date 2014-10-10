@@ -40,6 +40,21 @@ app.directive('autoScroll', function ($timeout) {
 			});
 		}};
 });
+app.directive('bunkerInput', function() {
+	return {
+		scope: {
+			text: '=bunkerInput'
+		},
+		link: function(scope, elem) {
+			scope.$on('inputText', function(evt, text) {
+				var append = scope.text.length ? ' ' : ''; // start with a space if message already started
+				append += text + ' ';
+				scope.text += append;
+				angular.element(elem).focus();
+			});
+		}
+	};
+});
 app.directive('bunkerMessage', function ($compile, emoticons) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
@@ -100,6 +115,21 @@ app.directive('bunkerMessageImage', function () {
 		}
 	};
 });
+
+app.directive('messageMention', function() {
+	return {
+		scope: {
+			userNick: '@messageMention',
+			messageText: '@messageMentionText'
+		},
+		link: function(scope, elem) {
+			if (scope.messageText.indexOf(scope.userNick) > -1) {
+				elem.addClass('message-mention');
+			}
+		}
+	}
+});
+
 app.directive('unreadMessages', function ($rootScope, $window, user) {
 	return function (scope, elem) {
 		var el = angular.element(elem);

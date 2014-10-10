@@ -16,11 +16,15 @@
 							</span>
 						</div>
 						<div class="message-caret" ng-if="log.messages[$index-1].author.id != message.author.id"></div>
-						<div class="message-body" ng-class="{ 'new-message-body': log.messages[$index-1].author.id != message.author.id }">
-							<span bunker-message="{{message.text}}"></span>
+						<div class="message-body"
+							 ng-class="{ 'new-message-body': log.messages[$index-1].author.id != message.author.id }"
+							 message-mention="{{log.user.nick}}" message-mention-text="{{message.text}}">
+							<span bunker-message="{{message.text}}">
+							</span>
 							<span ng-if="log.messages[$index-1].author.id != message.author.id"
 								  class="message-timestamp text-muted">
-								<small am-time-ago="message.createdAt" title="{{message.createdAt | date:'medium'}}"></small>
+								<small am-time-ago="message.createdAt"
+									   title="{{message.createdAt | date:'medium'}}"></small>
 							</span>
 						</div>
 					</div>
@@ -42,10 +46,10 @@
 
 		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
 			<ul class="list-group">
-				<li class="list-group-item" ng-repeat="user in roomCtrl.roomsService.current.members | filter:{connected:true}">
-					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
-					{{user.nick}}
-					<span status class="pull-right" user="user"></span>
+				<li class="list-group-item" ng-repeat="member in room.room.room.members | filter:{connected:true}">
+					<img gravatar-src-once="member.email | lowercase" gravatar-size="20"/>
+					{{member.nick}}
+					<span class="status pull-right" ng-class="{ here: member.connected }"></span>
 				</li>
 			</ul>
 		</div>
@@ -56,7 +60,12 @@
 	<div class="row">
 		<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
 			<div class="input-group">
-				<input type="text" class="form-control" ng-model="input.messageText" ng-keyup="input.keyUp($event)" ng-keydown="input.keyDown($event)"/>
+				<input type="text" class="form-control"
+					   ng-model="input.messageText"
+					   ng-keyup="input.keyUp($event)"
+					   ng-keydown="input.keyDown($event)"
+					   bunker-input="input.messageText" />ageText" ng-keyup="input.keyUp($event)"
+							 ng-keydown="input.keyDown($event)"/>
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-success">Send</button>
 					</span>

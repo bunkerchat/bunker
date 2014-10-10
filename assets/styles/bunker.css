@@ -17,7 +17,6 @@ nav,
     background-color: #969696;
     border-color: #A5A5A5;
 }
-
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
@@ -31,12 +30,12 @@ nav,
     line-height: 4px;
 }
 .navbar .nav > li > a {
-    text-transform: none;
-    font-size: 16px;
-    font-weight: normal;
-    min-width: 100px;
-    text-align: center;
-    color: #fff;
+	text-transform: none;
+	font-size: 16px;
+	font-weight: normal;
+	min-width: 100px;
+	text-align: center;
+	color: #fff;
 	line-height: 40px;
 	padding: 0;
 
@@ -51,6 +50,32 @@ nav,
 .col-center {
     float: none;
     margin: 0 auto;
+}
+
+/* emoticon */
+[emoticon-menu] {
+	position: fixed;
+	top: 40px;
+	right: 0;
+	width: 300px;
+	height: 500px;
+	margin-left: -300px;
+	border: solid #ddd 3px;
+	border-width: 0 0 3px 3px;
+	border-bottom-left-radius: 4px;
+	background: #fff;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	font-size: 15px;
+}
+[emoticon-menu] .emoticon {
+	width: 16px;
+}
+[emoticon-menu] a {
+	color: #333;
+}
+[emoticon-menu] a:hover {
+	text-decoration: none;
 }
 
 /* bunker stuff */
@@ -100,7 +125,7 @@ nav,
     min-height: 30px;
     margin-left: 180px;
     padding-left: 10px;
-    padding-right: 75px;
+	padding-right: 100px;
     background: #fff;
 }
 .new-message-body {
@@ -113,6 +138,11 @@ nav,
 .message-body .panel {
     margin: 0;
 }
+
+.message-mention {
+	background-color: #faf2cc;
+}
+
 .message-timestamp {
     position: absolute;
     top: 0;
