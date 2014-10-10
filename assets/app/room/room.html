@@ -47,7 +47,7 @@
 		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
 			<ul class="list-group">
 				<li class="list-group-item"
-						ng-repeat="user in roomCtrl.roomsService.current.members track by user.id | filter:{connected:true}">
+						ng-repeat="user in roomCtrl.roomsService.current.members | filter:{connected:true} track by user.id">
 					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
 					{{user.nick}}
 					<span status class="pull-right" user="user"></span>
