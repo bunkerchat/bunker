@@ -12,7 +12,7 @@
 							<span ng-if="log.messages[$index-1].author.id != message.author.id">
 								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 								<div class="name">{{message.author.nick}}</div>
-								<span status user="roomCtrl.roomsService.memberLookup[message.author.id]"></span>
+								<span status="roomCtrl.roomsService.memberLookup[message.author.id]"></span>
 							</span>
 						</div>
 						<div class="message-caret" ng-if="log.messages[$index-1].author.id != message.author.id"></div>
@@ -50,7 +50,7 @@
 						ng-repeat="user in roomCtrl.roomsService.current.members | filter:{connected:true} track by user.id">
 					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
 					{{user.nick}}
-					<span status class="pull-right" user="user"></span>
+					<span class="pull-right" status="user"></span>
 				</li>
 			</ul>
 		</div>

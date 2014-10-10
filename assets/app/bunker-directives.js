@@ -123,7 +123,7 @@ app.directive('messageMention', function() {
 			messageText: '@messageMentionText'
 		},
 		link: function(scope, elem) {
-			if (scope.messageText.indexOf(scope.userNick) > -1) {
+			if(new RegExp(scope.userNick, 'i').test(scope.messageText)) {
 				elem.addClass('message-mention');
 			}
 		}
@@ -153,7 +153,7 @@ app.directive('unreadMessages', function ($rootScope, $window, user) {
 		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
 			if (!hasFocus && resource.model == 'room' && resource.data.author && user.current.$resolved) {
 				unreadMessages++;
-				if (new RegExp(user.current.nick).test(resource.data.text)) {
+				if (new RegExp(user.current.nick, 'i').test(resource.data.text)) {
 					// TODO this probably won't work if user changes their nick
 					mentioned = true;
 				}
