@@ -20,9 +20,9 @@ window.app = angular.module('bunker', [
 				resolve: {
 					current: function($stateParams, bunkerApi, roomService) {
 						var roomId = $stateParams.roomId;
-						bunkerApi.room.get({id: roomId}, function(room){
+						return bunkerApi.room.get({id: roomId}, function(room){
 							roomService.current = room;
-						});
+						}).$promise;
 					},
 					bunkerApi: 'bunkerApi',
 					roomService: 'rooms'

@@ -5,7 +5,7 @@ app.controller('MessageLogController', function ($rootScope, $scope, $timeout, $
 	this.roomsService = rooms;
 	this.messages = [];
 
-	bunkerApi.message.query({id: 'latest', roomId: roomId }, function (messages) {
+	bunkerApi.message.query({id: 'latest', roomId: roomId}, function (messages) {
 		self.messages = _.sortBy(messages, 'createdAt');
 		fixMessageUsers();
 	});
@@ -23,31 +23,32 @@ app.controller('MessageLogController', function ($rootScope, $scope, $timeout, $
 	});
 
 	$rootScope.$on('$sailsConnected', function (evt, data) {
-		$timeout(function(){
+		$timeout(function () {
 			fixMessageUsers();
 		}, 1500);
 	});
 
-	function fixMessageUsers(){
+	var fixMessageUsers = _.throttle(function () {
 		//Tie the authors of the messages to the onlineUsers (if they are online)
-		if(self.roomsService && self.roomsService.current && self.roomsService.current.$resolved){
+		if (self.roomsService && self.roomsService.current && self.roomsService.current.$resolved) {
 			// The timeout fixes a race condition with posting a message and it getting added to the messages list on
 			// subscribed clients
-			$timeout(function(){
+			$timeout(function () {
 				//filter out the server messages
-				_.each(self.messages, function(message){
-					if(message.author){
+				_.each(self.messages, function (message) {
+					if (message.author) {
 
-						var onlineUser = _.find(self.roomsService.current.members, function(item){
+						var onlineUser = _.find(self.roomsService.current.members, function (item) {
 							return item.id == message.author.id;
 						});
 
-						if(onlineUser){
+						if (onlineUser) {
 							message.author.lastActivity = onlineUser.lastActivity;
 						}
 					}
 				});
 			}, 200);
 		}
-	}
+	}, 2000); // only run fixMessageUsers every 2 seconds
+
 });
