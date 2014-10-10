@@ -40,7 +40,7 @@ app.directive('autoScroll', function ($timeout) {
 			});
 		}};
 });
-app.directive('bunkerInput', function() {
+app.directive('bunkerInput', function($window, user) {
 	return {
 		scope: {
 			text: '=bunkerInput'
@@ -51,6 +51,21 @@ app.directive('bunkerInput', function() {
 				append += text + ' ';
 				scope.text += append;
 				angular.element(elem).focus();
+			});
+
+			// Handle user away notification
+			var win = angular.element($window);
+			win.bind('focus', function () {
+				scope.$apply(function() {
+					user.current.present = true;
+					user.current.$save();
+				});
+			});
+			win.bind('blur', function () {
+				scope.$apply(function() {
+					user.current.present = false;
+					user.current.$save();
+				});
 			});
 		}
 	};

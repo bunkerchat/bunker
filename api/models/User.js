@@ -20,8 +20,9 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: false
 		},
-		lastActivity: {
-			type: 'date'
+		present: {
+			type: 'boolean',
+			defaultsTo: true
 		}
 	}
 };

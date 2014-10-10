@@ -25,7 +25,7 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 
 	function addMessage(message) {
 		var lastMessage = _.last(self.messages);
-		message.$firstInSeries = !lastMessage || !message.author || lastMessage.author.id != message.author.id;
+		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
 		self.messages.push(message);
 	}
 });
