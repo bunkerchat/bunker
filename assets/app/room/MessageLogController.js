@@ -1,4 +1,4 @@
-app.controller('MessageLogController', function ($rootScope, $scope, $timeout, $stateParams, bunkerApi, uuid, user, rooms) {
+app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, uuid, user, rooms) {
 	var self = this;
 	var roomId = $stateParams.roomId;
 
@@ -7,13 +7,15 @@ app.controller('MessageLogController', function ($rootScope, $scope, $timeout, $
 	this.messages = [];
 
 	bunkerApi.message.query({id: 'latest', roomId: roomId}, function (messages) {
-		self.messages = _.sortBy(messages, 'createdAt');
+		_(messages).sortBy('createdAt').each(function(message) {
+			addMessage(message);
+		});
 	});
 
 	// Handle incoming messages
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
 		if (resource.model == 'room' && resource.id == roomId) {
-			self.messages.push(resource.data);
+			addMessage(resource.data);
 		}
 	});
 
@@ -21,4 +23,9 @@ app.controller('MessageLogController', function ($rootScope, $scope, $timeout, $
 		self.messages.push({text: 'Disconnected', id: uuid.v4(), createdAt: new Date().toISOString()});
 	});
 
+	function addMessage(message) {
+		var lastMessage = _.last(self.messages);
+		message.$firstInSeries = !lastMessage || lastMessage.author.id != message.author.id;
+		self.messages.push(message);
+	}
 });
