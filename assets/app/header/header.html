@@ -1,5 +1,5 @@
 <nav class="navbar navbar-default navbar-fixed-top navbar-background" role="navigation"
-	 ng-controller="HeaderController as header">
+		 ng-controller="HeaderController as header">
 	<div class="container-fluid">
 		<div class="navbar-header">
 			<a class="navbar-brand" ui-sref="lobby">Bunker</a>
@@ -9,5 +9,15 @@
 				<a ui-sref="room({roomId: room.id})">{{room.name}}</a>
 			</li>
 		</ul>
+		<ul class="nav navbar-nav navbar-right hidden-xs">
+			<li ng-class="{active: header.emoticonMenu}">
+				<a ng-click="header.emoticonMenu = !header.emoticonMenu">
+					<img src="/assets/images/emoticons/allthethings.png"/>
+				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div ng-show="header.emoticonMenu" emoticon-menu="header.emoticons">
 	</div>
 </nav>

@@ -34,6 +34,7 @@ module.exports.sockets = {
 
 			user.socketId = socketId;
 			user.connected = true;
+			user.lastActivity = new Date().toISOString();
 			user.save().then(function () {
 				Room.find().populate('members').exec(function (error, rooms) {
 					if (error) return;

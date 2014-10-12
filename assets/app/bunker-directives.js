@@ -40,6 +40,36 @@ app.directive('autoScroll', function ($timeout) {
 			});
 		}};
 });
+app.directive('bunkerInput', function($window, user) {
+	return {
+		scope: {
+			text: '=bunkerInput'
+		},
+		link: function(scope, elem) {
+			scope.$on('inputText', function(evt, text) {
+				var append = scope.text.length ? ' ' : ''; // start with a space if message already started
+				append += text + ' ';
+				scope.text += append;
+				angular.element(elem).focus();
+			});
+
+			// Handle user away notification
+			var win = angular.element($window);
+			win.bind('focus', function () {
+				scope.$apply(function() {
+					user.current.present = true;
+					user.current.$save();
+				});
+			});
+			win.bind('blur', function () {
+				scope.$apply(function() {
+					user.current.present = false;
+					user.current.$save();
+				});
+			});
+		}
+	};
+});
 app.directive('bunkerMessage', function ($compile, emoticons) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
@@ -108,7 +138,7 @@ app.directive('messageMention', function() {
 			messageText: '@messageMentionText'
 		},
 		link: function(scope, elem) {
-			if (scope.messageText.indexOf(scope.userNick) > -1) {
+			if(new RegExp(scope.userNick, 'i').test(scope.messageText)) {
 				elem.addClass('message-mention');
 			}
 		}
@@ -136,9 +166,9 @@ app.directive('unreadMessages', function ($rootScope, $window, user) {
 		});
 
 		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-			if (!hasFocus && resource.model == 'room' && resource.data.author) {
+			if (!hasFocus && resource.model == 'room' && resource.data.author && user.current.$resolved) {
 				unreadMessages++;
-				if (new RegExp(user.nick).test(resource.data.text)) {
+				if (new RegExp(user.current.nick, 'i').test(resource.data.text)) {
 					// TODO this probably won't work if user changes their nick
 					mentioned = true;
 				}
@@ -152,3 +182,4 @@ app.directive('unreadMessages', function ($rootScope, $window, user) {
 		});
 	};
 });
+

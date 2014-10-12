@@ -14,8 +14,8 @@ module.exports.connectedMembers = function (req, res) {
 module.exports.findOne = function (req, res) {
 	var roomId = req.param('id');
 	var user = req.session.user;
-	// TODO check for roomId and user values
 
+	// TODO check for roomId and user values
 	Room.findOne(roomId).exec(function (error, room) {
 		if (error) return res.serverError();
 		if (!room) return res.notFound();
@@ -25,12 +25,14 @@ module.exports.findOne = function (req, res) {
 			// repopulate and send update
 			Room.findOne(room.id).populate('members').exec(function (error, populatedRoom) {
 				Room.publishUpdate(populatedRoom.id, populatedRoom);
-			});
-		});
 
-		// Subscribe the socket to message and updates of this room
-		// Socket will now receive messages when a new message is created
-		Room.subscribe(req, roomId, ['message', 'update']);
-		res.ok(room);
+				// Subscribe the socket to message and updates of this room
+				// Socket will now receive messages when a new message is created
+				Room.subscribe(req, roomId, ['message', 'update']);
+				res.ok(populatedRoom);
+			});
+
+
+		});
 	});
 };

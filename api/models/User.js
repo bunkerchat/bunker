@@ -19,6 +19,10 @@ module.exports = {
 		connected: {
 			type: 'boolean',
 			defaultsTo: false
+		},
+		present: {
+			type: 'boolean',
+			defaultsTo: true
 		}
 	}
 };

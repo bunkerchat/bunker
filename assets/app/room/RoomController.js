@@ -1,3 +1,4 @@
-app.controller('RoomController', function (room) {
-	this.room = room;
+app.controller('RoomController', function (user, rooms) {
+	this.userService = user;
+	this.roomsService = rooms;
 });
