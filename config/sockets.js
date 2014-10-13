@@ -9,7 +9,6 @@
  * For more information on sockets configuration, including advanced config options, see:
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.sockets.html
  */
-var uuid = require('node-uuid');
 
 module.exports.sockets = {
 
@@ -36,21 +35,7 @@ module.exports.sockets = {
 			user.connected = true;
 			user.lastActivity = new Date().toISOString();
 			user.save().then(function () {
-				Room.find().populate('members').exec(function (error, rooms) {
-					if (error) return;
-					_.each(rooms, function (room) {
-						if (_.any(room.members, {id: user.id})) {
-
-							Room.publishUpdate(room.id, room);
-							Room.message(room.id, {
-								id: uuid.v4(),
-								room: room,
-								text: user.nick + ' has joined the room',
-								createdAt: new Date().toISOString()
-							});
-						}
-					});
-				});
+				RoomService.updateAllWithUser(user.id, user.nick + ' has joined the room');
 			});
 		});
 	},
@@ -70,22 +55,8 @@ module.exports.sockets = {
 
 		User.update({socketId: socketId}, {socketId: null, connected: false}).exec(function (error, users) {
 			if (error || !users.length) return;
-
-			Room.find().populate('members').exec(function (error, rooms) {
-				if (error) return;
-				_.each(users, function (disconnectedUser) {
-					_.each(rooms, function (room) {
-						if (_.any(room.members, {id: disconnectedUser.id})) {
-							Room.publishUpdate(room.id, room);
-							Room.message(room.id, {
-								id: uuid.v4(),
-								room: room,
-								text: disconnectedUser.nick + ' has left the room',
-								createdAt: new Date().toISOString()
-							});
-						}
-					});
-				});
+			_.each(users, function (disconnectedUser) {
+				RoomService.updateAllWithUser(disconnectedUser.id, disconnectedUser.nick + ' has left the room');
 			});
 		});
 	},

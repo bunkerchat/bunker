@@ -5,8 +5,6 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var uuid = require('node-uuid');
-
 // Create a new message, this will be the endpoint for POST /message
 module.exports.create = function (req, res) {
 	var author = req.session.user;
@@ -31,16 +29,7 @@ module.exports.create = function (req, res) {
 				user.nick = newNick[1];
 				user.save() // save the model with the updated nick
 					.then(function() {
-						// publish updates
-						Room.findOne(roomId).populate('members').exec(function (error, populatedRoom) {
-							Room.publishUpdate(populatedRoom.id, populatedRoom);
-							Room.message(roomId, {
-								id: uuid.v4(),
-								text: currentNick + ' changed their handle to ' + user.nick,
-								room: roomId,
-								createdAt: new Date().toISOString()
-							});
-						});
+						RoomService.updateAllWithUser(user.id, currentNick + ' changed their handle to ' + user.nick);
 					})
 					.catch(function() {
 						// TODO error handling
@@ -68,7 +57,7 @@ module.exports.create = function (req, res) {
 	}
 };
 
-// Get the latest 50 messages, this will be the endpoint for
+// Get the latest 50 messages, this will be the endpoint for GET /message/latest
 module.exports.latest = function (req, res) {
 	var roomId = req.param('roomId');
 	var user = req.session.user;
