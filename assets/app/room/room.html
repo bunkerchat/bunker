@@ -7,7 +7,9 @@
 						ng-repeat="message in log.messages track by message.id">
 
 					<!-- standard message -->
-					<div ng-switch-when="true">
+					<div ng-switch-when="true"
+                         message-mention="{{roomCtrl.userService.current.nick}}"
+                         message-mention-text="{{message.text}}">
 						<div class="message-author">
 							<span ng-if="message.$firstInSeries">
 								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
@@ -17,8 +19,7 @@
 						</div>
 						<div class="message-caret" ng-if="message.$firstInSeries"></div>
 						<div class="message-body"
-								 ng-class="{ 'new-message-body': message.$firstInSeries }"
-								 message-mention="{{roomCtrl.userService.current.nick}}" message-mention-text="{{message.text}}">
+								 ng-class="{ 'new-message-body': message.$firstInSeries }">
 							<span bunker-message="{{message.text}}">
 							</span>
 							<span ng-if="message.$firstInSeries" class="message-timestamp text-muted">

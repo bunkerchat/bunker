@@ -138,7 +138,7 @@ app.directive('messageMention', function() {
 			messageText: '@messageMentionText'
 		},
 		link: function(scope, elem) {
-			if(new RegExp(scope.userNick, 'i').test(scope.messageText)) {
+			if(new RegExp('@' + scope.userNick + ' ', 'i').test(scope.messageText)) {
 				elem.addClass('message-mention');
 			}
 		}
