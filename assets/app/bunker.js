@@ -20,6 +20,7 @@ window.app = angular.module('bunker', [
 				resolve: {
 					current: function($stateParams, bunkerApi, roomService) {
 						var roomId = $stateParams.roomId;
+						// Angular UI router will complete this before creating the controller if a $promise is returned
 						return bunkerApi.room.get({id: roomId}, function(room){
 							roomService.current = room;
 						}).$promise;
@@ -27,11 +28,6 @@ window.app = angular.module('bunker', [
 					bunkerApi: 'bunkerApi',
 					roomService: 'rooms'
 				}
-			})
-			.state('emoticons', {
-				url: '/emoticons',
-				templateUrl: '/assets/app/emoticons/emoticons.html',
-				controller: 'EmoticonsListController as emoticonsListCtrl'
 			});
 	})
 	.config(function ($compileProvider) {

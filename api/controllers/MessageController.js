@@ -68,7 +68,7 @@ module.exports.create = function (req, res) {
 	}
 };
 
-// Get the latest 50 messages, this will be the endpoint for
+// Get the latest 50 messages, this will be the endpoint for GET /message/latest
 module.exports.latest = function (req, res) {
 	var roomId = req.param('roomId');
 	var user = req.session.user;
