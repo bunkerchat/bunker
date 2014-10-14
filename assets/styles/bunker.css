@@ -139,8 +139,11 @@ nav,
 .message-body .panel {
 	margin: 0;
 }
-.message-mention {
-	background-color: #faf2cc;
+.message-mention > .message-body {
+    background-color: #faf2cc;
+}
+.message-mention > .message-caret {
+    border-right-color: #faf2cc;
 }
 .message-timestamp {
 	position: absolute;
