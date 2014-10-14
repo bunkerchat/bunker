@@ -33,4 +33,9 @@ window.app = angular.module('bunker', [
 	.config(function ($compileProvider) {
 		// This is where we might customize the sanitize whitelist some day
 		// $compileProvider.imgSrcSanitizationWhitelist();
+	})
+	.config(function(gravatarServiceProvider) {
+		gravatarServiceProvider.defaults = {
+			'default': 'identicon'
+		};
 	});
