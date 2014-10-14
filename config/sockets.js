@@ -35,7 +35,7 @@ module.exports.sockets = {
 			user.connected = true;
 			user.lastActivity = new Date().toISOString();
 			user.save().then(function () {
-				RoomService.updateAllWithUser(user.id, user.nick + ' has joined the room');
+				RoomService.updateAllWithUser(user.id, user.nick + ' joined the room');
 			});
 		});
 	},
@@ -56,7 +56,7 @@ module.exports.sockets = {
 		User.update({socketId: socketId}, {socketId: null, connected: false}).exec(function (error, users) {
 			if (error || !users.length) return;
 			_.each(users, function (disconnectedUser) {
-				RoomService.updateAllWithUser(disconnectedUser.id, disconnectedUser.nick + ' has left the room');
+				RoomService.updateAllWithUser(disconnectedUser.id, disconnectedUser.nick + ' left the room');
 			});
 		});
 	},
