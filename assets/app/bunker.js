@@ -16,17 +16,13 @@ window.app = angular.module('bunker', [
 			.state('room', {
 				url: '/rooms/{roomId}',
 				templateUrl: '/assets/app/room/room.html',
-				controller: 'RoomController as roomCtrl',
+				controller: 'RoomController as room',
 				resolve: {
-					current: function($stateParams, bunkerApi, roomService) {
-						var roomId = $stateParams.roomId;
+					currentRoom: function($stateParams, rooms) {
 						// Angular UI router will complete this before creating the controller if a $promise is returned
-						return bunkerApi.room.get({id: roomId}, function(room){
-							roomService.current = room;
-						}).$promise;
-					},
-					bunkerApi: 'bunkerApi',
-					roomService: 'rooms'
+						var currentRoom = rooms($stateParams.roomId);
+						return currentRoom.$promise;
+					}
 				}
 			});
 	})
