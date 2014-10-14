@@ -12,20 +12,36 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 		});
 	});
 
-	// Handle incoming messages
-	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		if (resource.model == 'room' && resource.id == roomId) {
-			addMessage(resource.data);
-		}
-	});
+    // Handle incoming messages
+    $rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
+        if (resource.model == 'room' && resource.id == roomId) {
+            addMessage(resource.data);
+        }
+    });
+
+    // Handle message edits
+    $rootScope.$on('$sailsResourceUpdated', function (evt, resource) {
+        if (resource.model == 'message') {
+            editMessage(resource.data);
+        }
+    });
 
 	$rootScope.$on('$sailsDisconnected', function (evt, data) {
 		self.messages.push({text: 'Disconnected', id: uuid.v4(), createdAt: new Date().toISOString()});
 	});
 
-	function addMessage(message) {
-		var lastMessage = _.last(self.messages);
-		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
-		self.messages.push(message);
-	}
+    function addMessage(message) {
+        var lastMessage = _.last(self.messages);
+        message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+        self.messages.push(message);
+    }
+
+    function editMessage(message) {
+        // todo: learn underscore (I think)
+        for (var i = 0; i < self.messages.length; i++){
+            if (self.messages[i].id == message.id) {
+                self.messages[i] = message;
+            }
+        }
+    }
 });

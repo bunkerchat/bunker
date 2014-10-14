@@ -17,10 +17,11 @@
 						</div>
 						<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 						<div class="message-body"
-								 ng-class="::{ 'new-message-body': message.$firstInSeries }"
+								 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }"
 								 message-mention="{{roomCtrl.userService.current.nick}}"
 								 message-mention-text="{{message.text}}">
-							<span bunker-message="{{message.text}}">
+                            <span class="message-edit-indicator" ng-if="message.edited">*</span>
+                            <span bunker-message="{{message.text}}">
 							</span>
 							<span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
 								<small am-time-ago="message.createdAt"

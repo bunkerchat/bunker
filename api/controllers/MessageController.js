@@ -57,6 +57,16 @@ module.exports.create = function (req, res) {
 	}
 };
 
+module.exports.update = function (req, res) {
+    Message.update({id: req.body.id}, req.body).exec(function(){
+
+        // somehow broadcast to all rooms that the message has been updated
+        RoomService.updateAllWithMessageEdit(req.body.id, req.body);
+
+        res.ok(req.body);
+    });
+};
+
 // Get the latest 50 messages, this will be the endpoint for GET /message/latest
 module.exports.latest = function (req, res) {
 	var roomId = req.param('roomId');
