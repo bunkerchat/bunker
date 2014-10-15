@@ -147,6 +147,10 @@ nav,
     margin-left: -19px;
 }
 
+.message-history-anchor {
+    position: relative;
+}
+
 .message-history {
     position: absolute;
     background-color: white;
@@ -155,6 +159,7 @@ nav,
     left: 187px;
     margin-top: 6px;
     padding: 8px;
+    box-shadow: #888 3px 5px 3px;
 }
 
 .message-mention {
