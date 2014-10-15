@@ -16,11 +16,20 @@
 							</span>
 						</div>
 						<div class="message-caret" ng-if="::message.$firstInSeries"></div>
+                        <div class="message-edit-indicator"
+                              ng-click="message.showHistory = !message.showHistory"
+                              ng-if="message.edited">&nbsp;</div>
 						<div class="message-body"
 								 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }"
 								 message-mention="{{roomCtrl.userService.current.nick}}"
 								 message-mention-text="{{message.text}}">
-                            <span class="message-edit-indicator" ng-if="message.edited">*</span>
+                            <div class="message-history"
+                                 ng-if="message.history && message.showHistory">
+                                <div>previous content:</div>
+                                <div ng-repeat="history in message.history.substring(1).split(',')">
+                                    {{::history}}
+                                </div>
+                            </div>
                             <span bunker-message="{{message.text}}">
 							</span>
 							<span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
