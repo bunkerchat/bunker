@@ -151,6 +151,10 @@ nav,
     position: absolute;
     background-color: white;
     border: 1px black solid;
+    z-index: 100;
+    left: 187px;
+    margin-top: 6px;
+    padding: 8px;
 }
 
 .message-mention {
