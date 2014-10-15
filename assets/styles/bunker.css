@@ -225,3 +225,25 @@ img.emoticon {
 .member-list .status.pull-right{
 	margin-top: 8px;
 }
+
+/* mobile modifications */
+
+@media (max-width: 480px) {
+    .message-author {
+        width: 100%;
+        height: auto;
+        background-color: #414B57;
+    }
+    .message-caret {
+        display: none;
+    }
+    .message-author .status {
+        position: absolute;
+        top: 5px;
+        left: 0;
+    }
+    .message-body {
+        border-top: solid #eee 1px;
+        margin-left: 0;
+    }
+}
