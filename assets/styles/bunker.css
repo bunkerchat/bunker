@@ -118,6 +118,7 @@ nav,
 	overflow: hidden;
 	display: inline-block;
 	padding-left: 4px;
+	height: 30px;
 }
 .message-author img {
 	margin-left: 5px;
