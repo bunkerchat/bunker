@@ -9,9 +9,11 @@
                         <div class="message-history"
                              ng-if="message.history && message.showHistory">
                             <div class="small">previous content:</div>
-                            <div ng-repeat="history in message.history.substring(1).split(',')">
-                                {{::history}}
-                            </div>
+                            <ul>
+                                <li ng-repeat="history in message.history.substring(1).split(',')">
+                                    {{::history}}
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     <div class="message">
@@ -25,7 +27,7 @@
                                 </span>
                             </div>
                             <div class="message-caret" ng-if="::message.$firstInSeries"></div>
-                            <div class="message-edit-indicator"
+                            <div class="message-edit-indicator" title="view message history"
                                   ng-click="message.showHistory = !message.showHistory"
                                   ng-if="message.edited">&nbsp;</div>
                             <div class="message-body"
