@@ -60,8 +60,9 @@ module.exports.create = function (req, res) {
 module.exports.update = function (req, res) {
     Message.update({id: req.body.id}, req.body).exec(function(){
 
-        // somehow broadcast to all rooms that the message has been updated
-        Room.message(req.body.room, req.body); // message all subscribers of the room that with the new message as data
+        // message all subscribers of the room that with the new message as data
+        // this message is flagged with 'edited' so the client will know to perform an edit
+        Room.message(req.body.room, req.body);
 
         res.ok(req.body);
     });

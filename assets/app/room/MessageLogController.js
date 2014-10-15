@@ -34,8 +34,11 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
     function editMessage(message) {
         // todo: learn underscore (I think)
         for (var i = 0; i < self.messages.length; i++){
-            if (self.messages[i].id == message.id) {
-                self.messages[i] = message;
+            var currentMessage = self.messages[i];
+            if (currentMessage.id == message.id) {
+                currentMessage.text = message.text;
+                currentMessage.history = message.history;
+                currentMessage.edited = message.edited;
             }
         }
     }

@@ -106,19 +106,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 		}
 	};
 	this.keyUp = function (evt) {
-		if (evt.keyCode == 40) { // up or down, cycle through last messages
-			this.selectedMessageIndex += evt.keyCode == 38 ? 1 : -1;
-
-			if (this.selectedMessageIndex < 0) {
-				this.selectedMessageIndex = 0;
-			}
-			else if (this.selectedMessageIndex >= this.submittedMessages.length) {
-				this.selectedMessageIndex = this.submittedMessages.length - 1;
-			}
-
-			this.messageText = this.submittedMessages[this.selectedMessageIndex].text;
-		}
-        if (evt.keyCode == 38) {
+        if (evt.keyCode == 38 || evt.keyCode == 40) {
             this.selectedMessageIndex += evt.keyCode == 38 ? 1 : -1;
 
             if (this.selectedMessageIndex < 0) {

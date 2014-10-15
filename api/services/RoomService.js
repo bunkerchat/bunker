@@ -22,24 +22,3 @@ module.exports.updateAllWithUser = function(userId, systemMessage) {
         return true;
     });
 };
-
-module.exports.updateAllWithMessageEdit = function(messageId, newMessage) {
-    Room.find().populateAll().exec(function (error, rooms) {
-        if (error) return false;
-        // todo: learn underscore
-        for(var i = 0; i < rooms.length; i++){
-            var room = rooms[i];
-            for(var j = 0; j < room.messages.length; j++){
-                var message = room.messages[j];
-                if (message.id == messageId){
-                    rooms[i].messages[j] = newMessage;
-
-                    Room.publishUpdate(room.id, rooms[i]);
-                    return true;
-                }
-            }
-        }
-
-        return true;
-    });
-};
