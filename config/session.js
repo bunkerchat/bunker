@@ -12,13 +12,20 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.session.html
  */
 
-var client;
-var isProd = process.env.NODE_ENV == 'production';
-var mongoUrl = process.env.MONGO_URL_SESSION || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/bunker_sessions';
 
-//if(isProd){
-//	client = require('redis-url').connect(process.env.REDISCLOUD_URL);
-//}
+var mongoUrl = process.env.MONGO_URL_SESSION || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/bunker_sessions';
+var adapter = 'mongo';
+
+var redisClient;
+if(process.env.NODE_ENV == 'production'){
+	var redis = require('redis');
+	var url = require('url');
+
+	adapter = 'redis';
+	var redisURL = url.parse(process.env.REDISCLOUD_URL);
+	redisClient = redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
+	redisClient.auth(redisURL.auth.split(":")[1]);
+}
 
 module.exports.session = {
 
@@ -60,7 +67,7 @@ module.exports.session = {
 	 *                                                                          *
 	 ***************************************************************************/
 
-	client:client,
+	client:redisClient,
 	// host: 'localhost',
 	// port: 6379,
 	// ttl: <redis session TTL in seconds>,
@@ -76,7 +83,7 @@ module.exports.session = {
 	 *                                                                          *
 	 ***************************************************************************/
 
-	adapter: 'mongo',
+	adapter: adapter,
 	url: mongoUrl + '/bunker_user_sessions'
 	// host: 'localhost',
 	// port: 27017,
