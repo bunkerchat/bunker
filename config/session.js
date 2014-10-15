@@ -12,7 +12,13 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.session.html
  */
 
+var client;
+var isProd = process.env.NODE_ENV == 'production';
 var mongoUrl = process.env.MONGO_URL_SESSION || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/bunker_sessions';
+
+if(isProd){
+	client = require('redis-url').connect(process.env.REDISCLOUD_URL);
+}
 
 module.exports.session = {
 
@@ -43,7 +49,7 @@ module.exports.session = {
 	 * session store that can be shared across multiple Sails.js servers        *
 	 ***************************************************************************/
 
-	// adapter: 'redis',
+	adapter: isProd ? 'redis' : 'mongo',
 
 	/***************************************************************************
 	 *                                                                          *
@@ -54,6 +60,7 @@ module.exports.session = {
 	 *                                                                          *
 	 ***************************************************************************/
 
+	client:client,
 	// host: 'localhost',
 	// port: 6379,
 	// ttl: <redis session TTL in seconds>,
@@ -69,7 +76,7 @@ module.exports.session = {
 	 *                                                                          *
 	 ***************************************************************************/
 
-	adapter: 'mongo',
+	//adapter: 'mongo',
 	url: mongoUrl + '/bunker_user_sessions'
 	// host: 'localhost',
 	// port: 27017,
