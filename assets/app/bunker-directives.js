@@ -83,12 +83,12 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					replacedLinks = {};
 
 				// Parse bold
-				_.each(text.match(/(\*[\w\s]+\*)/g), function (bold) {
+				_.each(text.match(/(\*[A-Za-z0-9\s]+\*)/g), function (bold) {
 					formatted = formatted.replace(bold, '<strong>' + bold.replace(/\*/g, '') + '</strong>');
 				});
 
 				// Parse italics
-				_.each(text.match(/(_[\w\s]+_)/g), function (italics) {
+				_.each(text.match(/(_[A-Za-z0-9\s]+_)/g), function (italics) {
 					formatted = formatted.replace(italics, '<em>' + italics.replace(/_/g, '') + '</em>');
 				});
 
