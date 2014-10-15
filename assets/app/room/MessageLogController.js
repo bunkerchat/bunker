@@ -14,15 +14,10 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 
     // Handle incoming messages
     $rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-        if (resource.model == 'room' && resource.id == roomId) {
+        if (resource.model == 'room' && resource.id == roomId && !resource.data.edited) {
             addMessage(resource.data);
-        }
-    });
-
-    // Handle message edits
-    $rootScope.$on('$sailsResourceUpdated', function (evt, resource) {
-        if (resource.model == 'message') {
-            editMessage(resource.data);
+        } else {
+            editMessage(resource.data)
         }
     });
 

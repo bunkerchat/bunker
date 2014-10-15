@@ -61,7 +61,7 @@ module.exports.update = function (req, res) {
     Message.update({id: req.body.id}, req.body).exec(function(){
 
         // somehow broadcast to all rooms that the message has been updated
-        RoomService.updateAllWithMessageEdit(req.body.id, req.body);
+        Room.message(req.body.room, req.body); // message all subscribers of the room that with the new message as data
 
         res.ok(req.body);
     });
