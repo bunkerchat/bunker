@@ -82,10 +82,20 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					replacedEmotes = {},
 					replacedLinks = {};
 
+				// Parse bold
+				_.each(text.match(/(\*[\w\s]+\*)/g), function (bold) {
+					formatted = formatted.replace(bold, '<strong>' + bold.replace(/\*/g, '') + '</strong>');
+				});
+
+				// Parse italics
+				_.each(text.match(/(_[\w\s]+_)/g), function (italics) {
+					formatted = formatted.replace(italics, '<em>' + italics.replace(/_/g, '') + '</em>');
+				});
+
 				// Parse emoticons
 				_.each(text.match(/:\w+:/g), function (emoticonText) {
 					var knownEmoticon = _.find(emoticons.files, function (known) {
-						return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');
+						return new RegExp(known.replace(/.\w+$/, ''), 'i').test(emoticonText.replace(/:/g, ''));
 					});
 					if (knownEmoticon && !replacedEmotes[knownEmoticon]) {
 						formatted = formatted.replace(new RegExp(emoticonText, 'g'),
