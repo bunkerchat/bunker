@@ -26,16 +26,20 @@ module.exports.updateAllWithUser = function(userId, systemMessage) {
 module.exports.updateAllWithMessageEdit = function(messageId, newMessage) {
     Room.find().populateAll().exec(function (error, rooms) {
         if (error) return false;
-        _.each(rooms, function (room) {
-            if (_.any(room.messages, {id: messageId})) {
-                for(var i = 0; i < room.messages.length; i++){
-                    if (room.messages[i].id == messageId){
-                        room.messages[i].text = newMessage.text;
-                    }
+        // todo: learn underscore
+        for(var i = 0; i < rooms.length; i++){
+            var room = rooms[i];
+            for(var j = 0; j < room.messages.length; j++){
+                var message = room.messages[j];
+                if (message.id == messageId){
+                    rooms[i].messages[j] = newMessage;
+
+                    Room.publishUpdate(room.id, rooms[i]);
+                    return true;
                 }
-                Room.publishUpdate(room.id, room);
             }
-        });
+        }
+
         return true;
     });
 };
