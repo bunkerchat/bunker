@@ -17,15 +17,15 @@ var mongoUrl = process.env.MONGO_URL_SESSION || process.env.MONGOLAB_URI || 'mon
 var adapter = 'mongo';
 
 var redisClient;
-if(process.env.NODE_ENV == 'production'){
-	var redis = require('redis');
-	var url = require('url');
-
-	adapter = 'redis';
-	var redisURL = url.parse(process.env.REDISCLOUD_URL);
-	redisClient = redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
-	redisClient.auth(redisURL.auth.split(":")[1]);
-}
+//if(process.env.NODE_ENV == 'production'){
+//	var redis = require('redis');
+//	var url = require('url');
+//
+//	adapter = 'redis';
+//	var redisURL = url.parse(process.env.REDISCLOUD_URL);
+//	redisClient = redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
+//	redisClient.auth(redisURL.auth.split(":")[1]);
+//}
 
 module.exports.session = {
 
