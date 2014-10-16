@@ -1,3 +1,4 @@
+
 var uuid = require('node-uuid');
 
 module.exports.updateAllWithUser = function(userId, systemMessage) {
@@ -8,7 +9,7 @@ module.exports.updateAllWithUser = function(userId, systemMessage) {
 				Room.publishUpdate(room.id, room);
 
 				// If we were provided a message, send it down to affected rooms
-				if (systemMessage){
+				if(systemMessage) {
 					Room.message(room.id, {
 						id: uuid.v4(),
 						text: systemMessage,

@@ -4,11 +4,11 @@
 		<div class="col-md-10 col-xs-12 no-gutter" ng-controller="MessageLogController as log">
 			<ol class="list-unstyled message-list" fill="{'marginBottom': 45}" auto-scroll="{{log.messages.length}}">
 				<li class="message-container" ng-class="::{ local: message.author.id == log.user.id }"
-				    ng-switch="::!!message.author"
-				    ng-repeat="message in log.messages track by message.id">
+					ng-switch="::!!message.author"
+					ng-repeat="message in log.messages track by message.id">
 					<div class="message-history-anchor">
 						<div class="message-history"
-						     ng-if="message.history && message.showHistory">
+							 ng-if="message.history && message.showHistory">
 							<div class="small">previous content:</div>
 							<ul>
 								<li ng-repeat="history in message.history.substring(1).split(',')">
@@ -29,18 +29,18 @@
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-edit-indicator" title="view message history"
-							     ng-click="message.showHistory = !message.showHistory"
-							     ng-if="message.edited">&nbsp;</div>
+								 ng-click="message.showHistory = !message.showHistory"
+								 ng-if="message.edited">&nbsp;</div>
 							<div class="message-body"
-							     ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }"
-							     message-mention="{{roomCtrl.userService.current.nick}}"
-							     message-mention-text="{{message.text}}">
+								 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }"
+								 message-mention="{{roomCtrl.userService.current.nick}}"
+								 message-mention-text="{{message.text}}">
 
                                 <span bunker-message="{{message.text}}">
                                 </span>
                                 <span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
                                     <small am-time-ago="message.createdAt"
-                                           title="{{::message.createdAt | date:'medium'}}"></small>
+										   title="{{::message.createdAt | date:'medium'}}"></small>
                                 </span>
 							</div>
 						</div>
@@ -51,7 +51,7 @@
 							</div>
                             <span class="message-timestamp text-muted">
                                 <small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
-                                </small>
+								</small>
                             </span>
 						</div>
 					</div>
@@ -62,7 +62,7 @@
 		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
 			<ul class="list-group">
 				<li class="list-group-item"
-				    ng-repeat="user in roomCtrl.roomsService.current.members | filter:{connected:true} track by user.id">
+					ng-repeat="user in roomCtrl.roomsService.current.members | filter:{connected:true} track by user.id">
 					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
 					{{user.nick}}
 					<span class="pull-right" status="user"></span>
@@ -77,10 +77,10 @@
 		<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
 			<div class="input-group">
 				<input type="text" class="form-control"
-				       ng-model="input.messageText"
-				       ng-keyup="input.keyUp($event)"
-				       ng-keydown="input.keyDown($event)"
-				       bunker-input="input.messageText"/>
+					   ng-model="input.messageText"
+					   ng-keyup="input.keyUp($event)"
+					   ng-keydown="input.keyDown($event)"
+					   bunker-input="input.messageText"/>
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-success">Send</button>
 					</span>
