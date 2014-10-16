@@ -26,7 +26,7 @@ module.exports.http = {
 module.exports.bootstrap = function (cb) {
 
 	// Clear user socket data
-	User.update({}, {socketId: null, connected: false}).exec(function (error) {
+	User.update({}, {sockets: [], connected: false}).exec(function (error) {
 	});
 
 	passport.serializeUser(function (user, done) {

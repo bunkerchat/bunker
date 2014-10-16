@@ -31,11 +31,15 @@ module.exports.sockets = {
 
 			console.log('connecting ' + socketId + ' for ' + user.nick);
 
-			user.socketId = socketId;
+			var previouslyConnected = user.connected;
+
+			if(!user.sockets) user.sockets = [];
+			user.sockets.push(socketId);
 			user.connected = true;
-			user.lastActivity = new Date().toISOString();
 			user.save().then(function () {
-				RoomService.updateAllWithUser(user.id, user.nick + ' joined the room');
+				if(!previouslyConnected) {
+					RoomService.updateAllWithUser(user.id, user.nick + ' joined the room');
+				}
 			});
 		});
 	},
@@ -49,15 +53,26 @@ module.exports.sockets = {
 	 ***************************************************************************/
 	onDisconnect: function (session, socket) {
 		var socketId = sails.sockets.id(socket);
-		if (!session.user) return;
+		//if (!session.user) return;
 
 		console.log('disconnecting ' + socketId);
 
-		User.update({socketId: socketId}, {socketId: null, connected: false}).exec(function (error, users) {
-			if (error || !users.length) return;
-			_.each(users, function (disconnectedUser) {
-				RoomService.updateAllWithUser(disconnectedUser.id, disconnectedUser.nick + ' left the room');
-			});
+		User.find().where({connected: true}).exec(function(error, connectedUsers) {
+			if(error || connectedUsers.length == 0) return
+
+			_(connectedUsers)
+				.filter(function(user) {
+					return _.contains(user.sockets, socketId);
+				})
+				.each(function(user) {
+					user.sockets = _.without(user.sockets, socketId);
+					user.connected = user.sockets.length > 0;
+					user.save().then(function() {
+						if(!user.connected) {
+							RoomService.updateAllWithUser(user.id, user.nick + ' left the room');
+						}
+					});
+				});
 		});
 	},
 
