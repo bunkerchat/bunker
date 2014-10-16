@@ -24,14 +24,14 @@ module.exports.create = function (req, res) {
 		var newNick = text.match(/\/nick\s+([\w\s-]{1,20})/i);
 		if (newNick) {
 
-			User.findOne(author.id).exec(function(error, user) { // find the user in the db (don't want to use session version)
+			User.findOne(author.id).exec(function (error, user) { // find the user in the db (don't want to use session version)
 				var currentNick = user.nick;
 				user.nick = newNick[1];
 				user.save() // save the model with the updated nick
-					.then(function() {
+					.then(function () {
 						RoomService.updateAllWithUser(user.id, currentNick + ' changed their handle to ' + user.nick);
 					})
-					.catch(function() {
+					.catch(function () {
 						// TODO error handling
 					});
 			});
@@ -60,22 +60,22 @@ module.exports.create = function (req, res) {
 module.exports.update = function (req, res) {
 	var messageEditWindowSeconds = 10;
 
-	Message.findOne(req.body.id).exec(function(error, message){
-        if (error) return;
-        var acceptableEditDate = new Date();
-        acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
-		if (message.createdAt < acceptableEditDate){
+	Message.findOne(req.body.id).exec(function (error, message) {
+		if (error) return;
+		var acceptableEditDate = new Date();
+		acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
+		if (message.createdAt < acceptableEditDate) {
 			return;
 		}
-        Message.update({id: req.body.id}, req.body).exec(function(){
+		Message.update({id: req.body.id}, req.body).exec(function () {
 
-            // message all subscribers of the room that with the new message as data
-            // this message is flagged with 'edited' so the client will know to perform an edit
-            Room.message(req.body.room, req.body);
+			// message all subscribers of the room that with the new message as data
+			// this message is flagged with 'edited' so the client will know to perform an edit
+			Room.message(req.body.room, req.body);
 
-            res.ok(req.body);
-        });
-    });
+			res.ok(req.body);
+		});
+	});
 };
 
 // Get the latest 50 messages, this will be the endpoint for GET /message/latest

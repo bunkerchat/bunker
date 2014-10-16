@@ -1,6 +1,6 @@
 app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
 
-    var messageEditWindowSeconds = 10;
+	var messageEditWindowSeconds = 10;
 	var searchStates = {
 		NONE: 'none',
 		EMOTE: 'emote',
@@ -19,41 +19,41 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 	this.submittedMessages = [];
 	this.selectedMessageIndex = -1;
 
-    var previousText = undefined;
-    this.editMode = false;
+	var previousText = undefined;
+	this.editMode = false;
 
 	this.sendMessage = function () {
 		if (!this.messageText) return;
 
-        var toSave = new bunkerApi.message();
-        toSave.room = $stateParams.roomId;
-        toSave.text = this.messageText;
+		var toSave = new bunkerApi.message();
+		toSave.room = $stateParams.roomId;
+		toSave.text = this.messageText;
 
-        var historicMessage = { text: this.messageText, createdAt: new Date()};
+		var historicMessage = { text: this.messageText, createdAt: new Date()};
 
-        if (!this.editMode) {
-            toSave.$save(function(result){
-                historicMessage.id = result.id;
-            });
+		if (!this.editMode) {
+			toSave.$save(function (result) {
+				historicMessage.id = result.id;
+			});
 
-            // Save message for up/down keys to retrieve
-            this.submittedMessages.unshift(historicMessage);
-        } else {
-            this.submittedMessages[this.selectedMessageIndex].text = this.messageText;
-            toSave.id = this.submittedMessages[this.selectedMessageIndex].id;
-            toSave.edited = true;
-            toSave.history = toSave.history || '';
-            toSave.history += ',' + previousText;
-            toSave.$save(function(result){
-                // todo: react appropriately
-            });
-        }
+			// Save message for up/down keys to retrieve
+			this.submittedMessages.unshift(historicMessage);
+		} else {
+			this.submittedMessages[this.selectedMessageIndex].text = this.messageText;
+			toSave.id = this.submittedMessages[this.selectedMessageIndex].id;
+			toSave.edited = true;
+			toSave.history = toSave.history || '';
+			toSave.history += ',' + previousText;
+			toSave.$save(function (result) {
+				// todo: react appropriately
+			});
+		}
 
 		// Reset all the things
 		this.selectedMessageIndex = -1;
 		this.messageText = '';
-        this.editMode = false;
-        previousText = undefined;
+		this.editMode = false;
+		previousText = undefined;
 		emoticonSearch = '';
 		emoticonSearchIndex = -1;
 	};
@@ -85,7 +85,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 				this.messageText = this.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
 			}
 			else if (searchState === searchStates.NICK) {
-				var matchingNames = _.filter(rooms.current && rooms.current.members, function(item) {
+				var matchingNames = _.filter(rooms.current && rooms.current.members, function (item) {
 					return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
 				});
 
@@ -107,25 +107,25 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 		}
 	};
 	this.keyUp = function (evt) {
-        if (evt.keyCode == 38 || evt.keyCode == 40) {
-            this.selectedMessageIndex += evt.keyCode == 38 ? 1 : -1;
+		if (evt.keyCode == 38 || evt.keyCode == 40) {
+			this.selectedMessageIndex += evt.keyCode == 38 ? 1 : -1;
 
-            if (this.selectedMessageIndex < 0) {
-                this.selectedMessageIndex = 0;
-            }
-            else if (this.selectedMessageIndex >= this.submittedMessages.length) {
-                this.selectedMessageIndex = this.submittedMessages.length - 1;
-            }
+			if (this.selectedMessageIndex < 0) {
+				this.selectedMessageIndex = 0;
+			}
+			else if (this.selectedMessageIndex >= this.submittedMessages.length) {
+				this.selectedMessageIndex = this.submittedMessages.length - 1;
+			}
 
-            var chosenMessage = this.submittedMessages[this.selectedMessageIndex];
-            var acceptableEditDate = new Date();
-            acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
-            if (chosenMessage.createdAt > acceptableEditDate){
-                this.editMode = true;
-                previousText = chosenMessage.text;
-                this.messageText = chosenMessage.text;
-            }
-        }
+			var chosenMessage = this.submittedMessages[this.selectedMessageIndex];
+			var acceptableEditDate = new Date();
+			acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
+			if (chosenMessage.createdAt > acceptableEditDate) {
+				this.editMode = true;
+				previousText = chosenMessage.text;
+				this.messageText = chosenMessage.text;
+			}
+		}
 		else if (evt.keyCode != 9 && evt.keyCode != 16) {
 			if (/:\w+$/.test(this.messageText)) {
 				searchState = searchStates.EMOTE;
