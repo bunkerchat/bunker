@@ -1,6 +1,6 @@
 app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
 
-    var messageEditWindowSeconds = 200;
+    var messageEditWindowSeconds = 10;
 	var searchStates = {
 		NONE: 'none',
 		EMOTE: 'emote',
@@ -39,6 +39,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
             // Save message for up/down keys to retrieve
             this.submittedMessages.unshift(historicMessage);
         } else {
+            this.submittedMessages[this.selectedMessageIndex].text = this.messageText;
             toSave.id = this.submittedMessages[this.selectedMessageIndex].id;
             toSave.edited = true;
             toSave.history = toSave.history || '';

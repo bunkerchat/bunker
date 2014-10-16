@@ -58,13 +58,23 @@ module.exports.create = function (req, res) {
 };
 
 module.exports.update = function (req, res) {
-    Message.update({id: req.body.id}, req.body).exec(function(){
+	var messageEditWindowSeconds = 10;
 
-        // message all subscribers of the room that with the new message as data
-        // this message is flagged with 'edited' so the client will know to perform an edit
-        Room.message(req.body.room, req.body);
+	Message.findOne(req.body.id).exec(function(error, message){
+        if (error) return;
+        var acceptableEditDate = new Date();
+        acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
+		if (message.createdAt < acceptableEditDate){
+			return;
+		}
+        Message.update({id: req.body.id}, req.body).exec(function(){
 
-        res.ok(req.body);
+            // message all subscribers of the room that with the new message as data
+            // this message is flagged with 'edited' so the client will know to perform an edit
+            Room.message(req.body.room, req.body);
+
+            res.ok(req.body);
+        });
     });
 };
 
