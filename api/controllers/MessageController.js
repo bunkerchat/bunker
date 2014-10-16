@@ -24,14 +24,14 @@ module.exports.create = function (req, res) {
 		var newNick = text.match(/\/nick\s+([\w\s-]{1,20})/i);
 		if (newNick) {
 
-			User.findOne(author.id).exec(function (error, user) { // find the user in the db (don't want to use session version)
+			User.findOne(author.id).exec(function(error, user) { // find the user in the db (don't want to use session version)
 				var currentNick = user.nick;
 				user.nick = newNick[1];
 				user.save() // save the model with the updated nick
-					.then(function () {
+					.then(function() {
 						RoomService.updateAllWithUser(user.id, currentNick + ' changed their handle to ' + user.nick);
 					})
-					.catch(function () {
+					.catch(function() {
 						// TODO error handling
 					});
 			});

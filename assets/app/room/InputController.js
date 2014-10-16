@@ -85,7 +85,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 				this.messageText = this.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
 			}
 			else if (searchState === searchStates.NICK) {
-				var matchingNames = _.filter(rooms.current && rooms.current.members, function (item) {
+				var matchingNames = _.filter(rooms.current && rooms.current.members, function(item) {
 					return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
 				});
 
@@ -107,7 +107,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 		}
 	};
 	this.keyUp = function (evt) {
-		if (evt.keyCode == 38 || evt.keyCode == 40) {
+		if (evt.keyCode == 38 || evt.keyCode == 40) {// choose previous message to edit
 			this.selectedMessageIndex += evt.keyCode == 38 ? 1 : -1;
 
 			if (this.selectedMessageIndex < 0) {
