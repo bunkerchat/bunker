@@ -58,7 +58,7 @@ module.exports.sockets = {
 		console.log('disconnecting ' + socketId);
 
 		User.find().where({connected: true}).exec(function(error, connectedUsers) {
-			if(error || connectedUsers.length == 0) return
+			if(error || connectedUsers.length == 0) return;
 
 			_(connectedUsers)
 				.filter(function(user) {
