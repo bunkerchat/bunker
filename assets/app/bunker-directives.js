@@ -70,7 +70,7 @@ app.directive('bunkerInput', function($window, user) {
 		}
 	};
 });
-app.directive('bunkerMessage', function ($compile, emoticons) {
+app.directive('bunkerMessage', function ($compile, $timeout, emoticons) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
 		scope: {
@@ -104,6 +104,15 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					}
 				});
 
+				// Parse twitter links
+				// TODO: improve regex to capture twitter url in a text block
+				var attachedTweet;
+				_.each(text.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/gi), function (link) {
+					if (!attachedTweet) {
+						attachedTweet = angular.element('<div bunker-message-tweet="' + link + '"></div>');
+					}
+				});
+
 				// Parse links
 				var attachedImage;
 				_.each(text.match(/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/gi), function (link) {
@@ -118,6 +127,16 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					}
 				});
 
+				// If we made an tweet, attach it now
+				if (attachedTweet) {
+					angular.element(elem).append(attachedTweet);
+					$compile(attachedTweet)(scope.$new());
+					$timeout(function () {
+						twttr.widgets.load();
+					}, 1);
+
+				}
+
 				// If we made an image, attach it now
 				if (attachedImage) {
 					angular.element(elem).append(attachedImage);
@@ -129,6 +148,19 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 		}
 	};
 });
+
+app.directive('bunkerMessageTweet', function () {
+	return {
+		templateUrl: '/assets/app/room/bunker-message-tweet.html',
+		scope: {
+			link: '@bunkerMessageTweet'
+		},
+		link: function (scope) {
+			scope.visible = true;
+		}
+	};
+});
+
 app.directive('bunkerMessageImage', function () {
 	return {
 		templateUrl: '/assets/app/room/bunker-message-image.html',
