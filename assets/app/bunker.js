@@ -1,10 +1,11 @@
 window.app = angular.module('bunker', [
-		'ngSanitize',
-		'sailsResource',
-		'ui.router',
-		'ui.gravatar',
-		'angularMoment'
-	])
+	'ngSanitize',
+	'sailsResource',
+	'ui.router',
+	'ui.gravatar',
+	'angularMoment',
+	'ngResource'
+])
 	.config(function ($stateProvider, $urlRouterProvider) {
 		$urlRouterProvider.otherwise('/');
 		$stateProvider
@@ -18,19 +19,24 @@ window.app = angular.module('bunker', [
 				templateUrl: '/assets/app/room/room.html',
 				controller: 'RoomController as room',
 				resolve: {
-					currentRoom: function($stateParams, rooms) {
+					currentRoom: function ($stateParams, rooms) {
 						// Angular UI router will complete this before creating the controller if a $promise is returned
 						var currentRoom = rooms($stateParams.roomId);
 						return currentRoom.$promise;
 					}
 				}
+			})
+			.state('roomHistory', {
+				url: '/rooms/{roomId}/history?date',
+				templateUrl: '/assets/app/room/roomHistory.html',
+				controller: 'RoomHistoryController as room'
 			});
 	})
 	.config(function ($compileProvider) {
 		// This is where we might customize the sanitize whitelist some day
 		// $compileProvider.imgSrcSanitizationWhitelist();
 	})
-	.config(function(gravatarServiceProvider) {
+	.config(function (gravatarServiceProvider) {
 		gravatarServiceProvider.defaults = {
 			'default': 'identicon'
 		};

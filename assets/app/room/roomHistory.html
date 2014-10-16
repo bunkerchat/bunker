@@ -1,0 +1,32 @@
+<div class="container-fluid">
+	<div ng-if="!room.rawMessages.$resolved">Loading...</div>
+	<div class="row">
+
+		<div class="col-md-10 col-xs-12 no-gutter">
+			<ol class="list-unstyled message-list">
+				<li class="message" ng-repeat="message in room.messages">
+					<div>
+						<div class="message-author">
+							<span ng-if="::message.$firstInSeries">
+								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
+								<div class="name">{{::message.author.nick}}</div>
+							</span>
+						</div>
+						<div class="message-caret" ng-if="::message.$firstInSeries"></div>
+						<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
+							<span bunker-message="{{message.text}}">
+							</span>
+							<span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
+								<small>{{::message.createdAt | date:'medium'}}</small>
+							</span>
+						</div>
+					</div>
+				</li>
+			</ol>
+		</div>
+
+		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
+			<input type="date" class="form-control" ng-model="room.date" ng-change="room.dateChanged">
+		</div>
+	</div>
+</div>

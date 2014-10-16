@@ -5,6 +5,8 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
+var moment = require('moment');
+
 // Create a new message, this will be the endpoint for POST /message
 module.exports.create = function (req, res) {
 	var author = req.session.user;
@@ -24,14 +26,14 @@ module.exports.create = function (req, res) {
 		var newNick = text.match(/\/nick\s+([\w\s-]{1,20})/i);
 		if (newNick) {
 
-			User.findOne(author.id).exec(function(error, user) { // find the user in the db (don't want to use session version)
+			User.findOne(author.id).exec(function (error, user) { // find the user in the db (don't want to use session version)
 				var currentNick = user.nick;
 				user.nick = newNick[1];
 				user.save() // save the model with the updated nick
-					.then(function() {
+					.then(function () {
 						RoomService.updateAllWithUser(user.id, currentNick + ' changed their handle to ' + user.nick);
 					})
-					.catch(function() {
+					.catch(function () {
 						// TODO error handling
 					});
 			});
@@ -77,3 +79,16 @@ function sanitizeMessage(original) {
 		allowedTags: []
 	});
 }
+
+module.exports.history = function (req, res) {
+	var roomId = req.param('roomId');
+	var startDate = req.param('startDate');
+	var endDate = req.param('endDate');
+
+	Message.find({room: roomId, createdAt: {'>': moment(startDate).toDate(), '<': moment(endDate).toDate()}})
+		.populate('author')
+		.exec(function (err, messages) {
+			if (err) return res.serverError(err);
+			res.ok(messages);
+		})
+};
