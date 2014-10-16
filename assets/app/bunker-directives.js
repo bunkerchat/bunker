@@ -105,9 +105,8 @@ app.directive('bunkerMessage', function ($compile, $timeout, emoticons) {
 				});
 
 				// Parse twitter links
-				// TODO: improve regex to capture twitter url in a text block
 				var attachedTweet;
-				_.each(text.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/gi), function (link) {
+				_.each(text.match(/([\w+]*)+https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)+([\w+]*)/gi), function (link) {
 					if (!attachedTweet) {
 						attachedTweet = angular.element('<div bunker-message-tweet="' + link + '"></div>');
 					}
