@@ -1,11 +1,13 @@
 <div class="container-fluid">
-	<div ng-if="!room.rawMessages.$resolved">Loading...</div>
 	<div class="row">
-
 		<div class="col-md-10 col-xs-12 no-gutter">
+			<h2 ng-if="!room.rawMessages.$resolved">Loading...</h2>
+
+			<h2 ng-if="room.rawMessages.$resolved && room.rawMessages.length == 0">No messages</h2>
 			<ol class="list-unstyled message-list">
 				<li class="message" ng-repeat="message in room.messages">
-					<div>
+					<div message-mention="{{room.userService.current.nick}}"
+							 message-mention-text="{{message.text}}">
 						<div class="message-author">
 							<span ng-if="::message.$firstInSeries">
 								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
@@ -26,7 +28,22 @@
 		</div>
 
 		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
-			<input type="date" class="form-control" ng-model="room.date" ng-change="room.dateChanged">
+			<ul class="list-group">
+				<li class="list-group-item"
+						ng-repeat="user in room.members | orderBy:'nick'">
+					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
+					{{user.nick}}
+				</li>
+			</ul>
+
+			<div class="room-options">
+				<a ng-click="room.subDay()" class="btn btn-primary">«</a>
+				<input type="date" class="form-control inline" ng-model="room.date">
+				<a ng-href ng-click="room.addDay()" class="btn btn-primary">»</a>
+				<a ui-sref="room({roomId: room.roomId})" class="btn btn-link">
+					Leave History
+				</a>
+			</div>
 		</div>
 	</div>
 </div>

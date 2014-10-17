@@ -1,44 +1,56 @@
-app.controller('RoomHistoryController', function ($scope, bunkerApi, $stateParams, $location) {
-	var room = this;
-	var roomId = $stateParams.roomId;
+app.controller('RoomHistoryController', function ($scope, bunkerApi, user, $stateParams, $state) {
+	var self = this;
+	this.roomId = $stateParams.roomId;
+	this.userService = user;
 
 	var startDate;
 	var endDate;
 
 	this.messages = [];
 	this.date; //need this for binding WHY?!!!!!!!!!!
+	this.members = {};
+
+	this.subDay = function () {
+		self.date = moment(self.date).add(-1,'days').toDate();
+	};
+
+	this.addDay = function () {
+		self.date = moment(self.date).add(1,'days').toDate();
+	};
 
 	// hack :-( ng-changed doesn't work
 	$scope.$watch('room.date', function (newVal, oldVal) {
 		if(!oldVal || newVal == oldVal) return;
 
-		setStartAndEnd(room.date);
+		setStartAndEnd(self.date);
 
 		// getMessages() will be triggered by this
-		$location.search({date: startDate});
+		//$location.search({date: startDate});
+		$state.go('roomHistory', {roomId: self.roomId, date: startDate});
 	});
 
 	setStartAndEnd($stateParams.date);
 	getMessages();
 
 	function getMessages(){
-		var query = { roomId: roomId, startDate: startDate, endDate: endDate};
-		room.rawMessages = bunkerApi.history.query(query, function (messages) {
+		var query = { roomId: self.roomId, startDate: startDate, endDate: endDate};
+		self.rawMessages = bunkerApi.history.query(query, function (messages) {
 			_(messages).each(function (message) {
 				addMessage(message);
+				self.members[message.author.id] = message.author;
 			});
 		});
 	}
 
 	function addMessage(message) {
-		var lastMessage = _.last(room.messages);
+		var lastMessage = _.last(self.messages);
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
-		room.messages.push(message);
+		self.messages.push(message);
 	}
 
 	function setStartAndEnd(date){
 		startDate = moment(date).format('YYYY-MM-DD');
 		endDate = moment(date).add(1, 'days').format('YYYY-MM-DD');
-		room.date = moment(date).toDate();
+		self.date = moment(date).toDate();
 	}
 });

@@ -8,8 +8,8 @@
 
 					<!-- standard message -->
 					<div ng-switch-when="true"
-						message-mention="{{room.userService.current.nick}}"
-						message-mention-text="{{message.text}}">
+							 message-mention="{{room.userService.current.nick}}"
+							 message-mention-text="{{message.text}}">
 						<div class="message-author">
 							<span ng-if="::message.$firstInSeries">
 								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
@@ -52,23 +52,30 @@
 					<span class="pull-right" status="user"></span>
 				</li>
 			</ul>
+
+			<div class="room-options">
+				<a href="#" ui-sref="roomHistory({roomId: room.current.id, date:room.now()})" class="btn btn-link">
+					History
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="message-input" ng-controller="InputController as input">
+		<div class="row">
+			<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
+				<div class="input-group">
+					<input type="text" class="form-control"
+								 ng-model="input.messageText"
+								 ng-keyup="input.keyUp($event)"
+								 ng-keydown="input.keyDown($event)"
+								 bunker-input="input.messageText"/>
+					<span class="input-group-btn">
+						<button type="submit" class="btn btn-success">Send</button>
+					</span>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
 
-<div class="container-fluid message-input" ng-controller="InputController as input">
-	<div class="row">
-		<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
-			<div class="input-group">
-				<input type="text" class="form-control"
-							 ng-model="input.messageText"
-							 ng-keyup="input.keyUp($event)"
-							 ng-keydown="input.keyDown($event)"
-							 bunker-input="input.messageText"/>
-					<span class="input-group-btn">
-						<button type="submit" class="btn btn-success">Send</button>
-					</span>
-			</div>
-		</form>
-	</div>
-</div>
