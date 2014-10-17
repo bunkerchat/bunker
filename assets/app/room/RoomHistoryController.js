@@ -1,7 +1,7 @@
-app.controller('RoomHistoryController', function ($scope, bunkerApi, user, $stateParams, $state) {
+app.controller('RoomHistoryController', function ($scope, bunkerApi, currentUser, $stateParams, $state) {
 	var self = this;
 	this.roomId = $stateParams.roomId;
-	this.userService = user;
+	this.currentUser = currentUser;
 
 	var startDate;
 	var endDate;
@@ -53,4 +53,18 @@ app.controller('RoomHistoryController', function ($scope, bunkerApi, user, $stat
 		endDate = moment(date).add(1, 'days').format('YYYY-MM-DD');
 		self.date = moment(date).toDate();
 	}
+
+	this.openCalendar = function($event) {
+		$event.preventDefault();
+		$event.stopPropagation();
+
+		self.calendarOpened = true;
+	};
+
+	this.dateOptions = {
+		formatYear: 'yy',
+		startingDay: 1
+	};
+
+	this.format = 'yyyy-MM-dd';
 });

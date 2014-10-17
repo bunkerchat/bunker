@@ -4,7 +4,8 @@ window.app = angular.module('bunker', [
 	'ui.router',
 	'ui.gravatar',
 	'angularMoment',
-	'ngResource'
+	'ngResource',
+	'ui.bootstrap'
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 		$urlRouterProvider.otherwise('/');
@@ -21,15 +22,19 @@ window.app = angular.module('bunker', [
 				resolve: {
 					currentRoom: function ($stateParams, rooms) {
 						// Angular UI router will complete this before creating the controller if a $promise is returned
-						var currentRoom = rooms($stateParams.roomId);
-						return currentRoom.$promise;
+						return rooms($stateParams.roomId).$promise;
 					}
 				}
 			})
 			.state('roomHistory', {
 				url: '/rooms/{roomId}/history?date',
 				templateUrl: '/assets/app/room/roomHistory.html',
-				controller: 'RoomHistoryController as room'
+				controller: 'RoomHistoryController as room',
+				resolve: {
+					currentUser: function (user) {
+						return user.current.$promise;
+					}
+				}
 			});
 	})
 	.config(function ($compileProvider) {

@@ -4,9 +4,9 @@
 			<h2 ng-if="!room.rawMessages.$resolved">Loading...</h2>
 
 			<h2 ng-if="room.rawMessages.$resolved && room.rawMessages.length == 0">No messages</h2>
-			<ol class="list-unstyled message-list">
+			<ol class="list-unstyled message-list" fill="{'marginBottom': 0}">
 				<li class="message" ng-repeat="message in room.messages">
-					<div message-mention="{{room.userService.current.nick}}"
+					<div message-mention="{{room.currentUser.nick}}"
 							 message-mention-text="{{message.text}}">
 						<div class="message-author">
 							<span ng-if="::message.$firstInSeries">
@@ -37,9 +37,16 @@
 			</ul>
 
 			<div class="room-options">
-				<a ng-click="room.subDay()" class="btn btn-primary">«</a>
-				<input type="date" class="form-control inline" ng-model="room.date">
-				<a ng-href ng-click="room.addDay()" class="btn btn-primary">»</a>
+				<p class="input-group date-picker-above">
+					<input class="form-control" ng-model="room.date"
+						datepicker-popup="{{room.format}}" is-open="room.calendarOpened"
+						close-text="Close"/>
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-primary" ng-click="room.openCalendar($event)"><i
+							class="glyphicon glyphicon-calendar"></i></button>
+					</span>
+				</p>
+
 				<a ui-sref="room({roomId: room.roomId})" class="btn btn-link">
 					Leave History
 				</a>

@@ -68,9 +68,11 @@ nav,
 	width: auto;
 	padding-top: 2px;
 }
+
 .float {
 	position: absolute;
 }
+
 .inline {
 	display: inline-block;
 	width: initial;
@@ -275,6 +277,17 @@ img.emoticon {
 .room-options {
 	position: fixed;
 	bottom: 0;
+}
+
+/*date picker*/
+
+.date-picker-above .dropdown-menu {
+	margin-top: -252px;
+	width: 272px;
+	right: 4px !important;
+	left: auto !important;
+	top: auto !important;
+	bottom: 50px;
 }
 
 /* mobile modifications */
