@@ -1,9 +1,8 @@
-app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, uuid, user, rooms) {
+app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, uuid, user) {
 	var self = this;
 	var roomId = $stateParams.roomId;
 
 	this.user = user.current;
-	this.roomsService = rooms;
 	this.messages = [];
 
 	bunkerApi.message.query({id: 'latest', roomId: roomId}, function (messages) {

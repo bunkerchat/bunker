@@ -18,18 +18,14 @@ module.exports.update = function (req, res) {
 	// I see no reason to allow other values to be updated from clients at this time.
 	User.update(req.param('id'), {present: req.param('present')}).exec(function (error, users) {
 		if (error || users.length != 1) return;
-		var user = users[0];
+		var user = users[0]; // only one possible
 
 		// Inform rooms of update to their members
-		Room.find().populate('members').exec(function (error, rooms) {
-			if (error) return;
-			_.each(rooms, function (room) {
-				if (_.any(room.members, {id: user.id})) {
-					Room.publishUpdate(room.id, room);
-				}
-			});
-		});
+		RoomService.updateAllWithUser(user.id);
 
-		res.ok(user);
+		// Populate the updated user and return as successful response
+		User.findOne(user.id).populateAll().exec(function(error, populatedUser) {
+			res.ok(populatedUser);
+		});
 	});
 };

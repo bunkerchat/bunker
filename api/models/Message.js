@@ -1,4 +1,5 @@
 module.exports = {
+	autoUpdatedAt: false,
 	attributes: {
 		room: {
 			model: 'Room'

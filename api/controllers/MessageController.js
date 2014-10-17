@@ -5,7 +5,7 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var uuid = require('node-uuid');
+var moment = require('moment');
 
 // Create a new message, this will be the endpoint for POST /message
 module.exports.create = function (req, res) {
@@ -26,23 +26,14 @@ module.exports.create = function (req, res) {
 		var newNick = text.match(/\/nick\s+([\w\s-]{1,20})/i);
 		if (newNick) {
 
-			User.findOne(author.id).exec(function(error, user) { // find the user in the db (don't want to use session version)
+			User.findOne(author.id).exec(function (error, user) { // find the user in the db (don't want to use session version)
 				var currentNick = user.nick;
 				user.nick = newNick[1];
 				user.save() // save the model with the updated nick
-					.then(function() {
-						// publish updates
-						Room.findOne(roomId).populate('members').exec(function (error, populatedRoom) {
-							Room.publishUpdate(populatedRoom.id, populatedRoom);
-							Room.message(roomId, {
-								id: uuid.v4(),
-								text: currentNick + ' changed their handle to ' + user.nick,
-								room: roomId,
-								createdAt: new Date().toISOString()
-							});
-						});
+					.then(function () {
+						RoomService.updateAllWithUser(user.id, currentNick + ' changed their handle to ' + user.nick);
 					})
-					.catch(function() {
+					.catch(function () {
 						// TODO error handling
 					});
 			});
@@ -68,7 +59,7 @@ module.exports.create = function (req, res) {
 	}
 };
 
-// Get the latest 50 messages, this will be the endpoint for
+// Get the latest 50 messages, this will be the endpoint for GET /message/latest
 module.exports.latest = function (req, res) {
 	var roomId = req.param('roomId');
 	var user = req.session.user;
@@ -88,3 +79,16 @@ function sanitizeMessage(original) {
 		allowedTags: []
 	});
 }
+
+module.exports.history = function (req, res) {
+	var roomId = req.param('roomId');
+	var startDate = req.param('startDate');
+	var endDate = req.param('endDate');
+
+	Message.find({room: roomId, createdAt: {'>': moment(startDate).toDate(), '<': moment(endDate).toDate()}})
+		.populate('author')
+		.exec(function (err, messages) {
+			if (err) return res.serverError(err);
+			res.ok(messages);
+		})
+};

@@ -16,6 +16,10 @@ module.exports = {
 			collection: 'Room',
 			via: 'members'
 		},
+		sockets: {
+			type: 'array',
+			defaultsTo: []
+		},
 		connected: {
 			type: 'boolean',
 			defaultsTo: false

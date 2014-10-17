@@ -31,8 +31,6 @@ module.exports.findOne = function (req, res) {
 				Room.subscribe(req, roomId, ['message', 'update']);
 				res.ok(populatedRoom);
 			});
-
-
 		});
 	});
 };
