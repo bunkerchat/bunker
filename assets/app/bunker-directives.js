@@ -82,10 +82,20 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					replacedEmotes = {},
 					replacedLinks = {};
 
+				// Parse bold
+				_.each(text.match(/(?:[^A-Za-z0-9]|^)(\*[A-Za-z0-9\s]+\*)(?:[^A-Za-z0-9]|$)/g), function (bold) {
+					formatted = formatted.replace(bold, '<strong>' + bold.replace(/\*/g, '') + '</strong>');
+				});
+
+				// Parse italics
+				_.each(text.match(/(?:[^A-Za-z0-9]|^)(_[A-Za-z0-9\s]+_)(?:[^A-Za-z0-9]|$)/g), function (italics) {
+					formatted = formatted.replace(italics, '<em>' + italics.replace(/_/g, '') + '</em>');
+				});
+
 				// Parse emoticons
 				_.each(text.match(/:\w+:/g), function (emoticonText) {
 					var knownEmoticon = _.find(emoticons.files, function (known) {
-						return known.replace(/.\w+$/, '') == emoticonText.replace(/:/g, '');
+						return new RegExp(known.replace(/\.\w{1,4}$/, '') + '$', 'i').test(emoticonText.replace(/:/g, ''));
 					});
 					if (knownEmoticon && !replacedEmotes[knownEmoticon]) {
 						formatted = formatted.replace(new RegExp(emoticonText, 'g'),
@@ -138,7 +148,7 @@ app.directive('messageMention', function() {
 			messageText: '@messageMentionText'
 		},
 		link: function(scope, elem) {
-			if(new RegExp(scope.userNick, 'i').test(scope.messageText)) {
+			if(new RegExp(scope.userNick + '(?:[^@\\w]|$)', 'i').test(scope.messageText)) {
 				elem.addClass('message-mention');
 			}
 		}
@@ -180,6 +190,21 @@ app.directive('unreadMessages', function ($rootScope, $window, user) {
 				el.text(newTitle.join(''));
 			}
 		});
+	};
+});
+
+// override the angular-bootstrap datepicker directive due to changes in angular 1.3
+app.directive('datepickerPopup', function (dateFilter, datepickerPopupConfig) {
+	return {
+		restrict: 'A',
+		priority: 1,
+		require: 'ngModel',
+		link: function(scope, element, attr, ngModel) {
+			var dateFormat = attr.datepickerPopup || datepickerPopupConfig.datepickerPopup;
+			ngModel.$formatters.push(function (value) {
+				return dateFilter(value, dateFormat);
+			});
+		}
 	};
 });
 

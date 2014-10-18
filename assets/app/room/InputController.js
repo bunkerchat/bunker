@@ -1,6 +1,9 @@
 app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
 
 	var messageEditWindowSeconds = 10;
+	var roomId = $stateParams.roomId;
+	var currentRoom = rooms(roomId);
+
 	var searchStates = {
 		NONE: 'none',
 		EMOTE: 'emote',
@@ -26,7 +29,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 		if (!this.messageText) return;
 
 		var toSave = new bunkerApi.message();
-		toSave.room = $stateParams.roomId;
+		toSave.room = roomId;
 		toSave.text = this.messageText;
 
 		var historicMessage = { text: this.messageText, createdAt: new Date()};
@@ -48,7 +51,6 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 				// todo: react appropriately
 			});
 		}
-
 		// Reset all the things
 		this.selectedMessageIndex = -1;
 		this.messageText = '';
@@ -85,7 +87,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 				this.messageText = this.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
 			}
 			else if (searchState === searchStates.NICK) {
-				var matchingNames = _.filter(rooms.current && rooms.current.members, function(item) {
+				var matchingNames = _.filter(currentRoom && currentRoom.members, function(item) {
 					return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
 				});
 

@@ -1,0 +1,56 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-10 col-xs-12 no-gutter">
+			<h2 ng-if="!room.rawMessages.$resolved">Loading...</h2>
+
+			<h2 ng-if="room.rawMessages.$resolved && room.rawMessages.length == 0">No messages</h2>
+			<ol class="list-unstyled message-list" fill="{'marginBottom': 0}">
+				<li class="message" ng-repeat="message in room.messages">
+					<div message-mention="{{room.currentUser.nick}}"
+							 message-mention-text="{{message.text}}">
+						<div class="message-author">
+							<span ng-if="::message.$firstInSeries">
+								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
+								<div class="name">{{::message.author.nick}}</div>
+							</span>
+						</div>
+						<div class="message-caret" ng-if="::message.$firstInSeries"></div>
+						<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
+							<span bunker-message="{{message.text}}">
+							</span>
+							<span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
+								<small>{{::message.createdAt | date:'medium'}}</small>
+							</span>
+						</div>
+					</div>
+				</li>
+			</ol>
+		</div>
+
+		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
+			<ul class="list-group">
+				<li class="list-group-item"
+						ng-repeat="user in room.members | orderBy:'nick'">
+					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
+					{{user.nick}}
+				</li>
+			</ul>
+
+			<div class="room-options">
+				<p class="input-group date-picker-above">
+					<input class="form-control" ng-model="room.date"
+						datepicker-popup="{{room.format}}" is-open="room.calendarOpened"
+						close-text="Close"/>
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-primary" ng-click="room.openCalendar($event)"><i
+							class="glyphicon glyphicon-calendar"></i></button>
+					</span>
+				</p>
+
+				<a ui-sref="room({roomId: room.roomId})" class="btn btn-link">
+					Leave History
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
