@@ -208,10 +208,6 @@ nav,
 	list-style: none;
 }
 
-.message-mention {
-	background-color: #faf2cc;
-}
-
 .message-mention > .message-body {
 	background-color: #faf2cc;
 }
