@@ -1,6 +1,6 @@
 app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
 
-	var messageEditWindowSeconds = 10;
+	var messageEditWindowSeconds = 15;
 	var roomId = $stateParams.roomId;
 	var currentRoom = rooms(roomId);
 
@@ -120,12 +120,14 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			}
 
 			var chosenMessage = this.submittedMessages[this.selectedMessageIndex];
+
+			this.messageText = chosenMessage.text;
+
 			var acceptableEditDate = new Date();
 			acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
 			if (chosenMessage.createdAt > acceptableEditDate) {
 				this.editMode = true;
 				previousText = chosenMessage.text;
-				this.messageText = chosenMessage.text;
 			}
 		}
 		else if (evt.keyCode != 9 && evt.keyCode != 16) {

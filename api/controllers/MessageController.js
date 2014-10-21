@@ -60,7 +60,7 @@ module.exports.create = function (req, res) {
 };
 
 module.exports.update = function (req, res) {
-	var messageEditWindowSeconds = 10;
+	var messageEditWindowSeconds = 15;
 
 	Message.findOne(req.body.id).exec(function (error, message) {
 		if (error) return;
