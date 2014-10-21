@@ -5,7 +5,7 @@
 			<ol class="list-unstyled message-list" fill="{'marginBottom': 45}" auto-scroll="{{log.messages.length}}">
 				<li class="message-container" ng-class="::{ local: message.author.id == log.user.id }"
 					ng-switch="::!!message.author"
-					ng-repeat="message in log.messages track by message.id">
+					ng-repeat="message in log.messages">
 					<div class="message">
 						<!-- standard message -->
 						<div ng-switch-when="true"
@@ -13,7 +13,7 @@
 							 message-mention-text="{{message.text}}">
 							<div class="message-author">
 							<span ng-if="::message.$firstInSeries">
-								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
+								<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
 								<div class="name">{{::message.author.nick}}</div>
 								<span status="room.memberLookup[message.author.id]"></span>
 							</span>
