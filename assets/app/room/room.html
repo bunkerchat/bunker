@@ -6,17 +6,6 @@
 				<li class="message-container" ng-class="::{ local: message.author.id == log.user.id }"
 					ng-switch="::!!message.author"
 					ng-repeat="message in log.messages track by message.id">
-					<div class="message-history-anchor">
-						<div class="message-history"
-							 ng-if="message.history && message.showHistory">
-							<div class="small">previous content:</div>
-							<ul>
-								<li ng-repeat="history in message.history.substring(1).split(',')">
-									{{::history}}
-								</li>
-							</ul>
-						</div>
-					</div>
 					<div class="message">
 						<!-- standard message -->
 						<div ng-switch-when="true"
@@ -29,25 +18,20 @@
 								<span status="room.memberLookup[message.author.id]"></span>
 							</span>
 							</div>
-							<div class="message-edit-indicator" title="view message history"
-								 ng-click="message.showHistory = !message.showHistory"
-								 ng-if="message.edited">&nbsp;</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body"
 								 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
-							<span bunker-message="{{message.text}}">
-							</span>
-							<span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
-								<small am-time-ago="message.createdAt"
-									   title="{{::message.createdAt | date:'medium'}}"></small>
-							</span>
+								<span bunker-message="{{message.text}}"></span>
+								<span class="message-info-container">
+									<span class="message-edit-indicator" title="view message history"
+										  ng-click="message.showHistory = !message.showHistory"
+										  ng-if="message.edited">&nbsp;</span>
+									<span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
+										<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}"></small>
+									</span>
+								</span>
 							</div>
 						</div>
-						</span>
-						<span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
-							<small am-time-ago="message.createdAt"
-								   title="{{::message.createdAt | date:'medium'}}"></small>
-						</span>
 					</div>
 					<!-- system message -->
 					<div class="new-message-body" ng-switch-default>
@@ -58,6 +42,17 @@
                                 <small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
 								</small>
                             </span>
+					</div>
+					<div class="message-history-anchor">
+						<div class="message-history"
+							 ng-if="message.history && message.showHistory">
+							<div class="small">previous content:</div>
+							<ul>
+								<li ng-repeat="history in message.history.substring(1).split(',')">
+									{{::history}}
+								</li>
+							</ul>
+						</div>
 					</div>
 				</li>
 			</ol>
