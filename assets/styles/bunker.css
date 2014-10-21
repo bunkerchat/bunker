@@ -193,8 +193,8 @@ nav,
 	background-color: white;
 	border: 1px black solid;
 	z-index: 100;
-	right: 5px;
-	margin-top: 6px;
+	right: 30px;
+	top: -86px;
 	padding: 8px;
 	box-shadow: #888 3px 5px 3px;
 }
