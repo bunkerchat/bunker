@@ -231,6 +231,10 @@ nav,
 	/* bottom: 0; */
 }
 
+.message-input.edit-mode input {
+	background-color: #e4dcfa;
+}
+
 .message-input input[type=text],
 .message-input button {
 	border-radius: 0;

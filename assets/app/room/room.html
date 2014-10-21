@@ -76,7 +76,7 @@
 		</div>
 	</div>
 
-	<div class="message-input" ng-controller="InputController as input">
+	<div class="message-input" ng-controller="InputController as input" ng-class="{'edit-mode' : input.editMode}">
 		<div class="row">
 			<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
 				<div class="input-group">
