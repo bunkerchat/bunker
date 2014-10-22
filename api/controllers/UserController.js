@@ -5,27 +5,45 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
+actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+
 // Get the current user, pulled out of session. This will respond for GET /user/current
 module.exports.current = function (req, res) {
 	User.findOne(req.session.user.id).populateAll().exec(function (error, user) {
+		if(error) return res.serverError(error);
+		if(!user) return res.notFound();
+
 		User.subscribe(req, user.id);
 		res.ok(user);
 	});
 };
+
+// Update a user
 module.exports.update = function (req, res) {
 
-	// Currently on allows the 'present' boolean to be updated via endpoint.
-	// I see no reason to allow other values to be updated from clients at this time.
-	User.update(req.param('id'), {present: req.param('present')}).exec(function (error, users) {
-		if (error || users.length != 1) return;
-		var user = users[0]; // only one possible
+	var pk = actionUtil.requirePk(req);
 
-		// Inform rooms of update to their members
-		RoomService.updateAllWithUser(user.id);
+	User.findOne(pk).populateAll().exec(function(error, user) {
+		if(error) return res.serverError(error);
+		if(!user) return res.notFound();
 
-		// Populate the updated user and return as successful response
-		User.findOne(user.id).populateAll().exec(function(error, populatedUser) {
-			res.ok(populatedUser);
-		});
+		if(user.id !== req.session.user.id) { // Only allow updates from current user
+			return res.forbidden('Not authorized to update this user');
+		}
+
+		// Only allow present and typingIn to be changed
+		if(req.param('present')) user.present = req.param('present');
+		user.typingIn = req.param('typingIn') || null;
+
+		user.save()
+			.then(function() {
+				RoomService.updateAllWithUser(user.id);
+			})
+			.catch(function(error) {
+				// TODO error handling
+			})
+			.finally(function() {
+				res.ok(user);
+			});
 	});
 };

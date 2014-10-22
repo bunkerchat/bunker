@@ -36,6 +36,7 @@ module.exports.sockets = {
 			if(!user.sockets) user.sockets = [];
 			user.sockets.push(socketId);
 			user.connected = true;
+			user.typingIn = null;
 			user.save().then(function () {
 				if(!previouslyConnected) {
 					RoomService.updateAllWithUser(user.id, user.nick + ' joined the room');

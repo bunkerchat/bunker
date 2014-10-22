@@ -27,7 +27,8 @@ module.exports = {
 		present: {
 			type: 'boolean',
 			defaultsTo: true
-		}
+		},
+		typingIn: 'string'
 	}
 };
 

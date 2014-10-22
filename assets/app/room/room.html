@@ -47,7 +47,14 @@
 			<ul class="list-group">
 				<li class="list-group-item"
 						ng-repeat="user in room.current.members | filter:{connected:true} | orderBy:'nick' track by user.id">
-					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
+					<span ng-switch="user.typingIn == room.current.id" class="user-icon">
+						<span ng-switch-when="true">
+							<i class="fa fa-ellipsis-h"></i>
+						</span>
+						<span ng-switch-when="false">
+							<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
+						</span>
+					</span>
 					{{user.nick}}
 					<span class="pull-right" status="user"></span>
 				</li>

@@ -1,4 +1,4 @@
-app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
+app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms, user) {
 
 	var roomId = $stateParams.roomId;
 	var currentRoom = rooms(roomId);
@@ -64,7 +64,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 				this.messageText = this.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
 			}
 			else if (searchState === searchStates.NICK) {
-				var matchingNames = _.filter(currentRoom && currentRoom.members, function(item) {
+				var matchingNames = _.filter(currentRoom && currentRoom.members, function (item) {
 					return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
 				});
 
@@ -112,6 +112,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			}
 			else {
 				searchState = searchStates.NONE;
+				user.broadcastTyping(roomId);
 			}
 		}
 	};
