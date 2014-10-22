@@ -17,25 +17,27 @@ module.exports.findOne = function (req, res) {
 		return res.forbidden('No active session/user');
 	}
 
-	Room.findOne(pk).exec(function (error, room) {
+	Room.findOne(pk).populate('members').exec(function (error, room) {
 		if (error) return res.serverError();
 		if (!room) return res.notFound();
 
-		// TODO don't add the user if they are already a member of the room, as this causes an error we have to ignore below
-		room.members.add(user.id);
-		room.save()
-			.catch(function () {
-			})
-			.finally(function () {
-				// repopulate and send update
-				Room.findOne(room.id).populate('members').exec(function (error, populatedRoom) {
-					Room.publishUpdate(populatedRoom.id, populatedRoom);
+		// Subscribe the socket to message and updates of this room
+		// Socket will now receive messages when a new message is created
+		Room.subscribe(req, pk, ['message', 'update']);
 
-					// Subscribe the socket to message and updates of this room
-					// Socket will now receive messages when a new message is created
-					Room.subscribe(req, pk, ['message', 'update']);
-					res.ok(populatedRoom);
+		// If user is not a member, add them and publish update
+		if(!_.any(room.members, {id: user.id})) {
+			room.members.add(user.id);
+			room.save(function() {
+				// Repopulate the room, with the new member, and publish a room update
+				Room.findOne(pk).populate('members').exec(function(error, room) {
+					Room.publishUpdate(room.id, room);
+					res.ok(room);
 				});
 			});
+		}
+		else {
+			res.ok(room);
+		}
 	});
 };
