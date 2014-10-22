@@ -1,4 +1,4 @@
-app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms, user) {
+app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
 
 	var roomId = $stateParams.roomId;
 	var currentRoom = rooms(roomId);
@@ -112,7 +112,6 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			}
 			else {
 				searchState = searchStates.NONE;
-				user.broadcastTyping(roomId);
 			}
 		}
 	};

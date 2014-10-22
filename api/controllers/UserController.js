@@ -23,27 +23,23 @@ module.exports.update = function (req, res) {
 
 	var pk = actionUtil.requirePk(req);
 
-	User.findOne(pk).populateAll().exec(function(error, user) {
+	if(pk !== req.session.user.id) { // Only allow updates from current user
+		return res.forbidden('Not authorized to update this user');
+	}
+
+	// Only allow updates for the following values
+	var updates = {
+		typingIn: req.param('typingIn'),
+		present: req.param('present') || undefined
+	};
+
+	User.update(pk, updates).exec(function(error, users) {
 		if(error) return res.serverError(error);
-		if(!user) return res.notFound();
+		if(users.length == 0) return res.notFound();
 
-		if(user.id !== req.session.user.id) { // Only allow updates from current user
-			return res.forbidden('Not authorized to update this user');
-		}
-
-		// Only allow present and typingIn to be changed
-		if(req.param('present')) user.present = req.param('present');
-		user.typingIn = req.param('typingIn');
-
-		user.save()
-			.then(function() {
-				RoomService.updateAllWithUser(user.id);
-			})
-			.catch(function(error) {
-				// TODO error handling
-			})
-			.finally(function() {
-				res.ok(user);
-			});
+		User.findOne(pk).populateAll().exec(function(error, user) {
+			RoomService.updateAllWithUser(user.id);
+			res.ok(user);
+		});
 	});
 };
