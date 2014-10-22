@@ -17,7 +17,8 @@ app.factory('user', function(bunkerApi, $timeout) {
 			if(user.typingIn) { // Only need to reset in 2 seconds if room is set
 				if (typingTimeout) $timeout.cancel(typingTimeout); // Cancel current timeout (if any)
 				typingTimeout = $timeout(function () {
-					user.$save({typingIn: null});
+					user.typingIn = null;
+					user.$save();
 					typingTimeout = null;
 				}, 2000);
 			}

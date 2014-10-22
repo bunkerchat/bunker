@@ -28,7 +28,10 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: true
 		},
-		typingIn: 'string'
+		typingIn: {
+			type: 'string',
+			defaultsTo: null
+		}
 	}
 };
 

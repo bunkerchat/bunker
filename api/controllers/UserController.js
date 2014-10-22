@@ -33,7 +33,7 @@ module.exports.update = function (req, res) {
 
 		// Only allow present and typingIn to be changed
 		if(req.param('present')) user.present = req.param('present');
-		user.typingIn = req.param('typingIn') || null;
+		user.typingIn = req.param('typingIn');
 
 		user.save()
 			.then(function() {
