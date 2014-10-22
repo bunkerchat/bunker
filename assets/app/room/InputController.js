@@ -32,9 +32,11 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 		toSave.room = roomId;
 		toSave.text = this.messageText;
 
-		var historicMessage = { text: this.messageText, createdAt: new Date()};
 
-		if (!this.editMode) {
+		var chosenMessage = this.selectedMessageIndex > -1 ?  this.submittedMessages[this.selectedMessageIndex] : {createdAt : undefined};
+		var historicMessage = { text: this.messageText, createdAt: Date.now(), history : ''};
+
+		if (!this.editMode || previousText == this.messageText || !datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
 			toSave.$save(function (result) {
 				historicMessage.id = result.id;
 			});
@@ -45,8 +47,9 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			this.submittedMessages[this.selectedMessageIndex].text = this.messageText;
 			toSave.id = this.submittedMessages[this.selectedMessageIndex].id;
 			toSave.edited = true;
-			toSave.history = toSave.history || '';
-			toSave.history += ',' + previousText;
+			toSave.history = chosenMessage.history || '';
+			toSave.history += (',' + previousText);
+			chosenMessage.history = toSave.history;
 			toSave.$save(function (result) {
 				// todo: react appropriately
 			});
@@ -120,17 +123,24 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			}
 
 			var chosenMessage = this.submittedMessages[this.selectedMessageIndex];
+			previousText = chosenMessage.text;
 
 			this.messageText = chosenMessage.text;
 
-			var acceptableEditDate = new Date();
-			acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
-			if (chosenMessage.createdAt > acceptableEditDate) {
+			if (datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
 				this.editMode = true;
-				previousText = chosenMessage.text;
+			} else {
+				this.editMode = false;
 			}
-		}
-		else if (evt.keyCode != 9 && evt.keyCode != 16) {
+		} else if (evt.keyCode == 27) { // 'escape'
+			// Reset all the things
+			this.selectedMessageIndex = -1;
+			this.messageText = '';
+			this.editMode = false;
+			previousText = undefined;
+			emoticonSearch = '';
+			emoticonSearchIndex = -1;
+		} else if (evt.keyCode != 9 && evt.keyCode != 16) {
 			if (/:\w+$/.test(this.messageText)) {
 				searchState = searchStates.EMOTE;
 				// if an emoticon is at the end of the message, start the search
@@ -147,4 +157,10 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			}
 		}
 	};
+
+	function datesWithinSeconds(date1, date2, seconds){
+		if (!date1 || ! date2) return false;
+		var elapsed = Math.abs(date1 - date2) / 1000;
+		return elapsed < seconds;
+	}
 });

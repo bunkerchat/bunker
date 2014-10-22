@@ -86,7 +86,7 @@
 						   ng-keydown="input.keyDown($event)"
 						   bunker-input="input.messageText"/>
 					<span class="input-group-btn">
-						<button type="submit" class="btn btn-success">Send</button>
+						<button type="submit" class="btn btn-success">{{input.editMode? 'EDIT' : 'SEND'}}</button>
 					</span>
 				</div>
 			</form>
