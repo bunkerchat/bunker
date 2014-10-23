@@ -39,7 +39,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 
 				// Parse links
 				var attachedImage;
-				_.each(text.match(/((http|https|ftp)\:\/\/)?(([\w-]{2,}\.[a-z]{2,})|((\d{1,3}\.){3}\d{1,3})|localhost)[^\s]*/gi), function (link) {
+				_.each(text.match(/((http|ftp|https):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?/gi), function (link) {
 					if (/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedImage) {
 						// Image link
 						attachedImage = angular.element('<div bunker-message-image="' + link + '"></div>');
