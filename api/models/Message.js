@@ -11,6 +11,16 @@ module.exports = {
 			type: 'string',
 			required: true,
 			minLength: 1
+		},
+		edited: {
+			type: 'boolean',
+			required: false,
+			defaultsTo: false
+		},
+		history: {
+			type: 'string',
+			required: false,
+			defaultsTo: ''
 		}
 	}
 };

@@ -13,8 +13,10 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 
 	// Handle incoming messages
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		if (resource.model == 'room' && resource.id == roomId) {
+		if (resource.model == 'room' && resource.id == roomId && !resource.data.edited) {
 			addMessage(resource.data);
+		} else {
+			editMessage(resource.data)
 		}
 	});
 
@@ -26,5 +28,17 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 		var lastMessage = _.last(self.messages);
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
 		self.messages.push(message);
+	}
+
+	function editMessage(message) {
+		// todo: learn underscore (I think)
+		for (var i = 0; i < self.messages.length; i++){
+			var currentMessage = self.messages[i];
+			if (currentMessage.id == message.id) {
+				currentMessage.text = message.text;
+				currentMessage.history = message.history;
+				currentMessage.edited = message.edited;
+			}
+		}
 	}
 });

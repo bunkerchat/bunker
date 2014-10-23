@@ -178,6 +178,42 @@ nav,
 	margin: 0;
 }
 
+.message-edit-indicator {
+	background: url('/assets/images/icons/Editing-Pencil-icon-black.png') center no-repeat;
+	display: inline-block;
+	width: 13px;
+}
+
+.message-history-anchor {
+	position: relative;
+}
+
+.message-history {
+	position: absolute;
+	background-color: white;
+	border: 1px black solid;
+	z-index: 100;
+	right: 30px;
+	top: -86px;
+	padding: 8px;
+	box-shadow: #888 3px 5px 3px;
+}
+
+.message-history ul {
+	padding: 0px;
+}
+
+.message-history li {
+	list-style: none;
+}
+
+.message-info-container {
+	position: absolute;
+	top: 0px;
+	right: 3px;
+	padding-right: 5px;
+}
+
 .message-mention > .message-body {
 	background-color: #faf2cc;
 }
@@ -187,10 +223,16 @@ nav,
 }
 
 .message-timestamp {
-	position: absolute;
-	top: 0;
-	right: 0;
-	padding-right: 5px;
+	/* Styles moved to .message-info-container */
+}
+
+.message-input {
+	/* position: fixed; */
+	/* bottom: 0; */
+}
+
+.message-input.edit-mode input {
+	background-color: #e4dcfa;
 }
 
 .message-input input[type=text],
