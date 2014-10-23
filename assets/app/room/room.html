@@ -22,11 +22,11 @@
 							<div class="message-body"
 								 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
 								<span bunker-message="{{message.text}}"></span>
-								<span class="message-info-container">
-									<span class="message-edit-indicator" title="view message history"
+								<span class="message-info text-muted">
+									<i class="fa fa-pencil" title="View message history"
 										  ng-click="message.showHistory = !message.showHistory"
-										  ng-if="message.edited">&nbsp;</span>
-									<span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
+										  ng-if="message.edited"></i>
+									<span class="timestamp" ng-if="::message.$firstInSeries">
 										<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}"></small>
 									</span>
 								</span>
@@ -38,15 +38,15 @@
 						<div class="alert alert-message text-muted">
 							{{::message.text}}
 						</div>
-                            <span class="message-timestamp text-muted">
-                                <small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
-								</small>
-                            </span>
+						<span class="message-info text-muted">
+							<small class="timestamp" am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
+							</small>
+						</span>
 					</div>
 					<div class="message-history-anchor">
 						<div class="message-history"
 							 ng-if="message.history && message.showHistory">
-							<div class="small">previous content:</div>
+							<div class="small">Previous content:</div>
 							<ul>
 								<li ng-repeat="history in message.history.substring(1).split(',')">
 									{{::history}}

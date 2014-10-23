@@ -1,6 +1,7 @@
 app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
 
-	var messageEditWindowSeconds = 15;
+	var self = this;
+	var messageEditWindowSeconds = 10;
 	var roomId = $stateParams.roomId;
 	var currentRoom = rooms(roomId);
 
@@ -22,43 +23,45 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 	this.submittedMessages = [];
 	this.selectedMessageIndex = -1;
 
-	var previousText = undefined;
+	var previousText = null;
 	this.editMode = false;
 
 	this.sendMessage = function () {
 		if (!this.messageText) return;
 
-		var toSave = new bunkerApi.message();
-		toSave.room = roomId;
-		toSave.text = this.messageText;
+		var newMessage = new bunkerApi.message({
+			room: roomId,
+			text: this.messageText
+		});
 
-
-		var chosenMessage = this.selectedMessageIndex > -1 ?  this.submittedMessages[this.selectedMessageIndex] : {createdAt : undefined};
+		var chosenMessage = this.selectedMessageIndex > -1 ?  this.submittedMessages[this.selectedMessageIndex] : {createdAt : null};
 		var historicMessage = { text: this.messageText, createdAt: Date.now(), history : ''};
 
-		if (!this.editMode || previousText == this.messageText || !datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
-			toSave.$save(function (result) {
+		if (!this.editMode ||
+			previousText == this.messageText ||
+			chosenMessage.edited ||
+			!datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
+			newMessage.$save(function (result) {
 				historicMessage.id = result.id;
 			});
 
 			// Save message for up/down keys to retrieve
 			this.submittedMessages.unshift(historicMessage);
 		} else {
-			this.submittedMessages[this.selectedMessageIndex].text = this.messageText;
-			toSave.id = this.submittedMessages[this.selectedMessageIndex].id;
-			toSave.edited = true;
-			toSave.history = chosenMessage.history || '';
-			toSave.history += (',' + previousText);
-			chosenMessage.history = toSave.history;
-			toSave.$save(function (result) {
-				// todo: react appropriately
-			});
+			self.submittedMessages[self.selectedMessageIndex].text = self.messageText;
+			newMessage.id = this.submittedMessages[this.selectedMessageIndex].id;
+			newMessage.edited = true;
+			newMessage.history = chosenMessage.history || '';
+			newMessage.history += (',' + previousText);
+			chosenMessage.history = newMessage.history;
+			chosenMessage.edited = true;
+			newMessage.$save();
 		}
 		// Reset all the things
 		this.selectedMessageIndex = -1;
 		this.messageText = '';
 		this.editMode = false;
-		previousText = undefined;
+		previousText = null;
 		emoticonSearch = '';
 		emoticonSearchIndex = -1;
 	};
@@ -137,7 +140,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			this.selectedMessageIndex = -1;
 			this.messageText = '';
 			this.editMode = false;
-			previousText = undefined;
+			previousText = null;
 			emoticonSearch = '';
 			emoticonSearchIndex = -1;
 		} else if (evt.keyCode != 9 && evt.keyCode != 16) {

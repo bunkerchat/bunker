@@ -161,7 +161,7 @@ nav,
 	min-height: 30px;
 	margin-left: 180px;
 	padding-left: 10px;
-	padding-right: 100px;
+	padding-right: 150px;
 	background: #fff;
 }
 
@@ -178,11 +178,7 @@ nav,
 	margin: 0;
 }
 
-.message-edit-indicator {
-	background: url('/assets/images/icons/Editing-Pencil-icon-black.png') center no-repeat;
-	display: inline-block;
-	width: 13px;
-}
+/* message history */
 
 .message-history-anchor {
 	position: relative;
@@ -207,11 +203,15 @@ nav,
 	list-style: none;
 }
 
-.message-info-container {
+.message-info {
 	position: absolute;
 	top: 0px;
 	right: 3px;
 	padding-right: 5px;
+}
+
+.message-info .timestamp {
+    margin-left: 5px;
 }
 
 .message-mention > .message-body {
@@ -220,15 +220,6 @@ nav,
 
 .message-mention > .message-caret {
 	border-right-color: #faf2cc;
-}
-
-.message-timestamp {
-	/* Styles moved to .message-info-container */
-}
-
-.message-input {
-	/* position: fixed; */
-	/* bottom: 0; */
 }
 
 .message-input.edit-mode input {
@@ -256,7 +247,7 @@ nav,
 
 .alert-message {
 	margin: 0;
-	padding: 0 7px;
+	padding: 7px;
 	border-radius: 0;
 	background-color: #fff;
 	font-size: 12px;
