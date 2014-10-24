@@ -33,14 +33,19 @@ module.exports.sockets = {
 
 			var previouslyConnected = user.connected;
 
-			if(!user.sockets) user.sockets = [];
+			if (!user.sockets) user.sockets = [];
 			user.sockets.push(socketId);
 			user.connected = true;
-			user.save().then(function () {
-				if(!previouslyConnected) {
-					RoomService.updateAllWithUser(user.id, user.nick + ' joined the room');
-				}
-			});
+			user.typingIn = null;
+			user.save()
+				.then(function () {
+					if (!previouslyConnected) {
+						RoomService.updateAllWithUser(user.id, user.nick + ' joined the room');
+					}
+				})
+				.catch(function () {
+					// TODO error handling
+				});
 		});
 	},
 
@@ -57,21 +62,25 @@ module.exports.sockets = {
 
 		console.log('disconnecting ' + socketId);
 
-		User.find().where({connected: true}).exec(function(error, connectedUsers) {
-			if(error || connectedUsers.length == 0) return;
+		User.find().where({connected: true}).exec(function (error, connectedUsers) {
+			if (error || connectedUsers.length == 0) return;
 
 			_(connectedUsers)
-				.filter(function(user) {
+				.filter(function (user) {
 					return _.contains(user.sockets, socketId);
 				})
-				.each(function(user) {
+				.each(function (user) {
 					user.sockets = _.without(user.sockets, socketId);
 					user.connected = user.sockets.length > 0;
-					user.save().then(function() {
-						if(!user.connected) {
-							RoomService.updateAllWithUser(user.id, user.nick + ' left the room');
-						}
-					});
+					user.save()
+						.then(function () {
+							if (!user.connected) {
+								RoomService.updateAllWithUser(user.id, user.nick + ' left the room');
+							}
+						})
+						.catch(function () {
+							// TODO error handling
+						});
 				});
 		});
 	},

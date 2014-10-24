@@ -1,4 +1,4 @@
-app.controller('RoomController', function (user, currentRoom) {
+app.controller('RoomController', function ($scope, user, currentRoom) {
 	var self = this;
 	this.userService = user;
 	this.current = currentRoom;
@@ -7,11 +7,8 @@ app.controller('RoomController', function (user, currentRoom) {
 		return moment().format('YYYY-MM-DD');
 	};
 
-	// Create lookup table
-	// TODO get Jason to document how this works
-	Object.defineProperty(self, 'memberLookup', {
-		get: _.throttle(function () {
-			return self.current ? _.indexBy(self.current.members, 'id') : {};
-		}, 250)
+	$scope.$watch('room.current.members', function (newVal, oldVal) {
+		if(!oldVal) return;
+		self.memberLookup = _.indexBy(self.current.members, 'id');
 	});
 });

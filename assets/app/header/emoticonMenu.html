@@ -1,8 +1,8 @@
-<ol class="col-md-6 list-unstyled" ng-repeat="list in emoticonMenuLists">
-	<li ng-repeat="emoticon in list">
+<ol class="col-md-6 list-unstyled" ng-repeat="list in ::emoticonMenuLists">
+	<li ng-repeat="emoticon in ::list">
 		<a ng-click="appendEmoticonToChat(emoticon)">
-			<img class="emoticon" ng-src="/assets/images/emoticons/{{emoticon}}"/>
-			:{{emoticon|emoticonName}}:
+			<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon}}"/>
+			:{{::emoticon|emoticonName}}:
 		</a>
 	</li>
 </ol>

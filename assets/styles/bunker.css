@@ -75,7 +75,7 @@ nav,
 
 .inline {
 	display: inline-block;
-	width: initial;
+	width: auto;
 }
 
 /* emoticon */
@@ -161,7 +161,7 @@ nav,
 	min-height: 30px;
 	margin-left: 180px;
 	padding-left: 10px;
-	padding-right: 100px;
+	padding-right: 150px;
 	background: #fff;
 }
 
@@ -178,6 +178,42 @@ nav,
 	margin: 0;
 }
 
+/* message history */
+
+.message-history-anchor {
+	position: relative;
+}
+
+.message-history {
+	position: absolute;
+	background-color: white;
+	border: 1px black solid;
+	z-index: 100;
+	right: 30px;
+	top: -86px;
+	padding: 8px;
+	box-shadow: #888 3px 5px 3px;
+}
+
+.message-history ul {
+	padding: 0px;
+}
+
+.message-history li {
+	list-style: none;
+}
+
+.message-info {
+	position: absolute;
+	top: 0px;
+	right: 3px;
+	padding-right: 5px;
+}
+
+.message-info .timestamp {
+    margin-left: 5px;
+}
+
 .message-mention > .message-body {
 	background-color: #faf2cc;
 }
@@ -186,16 +222,8 @@ nav,
 	border-right-color: #faf2cc;
 }
 
-.message-timestamp {
-	position: absolute;
-	top: 0;
-	right: 0;
-	padding-right: 5px;
-}
-
-.message-input {
-	/* position: fixed; */
-	/* bottom: 0; */
+.message-input.edit-mode input {
+	background-color: #e4dcfa;
 }
 
 .message-input input[type=text],
@@ -219,7 +247,7 @@ nav,
 
 .alert-message {
 	margin: 0;
-	padding: 0 7px;
+	padding: 7px;
 	border-radius: 0;
 	background-color: #fff;
 	font-size: 12px;
@@ -235,11 +263,26 @@ img.emoticon {
 	border-radius: 0;
 	border-left: 0;
 	border-right: 0;
+    padding: 12px;
 }
 
 .member-list li.list-group-item:first-of-type {
 	border-top: none;
 }
+
+.member-list .user-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    text-align: center;
+}
+
+.member-list .status.pull-right {
+    margin-top: 8px;
+}
+
+/* status */
 
 [status] {
 	width: 6px;
@@ -268,10 +311,6 @@ img.emoticon {
 	background-image: -ms-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
 	background-image: linear-gradient(to bottom, #FFFF00 0%, #D4D400 100%);
 	box-shadow: 0px 0px 2px #D4D400;
-}
-
-.member-list .status.pull-right {
-	margin-top: 8px;
 }
 
 .room-options {

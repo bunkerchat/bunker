@@ -40,12 +40,20 @@ app.directive('autoScroll', function ($timeout) {
 			});
 		}};
 });
-app.directive('bunkerInput', function($window, user) {
+
+// Directive to handle outside influences on the input/chat box
+// Currently handles 3 functions:
+// 1. updating the text in the box when an event (inputText) is broadcast
+// 2. informing the user service if the text changes, so it can broadcast typing to other connected users
+// 3. updating the user when the window is blurred/focused
+app.directive('bunkerInput', function($stateParams, $window, user) {
 	return {
 		scope: {
 			text: '=bunkerInput'
 		},
 		link: function(scope, elem) {
+
+			// Change the text if commanded to do so
 			scope.$on('inputText', function(evt, text) {
 				var append = scope.text.length ? ' ' : ''; // start with a space if message already started
 				append += text + ' ';
@@ -53,7 +61,13 @@ app.directive('bunkerInput', function($window, user) {
 				angular.element(elem).focus();
 			});
 
-			// Handle user away notification
+			// Broadcast typing when the text changes
+			scope.$watch('text', function(value, oldValue) {
+				if(!value || !oldValue || value == oldValue) return;
+				user.broadcastTyping($stateParams.roomId);
+			});
+
+			// Handle user away notification on window focus/blur
 			var win = angular.element($window);
 			win.bind('focus', function () {
 				scope.$apply(function() {
@@ -67,76 +81,6 @@ app.directive('bunkerInput', function($window, user) {
 					user.current.$save();
 				});
 			});
-		}
-	};
-});
-app.directive('bunkerMessage', function ($compile, emoticons) {
-	return {
-		template: '<span ng-bind-html="formatted"></span>',
-		scope: {
-			text: '@bunkerMessage'
-		},
-		link: function (scope, elem) {
-			scope.$watch('text', function (text) {
-				var formatted = text,
-					replacedEmotes = {},
-					replacedLinks = {};
-
-				// Parse bold
-				_.each(text.match(/(?:[^A-Za-z0-9]|^)(\*[A-Za-z0-9\s]+\*)(?:[^A-Za-z0-9]|$)/g), function (bold) {
-					formatted = formatted.replace(bold, '<strong>' + bold.replace(/\*/g, '') + '</strong>');
-				});
-
-				// Parse italics
-				_.each(text.match(/(?:[^A-Za-z0-9]|^)(_[A-Za-z0-9\s]+_)(?:[^A-Za-z0-9]|$)/g), function (italics) {
-					formatted = formatted.replace(italics, '<em>' + italics.replace(/_/g, '') + '</em>');
-				});
-
-				// Parse emoticons
-				_.each(text.match(/:\w+:/g), function (emoticonText) {
-					var knownEmoticon = _.find(emoticons.files, function (known) {
-						return new RegExp(known.replace(/\.\w{1,4}$/, '') + '$', 'i').test(emoticonText.replace(/:/g, ''));
-					});
-					if (knownEmoticon && !replacedEmotes[knownEmoticon]) {
-						formatted = formatted.replace(new RegExp(emoticonText, 'g'),
-								'<img class="emoticon" title="' + emoticonText + '" src="/assets/images/emoticons/' + knownEmoticon + '"/>');
-						replacedEmotes[knownEmoticon] = true;
-					}
-				});
-
-				// Parse links
-				var attachedImage;
-				_.each(text.match(/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/gi), function (link) {
-					if (/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedImage) {
-						// Image link
-						attachedImage = angular.element('<div bunker-message-image="' + link + '"></div>');
-					}
-
-					if (!replacedLinks[link]) {
-						formatted = formatted.replace(new RegExp(link, 'g'), '<a href="' + link + '" target="_blank">' + link + '</a>');
-						replacedLinks[link] = true;
-					}
-				});
-
-				// If we made an image, attach it now
-				if (attachedImage) {
-					angular.element(elem).append(attachedImage);
-					$compile(attachedImage)(scope.$new());
-				}
-
-				scope.formatted = formatted;
-			});
-		}
-	};
-});
-app.directive('bunkerMessageImage', function () {
-	return {
-		templateUrl: '/assets/app/room/bunker-message-image.html',
-		scope: {
-			link: '@bunkerMessageImage'
-		},
-		link: function (scope) {
-			scope.visible = true;
 		}
 	};
 });

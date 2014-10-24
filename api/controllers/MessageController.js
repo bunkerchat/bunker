@@ -59,6 +59,27 @@ module.exports.create = function (req, res) {
 	}
 };
 
+module.exports.update = function (req, res) {
+	var messageEditWindowSeconds = 15;
+
+	Message.findOne(req.body.id).exec(function (error, message) {
+		if (error) return;
+		var acceptableEditDate = new Date();
+		acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
+		if (message.createdAt < acceptableEditDate) {
+			return;
+		}
+		Message.update({id: req.body.id}, req.body).exec(function () {
+
+			// message all subscribers of the room that with the new message as data
+			// this message is flagged with 'edited' so the client will know to perform an edit
+			Room.message(req.body.room, req.body);
+
+			res.ok(req.body);
+		});
+	});
+};
+
 // Get the latest 50 messages, this will be the endpoint for GET /message/latest
 module.exports.latest = function (req, res) {
 	var roomId = req.param('roomId');
