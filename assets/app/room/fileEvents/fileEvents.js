@@ -1,30 +1,36 @@
 angular
 	.module('fileEvents', [])
 
-	.factory('imageUpload', function ($http) {
+	.factory('imageUpload', function ($http, $q) {
 
 		return {
-			doUpload: function (base64ImageData, progress) {
+			doSingleImageUpload: function (base64ImageData, progress) {
 
-				var xmlHttpRequest = new XMLHttpRequest();
-				xmlHttpRequest.open('POST', 'https://api.imgur.com/3/image');
+				return $q(function(resolve, reject) {
+					var xmlHttpRequest = new XMLHttpRequest();
+					xmlHttpRequest.open('POST', 'https://api.imgur.com/3/image');
 
-				xmlHttpRequest.setRequestHeader('Authorization', 'Client-ID ' + 'f9b49a92d8ec31b');
-				xmlHttpRequest.setRequestHeader('Accept', 'application/json');
+					xmlHttpRequest.setRequestHeader('Authorization', 'Client-ID ' + 'f9b49a92d8ec31b');
+					xmlHttpRequest.setRequestHeader('Accept', 'application/json');
 
-				xmlHttpRequest.onload = function (e) {
-					$('#finalImage').val(JSON.parse(e.target.responseText).data.link);
-				};
+					xmlHttpRequest.onload = function (e) {
+						// right now just resolving the image link... might need to send more.
+						resolve(JSON.parse(e.target.responseText).data.link);
+					};
 
-				xmlHttpRequest.onerror = function (e) {
-					debugger;
-				};
+					xmlHttpRequest.onerror = reject;
 
-				var formData = new FormData();
-				formData.append('type', 'base64');
-				formData.append('image', base64ImageData);
+					if (xmlHttpRequest.upload && progress) {
+						xmlHttpRequest.upload.addEventListener('progress', progress, false);
+					}
 
-				xmlHttpRequest.send(formData);
+					var formData = new FormData();
+					formData.append('type', 'base64');
+					formData.append('image', base64ImageData);
+
+					xmlHttpRequest.send(formData);
+				});
+
 
 				// jQuery codes
 				//
@@ -55,5 +61,54 @@ angular
 			}
 		};
 
+	})
+
+	.directive('dropzone', function($document, imageUpload) {
+		return {
+			restrict: 'A',
+			link: function(scope, element) {
+				element
+					.on('dragover', function(e) {
+						e.preventDefault();
+					})
+					.on('dragbetterenter', function(e) {
+						$(this).addClass('dragover');
+					})
+					.on('dragbetterleave', function(e) {
+						$(this).removeClass('dragover');
+					})
+					.on('drop', function(e) {
+						e.preventDefault();
+
+						// TODO: open modal to do upload.
+						// TODO: send final URL to message directive.
+
+						var files = e.originalEvent.dataTransfer.files,
+							file = files.length ? files[0] : null;
+
+						if (!file) { return; }
+
+						var fileReader = new FileReader();
+
+						fileReader.onload = function(event) {
+							var finalImg = event.target.result.split(',')[1];
+
+							imageUpload.doSingleImageUpload(finalImg);
+						};
+
+						fileReader.readAsDataURL(file);
+					});
+
+
+				// we listen on doc element also to swallow "missed" drops.
+				$document
+					.on('dragover', function(e) {
+						e.preventDefault();
+					})
+					.on('drop', function(e) {
+						e.preventDefault();
+					});
+			}
+		};
 	});
 
