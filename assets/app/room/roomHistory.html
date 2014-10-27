@@ -16,11 +16,15 @@
 						</div>
 						<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 						<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
-							<span bunker-message="{{::message.text}}">
-							</span>
-							<span ng-if="::message.$firstInSeries" class="message-timestamp text-muted">
-								<small>{{::message.createdAt | date:'medium'}}</small>
-							</span>
+							<span bunker-message="{{::message.text}}"></span>
+							<span class="message-info text-muted">
+									<i class="fa fa-pencil" title="View message history"
+										 ng-click="message.showHistory = !message.showHistory"
+										 ng-if="::message.edited"></i>
+									<span class="timestamp" ng-if="::message.$firstInSeries">
+										<small>{{::message.createdAt | date:'medium'}}</small>
+									</span>
+								</span>
 						</div>
 					</div>
 				</li>
@@ -39,8 +43,8 @@
 			<div class="room-options">
 				<p class="input-group date-picker-above">
 					<input class="form-control" ng-model="room.date"
-						datepicker-popup="{{::room.format}}" is-open="room.calendarOpened"
-						close-text="Close"/>
+								 datepicker-popup="{{::room.format}}" is-open="room.calendarOpened"
+								 close-text="Close"/>
 					<span class="input-group-btn">
 						<button type="button" class="btn btn-primary" ng-click="room.openCalendar($event)"><i
 							class="glyphicon glyphicon-calendar"></i></button>
