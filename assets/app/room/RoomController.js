@@ -11,4 +11,13 @@ app.controller('RoomController', function ($scope, user, currentRoom) {
 		if(!oldVal) return;
 		self.memberLookup = _.indexBy(self.current.members, 'id');
 	});
+
+	$scope.$on('$sailsResourceUpdated', function(evt, resource) {
+		if(resource.model == 'user') {
+			var member = self.memberLookup[resource.id];
+			if(member) {
+				angular.extend(member, resource.data);
+			}
+		}
+	});
 });
