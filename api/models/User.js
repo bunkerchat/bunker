@@ -1,3 +1,5 @@
+/* global module */
+
 module.exports = {
 	attributes: {
 		token: {
@@ -31,6 +33,9 @@ module.exports = {
 		typingIn: {
 			type: 'string',
 			defaultsTo: null
+		},
+		settings: {
+			model: 'UserSettings'
 		}
 	}
 };

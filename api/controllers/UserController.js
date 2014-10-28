@@ -5,6 +5,8 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
+'use strict';
+
 actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
 // Get the current user, pulled out of session. This will respond for GET /user/current

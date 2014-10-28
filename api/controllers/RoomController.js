@@ -1,9 +1,13 @@
+/* global User, Room, _, actionUtil, require */
+
 /**
  * RoomController
  *
  * @description :: Server-side logic for managing rooms
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
+
+'use strict';
 
 actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
@@ -25,7 +29,7 @@ module.exports.findOne = function (req, res) {
 		// Socket will now receive messages when a new message is created
 		Room.subscribe(req, pk, ['message', 'update']);
 		_.each(room.members, function(member) {
-			User.subscribe(req, member.id, ['update']); // Subscribe to member updates
+			User.subscribe(req, member.id, ['message', 'update']); // Subscribe to member updates
 		});
 
 		// If user is not a member, add them and publish update
