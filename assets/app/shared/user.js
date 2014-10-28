@@ -15,14 +15,14 @@ app.factory('user', function(bunkerApi, $http, $timeout) {
 
 			if(user.typingIn != roomId) { // Only need to do anything if it's not already set
 				user.typingIn = roomId;
-				$http.put(presentUrl, {typingIn: roomId});
+				$http.put(presentUrl, {typingIn: roomId, present: user.present});
 			}
 
 			if(user.typingIn) { // Only need to reset in 2 seconds if room is set
 				if (typingTimeout) $timeout.cancel(typingTimeout); // Cancel current timeout (if any)
 				typingTimeout = $timeout(function () {
 					user.typingIn = null;
-					$http.put(presentUrl, {typingIn: null});
+					$http.put(presentUrl, {typingIn: null, present: user.present});
 					typingTimeout = null;
 				}, 2000);
 			}
