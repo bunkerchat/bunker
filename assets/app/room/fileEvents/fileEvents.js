@@ -1,5 +1,5 @@
 angular
-	.module('fileEvents', [])
+	.module('fileEvents', ['ui.bootstrap'])
 
 	.factory('imageUpload', function ($http, $q) {
 
@@ -63,10 +63,36 @@ angular
 
 	})
 
-	.directive('dropzone', function($document, imageUpload) {
+	.controller('ImageUpload', function(imageUpload, imageFile, $modalInstance) {
+
+		// start loading the image file immediately.
+		var fileReader = new FileReader(),
+			self = this;
+
+		self.imageAsDataUri = null;
+
+		fileReader.onload = function(event) {
+			self.imageAsDataUri = event.target.result;
+		};
+
+		fileReader.readAsDataURL(imageFile);
+
+		// TODO: cancel upload, do image preview, display loading indicator as image is uploading
+		// TODO: do something about errors, css/formatting for modal, notify caller of image URL.
+		this.doUpload = function() {
+			imageUpload.doSingleImageUpload(self.imageAsDataUri.split(',')[1]);
+		};
+	})
+
+	.directive('bunkerDropzone', function($document, imageUpload, $modal) {
 		return {
 			restrict: 'A',
 			link: function(scope, element) {
+
+				/* There's gotta be a better way to do this */
+				element
+					.append('<div id="bunkerDropzoneOverlay">drop images here!</div>');
+
 				element
 					.on('dragover', function(e) {
 						e.preventDefault();
@@ -80,23 +106,25 @@ angular
 					.on('drop', function(e) {
 						e.preventDefault();
 
-						// TODO: open modal to do upload.
-						// TODO: send final URL to message directive.
 
 						var files = e.originalEvent.dataTransfer.files,
 							file = files.length ? files[0] : null;
 
-						if (!file) { return; }
+						if (!file) {return;}
 
-						var fileReader = new FileReader();
+						$modal.open({
+							templateUrl: '/assets/app/room/fileEvents/imageUpload.html',
+							controller: 'ImageUpload as imageUpload',
+							resolve: {
+								imageFile: function() {
+									return file;
+								}
+							}
+						});
 
-						fileReader.onload = function(event) {
-							var finalImg = event.target.result.split(',')[1];
+						// TODO: send final URL to message directive.
 
-							imageUpload.doSingleImageUpload(finalImg);
-						};
 
-						fileReader.readAsDataURL(file);
 					});
 
 

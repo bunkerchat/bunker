@@ -5,7 +5,8 @@ window.app = angular.module('bunker', [
 	'ui.gravatar',
 	'angularMoment',
 	'ngResource',
-	'ui.bootstrap'
+	'ui.bootstrap',
+	'fileEvents'
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 		$urlRouterProvider.otherwise('/');
