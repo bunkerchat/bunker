@@ -37,6 +37,11 @@ module.exports.policies = {
 		'current': 'isLoggedIn',
 		'update': 'isLoggedIn'
 	},
+	UserSettingsController: {
+		'*': false,
+		'update': ['isLoggedIn', 'isCurrentUserSetting'],
+		'current': 'isLoggedIn'
+	},
 	RoomController: {
 		'*': false,
 		'find': 'isLoggedIn',
@@ -48,7 +53,7 @@ module.exports.policies = {
 		'latest': 'isLoggedIn',
 		'create': 'isLoggedIn',
 		'update': 'isLoggedIn'
-	}
+	},
 
 	/***************************************************************************
 	 *                                                                          *

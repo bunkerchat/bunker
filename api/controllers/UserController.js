@@ -11,7 +11,6 @@ var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUt
 
 // Get the current user, pulled out of session. This will respond for GET /user/current
 module.exports.current = function (req, res) {
-
 	var sessionUser = req.session.user;
 	sessionUser.lastActivity = new Date().toISOString();
 
