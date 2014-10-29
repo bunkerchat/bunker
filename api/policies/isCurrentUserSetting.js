@@ -2,8 +2,12 @@ var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUt
 
 module.exports = function (req, res, next) {
 	var pk = actionUtil.requirePk(req);
-	if (pk !== req.session.user.settings) { // Only allow updates from current user
-		return res.forbidden('Not authorized to update this user setting');
-	}
-	next();
+
+	User.findOne(req.session.user.id).exec(function (err, user) {
+		if (pk !== user.settings) { // Only allow updates from current user
+			return res.forbidden('Not authorized to update this user setting');
+		}
+		next();
+	});
+
 };

@@ -274,6 +274,10 @@ img.emoticon {
 	border-top: none;
 }
 
+.member-list li.list-group-item a {
+	color: #3e3f3a;
+}
+
 .member-list .user-icon {
     display: inline-block;
     width: 20px;
@@ -285,6 +289,8 @@ img.emoticon {
 .member-list .status.pull-right {
     margin-top: 8px;
 }
+
+
 
 /* status */
 
