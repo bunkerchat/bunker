@@ -1,7 +1,7 @@
-<div class="container-fluid">
+<div class="container-fluid" bunker-dropzone>
 	<div class="row">
 
-		<div class="col-md-10 col-xs-12 no-gutter" ng-controller="MessageLogController as log" bunker-dropzone>
+		<div class="col-md-10 col-xs-12 no-gutter" ng-controller="MessageLogController as log">
 			<ol class="list-unstyled message-list" fill="{'marginBottom': 45}" auto-scroll="{{log.messages.length}}">
 				<li class="message-container"
 					ng-switch="::!!message.author"

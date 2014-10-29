@@ -58,19 +58,26 @@ nav,
 	padding-right: 0;
 }
 
-.dragover #bunkerDropzoneOverlay {
+.dragover #bunker-dropzone-overlay {
     display: block;
 }
 
-#bunkerDropzoneOverlay {
+#bunker-dropzone-overlay {
     display: none;
     position: absolute;
-    top: 0;
+    top: 40px;
     bottom: 0;
     right: 0;
     left: 0;
     z-index: 99;
     /*background: red;*/
+}
+
+.image-upload > img {
+    display: block;
+    margin: auto;
+    max-width: 100%;
+    max-height: 550px;
 }
 
 .col-center {

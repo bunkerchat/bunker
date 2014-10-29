@@ -63,7 +63,7 @@ angular
 
 	})
 
-	.controller('ImageUpload', function(imageUpload, imageFile, $modalInstance) {
+	.controller('ImageUpload', function($scope, imageUpload, imageFile, $modalInstance) {
 
 		// start loading the image file immediately.
 		var fileReader = new FileReader(),
@@ -73,15 +73,21 @@ angular
 
 		fileReader.onload = function(event) {
 			self.imageAsDataUri = event.target.result;
+			$scope.$apply(); // do this b/c the filereader onload doesn't.
 		};
 
 		fileReader.readAsDataURL(imageFile);
 
-		// TODO: cancel upload, do image preview, display loading indicator as image is uploading
+		// TODO: Restrict to 3 or 4 MB: imageFile.size < 4 * 1024 * 1024
+		// TODO: do image preview, display loading indicator as image is uploading
 		// TODO: do something about errors, css/formatting for modal, notify caller of image URL.
 		this.doUpload = function() {
 			imageUpload.doSingleImageUpload(self.imageAsDataUri.split(',')[1]);
 		};
+
+		this.cancel = function() {
+			$modalInstance.dismiss('cancel');
+		}
 	})
 
 	.directive('bunkerDropzone', function($document, imageUpload, $modal) {
@@ -91,7 +97,7 @@ angular
 
 				/* There's gotta be a better way to do this */
 				element
-					.append('<div id="bunkerDropzoneOverlay">drop images here!</div>');
+					.append('<div id="bunker-dropzone-overlay">drop images here!</div>');
 
 				element
 					.on('dragover', function(e) {
@@ -119,7 +125,8 @@ angular
 								imageFile: function() {
 									return file;
 								}
-							}
+							},
+							size: 'lg'
 						});
 
 						// TODO: send final URL to message directive.
