@@ -29,6 +29,16 @@ module.exports.bootstrap = function (cb) {
 	User.update({}, {sockets: [], connected: false, typingIn: null}).exec(function (error) {
 	});
 
+	// Make sure all users have settings objects properly associated to them.
+	User.find({settings: null}).exec(function (error, users) {
+		async.each(users, function (user, cb) {
+			UserSettings.create({user: user}).exec(function (error, userSettings) {
+				user.settings = userSettings;
+				user.save(cb);
+			});
+		});
+	});
+
 	passport.serializeUser(function (user, done) {
 		done(null, user.id);
 	});
@@ -73,9 +83,7 @@ module.exports.bootstrap = function (cb) {
 						// when no display name, get everything before @ in email
 						nick: profile.displayName || email.replace(/@.*/, ""),
 						email: email
-					}).exec(function (error, user) {
-						done(error, user);
-					});
+					}).exec(done);
 				}
 			});
 		}

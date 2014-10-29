@@ -7,6 +7,10 @@ app.controller('RoomController', function ($scope, user, currentRoom) {
 		return moment().format('YYYY-MM-DD');
 	};
 
+	this.mentionUser = function (userNick) {
+		$scope.$broadcast('inputText', '@' + userNick);
+	};
+
 	$scope.$watch('room.current.members', function (newVal, oldVal) {
 		if(!oldVal) return;
 		self.memberLookup = _.indexBy(self.current.members, 'id');

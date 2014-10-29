@@ -1,3 +1,5 @@
+/* global app, _ */
+
 app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, uuid, user) {
 	var self = this;
 	var roomId = $stateParams.roomId;
@@ -6,7 +8,7 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 	this.messages = [];
 
 	bunkerApi.message.query({id: 'latest', roomId: roomId}, function (messages) {
-		_(messages).sortBy('createdAt').each(function(message) {
+		_(messages).sortBy('createdAt').each(function (message) {
 			addMessage(message);
 		});
 	});
@@ -32,7 +34,7 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 
 	function editMessage(message) {
 		// todo: learn underscore (I think)
-		for (var i = 0; i < self.messages.length; i++){
+		for (var i = 0; i < self.messages.length; i++) {
 			var currentMessage = self.messages[i];
 			if (currentMessage.id == message.id) {
 				currentMessage.text = message.text;

@@ -8,6 +8,7 @@ app.factory('bunkerApi', function (sailsResource, $resource) {
 		history: $resource('/message/history'),
 		room: sailsResource('room', {
 			get: { method: 'GET', fetchAfterReconnect: true }
-		})
+		}),
+		userSettings: sailsResource('userSettings')
 	};
 });

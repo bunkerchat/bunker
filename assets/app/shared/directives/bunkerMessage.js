@@ -1,4 +1,7 @@
+/* global app, _ */
+
 app.directive('bunkerMessage', function ($compile, emoticons) {
+	'use strict';
 
 	function replaceAll(str, find, replace) {
 		return str.split(find).join(replace);
@@ -62,14 +65,16 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 		}
 	};
 });
-app.directive('bunkerMessageImage', function () {
+app.directive('bunkerMessageImage', function (user) {
+	'use strict';
+
 	return {
 		templateUrl: '/assets/app/room/bunker-message-image.html',
 		scope: {
 			link: '@bunkerMessageImage'
 		},
 		link: function (scope) {
-			scope.visible = true;
+			scope.visible = user.settings.showImages;
 		}
 	};
 });

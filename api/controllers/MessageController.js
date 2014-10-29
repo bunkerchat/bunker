@@ -1,3 +1,5 @@
+/* global module, require, User, UserSettings, UserService, Message, Room, actionUtil */
+
 /**
  * MessageController
  *
@@ -5,8 +7,10 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
+'use strict';
+
 var moment = require('moment');
-actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
 // Create a new message, this will be the endpoint for POST /message
 module.exports.create = function (req, res) {
@@ -45,7 +49,6 @@ module.exports.create = function (req, res) {
 		// topic command
 	}
 	else { // base case, a regular chat message
-
 		// Create a message model object in the db
 		Message.create({ // the model to add into db
 			room: roomId,

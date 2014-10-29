@@ -8,7 +8,7 @@ app.directive('fill', function ($window, $timeout) {
 			var marginBottom = options.marginBottom || 0;
 
 			windowEl.resize(function () {
-				var fillHeight = $window.innerHeight - el.offset().top - marginBottom - 1;
+				var fillHeight = $window.innerHeight - el.offset().top - marginBottom - 2;
 				el.css({
 					height: fillHeight + 'px',
 					margin: 0
@@ -71,12 +71,14 @@ app.directive('bunkerInput', function($stateParams, $window, user) {
 			var win = angular.element($window);
 			win.bind('focus', function () {
 				scope.$apply(function() {
-					user.broadcastPresent(true);
+					user.current.present = true;
+					user.current.$save();
 				});
 			});
 			win.bind('blur', function () {
 				scope.$apply(function() {
-					user.broadcastPresent(false);
+					user.current.present = false;
+					user.current.$save();
 				});
 			});
 		}
