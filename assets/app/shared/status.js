@@ -9,7 +9,7 @@ app.directive('status', function () {
 		link: function (scope) {
 			scope.away = _.throttle(function () {
 				if (!scope.user) return false;
-				return !scope.user.present && moment().diff(moment(scope.user.updatedAt), 'minutes') > 5;
+				return !scope.user.present && moment().diff(moment(scope.user.lastActivity), 'minutes') > 5;
 			}, 250);
 		}
 	};
