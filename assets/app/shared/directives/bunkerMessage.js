@@ -74,7 +74,7 @@ app.directive('bunkerMessageImage', function (user) {
 			link: '@bunkerMessageImage'
 		},
 		link: function (scope) {
-			scope.visible = !user.current.settings.hideImages;  // default is false, so images start shown.
+			scope.visible = !user.current.settings.showImages;  // default is false, so images start shown.
 		}
 	};
 });

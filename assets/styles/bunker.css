@@ -51,6 +51,10 @@ nav,
 	color: #fff;
 }
 
+.navbar .nav > li > a.small-width {
+	min-width: 50px;
+}
+
 /* augments */
 
 .no-gutter {

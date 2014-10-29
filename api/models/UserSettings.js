@@ -11,9 +11,9 @@
 
 module.exports = {
 	attributes: {
-		hideImages: {
+		showImages: {
 			type: 'boolean',
-			defaultsTo: false
+			defaultsTo: true
 		},
 		user: {
 			model: 'User'

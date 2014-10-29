@@ -15,6 +15,21 @@
 					<img src="/assets/images/emoticons/allthethings.png"/>
 				</a>
 			</li>
+			<li class="dropdown">
+				<a href="#" id="drop2" role="button" class="dropdown-toggle small-width"><i class="fa fa-cog fa-lg"></i></a>
+				<ul class="dropdown-menu" role="menu" aria-labelledby="drop2">
+					<!--<li role="presentation"><a role="menuitem" tabindex="-1" href="http://twitter.com/fat">Action</a></li>-->
+					<!--<li role="presentation"><a role="menuitem" tabindex="-1" href="http://twitter.com/fat">Another action</a></li>-->
+					<!--<li role="presentation"><a role="menuitem" tabindex="-1" href="http://twitter.com/fat">Something else here</a></li>-->
+					<!--<li role="presentation" class="divider"></li>-->
+					<!--<li role="presentation"><a role="menuitem" tabindex="-1" href="http://twitter.com/fat">Separated link</a></li>-->
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" ng-click="header.user.settings.showImages = !header.user.settings.showImages">
+							<i class="fa {{header.user.settings.showImages ? 'fa-check-square-o' : 'fa-square-o'}}"></i> Show Images
+						</a>
+					</li>
+				</ul>
+			</li>
 		</ul>
 	</div>
 
