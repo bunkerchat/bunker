@@ -30,10 +30,11 @@ module.exports.bootstrap = function (cb) {
 	});
 
 	// Make sure all users have settings objects properly associated to them.
-	User.find().where({settings: null}).exec(function(error, users) {
-		_.each(users, function(user) {
-			UserSettings.create({user: user.id}).exec(function(error, userSettings) {
-				User.update({id: user.id}, {settings: userSettings.id}).exec(function(error) {});
+	User.find({settings: null}).exec(function (error, users) {
+		async.each(users, function (user, cb) {
+			UserSettings.create({user: user}).exec(function (error, userSettings) {
+				user.settings = userSettings;
+				user.save(cb);
 			});
 		});
 	});
@@ -82,21 +83,7 @@ module.exports.bootstrap = function (cb) {
 						// when no display name, get everything before @ in email
 						nick: profile.displayName || email.replace(/@.*/, ""),
 						email: email
-					}).exec(function (error, user) {
-						if (error) { return done(error, user); }
-
-						// Create a UserSettings object for the user.
-						UserSettings.create({user: user.id}).exec(function(error, userSettings) {
-							if (error) {
-								// Clean up the user? Try again? What to do if the create for user settings fails?
-								done(error, user);  // Optimistic for now.
-							}
-
-							User.update({id: user.id}, {settings: userSettings.id}).exec(function(error) {
-								done(error, user);
-							});
-						});
-					});
+					}).exec(done);
 				}
 			});
 		}

@@ -9,7 +9,7 @@
 
 'use strict';
 
-actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
 // Find a single room, this will respond for GET /room/:roomId
 // This acts as the room join for now

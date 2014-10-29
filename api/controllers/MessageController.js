@@ -10,7 +10,7 @@
 'use strict';
 
 var moment = require('moment');
-actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
 // Create a new message, this will be the endpoint for POST /message
 module.exports.create = function (req, res) {

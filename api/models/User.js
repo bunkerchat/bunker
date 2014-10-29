@@ -37,6 +37,12 @@ module.exports = {
 		settings: {
 			model: 'UserSettings'
 		}
+	},
+	afterCreate: function (user, cb) {
+		// Create a UserSettings object for the user.
+		UserSettings.create({user: user.id}).exec(function (error, userSettings) {
+			User.update(user.id, {settings: userSettings}).exec(cb);
+		});
 	}
 };
 
