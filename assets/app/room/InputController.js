@@ -42,6 +42,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			chosenMessage.edited ||
 			!datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
 			newMessage.$save(function (result) {
+				// TODO use the result of this? currently this object is just forgotten about
 				historicMessage.id = result.id;
 			});
 

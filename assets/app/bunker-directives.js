@@ -71,14 +71,12 @@ app.directive('bunkerInput', function($stateParams, $window, user) {
 			var win = angular.element($window);
 			win.bind('focus', function () {
 				scope.$apply(function() {
-					user.current.present = true;
-					user.current.$save();
+					user.broadcastPresent(true);
 				});
 			});
 			win.bind('blur', function () {
 				scope.$apply(function() {
-					user.current.present = false;
-					user.current.$save();
+					user.broadcastPresent(false);
 				});
 			});
 		}
