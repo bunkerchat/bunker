@@ -1,3 +1,5 @@
+/* global User, Room, _, actionUtil, require */
+
 /**
  * RoomController
  *
@@ -5,7 +7,9 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+'use strict';
+
+var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
 // Find a single room, this will respond for GET /room/:roomId
 // This acts as the room join for now
@@ -25,7 +29,7 @@ module.exports.findOne = function (req, res) {
 		// Socket will now receive messages when a new message is created
 		Room.subscribe(req, pk, ['message', 'update']);
 		_.each(room.members, function(member) {
-			User.subscribe(req, member.id, ['update']); // Subscribe to member updates
+			User.subscribe(req, member.id, ['message', 'update']); // Subscribe to member updates
 		});
 
 		// If user is not a member, add them and publish update

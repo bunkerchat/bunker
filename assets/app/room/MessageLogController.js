@@ -1,3 +1,5 @@
+/* global app, _ */
+
 app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, uuid, user) {
 	var self = this;
 	var roomId = $stateParams.roomId;
@@ -13,10 +15,16 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 
 	// Handle incoming messages
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		if (resource.model == 'room' && resource.id == roomId && !resource.data.edited) {
-			addMessage(resource.data);
-		} else {
-			editMessage(resource.data)
+		switch (resource.model) {
+			case 'room':
+				if (resource.id === roomId && !resource.data.edited) {
+					addMessage(resource.data);
+				} else {
+					editMessage(resource.data);
+				}
+				break;
+			case 'user':
+				addMessage(resource.data);
 		}
 	});
 

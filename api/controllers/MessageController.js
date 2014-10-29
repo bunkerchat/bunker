@@ -1,3 +1,5 @@
+/* global module, require, User, UserSettings, UserService, Message, Room, actionUtil */
+
 /**
  * MessageController
  *
@@ -5,8 +7,10 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
+'use strict';
+
 var moment = require('moment');
-actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
 // Create a new message, this will be the endpoint for POST /message
 module.exports.create = function (req, res) {
@@ -43,6 +47,57 @@ module.exports.create = function (req, res) {
 	}
 	else if (/^\/topic\s+/i.test(text)) {
 		// topic command
+	}
+	else if (/^\/settings\s+/i.test(text)) {
+		// Command syntax: /settings target verb newValue
+		//   Verb can be set or get. Set requires a newValue.
+
+		var commandSyntaxText = 'Syntax: /settings targetSetting get/set setToValue';
+
+		var command = text.split(' ');
+		var targetSetting = command[1];
+		var verb = command[2];
+
+		if (command.length > 2 && targetSetting && verb) {
+			if (verb.toLowerCase() === 'get' && command.length === 3) {
+				// TODO: It'd be nice to have a way to get a list of all settings and their values. I will do this one day. -weeg
+
+				UserSettings.findOne({ user: author.id }).exec(function (error, userSettings) {
+					if (targetSetting !== 'createdAt' && // Line 58-61, we don't want to expose db specific shit.
+						targetSetting !== 'updatedAt' &&
+						targetSetting !== 'id' &&
+						targetSetting !== 'user' &&
+						targetSetting in userSettings) {
+						UserService.sendUserSpecificMessage(author, targetSetting + ' = ' + userSettings[targetSetting]);
+					} else {
+						UserService.sendUserSpecificMessage(author, 'Setting does not exist.');
+					}
+				});
+			} else if (verb.toLowerCase() === 'set' && command.length === 4) {
+				var updates = {};
+				updates[targetSetting] = command[3];
+
+				UserSettings.update({ user: author.id }, updates).exec(function (error, userSettings) {
+					if (targetSetting in userSettings[0]) {
+						UserService.sendUserSpecificMessage(author, targetSetting + ' = ' + userSettings[0][targetSetting]);
+					} else {
+						UserService.sendUserSpecificMessage(author, 'Setting does not exist.');
+					}
+				});
+			}
+			else {
+				UserService.sendUserSpecificMessage(author, commandSyntaxText);
+			}
+		} else {
+			UserService.sendUserSpecificMessage(author, commandSyntaxText);
+		}
+	}
+	else if (/^\/.*/i.test(text)) {
+		// Unknown slash command response.
+
+		var possibleCommandsText = 'Possible commands: /me /nick /settings /topic';
+
+		UserService.sendUserSpecificMessage(author, possibleCommandsText);
 	}
 	else { // base case, a regular chat message
 
