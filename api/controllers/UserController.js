@@ -11,7 +11,11 @@ var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUt
 
 // Get the current user, pulled out of session. This will respond for GET /user/current
 module.exports.current = function (req, res) {
-	User.findOne(req.session.user.id).populateAll().exec(function (error, user) {
+
+	var sessionUser = req.session.user;
+	sessionUser.lastActivity = new Date().toISOString();
+
+	User.findOne(sessionUser.id).populateAll().exec(function (error, user) {
 		if (error) return res.serverError(error);
 		if (!user) return res.notFound();
 
@@ -20,24 +24,29 @@ module.exports.current = function (req, res) {
 	});
 };
 
-module.exports.present = function(req, res) {
+// Overriding the update route. This will respond to PUT /user/:id
+// This route only allows updates to present and typingIn.
+// It can only be called by the current user.
+// It's sole purpose is to enable away and typing notifications.
+module.exports.update = function(req, res) {
 	var pk = actionUtil.requirePk(req);
-
 	if (pk !== req.session.user.id) { // Only allow updates from current user
 		return res.forbidden('Not authorized to update this user');
 	}
 
+	var sessionUser = req.session.user;
+	sessionUser.lastActivity = new Date().toISOString();
+
 	// Only allow updates for the following values
-	// There's no need for us to save these in the db, so we don't bother
-	// This may change in the future
-	var user = req.session.user;
+	// There's no need for us to save these in the db, this may change in the future
 	var typingIn = req.param('typingIn');
 	var present = req.param('present');
 	var updates = {
 		typingIn: typeof typingIn !== 'undefined' ? typingIn : null,
-		present: typeof present !== 'undefined' ? present : true
+		present: typeof present !== 'undefined' ? present : true,
+		lastActivity: new Date().toISOString()
 	};
 
-	User.publishUpdate(user.id, updates);
+	User.publishUpdate(sessionUser.id, updates);
 	res.ok(updates);
 };

@@ -35,7 +35,7 @@ module.exports.policies = {
 	UserController: {
 		'*': false,
 		'current': 'isLoggedIn',
-		'present': 'isLoggedIn'
+		'update': 'isLoggedIn'
 	},
 	RoomController: {
 		'*': false,
