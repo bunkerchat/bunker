@@ -52,7 +52,8 @@ module.exports.policies = {
 		'*': false,
 		'latest': 'isLoggedIn',
 		'create': 'isLoggedIn',
-		'update': 'isLoggedIn'
+		'update': 'isLoggedIn',
+		'history': 'isLoggedIn'
 	}
 
 	/***************************************************************************
