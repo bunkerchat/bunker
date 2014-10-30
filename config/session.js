@@ -12,8 +12,9 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.session.html
  */
 
+var mongoConnectClient = require('./../mongoConnectClient');
 
-var mongoUrl = process.env.MONGO_URL_SESSION || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/bunker_sessions';
+//var mongoUrl = process.env.MONGO_URL_SESSION || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/bunker_sessions';
 var adapter = 'mongo';
 
 var redisClient;
@@ -84,11 +85,12 @@ module.exports.session = {
 	 ***************************************************************************/
 
 	adapter: adapter,
-	url: mongoUrl + '/bunker_user_sessions'
+	//url: mongoUrl + '/bunker_user_sessions'
+	db:mongoConnectClient.db,
 	// host: 'localhost',
 	// port: 27017,
 	// db: 'sails',
-	// collection: 'sessions',
+	collection: 'bunker_sessions'
 
 	/***************************************************************************
 	 *                                                                          *
