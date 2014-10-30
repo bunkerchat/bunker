@@ -61,7 +61,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					if (/(www\.youtube\.com|youtu\.?be)/i.test(link)){
 						//var videoId = extractVideoID(link);
 						attachedMedia = angular.element('' +
-						'<div bunker-media="' + link + '">' +
+						'<div class="default-video-height" bunker-media="' + link + '">' +
 						'<youtube-video video-url="\''+ link + '\'"></youtube-video>' +
 						'</div>');
 					}
