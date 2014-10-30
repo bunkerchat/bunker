@@ -5,7 +5,7 @@ app.directive('status', function () {
 		scope: {
 			user: '=status'
 		},
-		templateUrl: '/assets/app/shared/status.html',
+		templateUrl: '/assets/app/directives/status.html',
 		link: function (scope) {
 			scope.away = _.throttle(function () {
 				if (!scope.user) return false;
