@@ -5,7 +5,8 @@ window.app = angular.module('bunker', [
 	'ui.gravatar',
 	'angularMoment',
 	'ngResource',
-	'ui.bootstrap'
+	'ui.bootstrap',
+	'youtube-embed'
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 		$urlRouterProvider.otherwise('/');
