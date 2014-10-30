@@ -6,7 +6,7 @@ angular
 		return {
 			doSingleImageUpload: function (base64ImageData, progress) {
 
-				return $q(function(resolve, reject) {
+				return $q(function (resolve, reject) {
 					var xmlHttpRequest = new XMLHttpRequest();
 					xmlHttpRequest.open('POST', 'https://api.imgur.com/3/image');
 
@@ -63,86 +63,151 @@ angular
 
 	})
 
-	.controller('ImageUpload', function($scope, imageUpload, imageFile, $modalInstance) {
+	.controller('ImageUpload', function ($scope, imageUpload, imageFile, $modalInstance) {
 
-		// start loading the image file immediately.
-		var fileReader = new FileReader(),
-			self = this;
+		var self = this;
 
 		self.imageAsDataUri = null;
 
-		fileReader.onload = function(event) {
-			self.imageAsDataUri = event.target.result;
-			$scope.$apply(); // do this b/c the filereader onload doesn't.
+		var readImageFile = function () {
+			var fileReader = new FileReader();
+			fileReader.onload = function (event) {
+				self.imageAsDataUri = event.target.result;
+				$scope.$apply(); // do this b/c the filereader onload doesn't.
+			};
+
+			fileReader.readAsDataURL(imageFile);
 		};
 
-		fileReader.readAsDataURL(imageFile);
+		readImageFile();
 
-		// TODO: Restrict to 3 or 4 MB: imageFile.size < 4 * 1024 * 1024
-		// TODO: do image preview, display loading indicator as image is uploading
 		// TODO: do something about errors, css/formatting for modal, notify caller of image URL.
-		this.doUpload = function() {
+		this.doUpload = function () {
 			imageUpload.doSingleImageUpload(self.imageAsDataUri.split(',')[1]);
 		};
 
-		this.cancel = function() {
+		this.cancel = function () {
 			$modalInstance.dismiss('cancel');
 		}
 	})
 
-	.directive('bunkerDropzone', function($document, imageUpload, $modal) {
+	.controller('FileError', function (errorMessage, $modalInstance) {
+		this.error = errorMessage;
+
+		this.close = function () {
+			$modalInstance.dismiss('close');
+		};
+	})
+
+	.directive('bunkerDropzone', function ($document, imageUpload, $modal) {
 		return {
 			restrict: 'A',
-			link: function(scope, element) {
+			scope: true,
+			link: function (scope, element) {
 
 				/* There's gotta be a better way to do this */
 				element
 					.append('<div id="bunker-dropzone-overlay">drop images here!</div>');
 
+				var modalOpen = false,
+					setModalClose = function () {
+						modalOpen = false;
+					};
+
 				element
-					.on('dragover', function(e) {
+					.on('dragover.dropzone', function (e) {
 						e.preventDefault();
 					})
-					.on('dragbetterenter', function(e) {
+					.on('dragbetterenter.dropzone', function (e) {
+						if (modalOpen) {
+							e.preventDefault();
+							return;
+						}
 						$(this).addClass('dragover');
 					})
-					.on('dragbetterleave', function(e) {
+					.on('dragbetterleave.dropzone', function (e) {
+						if (modalOpen) {
+							e.preventDefault();
+							return;
+						}
 						$(this).removeClass('dragover');
 					})
-					.on('drop', function(e) {
+					.on('drop.dropzone', function (e) {
+
 						e.preventDefault();
 
+						if (modalOpen) {
+							return;
+						}
 
 						var files = e.originalEvent.dataTransfer.files,
 							file = files.length ? files[0] : null;
 
-						if (!file) {return;}
+						if (!file) {
+							return;
+						}
 
-						$modal.open({
-							templateUrl: '/assets/app/room/fileEvents/imageUpload.html',
-							controller: 'ImageUpload as imageUpload',
-							resolve: {
-								imageFile: function() {
-									return file;
+						var error = null,
+							type = file.type;
+
+						// TODO: refactor this in to something more generic.
+						if (!file.type || !(
+							_.contains(type, '/jpeg') ||
+							_.contains(type, '/jpg') ||
+							_.contains(type, '/gif') ||
+							_.contains(type, '/png'))) {
+
+							error = 'Unsupported file type.  Only images are allowed currently.';
+						}
+						else if (file.size > 4 * 1024 * 1024) {
+
+							error = 'The file is too large! Files can be a maximum of 4MB.';
+						}
+
+						modalOpen = true;
+
+						if (error) {
+							$modal.open({
+								templateUrl: '/assets/app/room/fileEvents/fileError.html',
+								controller: 'FileError as fileError',
+								resolve: {
+									errorMessage: function () {
+										return error;
+									}
 								}
-							},
-							size: 'lg'
-						});
-
-						// TODO: send final URL to message directive.
-
-
+							})
+								.result
+								.then(setModalClose, setModalClose);
+						}
+						else {
+							$modal.open({
+								templateUrl: '/assets/app/room/fileEvents/imageUpload.html',
+								controller: 'ImageUpload as imageUpload',
+								resolve: {
+									imageFile: function () {
+										return file;
+									}
+								},
+								size: 'lg'
+							});
+							// TODO: send final URL to message directive.
+						}
 					});
-
 
 				// we listen on doc element also to swallow "missed" drops.
 				$document
-					.on('dragover', function(e) {
+					.on('dragover.dropzone', function (e) {
 						e.preventDefault();
 					})
-					.on('drop', function(e) {
+					.on('drop.dropzone', function (e) {
 						e.preventDefault();
 					});
+
+				scope.$on('$destroy', function () {
+					element.off('.dropzone');
+					$document.off('.dropzone');
+				});
+
 			}
 		};
 	});

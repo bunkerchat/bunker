@@ -3,11 +3,11 @@
 </div>
 <div class="modal-body image-upload">
 	<img ng-if="imageUpload.imageAsDataUri" ng-src="{{imageUpload.imageAsDataUri}}" alt="Image to upload" />
-	<div ng-if="!imageUpload.imageAsDataUri">
-		Loading...
+	<div ng-if="imageUpload.error">
+		{{imageUpload.error}}
 	</div>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-primary" ng-click="imageUpload.doUpload()">Upload</button>
+	<button ng-if="imageUpload.imageAsDataUri" class="btn btn-primary" ng-click="imageUpload.doUpload()">Upload</button>
 	<button class="btn btn-warning" ng-click="imageUpload.cancel()">Cancel</button>
 </div>
