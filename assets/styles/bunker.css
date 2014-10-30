@@ -361,5 +361,6 @@ img.emoticon {
 	.message-body {
 		border-top: solid #eee 1px;
 		margin-left: 0;
+		padding-right: 10px;
 	}
 }
