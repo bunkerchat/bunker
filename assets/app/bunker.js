@@ -28,7 +28,7 @@ window.app = angular.module('bunker', [
 				}
 			})
 			.state('roomHistory', {
-				url: '/rooms/{roomId}/history?date',
+				url: '/rooms/{roomId}/history?date&message',
 				templateUrl: '/assets/app/room/roomHistory.html',
 				controller: 'RoomHistoryController as room',
 				resolve: {

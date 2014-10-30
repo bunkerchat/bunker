@@ -1,6 +1,7 @@
-app.controller('RoomHistoryController', function ($scope, bunkerApi, currentUser, $stateParams, $state) {
+app.controller('RoomHistoryController', function ($scope, bunkerApi, currentUser, $stateParams, $state, $location, $anchorScroll, $timeout) {
 	var self = this;
 	this.roomId = $stateParams.roomId;
+	this.message = $stateParams.message;
 	this.currentUser = currentUser;
 
 	var startDate;
@@ -39,6 +40,14 @@ app.controller('RoomHistoryController', function ($scope, bunkerApi, currentUser
 				addMessage(message);
 				self.members[message.author.id] = message.author;
 			});
+
+			if(self.message) {
+				// scroll to message
+				$timeout(function() {
+					$location.hash(self.message);
+					$anchorScroll();
+				},1000);
+			}
 		});
 	}
 
