@@ -6,7 +6,8 @@ window.app = angular.module('bunker', [
 	'angularMoment',
 	'ngResource',
 	'ui.bootstrap',
-	'fileEvents'
+	'fileEvents',
+	'youtube-embed'
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 		$urlRouterProvider.otherwise('/');
@@ -28,7 +29,7 @@ window.app = angular.module('bunker', [
 				}
 			})
 			.state('roomHistory', {
-				url: '/rooms/{roomId}/history?date',
+				url: '/rooms/{roomId}/history?date&message',
 				templateUrl: '/assets/app/room/roomHistory.html',
 				controller: 'RoomHistoryController as room',
 				resolve: {

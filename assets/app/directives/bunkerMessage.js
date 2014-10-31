@@ -7,6 +7,16 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 		return str.split(find).join(replace);
 	}
 
+	//function extractVideoID(url){
+	//	var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+	//	var match = url.match(regExp);
+	//	if ( match && match[7].length == 11 ){
+	//		return match[7];
+	//	}else{
+	//		alert("Could not extract video ID.");
+	//	}
+	//}
+
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
 		scope: {
@@ -41,11 +51,19 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 				});
 
 				// Parse links
-				var attachedImage;
+				var attachedMedia;
 				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
-					if (/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedImage) {
+					if (/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedMedia) {
 						// Image link
-						attachedImage = angular.element('<div bunker-message-image="' + link + '"></div>');
+						attachedMedia = angular.element('<div bunker-media="' + link + '"><img src="'+link+'"/></div>');
+					}
+
+					if (/(www\.youtube\.com|youtu\.?be)/i.test(link)){
+						//var videoId = extractVideoID(link);
+						attachedMedia = angular.element('' +
+						'<div class="default-video-height" bunker-media="' + link + '">' +
+						'<youtube-video video-url="\''+ link + '\'"></youtube-video>' +
+						'</div>');
 					}
 
 					if (!replacedLinks[link]) {
@@ -55,26 +73,13 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 				});
 
 				// If we made an image, attach it now
-				if (attachedImage) {
-					angular.element(elem).append(attachedImage);
-					$compile(attachedImage)(scope.$new());
+				if (attachedMedia) {
+					angular.element(elem).append(attachedMedia);
+					$compile(attachedMedia)(scope.$new());
 				}
 
 				scope.formatted = formatted;
 			});
-		}
-	};
-});
-app.directive('bunkerMessageImage', function (user) {
-	'use strict';
-
-	return {
-		templateUrl: '/assets/app/room/bunker-message-image.html',
-		scope: {
-			link: '@bunkerMessageImage'
-		},
-		link: function (scope) {
-			scope.visible = user.settings.showImages;
 		}
 	};
 });

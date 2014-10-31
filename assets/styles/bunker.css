@@ -204,6 +204,10 @@ nav,
 	margin: 0;
 }
 
+.message-body .default-video-height .panel-body {
+	height: 420px;
+}
+
 /* message history */
 
 .message-history-anchor {
@@ -237,7 +241,7 @@ nav,
 }
 
 .message-info .timestamp {
-    margin-left: 5px;
+	margin-left: 5px;
 }
 
 .message-mention > .message-body {
@@ -289,7 +293,7 @@ img.emoticon {
 	border-radius: 0;
 	border-left: 0;
 	border-right: 0;
-    padding: 12px;
+	padding: 12px;
 }
 
 .member-list li.list-group-item:first-of-type {
@@ -301,18 +305,16 @@ img.emoticon {
 }
 
 .member-list .user-icon {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
-    text-align: center;
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	margin-right: 5px;
+	text-align: center;
 }
 
 .member-list .status.pull-right {
-    margin-top: 8px;
+	margin-top: 8px;
 }
-
-
 
 /* status */
 
@@ -383,5 +385,6 @@ img.emoticon {
 	.message-body {
 		border-top: solid #eee 1px;
 		margin-left: 0;
+		padding-right: 10px;
 	}
 }

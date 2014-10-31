@@ -24,6 +24,8 @@ process.chdir(__dirname);
 
 // Ensure a "sails" can be located:
 (function() {
+	var mongoConnectClient = require('./mongoConnectClient');
+
   var sails;
   try {
     sails = require('sails');
@@ -53,7 +55,9 @@ process.chdir(__dirname);
     }
   }
 
+	mongoConnectClient.connect(function () {
+		// Start server
+		sails.lift(rc('sails'));
+	});
 
-  // Start server
-  sails.lift(rc('sails'));
 })();

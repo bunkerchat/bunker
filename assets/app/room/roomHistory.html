@@ -5,7 +5,7 @@
 
 			<h2 ng-if="room.rawMessages.$resolved && room.rawMessages.length == 0">No messages</h2>
 			<ol class="list-unstyled message-list" fill="{'marginBottom': 0}">
-				<li class="message" ng-repeat="message in room.messages">
+				<li class="message" id="{{::message.id}}" ng-repeat="message in room.messages">
 					<div message-mention="{{::room.currentUser.nick}}"
 							 message-mention-text="{{::message.text}}">
 						<div class="message-author">
@@ -22,7 +22,9 @@
 										 ng-click="message.showHistory = !message.showHistory"
 										 ng-if="::message.edited"></i>
 									<span class="timestamp" ng-if="::message.$firstInSeries">
-										<small>{{::message.createdAt | date:'medium'}}</small>
+										<a ui-sref="roomHistory({roomId: room.roomId, date: message.createdAt, message: message.id})" class="text-muted">
+											<small>{{::message.createdAt | date:'medium'}}</small>
+										</a>
 									</span>
 								</span>
 						</div>

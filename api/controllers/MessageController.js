@@ -103,13 +103,6 @@ module.exports.latest = function (req, res) {
 	});
 };
 
-// Sanitize a message, no tags allow currently
-function sanitizeMessage(original) {
-	return require('sanitize-html')(original, {
-		allowedTags: []
-	});
-}
-
 module.exports.history = function (req, res) {
 	var roomId = req.param('roomId');
 	var startDate = req.param('startDate');
@@ -120,5 +113,12 @@ module.exports.history = function (req, res) {
 		.exec(function (err, messages) {
 			if (err) return res.serverError(err);
 			res.ok(messages);
-		})
+		});
 };
+
+// Sanitize a message, no tags allow currently
+function sanitizeMessage(original) {
+	return require('sanitize-html')(original, {
+		allowedTags: []
+	});
+}
