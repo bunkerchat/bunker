@@ -30,34 +30,6 @@ angular
 
 					xmlHttpRequest.send(formData);
 				});
-
-
-				// jQuery codes
-				//
-				// $.ajax({
-				//   xhr: function() {
-				//     var xhr = new XMLHttpRequest();
-
-				//     xhr.upload.addEventListener('progress', handleProgress, false);
-				//     // xhr.addEventListener('progress', handleProgress, false); // only required for download
-
-				//     return xhr;
-				//   },
-				//   url: 'https://api.imgur.com/3/image',
-				//   type: 'POST',
-				//   headers: {
-				//     Authorization: 'Client-ID ' + 'f9b49a92d8ec31b',
-				//     Accept: 'application/json'
-				//   },
-				//   data: {
-				//     image: datas,
-				//     type: 'base64'
-				//   },
-				//   success: function(result) {
-				//     $('#finalImage').val(result.data.link);
-				//     console.log(result);
-				//   }
-				// });
 			}
 		};
 
@@ -81,9 +53,16 @@ angular
 
 		readImageFile();
 
-		// TODO: do something about errors, css/formatting for modal, notify caller of image URL.
+		// TODO: do something about errors
+		// TODO: progress indicator!
 		this.doUpload = function () {
-			imageUpload.doSingleImageUpload(self.imageAsDataUri.split(',')[1]);
+			imageUpload
+				.doSingleImageUpload(self.imageAsDataUri.split(',')[1])
+				.then(function (imageUrl) {
+					$modalInstance.close(imageUrl);
+				}, function (error) {
+					// TODO: image upload error handling.
+				});
 		};
 
 		this.cancel = function () {
@@ -99,37 +78,91 @@ angular
 		};
 	})
 
-	.directive('bunkerDropzone', function ($document, imageUpload, $modal) {
+	.directive('bunkerDropzone', function ($document, imageUpload, $modal, $rootScope, $compile) {
+
+		// TODO: move this in to controller.
+		var methods = {
+			isImageFile: function (item) {
+				// TODO: can probably change this to just be a regex: /image.*/
+				return item.type && (
+					_.contains(item.type, '/jpeg') ||
+					_.contains(item.type, '/jpg') ||
+					_.contains(item.type, '/gif') ||
+					_.contains(item.type, '/png'));
+			}
+		};
+
 		return {
 			restrict: 'A',
 			scope: true,
 			link: function (scope, element) {
 
 				/* There's gotta be a better way to do this */
+				var overlay = angular.element('<div id="bunker-dropzone-overlay" overlay-contents></div>');
 				element
-					.append('<div id="bunker-dropzone-overlay">drop images here!</div>');
+					.append(overlay);
+				$compile(overlay)(scope);
 
 				var modalOpen = false,
 					setModalClose = function () {
 						modalOpen = false;
 					};
 
+				var doImageUpload = function (file) {
+					var error = null;
+
+					// TODO: refactor this in to something more generic.
+					if (!methods.isImageFile(file)) {
+						error = 'Unsupported file type.  Only images are supported.';
+					}
+					else if (file.size > 4 * 1024 * 1024) {
+						error = 'The file is too large! Files can be a maximum of 4MB.';
+					}
+
+					modalOpen = true;
+
+					if (error) {
+						$modal.open({
+							templateUrl: '/assets/app/room/fileEvents/fileError.html',
+							controller: 'FileError as fileError',
+							resolve: {
+								errorMessage: function () {
+									return error;
+								}
+							}
+						})
+							.result
+							.then(setModalClose, setModalClose);
+					}
+					else {
+						$modal.open({
+							templateUrl: '/assets/app/room/fileEvents/imageUpload.html',
+							controller: 'ImageUpload as imageUpload',
+							resolve: {
+								imageFile: function () {
+									return file;
+								}
+							},
+							size: 'lg'
+						})
+							.result
+							.then(function (url) {
+								setModalClose();
+								$rootScope.$broadcast('inputText', url);
+							}, setModalClose);
+					}
+				};
+
 				element
 					.on('dragover.dropzone', function (e) {
-						e.preventDefault();
+						e.preventDefault(); // this must be here otherwise the browser won't listen for the drop event.
 					})
-					.on('dragbetterenter.dropzone', function (e) {
-						if (modalOpen) {
-							e.preventDefault();
-							return;
+					.on('dragbetterenter.dropzone', function () {
+						if (!modalOpen) {
+							$(this).addClass('dragover');
 						}
-						$(this).addClass('dragover');
 					})
-					.on('dragbetterleave.dropzone', function (e) {
-						if (modalOpen) {
-							e.preventDefault();
-							return;
-						}
+					.on('dragbetterleave.dropzone', function () {
 						$(this).removeClass('dragover');
 					})
 					.on('drop.dropzone', function (e) {
@@ -147,60 +180,36 @@ angular
 							return;
 						}
 
-						var error = null,
-							type = file.type;
-
-						// TODO: refactor this in to something more generic.
-						if (!file.type || !(
-							_.contains(type, '/jpeg') ||
-							_.contains(type, '/jpg') ||
-							_.contains(type, '/gif') ||
-							_.contains(type, '/png'))) {
-
-							error = 'Unsupported file type.  Only images are allowed currently.';
-						}
-						else if (file.size > 4 * 1024 * 1024) {
-
-							error = 'The file is too large! Files can be a maximum of 4MB.';
-						}
-
-						modalOpen = true;
-
-						if (error) {
-							$modal.open({
-								templateUrl: '/assets/app/room/fileEvents/fileError.html',
-								controller: 'FileError as fileError',
-								resolve: {
-									errorMessage: function () {
-										return error;
-									}
-								}
-							})
-								.result
-								.then(setModalClose, setModalClose);
-						}
-						else {
-							$modal.open({
-								templateUrl: '/assets/app/room/fileEvents/imageUpload.html',
-								controller: 'ImageUpload as imageUpload',
-								resolve: {
-									imageFile: function () {
-										return file;
-									}
-								},
-								size: 'lg'
-							});
-							// TODO: send final URL to message directive.
-						}
+						doImageUpload(file);
 					});
 
 				// we listen on doc element also to swallow "missed" drops.
+				// also listening for paste!
 				$document
 					.on('dragover.dropzone', function (e) {
 						e.preventDefault();
 					})
 					.on('drop.dropzone', function (e) {
 						e.preventDefault();
+					})
+					.on('paste.dropzone', function (e) {
+
+						if (!e.originalEvent.clipboardData) {
+							return;
+						}
+
+						var copiedImage = _.find(e.originalEvent.clipboardData.items, function (item) {
+							return methods.isImageFile(item);
+						});
+
+						if (!copiedImage) {
+							return;
+						}
+
+						// we have a valid image, do things!
+						e.preventDefault();
+
+						doImageUpload(copiedImage.getAsFile());
 					});
 
 				scope.$on('$destroy', function () {
