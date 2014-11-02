@@ -2,12 +2,27 @@
 	<h4 class="modal-title">Image Preview</h4>
 </div>
 <div class="modal-body image-upload">
-	<img ng-if="imageUpload.imageAsDataUri" ng-src="{{imageUpload.imageAsDataUri}}" alt="Image to upload" />
+	<img ng-if="imageUpload.imageAsDataUri" ng-src="{{imageUpload.imageAsDataUri}}" alt="Image to upload"/>
+
 	<div ng-if="imageUpload.error">
 		{{imageUpload.error}}
 	</div>
 </div>
 <div class="modal-footer">
-	<button ng-if="imageUpload.imageAsDataUri" class="btn btn-primary" ng-click="imageUpload.doUpload()">Upload</button>
-	<button class="btn btn-warning" ng-click="imageUpload.cancel()">Cancel</button>
+
+	<div class="progress-container">
+		<div class="progress" ng-if="imageUpload.progress >= 0" >
+			<div class="progress-bar" role="progressbar" ng-attr-aria-valuenow="imageUpload.progress" aria-valuemin="0" aria-valuemax="100"
+				 ng-style="{'width': imageUpload.progress + '%'}">
+				{{imageUpload.progress}}%
+			</div>
+		</div>
+	</div>
+
+	<div class="imageupload-button-group">
+		<loading-button ng-if="imageUpload.imageAsDataUri" class="btn btn-primary" action="imageUpload.doUpload()">
+			Upload
+		</loading-button>
+		<button class="btn btn-warning" ng-click="imageUpload.cancel()">Cancel</button>
+	</div>
 </div>

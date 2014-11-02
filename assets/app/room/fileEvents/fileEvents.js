@@ -10,7 +10,7 @@ angular
 					var xmlHttpRequest = new XMLHttpRequest();
 					xmlHttpRequest.open('POST', 'https://api.imgur.com/3/image');
 
-					xmlHttpRequest.setRequestHeader('Authorization', 'Client-ID ' + 'f9b49a92d8ec31b');
+					xmlHttpRequest.setRequestHeader('Authorization', 'Client-ID f9b49a92d8ec31b');
 					xmlHttpRequest.setRequestHeader('Accept', 'application/json');
 
 					xmlHttpRequest.onload = function (e) {
@@ -21,7 +21,11 @@ angular
 					xmlHttpRequest.onerror = reject;
 
 					if (xmlHttpRequest.upload && progress) {
-						xmlHttpRequest.upload.addEventListener('progress', progress, false);
+						xmlHttpRequest.upload.addEventListener('progress', function(progressEvent) {
+							if (progressEvent.lengthComputable) {
+								progress(progressEvent.loaded / progressEvent.total * 100);
+							}
+						}, false);
 					}
 
 					var formData = new FormData();
@@ -32,7 +36,6 @@ angular
 				});
 			}
 		};
-
 	})
 
 	.controller('ImageUpload', function ($scope, imageUpload, imageFile, $modalInstance) {
@@ -40,29 +43,33 @@ angular
 		var self = this;
 
 		self.imageAsDataUri = null;
+		self.progress = -1;
 
-		var readImageFile = function () {
-			var fileReader = new FileReader();
-			fileReader.onload = function (event) {
-				self.imageAsDataUri = event.target.result;
-				$scope.$apply(); // do this b/c the filereader onload doesn't.
-			};
-
-			fileReader.readAsDataURL(imageFile);
+		var fileReader = new FileReader();
+		fileReader.onload = function (event) {
+			self.imageAsDataUri = event.target.result;
+			$scope.$apply();
 		};
 
-		readImageFile();
+		fileReader.readAsDataURL(imageFile);
+
+		this.updateProgress = function(progress) {
+			self.progress = Math.ceil(progress);
+			$scope.$apply();
+		};
 
 		// TODO: do something about errors
-		// TODO: progress indicator!
 		this.doUpload = function () {
-			imageUpload
-				.doSingleImageUpload(self.imageAsDataUri.split(',')[1])
-				.then(function (imageUrl) {
-					$modalInstance.close(imageUrl);
-				}, function (error) {
-					// TODO: image upload error handling.
-				});
+			var uploadPromise = imageUpload
+				.doSingleImageUpload(self.imageAsDataUri.split(',')[1], self.updateProgress);
+
+			uploadPromise.then(function (imageUrl) {
+				$modalInstance.close(imageUrl);
+			}, function (error) {
+				// TODO: image upload error handling.
+			});
+
+			return uploadPromise;
 		};
 
 		this.cancel = function () {
@@ -78,48 +85,30 @@ angular
 		};
 	})
 
-	.directive('bunkerDropzone', function ($document, imageUpload, $modal, $rootScope, $compile) {
-
-		// TODO: move this in to controller.
-		var methods = {
-			isImageFile: function (item) {
-				// TODO: can probably change this to just be a regex: /image.*/
-				return item.type && (
-					_.contains(item.type, '/jpeg') ||
-					_.contains(item.type, '/jpg') ||
-					_.contains(item.type, '/gif') ||
-					_.contains(item.type, '/png'));
-			}
-		};
+	.directive('bunkerDropzone', function ($document, $compile) {
 
 		return {
 			restrict: 'A',
 			scope: true,
-			link: function (scope, element) {
 
-				/* There's gotta be a better way to do this */
-				var overlay = angular.element('<div id="bunker-dropzone-overlay" overlay-contents></div>');
-				element
-					.append(overlay);
-				$compile(overlay)(scope);
+			controller: function($modal, $rootScope, imageUpload) {
 
-				var modalOpen = false,
-					setModalClose = function () {
-						modalOpen = false;
-					};
+				var self = this;
 
-				var doImageUpload = function (file) {
+				self.isModalOpen = false;
+
+				this.doSingleImageUpload = function(file) {
 					var error = null;
 
-					// TODO: refactor this in to something more generic.
-					if (!methods.isImageFile(file)) {
+					// this could probably be more generic to support more file types
+					if (!self.isImageFile(file)) {
 						error = 'Unsupported file type.  Only images are supported.';
 					}
 					else if (file.size > 4 * 1024 * 1024) {
 						error = 'The file is too large! Files can be a maximum of 4MB.';
 					}
 
-					modalOpen = true;
+					self.isModalOpen = true;
 
 					if (error) {
 						$modal.open({
@@ -132,7 +121,7 @@ angular
 							}
 						})
 							.result
-							.then(setModalClose, setModalClose);
+							.then(self.setModalClosed, self.setModalClosed);
 					}
 					else {
 						$modal.open({
@@ -147,18 +136,43 @@ angular
 						})
 							.result
 							.then(function (url) {
-								setModalClose();
+								self.setModalClosed();
 								$rootScope.$broadcast('inputText', url);
-							}, setModalClose);
+							}, self.setModalClosed);
 					}
 				};
 
+				this.isImageFile = function(item) {
+					// TODO: can probably change this to just be a regex: /image.*/
+					return item.type && (
+						_.contains(item.type, '/jpeg') ||
+						_.contains(item.type, '/jpg') ||
+						_.contains(item.type, '/gif') ||
+						_.contains(item.type, '/png'));
+				};
+
+				this.setModalClosed = function() {
+					self.isModalOpen = false;
+				};
+			},
+
+			controllerAs: 'dropzoneCtrl',
+
+			link: function (scope, element, attrs, dropzoneCtrl) {
+
+				/* There's gotta be a better way to do this */
+				var overlay = angular.element('<div id="bunker-dropzone-overlay" overlay-contents></div>');
+				element
+					.append(overlay);
+				$compile(overlay)(scope);
+
+				/* listen for main drag/drop events */
 				element
 					.on('dragover.dropzone', function (e) {
 						e.preventDefault(); // this must be here otherwise the browser won't listen for the drop event.
 					})
 					.on('dragbetterenter.dropzone', function () {
-						if (!modalOpen) {
+						if (!dropzoneCtrl.isModalOpen) {
 							$(this).addClass('dragover');
 						}
 					})
@@ -169,7 +183,7 @@ angular
 
 						e.preventDefault();
 
-						if (modalOpen) {
+						if (dropzoneCtrl.isModalOpen) {
 							return;
 						}
 
@@ -180,11 +194,11 @@ angular
 							return;
 						}
 
-						doImageUpload(file);
+						dropzoneCtrl.doSingleImageUpload(file);
 					});
 
-				// we listen on doc element also to swallow "missed" drops.
-				// also listening for paste!
+				/* we listen on doc element also to swallow "missed" drops.
+					also listening for paste event */
 				$document
 					.on('dragover.dropzone', function (e) {
 						e.preventDefault();
@@ -194,29 +208,26 @@ angular
 					})
 					.on('paste.dropzone', function (e) {
 
-						if (!e.originalEvent.clipboardData) {
+						if (!e.originalEvent.clipboardData || dropzoneCtrl.isModalOpen) {
 							return;
 						}
 
 						var copiedImage = _.find(e.originalEvent.clipboardData.items, function (item) {
-							return methods.isImageFile(item);
+							return dropzoneCtrl.isImageFile(item);
 						});
 
 						if (!copiedImage) {
 							return;
 						}
 
-						// we have a valid image, do things!
 						e.preventDefault();
-
-						doImageUpload(copiedImage.getAsFile());
+						dropzoneCtrl.doSingleImageUpload(copiedImage.getAsFile());
 					});
 
 				scope.$on('$destroy', function () {
 					element.off('.dropzone');
 					$document.off('.dropzone');
 				});
-
 			}
 		};
 	});

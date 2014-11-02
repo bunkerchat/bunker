@@ -84,6 +84,31 @@ nav,
     max-height: 550px;
 }
 
+.loadingbutton {
+    position: relative;
+    padding-left: 28px;
+    padding-right: 28px;
+}
+
+.loadingbutton-spinner {
+    position: absolute;
+    left: 10px;
+    line-height: inherit; /* fa overrides line height, set it back to bootstrap's */
+}
+
+.modal-footer > div {
+    float: left;
+}
+
+.modal-footer .progress-container {
+    width: 65%;
+    margin-top: 8px;
+}
+
+.modal-footer .imageupload-button-group {
+    width: 35%;
+}
+
 .col-center {
 	float: none;
 	margin: 0 auto;
