@@ -359,7 +359,7 @@ img.emoticon {
 
 .loadingbutton-spinner {
     position: absolute;
-    left: 10px;
+    left: 12px;
     line-height: inherit; /* fa overrides line height, set it back to bootstrap's */
 }
 
