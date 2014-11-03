@@ -23,16 +23,11 @@ module.exports.current = function (req, res) {
 	});
 };
 
-// Overriding the update route. This will respond to PUT /user/:id
+// Activity update route. This will respond to PUT /user/current/activity
 // This route only allows updates to present and typingIn.
 // It can only be called by the current user.
 // It's sole purpose is to enable away and typing notifications.
-module.exports.update = function(req, res) {
-	var pk = actionUtil.requirePk(req);
-	if (pk !== req.session.user.id) { // Only allow updates from current user
-		return res.forbidden('Not authorized to update this user');
-	}
-
+module.exports.activity = function(req, res) {
 	var sessionUser = req.session.user;
 	sessionUser.lastActivity = new Date().toISOString();
 
