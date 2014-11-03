@@ -11,7 +11,7 @@ app.directive('autoScroll', function ($location, $anchorScroll, $timeout) {
 
 				// TODO why does height need a 1px tolerance?
 				var currentScroll = el.prop('scrollHeight') - el.prop('scrollTop');
-				var shouldScroll = currentScroll == el.height() || currentScroll == el.height() + 1;
+				var shouldScroll = currentScroll <= el.height() + 25;
 				if (!shouldScroll) return;
 
 				if(firstTime) {
