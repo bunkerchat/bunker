@@ -1,8 +1,10 @@
 module.exports = {
-	index: function (request, response) {
-		response.view('index');
+	index: function (req, res) {
+		res.view('index', {
+			userId: req.session.user.id
+		});
 	},
-	login: function (request, response) {
-		response.view('login');
+	login: function (req, res) {
+		res.view('login');
 	}
 };

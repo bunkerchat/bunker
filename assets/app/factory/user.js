@@ -1,10 +1,9 @@
 app.factory('user', function(bunkerApi, $timeout) {
 
 	var typingTimeout;
-	var user = bunkerApi.user.get({id: 'current'});
-	var settings = bunkerApi.userSettings.get({id: 'current'});
-
-	// TODO because we got the id of 'current' we aren't gonna get any user updates... very sad, please fix
+	var userId = window.userId;
+	var user = bunkerApi.user.get({id: userId});
+	var settings = bunkerApi.userSettings.get({user: userId});
 
 	return {
 		current: user,

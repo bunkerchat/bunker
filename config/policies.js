@@ -34,12 +34,13 @@ module.exports.policies = {
 	},
 	UserController: {
 		'*': false,
-		'current': 'isLoggedIn',
-		'activity': 'isLoggedIn',
+		'findOne': 'isLoggedIn',
+		'activity': ['isLoggedIn', 'isCurrentUser'],
 		'update': ['isLoggedIn', 'isCurrentUser']
 	},
 	UserSettingsController: {
 		'*': false,
+		'findOne': 'isLoggedIn',
 		'update': 'isLoggedIn',
 		'current': 'isLoggedIn'
 	},
@@ -47,7 +48,8 @@ module.exports.policies = {
 		'*': false,
 		'find': 'isLoggedIn',
 		'findOne': 'isLoggedIn',
-		'create': 'isLoggedIn'
+		'create': 'isLoggedIn',
+		'leave': 'isLoggedIn'
 	},
 	MessageController: {
 		'*': false,

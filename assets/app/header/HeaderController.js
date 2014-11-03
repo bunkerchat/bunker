@@ -1,4 +1,4 @@
-app.controller('HeaderController', function ($stateParams, $state, user, emoticons) {
+app.controller('HeaderController', function ($stateParams, $state, user, rooms, emoticons) {
 	var self = this;
 	this.user = user.current;
 	this.settings = user.settings;
@@ -9,8 +9,8 @@ app.controller('HeaderController', function ($stateParams, $state, user, emotico
 		self.settings.$save();
 	};
 	this.leaveRoom = function() {
-		self.user.rooms = _.reject(self.user.rooms, {id: $stateParams.roomId});
-		self.user.$save(function() {
+		var room = rooms($stateParams.roomId);
+		room.$leave(function() {
 			$state.go('lobby');
 		});
 	};

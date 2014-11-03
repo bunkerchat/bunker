@@ -40,11 +40,13 @@ module.exports.findOne = function (req, res) {
 				// Repopulate the room, with the new member, and publish a room update
 				Room.findOne(pk).populate('members').exec(function (error, room) {
 					Room.publishUpdate(room.id, room);
+					res.ok(room);
 				});
 			});
 		}
-
-		res.ok(room);
+		else {
+			res.ok(room);
+		}
 	});
 };
 
@@ -58,7 +60,7 @@ module.exports.leave = function (req, res) {
 
 		// Unsubscribe to this room
 		Room.unsubscribe(req, pk, ['message', 'update']);
-		// TODO unsubscribe to all members? probably not... need to figure out which ones
+		// TODO unsubscribe all members? probably not... need to figure out which ones
 
 		room.members = _.reject(room.members, {id: user.id});
 		room.save(function () {
@@ -71,8 +73,7 @@ module.exports.leave = function (req, res) {
 
 			// Publish a room update
 			Room.publishUpdate(room.id, room);
+			res.ok(room);
 		});
-
-		res.ok(room);
 	});
 };
