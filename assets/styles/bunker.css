@@ -294,6 +294,76 @@ img.emoticon {
 	margin-top: 8px;
 }
 
+
+/* file upload related styles */
+#bunker-dropzone-overlay {
+    position: absolute;
+    vertical-align: middle;
+    top: 40px;
+    width: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 97;
+    visibility: hidden;
+}
+
+#bunker-dropzone-overlay > div {
+    opacity: 0;
+    transition: opacity .3s;
+}
+
+.dragover #bunker-dropzone-overlay {
+    visibility: visible;
+}
+
+#bunker-dropzone-overlay .overlay {
+    position: absolute;
+    background: black;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: opacity .3s;
+    z-index: 98;
+}
+
+.dragover #bunker-dropzone-overlay .overlay {
+    opacity: .5;
+}
+
+#bunker-dropzone-overlay [overlay-contents] {
+    text-align: center;
+    position: relative;
+    margin-top: 300px;
+    color: white;
+    z-index: 99;
+    font-size: 2.5em;
+}
+
+.dragover #bunker-dropzone-overlay [overlay-contents] {
+    opacity: 1;
+}
+
+.image-upload > img {
+    display: block;
+    margin: auto;
+    max-width: 100%;
+    max-height: 550px;
+}
+
+.loadingbutton {
+    position: relative;
+    padding-left: 28px;
+    padding-right: 28px;
+}
+
+.loadingbutton-spinner {
+    position: absolute;
+    left: 12px;
+    line-height: inherit; /* fa overrides line height, set it back to bootstrap's */
+}
+
+
 /* status */
 
 [status] {
