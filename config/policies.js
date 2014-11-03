@@ -40,6 +40,7 @@ module.exports.policies = {
 	},
 	UserSettingsController: {
 		'*': false,
+		'find': 'isLoggedIn',
 		'findOne': 'isLoggedIn',
 		'update': 'isLoggedIn',
 		'current': 'isLoggedIn'
