@@ -1,0 +1,16 @@
+<div class="modal-header">
+	<h4 class="modal-title">Image Preview</h4>
+</div>
+<div class="modal-body image-upload">
+	<img ng-if="imageUpload.imageAsDataUri" ng-src="{{imageUpload.imageAsDataUri}}" alt="Image to upload"/>
+
+	<div ng-if="imageUpload.error">
+		{{imageUpload.error}}
+	</div>
+</div>
+<div class="modal-footer">
+	<loading-button ng-if="imageUpload.imageAsDataUri" class="btn btn-primary" action="imageUpload.doUpload()" bindtoenter="true">
+		Upload
+	</loading-button>
+	<button class="btn btn-warning" ng-click="imageUpload.cancel()">Cancel</button>
+</div>
