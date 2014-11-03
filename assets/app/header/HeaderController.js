@@ -3,6 +3,9 @@ app.controller('HeaderController', function ($stateParams, $state, user, rooms, 
 	this.user = user.current;
 	this.settings = user.settings;
 	this.emoticons = emoticons;
+	this.showOptions = function() {
+		return !$state.is('lobby');
+	};
 
 	this.changeSetting = function (setting) {
 		self.settings[setting] = !self.settings[setting];
