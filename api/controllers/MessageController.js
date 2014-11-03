@@ -14,7 +14,7 @@ var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUt
 
 // Create a new message, this will be the endpoint for POST /message
 module.exports.create = function (req, res) {
-	var author = req.session.user;
+	var userId = req.session.userId;
 	var roomId = req.body.room;
 
 	// TODO if author is not a member of the roomId, cancel
@@ -30,7 +30,7 @@ module.exports.create = function (req, res) {
 	else if (/^\/nick\s+/i.test(text)) {
 		var newNick = text.match(/\/nick\s+([\w\s-]{1,20})/i);
 		if (newNick) {
-			User.findOne(author.id).populate('rooms').exec(function (error, user) { // find the user in the db (don't want to use session version)
+			User.findOne(userId).populate('rooms').exec(function (error, user) { // find the user in the db (don't want to use session version)
 				var currentNick = user.nick;
 				user.nick = newNick[1];
 				user.save() // save the model with the updated nick
@@ -52,7 +52,7 @@ module.exports.create = function (req, res) {
 		// Create a message model object in the db
 		Message.create({ // the model to add into db
 			room: roomId,
-			author: author.id,
+			author: userId,
 			text: text
 		}).exec(function (error, message) {
 			res.ok(message); // send back the message to the original caller
@@ -92,7 +92,6 @@ module.exports.update = function (req, res) {
 // Get the latest 50 messages, this will be the endpoint for GET /message/latest
 module.exports.latest = function (req, res) {
 	var roomId = req.param('roomId');
-	var user = req.session.user;
 	// TODO check for roomId and user values
 
 	// find finds multiple instances of a model, using the where criteria (in this case the roomId

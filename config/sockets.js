@@ -23,11 +23,11 @@ module.exports.sockets = {
 	 ***************************************************************************/
 	onConnect: function (session, socket) {
 		var socketId = sails.sockets.id(socket);
-		if (!session.user) return;
+		if (!session.userId) return;
 
 		//console.log('connected rooms', sails.sockets.rooms());
 
-		User.findOne(session.user.id).exec(function (error, user) {
+		User.findOne(session.userId).exec(function (error, user) {
 
 			console.log('connecting ' + socketId + ' for ' + user.nick);
 

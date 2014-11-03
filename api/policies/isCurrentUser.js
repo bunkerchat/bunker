@@ -2,9 +2,9 @@ var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUt
 
 module.exports = function (req, res, next) {
 	var pk = actionUtil.requirePk(req);
-	var sessionUser = req.session.user;
+	var userId = req.session.userId;
 
-	if(pk == sessionUser.id) {
+	if(pk == userId) {
 		return next();
 	}
 	return res.forbidden();

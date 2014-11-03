@@ -1,9 +1,12 @@
 module.exports = function (request, response, next) {
-	if (request.session.user) {
+	if (request.session.userId) {
 		next();
 	}
 	else if (request.user) {
-		request.session.user = request.user; // user won't be available in socket calls without this
+		// Passport places a 'user' object on the request, but sockets do not have access to it.
+		// Place the user's id into the session, which sockets do have access to.
+		// WARNING: This should always be the userId, not the user. Requests should pull user from db if they need more info
+		request.session.userId = request.user.id;
 		next();
 	}
 	else {

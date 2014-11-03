@@ -15,7 +15,7 @@ var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUt
 // This acts as the room join for now
 module.exports.findOne = function (req, res) {
 	var pk = actionUtil.requirePk(req);
-	var user = req.session.user;
+	var userId = req.session.userId;
 
 	Room.findOne(pk).populate('members').exec(function (error, room) {
 		if (error) return res.serverError();
@@ -29,12 +29,12 @@ module.exports.findOne = function (req, res) {
 		});
 
 		// If user is not a member, add them and publish update
-		if (!_.any(room.members, {id: user.id})) {
-			room.members.add(user.id);
+		if (!_.any(room.members, {id: userId})) {
+			room.members.add(userId);
 			room.save(function () {
 
-				User.findOne(user.id).populateAll().exec(function (error, populatedUser) {
-					User.publishUpdate(user.id, populatedUser);
+				User.findOne(userId).populateAll().exec(function (error, populatedUser) {
+					User.publishUpdate(userId, populatedUser);
 				});
 
 				// Repopulate the room, with the new member, and publish a room update
@@ -52,7 +52,7 @@ module.exports.findOne = function (req, res) {
 
 module.exports.leave = function (req, res) {
 	var pk = actionUtil.requirePk(req);
-	var user = req.session.user;
+	var userId = req.session.userId;
 
 	Room.findOne(pk).populate('members').exec(function (error, room) {
 		if (error) return res.serverError();
@@ -62,13 +62,13 @@ module.exports.leave = function (req, res) {
 		Room.unsubscribe(req, pk, ['message', 'update']);
 		// TODO unsubscribe all members? probably not... need to figure out which ones
 
-		room.members = _.reject(room.members, {id: user.id});
+		room.members = _.reject(room.members, {id: userId});
 		room.save(function () {
 
-			User.findOne(user.id).populateAll().exec(function(error, populatedUser) {
+			User.findOne(userId).populateAll().exec(function(error, populatedUser) {
 				populatedUser.rooms = _.reject(populatedUser.rooms, {id: room.id});
 				populatedUser.save();
-				User.publishUpdate(user.id, populatedUser);
+				User.publishUpdate(userId, populatedUser);
 			});
 
 			// Publish a room update
