@@ -6,7 +6,6 @@ window.app = angular.module('bunker', [
 	'angularMoment',
 	'ngResource',
 	'ui.bootstrap',
-	'fileEvents',
 	'youtube-embed'
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
