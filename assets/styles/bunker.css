@@ -170,6 +170,7 @@ nav,
 }
 
 .message-body {
+	position: relative;
 	min-height: 30px;
 	margin-left: 180px;
 	padding-left: 10px;
