@@ -230,13 +230,27 @@ nav,
 	border-right-color: #faf2cc;
 }
 
-.message-input.edit-mode input {
-	background-color: #e4dcfa;
+
+.message-input-container{
+
 }
 
-.message-input input[type=text],
-.message-input button {
+.message-input-container.edit-mode input {
+	background-color: #FBFF6B;
+}
+
+.message-input-container input[type=text],
+.message-input-container button {
 	border-radius: 0;
+}
+
+.btn.message-input{
+	line-height: 8px;
+}
+
+.form-control.message-input{
+	height: 32px;
+	padding: 2px 8px;
 }
 
 .message-caret {
@@ -265,13 +279,14 @@ img.emoticon {
 	max-height: 30px;
 }
 
+
 /* member list */
 
 .member-list li.list-group-item {
 	border-radius: 0;
 	border-left: 0;
 	border-right: 0;
-	padding: 12px;
+	padding: 4px 8px;
 }
 
 .member-list li.list-group-item:first-of-type {
