@@ -3,6 +3,7 @@
 app.controller('MessageLogController', function ($rootScope, $stateParams, bunkerApi, uuid, user) {
 	var self = this;
 	var roomId = $stateParams.roomId;
+	var messageLookup = {};
 
 	this.user = user.current;
 	this.messages = [];
@@ -22,25 +23,24 @@ app.controller('MessageLogController', function ($rootScope, $stateParams, bunke
 		}
 	});
 
-	$rootScope.$on('$sailsDisconnected', function (evt, data) {
+	$rootScope.$on('$sailsDisconnected', function () {
 		self.messages.push({text: 'Disconnected', id: uuid.v4(), createdAt: new Date().toISOString()});
 	});
 
 	function addMessage(message) {
+		if(messageLookup[message.id]) return; // already exists!
+
 		var lastMessage = _.last(self.messages);
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+
 		self.messages.push(message);
+		messageLookup[message.id] = message.id; // Store messages in lookup object, this allows us to check for duplicates quickly
 	}
 
 	function editMessage(message) {
-		// todo: learn underscore (I think)
-		for (var i = 0; i < self.messages.length; i++) {
-			var currentMessage = self.messages[i];
-			if (currentMessage.id == message.id) {
-				currentMessage.text = message.text;
-				currentMessage.history = message.history;
-				currentMessage.edited = message.edited;
-			}
+		var currentMessage = _.find(self.messages, {id: message.id});
+		if (currentMessage) {
+			angular.extend(currentMessage, message);
 		}
 	}
 });
