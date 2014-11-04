@@ -1,4 +1,4 @@
-app.directive('autoScroll', function ($location, $anchorScroll, $timeout) {
+app.directive('autoScroll', function ($location, $timeout) {
 	return {
 		scope: {
 			messageId: '@autoScroll'
@@ -31,8 +31,7 @@ app.directive('autoScroll', function ($location, $anchorScroll, $timeout) {
 				});
 
 				function scroll() {
-					$location.hash(messageId);
-					$anchorScroll();
+					el.scrollTop(el.prop('scrollHeight'));
 				}
 			});
 		}
