@@ -8,11 +8,18 @@ app.directive('fill', function ($window, $timeout) {
 			var marginBottom = options.marginBottom || 0;
 
 			windowEl.resize(function () {
-				var fillHeight = $window.innerHeight - el.offset().top - marginBottom - 2;
-				el.css({
-					height: fillHeight + 'px',
-					margin: 0
-				});
+				if($window.innerWidth <= 480) {
+					el.css({
+						height: 'auto'
+					});
+				}
+				else {
+					var fillHeight = $window.innerHeight - el.offset().top - marginBottom - 2;
+					el.css({
+						height: fillHeight + 'px',
+						margin: 0
+					});
+				}
 			});
 			$timeout(function () {
 				windowEl.resize();

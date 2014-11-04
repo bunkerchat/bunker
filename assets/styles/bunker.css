@@ -420,6 +420,11 @@ img.emoticon {
 /* mobile modifications */
 
 @media (max-width: 480px) {
+
+	.message-list {
+		margin-bottom: 47px;
+	}
+
 	.message-author {
 		width: 100%;
 		height: auto;
@@ -441,4 +446,10 @@ img.emoticon {
 		margin-left: 0;
 		padding-right: 10px;
 	}
+
+	.message-input {
+		position: fixed;
+		bottom: 0;
+	}
+
 }
