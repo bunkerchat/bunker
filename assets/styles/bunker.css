@@ -55,6 +55,13 @@ nav,
 	min-width: 50px;
 }
 
+.navbar .navbar-nav li .badge {
+	position: absolute;
+	top: 1px;
+	right: -3px;
+	z-index: 1;
+}
+
 /* augments */
 
 .no-gutter {

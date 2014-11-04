@@ -7,6 +7,7 @@
 		<ul class="nav navbar-nav hidden-xs">
 			<li ui-sref-active="active" ng-repeat="room in header.user.rooms">
 				<a ui-sref="room({roomId: room.id})">{{room.name}}</a>
+				<span class="badge" ng-show="room.$unreadMessages > 0">{{room.$unreadMessages}}</span>
 			</li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right hidden-xs" ng-show="header.showOptions()">
