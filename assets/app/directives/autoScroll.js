@@ -1,41 +1,36 @@
-app.directive('autoScroll', function ($location, $timeout) {
+app.directive('autoScroll', function ($timeout) {
 	return {
 		scope: {
 			messageId: '@autoScroll'
 		},
 		link: function (scope, elem) {
-			var el = angular.element(elem);
-			var firstTime = true;
+			var el = elem[0];
+			var tolerance = 31;
 
-			scope.$watch(function() { return $location.search()}, function() {
-				$timeout(scroll, 500);
-			});
-			scope.$watch('messageId', function (messageId, lastMessageId) {
-				if (messageId == lastMessageId) return;
+			// Scroll on message adds
+			scope.$watch('messageId', function (messageId) {
 
-				var currentScroll = el.prop('scrollHeight') - el.prop('scrollTop');
-				var shouldScroll = currentScroll <= el.height() + 25;
-				if (!shouldScroll) return;
+				if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) { // We're at the bottom
 
-				if(firstTime) {
-					$timeout(scroll, 500);
-					firstTime = false;
-					return;
-				}
-
-				$timeout(function () {
+					// Check for images
 					var image = angular.element('#' + messageId).find('img');
-
-					if (image.length) {
-						image.on('load', scroll);
-					} else {
+					if (image.length) { // If we have an image, wait for it to load before scrolling
+						image.load(scroll);
+					} else { // Otherwise scroll immediately
 						scroll();
 					}
-				});
+				}
 			});
 
-			function scroll() {
-				el.scrollTop(el.prop('scrollHeight'));
+			// Scroll after state changes
+			scope.$on('$stateChangeSuccess', function () {
+				scroll(500);
+			});
+
+			function scroll(waitTime) {
+				$timeout(function () {
+					el.scrollTop = el.scrollHeight;
+				}, waitTime || 0);
 			}
 		}
 	};
