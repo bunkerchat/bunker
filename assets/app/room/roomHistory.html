@@ -2,31 +2,34 @@
 	<div class="row">
 		<div class="col-md-10 col-xs-12 no-gutter">
 			<h2 ng-if="!room.rawMessages.$resolved">Loading...</h2>
-
 			<h2 ng-if="room.rawMessages.$resolved && room.rawMessages.length == 0">No messages</h2>
-			<ol class="list-unstyled message-list" fill="{'marginBottom': 0}">
-				<li class="message" id="{{::message.id}}" ng-repeat="message in room.messages">
-					<div message-mention="{{::room.currentUser.nick}}"
-							 message-mention-text="{{::message.text}}">
-						<div class="message-author">
+
+			<ol class="list-unstyled message-list" fill auto-scroll>
+				<li class="message-container" id="{{::message.id}}" ng-repeat="message in room.messages">
+					<div class="message">
+						<div message-mention="{{::room.currentUser.nick}}"
+								 message-mention-text="{{::message.text}}">
+							<div class="message-author">
 							<span ng-if="::message.$firstInSeries">
 								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 								<div class="name">{{::message.author.nick}}</div>
 							</span>
-						</div>
-						<div class="message-caret" ng-if="::message.$firstInSeries"></div>
-						<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
-							<span bunker-message="{{::message.text}}"></span>
+							</div>
+							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
+							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
+								<span bunker-message="{{::message.text}}"></span>
 							<span class="message-info text-muted">
 									<i class="fa fa-pencil" title="View message history"
 										 ng-click="message.showHistory = !message.showHistory"
 										 ng-if="::message.edited"></i>
-									<span class="timestamp" ng-if="::message.$firstInSeries">
-										<a ui-sref="roomHistory({roomId: room.roomId, date: message.createdAt, message: message.id})" class="text-muted">
+									<span ng-if="::message.$firstInSeries">
+										<a ui-sref="roomHistory({roomId: room.roomId, date: message.createdAt, message: message.id})"
+											 class="text-muted">
 											<small>{{::message.createdAt | date:'medium'}}</small>
 										</a>
 									</span>
 								</span>
+							</div>
 						</div>
 					</div>
 				</li>
@@ -48,8 +51,8 @@
 								 datepicker-popup="{{::room.format}}" is-open="room.calendarOpened"
 								 close-text="Close"/>
 					<span class="input-group-btn">
-						<button type="button" class="btn btn-primary" ng-click="room.openCalendar($event)"><i
-							class="glyphicon glyphicon-calendar"></i></button>
+						<button type="button" class="btn btn-primary" ng-click="room.openCalendar($event)">
+							<i class="fa fa-calendar"></i></button>
 					</span>
 				</p>
 
