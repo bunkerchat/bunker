@@ -6,10 +6,13 @@ app.directive('autoScroll', function ($location, $timeout) {
 		link: function (scope, elem) {
 			var el = angular.element(elem);
 			var firstTime = true;
+
+			scope.$watch(function() { return $location.search()}, function() {
+				$timeout(scroll, 500);
+			});
 			scope.$watch('messageId', function (messageId, lastMessageId) {
 				if (messageId == lastMessageId) return;
 
-				// TODO why does height need a 1px tolerance?
 				var currentScroll = el.prop('scrollHeight') - el.prop('scrollTop');
 				var shouldScroll = currentScroll <= el.height() + 25;
 				if (!shouldScroll) return;
@@ -29,11 +32,11 @@ app.directive('autoScroll', function ($location, $timeout) {
 						scroll();
 					}
 				});
-
-				function scroll() {
-					el.scrollTop(el.prop('scrollHeight'));
-				}
 			});
+
+			function scroll() {
+				el.scrollTop(el.prop('scrollHeight'));
+			}
 		}
 	};
 });
