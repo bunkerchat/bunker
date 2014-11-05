@@ -130,9 +130,11 @@ nav,
 	border-right: solid 1px #eee;
 }
 
-.message {
+.message-container {
 	position: relative;
-	overflow: hidden;
+}
+
+.message {
 	line-height: 30px;
 	background-color: #414B57;
 }
@@ -170,7 +172,6 @@ nav,
 }
 
 .message-body {
-	position: relative;
 	min-height: 30px;
 	margin-left: 180px;
 	padding-left: 10px;
@@ -222,13 +223,9 @@ nav,
 
 .message-info {
 	position: absolute;
-	top: 0px;
+	top: 0;
 	right: 3px;
 	padding-right: 5px;
-}
-
-.message-info .timestamp {
-	margin-left: 5px;
 }
 
 .message-mention > .message-body {

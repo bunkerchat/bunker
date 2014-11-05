@@ -26,7 +26,7 @@
 									<i class="fa fa-pencil" title="View message history"
 										 ng-click="message.showHistory = !message.showHistory"
 										 ng-if="message.edited"></i>
-									<span class="timestamp" ng-if="::message.$firstInSeries">
+									<span ng-if="::message.$firstInSeries">
 										<a ui-sref="roomHistory({roomId: room.current.id, date: message.createdAt, message: message.id})"
 											 class="text-muted">
 											<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}"></small>
@@ -42,7 +42,7 @@
 							{{::message.text}}
 						</div>
 						<span class="message-info text-muted">
-							<small class="timestamp" am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
+							<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
 							</small>
 						</span>
 					</div>
