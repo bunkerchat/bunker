@@ -115,6 +115,29 @@ module.exports.history = function (req, res) {
 		});
 };
 
+module.exports.emoticonCounts = function(req, res) {
+
+	var countMap = {};
+
+	Message.find().where({text: {'contains': ':'}}).exec(function(error, candidateMessages) {
+		_.each(candidateMessages, function(message) {
+
+			var matches = message.text.match(/:\w+:/g);
+			if(matches) {
+				_.each(matches, function (match) {
+					countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
+				});
+			}
+		});
+
+		var emoticonCounts = _(countMap).map(function(value, key) {
+			 return { count: value, emoticon: key};
+		 }).sortBy('count').reverse().value();
+
+		res.ok(emoticonCounts);
+	});
+};
+
 // Sanitize a message, no tags allow currently
 function sanitizeMessage(original) {
 	return require('sanitize-html')(original, {

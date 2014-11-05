@@ -57,7 +57,8 @@ module.exports.policies = {
 		'latest': 'isLoggedIn',
 		'create': 'isLoggedIn',
 		'update': 'isLoggedIn',
-		'history': 'isLoggedIn'
+		'history': 'isLoggedIn',
+		'emoticonCounts': true
 	}
 
 	/***************************************************************************
