@@ -78,6 +78,7 @@ module.exports.update = function (req, res) {
 		if (message.createdAt < acceptableEditDate) {
 			return;
 		}
+
 		Message.update({id: pk}, req.body).exec(function () {
 
 			// message all subscribers of the room that with the new message as data
@@ -91,7 +92,7 @@ module.exports.update = function (req, res) {
 
 // Get the latest 50 messages, this will be the endpoint for GET /message/latest
 module.exports.latest = function (req, res) {
-	var roomId = req.param('roomId');
+	var roomId = actionUtil.requirePk(req);
 	// TODO check for roomId and user values
 
 	// find finds multiple instances of a model, using the where criteria (in this case the roomId
@@ -115,24 +116,24 @@ module.exports.history = function (req, res) {
 		});
 };
 
-module.exports.emoticonCounts = function(req, res) {
+module.exports.emoticonCounts = function (req, res) {
 
 	var countMap = {};
 
-	Message.find().where({text: {'contains': ':'}}).exec(function(error, candidateMessages) {
-		_.each(candidateMessages, function(message) {
+	Message.find().where({text: {'contains': ':'}}).exec(function (error, candidateMessages) {
+		_.each(candidateMessages, function (message) {
 
 			var matches = message.text.match(/:\w+:/g);
-			if(matches) {
+			if (matches) {
 				_.each(matches, function (match) {
 					countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
 				});
 			}
 		});
 
-		var emoticonCounts = _(countMap).map(function(value, key) {
-			 return { count: value, emoticon: key};
-		 }).sortBy('count').reverse().value();
+		var emoticonCounts = _(countMap).map(function (value, key) {
+			return {count: value, emoticon: key};
+		}).sortBy('count').reverse().value();
 
 		res.ok(emoticonCounts);
 	});

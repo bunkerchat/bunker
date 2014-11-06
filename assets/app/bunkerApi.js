@@ -11,6 +11,7 @@ app.factory('bunkerApi', function (sailsResource, $resource) {
 		history: $resource('/message/history'),
 		room: sailsResource('room', {
 			get: { method: 'GET', fetchAfterReconnect: true },
+			latest: {method: 'GET', isArray: true, cache: false, url: '/room/:roomId/latest'},
 			leave: { method: 'PUT', url: '/room/leave' }
 		})
 	};

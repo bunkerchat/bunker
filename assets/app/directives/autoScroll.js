@@ -15,7 +15,7 @@ app.directive('autoScroll', function ($timeout) {
 					// Check for images
 					var image = angular.element('#' + messageId).find('img');
 					if (image.length) { // If we have an image, wait for it to load before scrolling
-						image.load(scroll);
+						image.load(function() { scroll(100); });
 					} else { // Otherwise scroll immediately
 						scroll();
 					}

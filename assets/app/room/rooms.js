@@ -6,7 +6,7 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
 	function retrieveRoom(roomId) {
 		rooms[roomId] = bunkerApi.room.get({id: roomId});
 		rooms[roomId].$messages = [];
-		bunkerApi.message.query({id: 'latest', roomId: roomId}, function (messages) {
+		bunkerApi.room.latest({roomId: roomId}, function (messages) {
 			_(messages).sortBy('createdAt').each(function (message) {
 				addMessage(roomId, message);
 			});
@@ -48,7 +48,7 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
 
 	// Handle disconnect
 	$rootScope.$on('$sailsDisconnected', function () {
-		_.each(rooms, function(room) {
+		_.each(rooms, function (room) {
 			addMessage(room.id, {text: 'Disconnected', id: uuid.v4(), createdAt: new Date().toISOString()})
 		});
 	});

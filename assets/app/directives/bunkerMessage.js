@@ -41,7 +41,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 				// Parse emoticons
 				_.each(text.match(/:\w+:/g), function (emoticonText) {
 					var knownEmoticon = _.find(emoticons.files, function (known) {
-						return new RegExp(known.replace(/\.\w{1,4}$/, '') + '$', 'i').test(emoticonText.replace(/:/g, ''));
+						return known.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticonText.replace(/:/g, '').toLowerCase();
 					});
 					if (knownEmoticon && !replacedEmotes[knownEmoticon]) {
 						formatted = replaceAll(formatted, emoticonText,
