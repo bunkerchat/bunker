@@ -12,22 +12,20 @@
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
-// Create a new message, this will be the endpoint for POST /message
-module.exports.create = function (req, res) {
+// POST /message
+// Create a new message. We're overriding the blueprint route provided by sails in order to do
+// some custom things.
+exports.create = function (req, res) {
 	var userId = req.session.userId;
-	var roomId = req.body.room;
+	var roomId = req.param('room');
 
 	// TODO if author is not a member of the roomId, cancel
-	var text = sanitizeMessage(req.body.text);
+	var text = sanitizeMessage(req.param('text'));
 	if (!text || !text.length) {
 		return res.badRequest();
 	}
-	else if (/^\/me\s+/i.test(text)) {
-		// /me emote command
-		// Pete's code zone, do not enter
-		// ******************************
-	}
-	else if (/^\/nick\s+/i.test(text)) {
+	else if (/^\/nick\s+/i.test(text)) { // Change the current user's nick
+
 		var newNick = text.match(/\/nick\s+([\w\s-]{1,20})/i);
 		if (newNick) {
 			User.findOne(userId).populate('rooms').exec(function (error, user) { // find the user in the db (don't want to use session version)
@@ -45,8 +43,7 @@ module.exports.create = function (req, res) {
 		}
 		res.ok();
 	}
-	else if (/^\/topic\s+/i.test(text)) {
-		// topic command
+	else if (/^\/topic\s+/i.test(text)) { // Change room topic
 	}
 	else { // base case, a regular chat message
 		// Create a message model object in the db
@@ -65,7 +62,9 @@ module.exports.create = function (req, res) {
 	}
 };
 
-module.exports.update = function (req, res) {
+// PUT /message/:id
+// Update a message (the edit functionality)
+exports.update = function (req, res) {
 	var messageEditWindowSeconds = 10;
 	var pk = actionUtil.requirePk(req);
 
@@ -73,50 +72,37 @@ module.exports.update = function (req, res) {
 		if (error) return res.serverError(error);
 		if (!message) return res.notFound();
 
+		// TODO use moment here
 		var acceptableEditDate = new Date();
 		acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
 		if (message.createdAt < acceptableEditDate) {
 			return;
 		}
 
-		Message.update({id: pk}, req.body).exec(function () {
+		var updates = { // Only certain things are editable
+			text: req.param('text'),
+			history: req.param('history'),
+			edited: true
+		};
 
-			// message all subscribers of the room that with the new message as data
-			// this message is flagged with 'edited' so the client will know to perform an edit
-			Room.message(req.body.room, req.body);
+		Message.update(pk, updates).exec(function (error) {
+			if(error) return res.serverError(error);
 
-			res.ok(req.body);
+			// Have to repopulate in order to deliver a full message. This would typically not be necessarily
+			// except we're informing clients of the update via the Room.message command, not a publishUpdate
+
+			Message.findOne(pk).populateAll().exec(function(error, message) { // Repopulate
+				// message all subscribers of the room that with the new message as data
+				// this message is flagged with 'edited' so the client will know to perform an edit
+				Room.message(message.room, message);
+				res.ok(message);
+			});
 		});
 	});
 };
 
-// Get the latest 50 messages, this will be the endpoint for GET /message/latest
-module.exports.latest = function (req, res) {
-	var roomId = actionUtil.requirePk(req);
-	// TODO check for roomId and user values
-
-	// find finds multiple instances of a model, using the where criteria (in this case the roomId
-	// we also want to sort in DESCing (latest) order and limit to 50
-	// populateAll hydrates all of the associations
-	Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).populateAll().exec(function (error, messages) {
-		res.ok(messages); // send the messages
-	});
-};
-
-module.exports.history = function (req, res) {
-	var roomId = req.param('roomId');
-	var startDate = req.param('startDate');
-	var endDate = req.param('endDate');
-
-	Message.find({room: roomId, createdAt: {'>': moment(startDate).toDate(), '<': moment(endDate).toDate()}})
-		.populate('author')
-		.exec(function (err, messages) {
-			if (err) return res.serverError(err);
-			res.ok(messages);
-		});
-};
-
-module.exports.emoticonCounts = function (req, res) {
+// GET /message/emoticons
+exports.emoticonCounts = function (req, res) {
 
 	var countMap = {};
 

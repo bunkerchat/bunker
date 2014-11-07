@@ -50,14 +50,14 @@ module.exports.policies = {
 		'find': 'isLoggedIn',
 		'findOne': 'isLoggedIn',
 		'create': 'isLoggedIn',
-		'leave': 'isLoggedIn'
+		'leave': 'isLoggedIn',
+		'latest': 'isLoggedIn',
+		'history': 'isLoggedIn'
 	},
 	MessageController: {
 		'*': false,
-		'latest': 'isLoggedIn',
 		'create': 'isLoggedIn',
 		'update': 'isLoggedIn',
-		'history': 'isLoggedIn',
 		'emoticonCounts': true
 	}
 

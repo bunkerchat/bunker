@@ -9,11 +9,13 @@
 
 'use strict';
 
+var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
 // Find a single room, this will respond for GET /room/:roomId
 // This acts as the room join for now
-module.exports.findOne = function (req, res) {
+// TODO should be /room/:id/join
+exports.findOne = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;
 
@@ -50,7 +52,9 @@ module.exports.findOne = function (req, res) {
 	});
 };
 
-module.exports.leave = function (req, res) {
+// PUT /room/:id/leave
+// Current user requesting to leave a room
+exports.leave = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;
 
@@ -58,14 +62,15 @@ module.exports.leave = function (req, res) {
 		if (error) return res.serverError();
 		if (!room) return res.notFound();
 
-		// Unsubscribe to this room
+		// Unsubscribe socket for this room
 		Room.unsubscribe(req, pk, ['message', 'update']);
 		// TODO unsubscribe all members? probably not... need to figure out which ones
 
+		// Remove from room member list
 		room.members = _.reject(room.members, {id: userId});
 		room.save(function () {
 
-			User.findOne(userId).populateAll().exec(function(error, populatedUser) {
+			User.findOne(userId).populateAll().exec(function (error, populatedUser) {
 				populatedUser.rooms = _.reject(populatedUser.rooms, {id: room.id});
 				populatedUser.save();
 				User.publishUpdate(userId, populatedUser);
@@ -76,4 +81,33 @@ module.exports.leave = function (req, res) {
 			res.ok(room);
 		});
 	});
+};
+
+// GET /room/:id/latest
+// Get the latest 50 messages of a room
+exports.latest = function (req, res) {
+	var roomId = actionUtil.requirePk(req);
+	// TODO check for roomId and user values
+
+	// find finds multiple instances of a model, using the where criteria (in this case the roomId
+	// we also want to sort in DESCing (latest) order and limit to 50
+	// populateAll hydrates all of the associations
+	Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).populateAll().exec(function (error, messages) {
+		res.ok(messages); // send the messages
+	});
+};
+
+// GET /room/:id/history
+// Get historical messages of a room
+exports.history = function (req, res) {
+	var roomId = actionUtil.requirePk(req);
+	var startDate = req.param('startDate');
+	var endDate = req.param('endDate');
+
+	Message.find({room: roomId, createdAt: {'>': moment(startDate).toDate(), '<': moment(endDate).toDate()}})
+		.populate('author')
+		.exec(function (err, messages) {
+			if (err) return res.serverError(err);
+			res.ok(messages);
+		});
 };
