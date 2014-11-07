@@ -81,7 +81,7 @@ module.exports.bootstrap = function (cb) {
 					User.create({
 						token: accessToken,
 						// when no display name, get everything before @ in email
-						nick: profile.displayName || email.replace(/@.*/, ""),
+						nick: (profile.displayName || email.replace(/@.*/, "")).substr(0,20),
 						email: email
 					}).exec(done);
 				}
