@@ -3,10 +3,12 @@ app.factory('user', function(bunkerApi, $timeout) {
 	var typingTimeout;
 	var userId = window.userId;
 	var user = bunkerApi.user.get({id: userId});
+	var memberships = bunkerApi.roomMember.query({user: userId});
 	var settings = bunkerApi.userSettings.get({user: userId});
 
 	return {
 		current: user,
+		memberships: memberships,
 		settings: settings,
 		broadcastTyping: function(roomId) {
 

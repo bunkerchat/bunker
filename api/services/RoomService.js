@@ -2,21 +2,22 @@
 var uuid = require('node-uuid');
 
 module.exports.updateAllWithUser = function(userId, systemMessage) {
-	Room.find().populate('members').exec(function (error, rooms) {
+	RoomMember.find().where({user: userId}).exec(function (error, memberships) {
 		if (error) return false;
-		_.each(rooms, function (room) {
-			if (_.any(room.members, {id: userId})) {
-				Room.publishUpdate(room.id, room);
+		if(!memberships) return true;
 
-				// If we were provided a message, send it down to affected rooms
-				if(systemMessage) {
-					Room.message(room.id, {
-						id: uuid.v4(),
-						text: systemMessage,
-						room: room.id,
-						createdAt: new Date().toISOString()
-					});
-				}
+		var rooms = _.pluck(memberships, 'room');
+		_.each(rooms, function (room) {
+			Room.publishUpdate(room.id, room);
+
+			// If we were provided a message, send it down to affected rooms
+			if (systemMessage) {
+				Room.message(room.id, {
+					id: uuid.v4(),
+					text: systemMessage,
+					room: room.id,
+					createdAt: new Date().toISOString()
+				});
 			}
 		});
 		return true;

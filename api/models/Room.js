@@ -17,10 +17,6 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: false // TODO make this true when privacy controls are in place
 		},
-		members: {
-			collection: 'User',
-			via: 'rooms'
-		},
 		messages: {
 			collection: 'Message',
 			via: 'room'

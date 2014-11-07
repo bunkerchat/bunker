@@ -64,7 +64,7 @@
 		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
 			<ul class="list-group">
 				<li class="list-group-item"
-						ng-repeat="user in room.current.members | filter:{connected:true} | orderBy:'nick' track by user.id">
+						ng-repeat="user in room.members | filter:{connected:true} | orderBy:'nick' track by user.id">
 					<span ng-switch="user.typingIn == room.current.id" class="user-icon">
 						<span ng-switch-when="true">
 							<i class="fa fa-ellipsis-h"></i>

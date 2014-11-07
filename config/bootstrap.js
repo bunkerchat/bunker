@@ -9,6 +9,7 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.bootstrap.html
  */
 
+var moment = require('moment');
 var express = require('../node_modules/sails/node_modules/express'),
 	passport = require('passport'),
 	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
@@ -27,14 +28,31 @@ module.exports.bootstrap = function (cb) {
 
 	// Clear user socket data
 	User.update({}, {sockets: [], connected: false, typingIn: null}).exec(function (error) {
-	});
 
-	// Make sure all users have settings objects properly associated to them.
-	User.find({settings: null}).exec(function (error, users) {
-		async.each(users, function (user, cb) {
-			UserSettings.create({user: user}).exec(function (error, userSettings) {
-				user.settings = userSettings;
+		// Migrate room members
+		// Previously a many-to-many assocation with user having rooms and rooms having members
+		// Now a RoomMember model
+		User.find().where({updatedAt: {'<': moment('2014-11-11').toDate()}}).populate('rooms').exec(function (err, users) {
+			var usersNeedingUpdate = _.filter(users, function(user) { return user.rooms; });
+			async.each(usersNeedingUpdate, function (user, cb) {
+
+				_.each(user.rooms, function (room) {
+					RoomMember.create({user: user.id, room: room.id}).exec(function () {
+					});
+				});
+
+				user.rooms = null;
 				user.save(cb);
+			});
+		});
+
+		// Make sure all users have settings objects properly associated to them.
+		User.find({settings: null}).exec(function (error, users) {
+			async.each(users, function (user, cb) {
+				UserSettings.create({user: user}).exec(function (error, userSettings) {
+					user.settings = userSettings;
+					user.save(cb);
+				});
 			});
 		});
 	});
@@ -81,7 +99,7 @@ module.exports.bootstrap = function (cb) {
 					User.create({
 						token: accessToken,
 						// when no display name, get everything before @ in email
-						nick: (profile.displayName || email.replace(/@.*/, "")).substr(0,20),
+						nick: (profile.displayName || email.replace(/@.*/, "")).substr(0, 20),
 						email: email
 					}).exec(done);
 				}

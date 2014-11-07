@@ -1,6 +1,7 @@
 app.controller('LobbyController', function ($state, bunkerApi, user) {
 
 	this.user = user.current;
+	this.memberships = user.memberships;
 
 	this.joinRoom = function (roomName) {
 		bunkerApi.room.get({name: roomName},

@@ -1,9 +1,10 @@
-app.factory('bunkerApi', function (sailsResource, $resource) {
+app.factory('bunkerApi', function (sailsResource) {
 	return {
 		user: sailsResource('user', {
 			activity: {method: 'PUT', url: '/user/current/activity'}
 		}),
 		userSettings: sailsResource('userSettings'),
+		roomMember: sailsResource('roomMember'),
 		message: sailsResource('message', {
 			query: {method: 'GET', isArray: true, cache: false, fetchAfterReconnect: true},
 			update: {method: 'PUT', isArray: false, cache: false, fetchAfterReconnect: false}

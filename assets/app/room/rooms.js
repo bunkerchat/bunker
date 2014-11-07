@@ -53,6 +53,8 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
 		});
 	});
 
+	// TODO remove room from our cache when user leaves it
+
 	return function (roomId) {
 		if (!rooms[roomId]) {
 			retrieveRoom(roomId);

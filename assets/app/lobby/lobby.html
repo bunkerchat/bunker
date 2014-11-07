@@ -2,10 +2,10 @@
 	<div class="row">
 		<h2>Rooms</h2>
 		<ul class="list-unstyled">
-			<li class="panel panel-default col-md-2" ng-repeat="room in lobby.user.rooms">
+			<li class="panel panel-default col-md-2" ng-repeat="membership in lobby.memberships">
 				<div class="panel-heading">
-					<a ui-sref="room({roomId: room.id})">
-						<h4>{{room.name}}</h4>
+					<a ui-sref="room({roomId: membership.room.id})">
+						<h4>{{membership.room.name}}</h4>
 					</a>
 				</div>
 				<div class="panel-body">
@@ -21,9 +21,9 @@
 				</div>
 				<form class="panel-body" ng-submit="lobby.createRoom(newRoomName)">
 					<input type="text" class="form-control" ng-model="newRoomName" placeholder="New room name"/>
-                    <span class="input-group-btn">
-                        <button class="btn btn-success">Create</button>
-                    </span>
+					<span class="input-group-btn">
+							<button class="btn btn-success">Create</button>
+					</span>
 				</form>
 			</li>
 		</ul>

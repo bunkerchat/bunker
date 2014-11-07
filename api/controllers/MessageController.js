@@ -28,13 +28,17 @@ exports.create = function (req, res) {
 
 		var newNick = text.match(/\/nick\s+([\w\s-]{1,20})/i);
 		if (newNick) {
-			User.findOne(userId).populate('rooms').exec(function (error, user) { // find the user in the db (don't want to use session version)
+			User.findOne(userId).exec(function (error, user) { // find the user in the db (don't want to use session version)
 				var currentNick = user.nick;
 				user.nick = newNick[1];
 				user.save() // save the model with the updated nick
 					.then(function () {
-						User.publishUpdate(user.id, {nick: user.nick});
-						RoomService.messageRooms(user.rooms, currentNick + ' changed their handle to ' + user.nick);
+						User.publishUpdate(userId, {nick: user.nick});
+
+						RoomMember.find().where({user: userId}).exec(function(err, memberships) {
+							var rooms = _.pluck(memberships, 'room');
+							RoomService.messageRooms(rooms, currentNick + ' changed their handle to ' + user.nick);
+						});
 					})
 					.catch(function () {
 						// TODO error handling

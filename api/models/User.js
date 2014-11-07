@@ -15,8 +15,7 @@ module.exports = {
 		},
 		email: 'email',
 		rooms: {
-			collection: 'Room',
-			via: 'members'
+			collection: 'Room'
 		},
 		sockets: {
 			type: 'array',
