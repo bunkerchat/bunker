@@ -126,7 +126,7 @@ exports.emoticonCounts = function (req, res) {
 				});
 
 				var emoticonCounts = _(countMap).map(function (value, key) {
-					return {count: value, emoticon: key};
+					return {count: value, emoticon: key, name: key.replace(/:/g,'')};
 				}).sortBy('count').reverse().value();
 
 				cacheLoadedCb(err, emoticonCounts);

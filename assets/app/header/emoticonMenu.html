@@ -1,11 +1,14 @@
-<a ng-click="toggleSetting('sortEmoticonsByPopularity')">
-	<i class="fa {{settings.sortEmoticonsByPopularity ? 'fa-check-square-o' : 'fa-square-o'}}"></i> Sort by popularity
-</a>
-<ol class="col-md-6 list-unstyled" ng-repeat="list in ::emoticonMenuLists">
-	<li ng-repeat="emoticon in ::list">
-		<a ng-click="appendEmoticonToChat(emoticon)">
-			<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon}}"/>
-			:{{::emoticon|emoticonName}}:
+<div class="sortEmoticons">
+	<a ng-click="toggleSetting('sortEmoticonsByPopularity')">
+		<i class="fa {{settings.sortEmoticonsByPopularity ? 'fa-check-square-o' : 'fa-square-o'}}"></i> Sort by popularity
+	</a>
+</div>
+
+<ol class="col-md-6 list-unstyled"  ng-repeat="list in emoticonMenuLists">
+	<li ng-repeat="emoticon in list">
+		<a ng-click="appendEmoticonToChat(emoticon.file)">
+			<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon.file}}"/>
+			:{{::emoticon.name}}:
 		</a>
 	</li>
 </ol>

@@ -1,8 +1,7 @@
-app.controller('HeaderController', function ($rootScope, $stateParams, $state, user, rooms, emoticons) {
+app.controller('HeaderController', function ($rootScope, $stateParams, $state, user, rooms) {
 	var self = this;
 	this.user = user.current;
 	this.settings = user.settings;
-	this.emoticons = emoticons;
 	this.showOptions = function () {
 		return !$state.is('lobby');
 	};

@@ -119,6 +119,14 @@ nav,
 	text-decoration: none;
 }
 
+.sortEmoticons {
+	display:block;
+}
+
+.sortEmoticons a{
+	 margin: 17px;
+}
+
 /* bunker stuff */
 
 [fill], .fill {
