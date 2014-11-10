@@ -7,10 +7,8 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 		return !$state.is('lobby');
 	};
 
-	this.changeSetting = function (setting) {
-		self.settings[setting] = !self.settings[setting];
-		self.settings.$save();
-	};
+	this.changeSetting = user.toggleSetting;
+
 	this.leaveRoom = function () {
 		var room = rooms($stateParams.roomId);
 		room.$leave(function () {

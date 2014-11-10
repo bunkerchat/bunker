@@ -1,4 +1,4 @@
-app.directive('emoticonMenu', function($rootScope, $filter) {
+app.directive('emoticonMenu', function($rootScope, $filter, user) {
 	return {
 		templateUrl: '/assets/app/header/emoticonMenu.html',
 		scope: {
@@ -6,6 +6,8 @@ app.directive('emoticonMenu', function($rootScope, $filter) {
 			visible: '=ngShow'
 		},
 		link: function(scope) {
+			scope.settings = user.settings;
+			scope.toggleSetting = user.toggleSetting;
 			scope.emoticonMenuLists = [
 				_.initial(scope.emoticons.files, Math.floor(scope.emoticons.files.length/2)),
 				_.rest(scope.emoticons.files, Math.ceil(scope.emoticons.files.length/2))

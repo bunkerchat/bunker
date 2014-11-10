@@ -1,3 +1,6 @@
+<a ng-click="toggleSetting('sortEmoticonsByPopularity')">
+	<i class="fa {{settings.sortEmoticonsByPopularity ? 'fa-check-square-o' : 'fa-square-o'}}"></i> Sort by popularity
+</a>
 <ol class="col-md-6 list-unstyled" ng-repeat="list in ::emoticonMenuLists">
 	<li ng-repeat="emoticon in ::list">
 		<a ng-click="appendEmoticonToChat(emoticon)">
