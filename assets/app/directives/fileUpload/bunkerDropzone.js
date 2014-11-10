@@ -1,4 +1,4 @@
-app.directive('bunkerDropzone', function ($document, $compile, $q, DroppableItem) {
+app.directive('bunkerDropzone', function ($document, $compile, DroppableItem) {
 
 	// Takes raw DOM events and translates them in to our DroppableItem model.
 	// returns falsy if we can't find a valid item to turn in to a droppable.
@@ -38,15 +38,15 @@ app.directive('bunkerDropzone', function ($document, $compile, $q, DroppableItem
 		restrict: 'A',
 		scope: true,
 
-		controller: function ($modal, $rootScope, imageUpload, $scope) {
+		controller: function ($modal, $rootScope, imageUpload) {
 
 			var self = this;
 
 			self.isModalOpen = false;
 
-			self.doSingleImageUpload = function (file) {
+			self.doSingleImageUpload = function (droppableItem) {
 
-				file.loadData().then(function (loadedData) {
+				droppableItem.loadData().then(function (loadedData) {
 
 					if (loadedData.droppable.isFile()) {
 						self.isModalOpen = true;
