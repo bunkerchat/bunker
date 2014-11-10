@@ -1,18 +1,10 @@
 app
-	.controller('ImageUpload', function ($scope, imageUpload, imageFile, $modalInstance) {
+	.controller('ImageUpload', function ($scope, imageUpload, imageData, $modalInstance) {
 
 		var self = this;
 
-		self.imageAsDataUri = null;
+		self.imageAsDataUri = imageData;
 		self.progress = -1;
-
-		var fileReader = new FileReader();
-		fileReader.onload = function (event) {
-			self.imageAsDataUri = event.target.result;
-			$scope.$apply();
-		};
-
-		fileReader.readAsDataURL(imageFile);
 
 		this.doUpload = function () {
 			var uploadPromise = imageUpload

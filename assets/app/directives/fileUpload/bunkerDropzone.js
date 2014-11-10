@@ -1,4 +1,38 @@
-app.directive('bunkerDropzone', function ($document, $compile) {
+app.directive('bunkerDropzone', function ($document, $compile, DroppableItem) {
+
+	// Takes raw DOM events and translates them in to our DroppableItem model.
+	// returns falsy if we can't find a valid item to turn in to a droppable.
+	var getDroppableItem = function (event) {
+
+		var dataTransfer = event.originalEvent.dataTransfer,
+			rawItem;
+
+		if (!dataTransfer) {
+			return null;
+		}
+
+		// Here is how to get a FF -> FF or Chrome -> FF image drag to work:
+		// dataTransfer.mozItemCount
+		// dataTransfer.mozGetDataAt('text/x-moz-url', 0)
+
+		// if dragging a file from within a browser window
+		if (dataTransfer.items && dataTransfer.items.length) {
+			rawItem = _.find(dataTransfer.items, function (i) {
+				return i.type === "text/uri-list";
+			});
+
+			if (rawItem) {
+				return new DroppableItem(rawItem);
+			}
+		}
+
+		// If dragging a file from outside the browser window (desktop)
+		if (dataTransfer.files && dataTransfer.files.length) {
+			return new DroppableItem(dataTransfer.files[0]);
+		}
+
+		return null;
+	};
 
 	return {
 		restrict: 'A',
@@ -10,61 +44,59 @@ app.directive('bunkerDropzone', function ($document, $compile) {
 
 			self.isModalOpen = false;
 
-			this.doSingleImageUpload = function (file) {
-				var error = null;
+			self.doSingleImageUpload = function (droppableItem) {
 
-				// this could probably be more generic to support more file types
-				if (!self.isImageFile(file)) {
-					error = 'Unsupported file type.  Only images are supported.';
-				}
-				else if (file.size > 4 * 1024 * 1024) {
-					error = 'The file is too large! Files can be a maximum of 4MB.';
-				}
+				droppableItem.loadData().then(function (loadedData) {
 
-				self.isModalOpen = true;
+					if (loadedData.droppable.isFile()) {
+						self.isModalOpen = true;
 
-				if (error) {
+						$modal.open({
+							templateUrl: '/assets/app/directives/fileUpload/imageUpload.html',
+							controller: 'ImageUpload as imageUpload',
+							resolve: {
+								imageData: function () {
+									return loadedData.data;
+								}
+							},
+							size: 'lg'
+						})
+							.result
+							.then(function (url) {
+								self.setModalClosed();
+								$rootScope.$broadcast('inputText', url);
+							}, self.setModalClosed);
+					}
+					else {
+						$rootScope.$broadcast('inputText', loadedData.data);
+					}
+
+				}, function (errorObj) {
 					$modal.open({
 						templateUrl: '/assets/app/directives/fileUpload/fileError.html',
 						controller: 'FileError as fileError',
 						resolve: {
 							errorMessage: function () {
-								return error;
+								return errorObj.error;
 							}
 						}
 					})
 						.result
 						.then(self.setModalClosed, self.setModalClosed);
-				}
-				else {
-					$modal.open({
-						templateUrl: '/assets/app/directives/fileUpload/imageUpload.html',
-						controller: 'ImageUpload as imageUpload',
-						resolve: {
-							imageFile: function () {
-								return file;
-							}
-						},
-						size: 'lg'
-					})
-						.result
-						.then(function (url) {
-							self.setModalClosed();
-							$rootScope.$broadcast('inputText', url);
-						}, self.setModalClosed);
-				}
+				});
 			};
 
-			this.isImageFile = function (item) {
+			self.isImageFile = function (item) {
 				// TODO: can probably change this to just be a regex: /image.*/
 				return item.type && (
 					_.contains(item.type, '/jpeg') ||
 					_.contains(item.type, '/jpg') ||
 					_.contains(item.type, '/gif') ||
+					_.contains(item.type, '/bmp') ||
 					_.contains(item.type, '/png'));
 			};
 
-			this.setModalClosed = function () {
+			self.setModalClosed = function () {
 				self.isModalOpen = false;
 			};
 		},
@@ -85,6 +117,8 @@ app.directive('bunkerDropzone', function ($document, $compile) {
 					e.preventDefault(); // this must be here otherwise the browser won't listen for the drop event.
 				})
 				.on('dragbetterenter.dropzone', function () {
+					// We should be doing a check here to make sure it's valid. To fix when fixing the FF
+					// bug. 'dragbetterenter' doesn't propagate the dragenter event properly :( /* && getDroppableItem(e) */
 					if (!dropzoneCtrl.isModalOpen) {
 						$(this).addClass('dragover');
 					}
@@ -100,15 +134,15 @@ app.directive('bunkerDropzone', function ($document, $compile) {
 						return;
 					}
 
-					var files = e.originalEvent.dataTransfer.files,
-						file = files.length ? files[0] : null;
+					var droppableItem = getDroppableItem(e);
 
-					if (!file) {
+					if (!droppableItem) {
 						return;
 					}
 
-					dropzoneCtrl.doSingleImageUpload(file);
+					dropzoneCtrl.doSingleImageUpload(droppableItem);
 				});
+
 
 			/* we listen on doc element also to swallow "missed" drops.
 			 also listening for paste event */
@@ -131,7 +165,7 @@ app.directive('bunkerDropzone', function ($document, $compile) {
 					}
 
 					e.preventDefault();
-					dropzoneCtrl.doSingleImageUpload(copiedImage.getAsFile());
+					dropzoneCtrl.doSingleImageUpload(new DroppableItem(copiedImage.getAsFile()));
 				});
 
 			scope.$on('$destroy', function () {
