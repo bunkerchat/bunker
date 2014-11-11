@@ -119,6 +119,10 @@ nav,
 	text-decoration: none;
 }
 
+[emoticon-menu] hr {
+	margin: 4px 0 4px 0;
+}
+
 .sortEmoticons a {
 	margin: 17px;
 }
