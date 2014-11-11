@@ -133,6 +133,12 @@ nav,
 
 /* bunker stuff */
 
+.topic {
+	padding: 5px 10px;
+	border-bottom: solid #eee 1px;
+	line-height: 30px;
+}
+
 [fill], .fill {
 	overflow: hidden;
 }

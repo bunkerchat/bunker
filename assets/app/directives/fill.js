@@ -10,7 +10,7 @@ app.directive('fill', function ($window, $timeout) {
 
 				marginBottom = angular.element('.message-input').height();
 
-				if($window.innerWidth <= 480) {
+				if ($window.innerWidth <= 480) {
 					el.css({
 						height: 'auto'
 					});
@@ -23,9 +23,21 @@ app.directive('fill', function ($window, $timeout) {
 					});
 				}
 			});
+
+			// Triggers
+			// Initial
 			$timeout(function () {
 				windowEl.resize();
 			}, 500);
+
+			// Room updates
+			scope.$on('$sailsResourceUpdated', function (evt, resource) {
+				if (resource.model == 'room') {
+					$timeout(function () {
+						windowEl.resize();
+					}, 500);
+				}
+			});
 		}
 	};
 });

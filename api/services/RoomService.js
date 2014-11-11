@@ -23,15 +23,19 @@ module.exports.updateAllWithUser = function (userId, systemMessage) {
 	});
 };
 
+
+module.exports.messageRoom = function(room, message) {
+	var roomId = room.id ? room.id : room;
+	Room.message(roomId, {
+		id: uuid.v4(),
+		text: message,
+		room: roomId,
+		createdAt: new Date().toISOString()
+	});
+};
+
 module.exports.messageRooms = function (rooms, message) {
 	_.each(rooms, function (room) {
-		var roomId = room.id ? room.id : room;
-
-		Room.message(roomId, {
-			id: uuid.v4(),
-			text: message,
-			room: roomId,
-			createdAt: new Date().toISOString()
-		});
+		module.exports.messageRoom(room, message);
 	});
 };

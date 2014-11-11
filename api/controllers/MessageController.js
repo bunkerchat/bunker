@@ -35,7 +35,7 @@ exports.create = function (req, res) {
 					.then(function () {
 						User.publishUpdate(userId, {nick: user.nick});
 
-						RoomMember.find().where({user: userId}).exec(function(err, roomMembers) {
+						RoomMember.find().where({user: userId}).exec(function (err, roomMembers) {
 							var rooms = _.pluck(roomMembers, 'room');
 							RoomService.messageRooms(rooms, currentNick + ' changed their handle to ' + user.nick);
 						});
@@ -47,7 +47,36 @@ exports.create = function (req, res) {
 		}
 		res.ok();
 	}
-	else if (/^\/topic\s+/i.test(text)) { // Change room topic
+	else if (/^\/topic/i.test(text)) { // Change room topic
+
+		RoomMember.findOne({room: roomId, user: userId}).populate('user').exec(function (error, roomMember) {
+			if (error) return res.serverError(error);
+			if (!roomMember) return res.forbidden();
+
+			if (roomMember.role == 'administrator' || roomMember.role == 'moderator') {
+
+				var topicMatches = text.match(/\/topic\s+(.+)/i);
+				var topic = topicMatches ? topicMatches[1] : null;
+
+				Room.update(roomId, {topic: topic}).exec(function (error, room) {
+					if (error) return res.serverError(error);
+					if (!room) return res.notFound();
+
+					var room = room[0];
+					var message = topic ? roomMember.user.nick + ' changed the topic to ' + room.topic :
+						roomMember.user.nick + ' cleared the topic';
+
+					Room.publishUpdate(room.id, room);
+					RoomService.messageRoom(roomId, message);
+
+					res.ok();
+				});
+			}
+			else {
+				res.forbidden();
+			}
+
+		});
 	}
 	else { // base case, a regular chat message
 		// Create a message model object in the db
@@ -130,7 +159,7 @@ exports.emoticonCounts = function (req, res) {
 				});
 
 				var emoticonCounts = _(countMap).map(function (value, key) {
-					return {count: value, emoticon: key, name: key.replace(/:/g,'')};
+					return {count: value, emoticon: key, name: key.replace(/:/g, '')};
 				}).sortBy('count').reverse().value();
 
 				cacheLoadedCb(err, emoticonCounts);
