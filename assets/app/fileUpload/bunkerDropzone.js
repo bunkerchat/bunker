@@ -52,7 +52,7 @@ app.directive('bunkerDropzone', function ($document, $compile, DroppableItem) {
 						self.isModalOpen = true;
 
 						$modal.open({
-							templateUrl: '/assets/app/directives/fileUpload/imageUpload.html',
+							templateUrl: '/assets/app/fileUpload/imageUpload.html',
 							controller: 'ImageUpload as imageUpload',
 							resolve: {
 								imageData: function () {
@@ -73,7 +73,7 @@ app.directive('bunkerDropzone', function ($document, $compile, DroppableItem) {
 
 				}, function (errorObj) {
 					$modal.open({
-						templateUrl: '/assets/app/directives/fileUpload/fileError.html',
+						templateUrl: '/assets/app/fileUpload/fileError.html',
 						controller: 'FileError as fileError',
 						resolve: {
 							errorMessage: function () {

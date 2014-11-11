@@ -5,6 +5,7 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 			visible: '=ngShow'
 		},
 		link: function (scope) {
+			scope.search = '';
 			scope.settings = user.settings;
 			scope.saveSettings = user.saveSettings;
 			scope.emoticonMenuLists = [];
@@ -24,15 +25,20 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 			});
 
 			scope.$watch('visible', function (visible, oldVal) {
-				if (!visible || !scope.settings.sortEmoticonsByPopularity || visible == oldVal) return;
-				console.log('yay')
-				scope.emoticonCounts = bunkerApi.message.emoticonCounts();
+				if (visible == oldVal) return;
+
+				if (!visible) {
+					scope.search = '';
+				}
+
+				if (visible && scope.settings.sortEmoticonsByPopularity) {
+					scope.emoticonCounts = bunkerApi.message.emoticonCounts();
+				}
 			});
 
 			scope.$watchCollection('emoticonCounts', function (emoteCounts, oldVal) {
 				if (emoteCounts == oldVal) return;
 
-				console.count('emoticonCounts watch');
 				var emoteCountsHash = _.indexBy(emoteCounts, 'name');
 
 				_.each(emoticons.list, function (emoticon) {
@@ -46,6 +52,7 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 			});
 
 			scope.appendEmoticonToChat = function (emoticonFileName) {
+				scope.search = '';
 				var emoticonName = ':' + $filter('emoticonName')(emoticonFileName) + ':';
 				$rootScope.$broadcast('inputText', emoticonName);
 
