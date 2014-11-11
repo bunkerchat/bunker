@@ -14,9 +14,6 @@ module.exports = {
 			maxLength: 20
 		},
 		email: 'email',
-		rooms: {
-			collection: 'Room'
-		},
 		sockets: {
 			type: 'array',
 			defaultsTo: []
