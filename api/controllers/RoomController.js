@@ -12,6 +12,29 @@
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
+// POST /room
+// Create a room
+module.exports.create = function(req, res) {
+	var userId = req.session.userId;
+	var name = req.param('name') || 'Untitled';
+
+	// Create new instance of model using data from params
+	Room.create({name: name}).exec(function (err, room) {
+
+		// Make user an administrator
+		RoomMember.create({room: room.id, user: userId, role: 'administrator'}).exec(function(error, roomMember) {
+			RoomMember.publishCreate(roomMember);
+		});
+
+		Room.subscribe(req, room);
+		Room.introduce(room);
+		Room.publishCreate(room, !req.options.mirror && req);
+
+		res.status(201);
+		res.ok(room.toJSON());
+	});
+};
+
 // Find a single room, this will respond for GET /room/:roomId
 // This acts as the room join for now
 // TODO should be /room/:id/join

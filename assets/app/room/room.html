@@ -7,6 +7,7 @@
 				<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in log.messages"
 						id="{{::message.id}}">
 					<div class="message" ng-class="::{ local: message.author.id == log.user.id }">
+
 						<!-- standard message -->
 						<div ng-switch-when="true"
 								 message-mention="{{room.userService.current.nick}}"
@@ -15,7 +16,7 @@
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
-									<span status="room.memberLookup[message.author.id]"></span>
+									<span status="room.memberLookup[message.author.id].user"></span>
 								</span>
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
@@ -36,6 +37,7 @@
 							</div>
 						</div>
 					</div>
+
 					<!-- system message -->
 					<div class="new-message-body" ng-switch-default>
 						<div class="alert alert-message text-muted">
@@ -46,6 +48,7 @@
 							</small>
 						</span>
 					</div>
+
 					<div class="message-history-anchor">
 						<div class="message-history"
 								 ng-if="message.history && message.showHistory">
@@ -61,28 +64,34 @@
 			</ol>
 		</div>
 
+
+		<!-- right pane -->
 		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
+
+			<!-- member list -->
 			<ul class="list-group">
 				<li class="list-group-item"
-						ng-repeat="user in room.members | filter:{connected:true} | orderBy:'nick' track by user.id">
-					<span ng-switch="user.typingIn == room.current.id" class="user-icon">
+						ng-init="member = room.memberLookup[roomMember.user.id]" ng-repeat="roomMember in room.roomMembers">
+					<span ng-switch="member.user.typingIn == room.current.id" class="user-icon" title="{{member.role}}">
 						<span ng-switch-when="true">
 							<i class="fa fa-ellipsis-h"></i>
 						</span>
 						<span ng-switch-when="false">
-							<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
+							<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
 						</span>
 					</span>
-					<a ng-click="room.mentionUser(user.nick)">{{user.nick}}</a>
-					<span class="pull-right" status="user"></span>
+					<a ng-click="room.mentionUser(member.user.nick)">{{member.user.nick}}</a>
+					<span class="pull-right" status="member.user"></span>
 				</li>
 			</ul>
 
+			<!-- right pane bottom options -->
 			<div class="room-options">
-				<a href="#" ui-sref="roomHistory({roomId: room.current.id, date:room.now()})" class="btn btn-link">
+				<a ui-sref="roomHistory({roomId: room.current.id, date:room.now()})" class="btn btn-link">
 					History
 				</a>
 			</div>
+
 		</div>
 	</div>
 

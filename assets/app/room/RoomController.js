@@ -14,15 +14,14 @@ app.controller('RoomController', function ($scope, bunkerApi, user, currentRoom)
 
 	$scope.$watch('room.roomMembers', function (newVal, oldVal) {
 		if(!oldVal) return;
-		self.members = _.pluck(self.roomMembers, 'user');
-		self.memberLookup = _.indexBy(self.members, 'id');
+		self.memberLookup = _.indexBy(self.roomMembers, function(roomMember) { return roomMember.user.id; });
 	}, true);
 
 	$scope.$on('$sailsResourceUpdated', function(evt, resource) {
 		if(resource.model == 'user') {
-			var member = self.memberLookup[resource.id];
-			if(member) {
-				angular.extend(member, resource.data);
+			var roomMember = self.memberLookup[resource.id];
+			if(roomMember) {
+				angular.extend(roomMember.user, resource.data);
 			}
 		}
 	});
