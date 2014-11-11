@@ -26,3 +26,9 @@ app.controller('RoomController', function ($scope, bunkerApi, user, currentRoom)
 		}
 	});
 });
+
+app.filter('connected', function() {
+	return function(members) {
+		return _.filter(members, function(member) { return member.user.connected; });
+	};
+});

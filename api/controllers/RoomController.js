@@ -23,7 +23,8 @@ module.exports.create = function(req, res) {
 
 		// Make user an administrator
 		RoomMember.create({room: room.id, user: userId, role: 'administrator'}).exec(function(error, roomMember) {
-			RoomMember.publishCreate(roomMember);
+			// TODO does this cause people to see rooms they shouldn't? seems like it did...
+			//RoomMember.publishCreate(roomMember);
 		});
 
 		Room.subscribe(req, room);
