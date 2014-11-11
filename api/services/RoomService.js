@@ -1,13 +1,11 @@
-
 var uuid = require('node-uuid');
 
-module.exports.updateAllWithUser = function(userId, systemMessage) {
-	RoomMember.find().where({user: userId}).exec(function (error, memberships) {
+module.exports.updateAllWithUser = function (userId, systemMessage) {
+	RoomMember.find().where({user: userId}).populate('room').exec(function (error, memberships) {
 		if (error) return false;
-		if(!memberships) return true;
+		if (!memberships) return true;
 
-		var rooms = _.pluck(memberships, 'room');
-		_.each(rooms, function (room) {
+		_(memberships).pluck('room').each(function (room) {
 			Room.publishUpdate(room.id, room);
 
 			// If we were provided a message, send it down to affected rooms
@@ -20,12 +18,13 @@ module.exports.updateAllWithUser = function(userId, systemMessage) {
 				});
 			}
 		});
+
 		return true;
 	});
 };
 
-module.exports.messageRooms = function(rooms, message) {
-	_.each(rooms, function(room) {
+module.exports.messageRooms = function (rooms, message) {
+	_.each(rooms, function (room) {
 		var roomId = room.id ? room.id : room;
 
 		Room.message(roomId, {

@@ -20,22 +20,18 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 	};
 
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		if (resource.model == 'room' && resource.data.author && !resource.data.edited) {
-			var otherRoom = _.find(self.memberships, function(membership) { return membership.room.id == resource.id; });
-			if (resource.id != $stateParams.roomId) {
-				otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
-			}
+		if (resource.model == 'room' && resource.id != $stateParams.roomId && resource.data.author && !resource.data.edited) {
+			var otherRoom = _(self.memberships).pluck('room').find({id: resource.id});
+			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
 		}
 	});
 
 	$rootScope.$on('$stateChangeSuccess', function () {
 		if ($stateParams.roomId) {
-			self.memberships.$promise.then(function() {
-				var currentRoom = _.find(self.memberships, function(membership) { return membership.room.id == $stateParams.roomId; });
-				if(currentRoom) {
-					currentRoom.$unreadMessages = 0;
-				}
-			});
+			var currentRoom = _(self.memberships).pluck('room').find({id: $stateParams.roomId});
+			if(currentRoom) {
+				currentRoom.$unreadMessages = 0;
+			}
 		}
 	});
 });

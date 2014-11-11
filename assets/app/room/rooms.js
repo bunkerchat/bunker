@@ -4,20 +4,26 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
 
 	// Lookup a room
 	function retrieveRoom(roomId) {
-		rooms[roomId] = bunkerApi.room.get({id: roomId});
-		rooms[roomId].$messages = [];
-		bunkerApi.room.latest({roomId: roomId}, function (messages) {
-			_(messages).sortBy('createdAt').each(function (message) {
-				addMessage(roomId, message);
+
+		if(!rooms[roomId]) {
+			rooms[roomId] = bunkerApi.room.get({id: roomId}, function () {
+				bunkerApi.room.latest({roomId: roomId}, function (messages) {
+					_(messages).sortBy('createdAt').each(function (message) {
+						addMessage(roomId, message);
+					});
+				});
 			});
-		});
+			rooms[roomId].$messages = [];
+		}
+
+		return rooms[roomId];
 	}
 
 	// Add a message
 	function addMessage(roomId, message) {
 		if (messageLookup[message.id]) return; // already exists!
 
-		var room = rooms[roomId];
+		var room = retrieveRoom(roomId);
 		var lastMessage = _.last(room.$messages);
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
 
@@ -27,7 +33,7 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
 
 	// Edit a message
 	function editMessage(roomId, message) {
-		var room = rooms[roomId];
+		var room = retrieveRoom(roomId);
 		var currentMessage = _.find(room.$messages, {id: message.id});
 		if (currentMessage) {
 			angular.extend(currentMessage, message);
@@ -55,10 +61,5 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
 
 	// TODO remove room from our cache when user leaves it
 
-	return function (roomId) {
-		if (!rooms[roomId]) {
-			retrieveRoom(roomId);
-		}
-		return rooms[roomId];
-	};
+	return retrieveRoom;
 });

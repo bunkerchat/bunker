@@ -28,24 +28,6 @@ module.exports.bootstrap = function (cb) {
 
 	// Clear user socket data
 	User.update({}, {sockets: [], connected: false, typingIn: null}).exec(function (error) {
-
-		// Migrate room members
-		// Previously a many-to-many assocation with user having rooms and rooms having members
-		// Now a RoomMember model
-		User.find().where({updatedAt: {'<': moment('2014-11-11').toDate()}}).populate('rooms').exec(function (err, users) {
-			var usersNeedingUpdate = _.filter(users, function(user) { return user.rooms; });
-			async.each(usersNeedingUpdate, function (user, cb) {
-
-				_.each(user.rooms, function (room) {
-					RoomMember.create({user: user.id, room: room.id}).exec(function () {
-					});
-				});
-
-				user.rooms = null;
-				user.save(cb);
-			});
-		});
-
 		// Make sure all users have settings objects properly associated to them.
 		User.find({settings: null}).exec(function (error, users) {
 			async.each(users, function (user, cb) {
