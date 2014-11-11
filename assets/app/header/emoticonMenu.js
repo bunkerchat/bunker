@@ -24,7 +24,7 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 			});
 
 			scope.$watchCollection('emoticonCounts', function (emoteCounts, oldVal) {
-				if (!scope.emoticonCounts.$resolved || emoteCounts == oldVal) return;
+				if (emoteCounts == oldVal) return;
 
 				console.count('emoticonCounts watch');
 				var emoteCountsHash = _.indexBy(emoteCounts, 'name');
