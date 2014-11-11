@@ -32,11 +32,12 @@ app.controller('RoomController', function ($scope, bunkerApi, user, currentRoom)
 app.filter('roomMemberFilter', function () {
 	return function (members) {
 		return _(members)
+			.sortBy(function (member) {
+				return member.user.nick.toLowerCase();
+			})
 			.filter(function (member) {
 				return member.user.connected;
 			})
-			.sortBy(function (member) {
-				return member.user.nick;
-			}).value();
+			.value();
 	};
 });
