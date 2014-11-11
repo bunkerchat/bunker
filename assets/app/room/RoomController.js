@@ -13,22 +13,30 @@ app.controller('RoomController', function ($scope, bunkerApi, user, currentRoom)
 	};
 
 	$scope.$watch('room.roomMembers', function (newVal, oldVal) {
-		if(!oldVal) return;
-		self.memberLookup = _.indexBy(self.roomMembers, function(roomMember) { return roomMember.user.id; });
+		if (!oldVal) return;
+		self.memberLookup = _.indexBy(self.roomMembers, function (roomMember) {
+			return roomMember.user.id;
+		});
 	}, true);
 
-	$scope.$on('$sailsResourceUpdated', function(evt, resource) {
-		if(resource.model == 'user') {
+	$scope.$on('$sailsResourceUpdated', function (evt, resource) {
+		if (resource.model == 'user') {
 			var roomMember = self.memberLookup[resource.id];
-			if(roomMember) {
+			if (roomMember) {
 				angular.extend(roomMember.user, resource.data);
 			}
 		}
 	});
 });
 
-app.filter('connected', function() {
-	return function(members) {
-		return _.filter(members, function(member) { return member.user.connected; });
+app.filter('roomMemberFilter', function () {
+	return function (members) {
+		return _(members)
+			.filter(function (member) {
+				return member.user.connected;
+			})
+			.sortBy(function (member) {
+				return member.user.nick;
+			}).value();
 	};
 });
