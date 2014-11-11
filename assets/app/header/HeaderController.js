@@ -13,10 +13,8 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 		self.settings.$save();
 	};
 	this.leaveRoom = function () {
-		var room = rooms($stateParams.roomId);
-		room.$leave(function () {
-			$state.go('lobby');
-		});
+		rooms.leave($stateParams.roomId);
+		$state.go('lobby');
 	};
 
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {

@@ -30,14 +30,13 @@ module.exports.findOne = function (req, res) {
 		Room.subscribe(req, pk, ['message', 'update']);
 		RoomMember.subscribe(req, ['create', 'destroy']);
 
-		RoomMember.find().where({room: pk}).exec(function (err, members) {
+		RoomMember.find().where({room: pk}).exec(function (err, memberships) {
 
-			_.each(members, function (member) {
-				User.subscribe(req, member.user, ['message', 'update']); // Subscribe to member updates
+			_.each(memberships, function (member) {
+				User.subscribe(req, member.user, ['message', 'update']); // Subscribe to all room members
 			});
 
-			// Do we need to add as a member?
-			if (!_.find(members, {user: userId})) {
+			if (!_.find(memberships, {user: userId})) { // Do we need to add as a member?
 				RoomMember.create({
 					room: pk,
 					user: userId

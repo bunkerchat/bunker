@@ -23,7 +23,7 @@ window.app = angular.module('bunker', [
 				resolve: {
 					currentRoom: function ($stateParams, rooms) {
 						// Angular UI router will complete this before creating the controller if a $promise is returned
-						var currentRoom = rooms($stateParams.roomId);
+						var currentRoom = rooms.get($stateParams.roomId);
 						return currentRoom.$resolved ? currentRoom : currentRoom.$promise;
 					}
 				}

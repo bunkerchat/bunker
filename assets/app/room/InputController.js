@@ -3,7 +3,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 	var self = this;
 	var messageEditWindowSeconds = 10;
 	var roomId = $stateParams.roomId;
-	var currentRoom = rooms(roomId);
+	var currentRoom = rooms.get(roomId);
 	var memberships = bunkerApi.roomMember.query({ room: roomId});
 
 	var searchStates = {
