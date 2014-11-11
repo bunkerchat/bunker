@@ -90,12 +90,12 @@ exports.update = function (req, res) {
 		};
 
 		Message.update(pk, updates).exec(function (error) {
-			if(error) return res.serverError(error);
+			if (error) return res.serverError(error);
 
 			// Have to repopulate in order to deliver a full message. This would typically not be necessarily
 			// except we're informing clients of the update via the Room.message command, not a publishUpdate
 
-			Message.findOne(pk).populateAll().exec(function(error, message) { // Repopulate
+			Message.findOne(pk).populateAll().exec(function (error, message) { // Repopulate
 				// message all subscribers of the room that with the new message as data
 				// this message is flagged with 'edited' so the client will know to perform an edit
 				Room.message(message.room, message);
@@ -107,26 +107,40 @@ exports.update = function (req, res) {
 
 // GET /message/emoticons
 exports.emoticonCounts = function (req, res) {
+	// setting the request url as as the cache key
+	cacheService.short.wrap('Message/emoticonCounts', lookup, done);
 
-	var countMap = {};
+	function lookup(cacheLoadedCb) {
+		var emoticonRegex = /:\w+:/g;
+		var countMap = {};
 
-	Message.find().where({text: {'contains': ':'}}).exec(function (error, candidateMessages) {
-		_.each(candidateMessages, function (message) {
+		// .native gives you a callback function with a hook to the model's collection
+		Message.native(function (err, messageCollection) {
+			if (err) return cacheLoadedCb(err);
 
-			var matches = message.text.match(/:\w+:/g);
-			if (matches) {
-				_.each(matches, function (match) {
-					countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
+			messageCollection.find({text: {$regex: emoticonRegex}}).toArray(function (err, messages) {
+				_.each(messages, function (message) {
+
+					var matches = message.text.match(emoticonRegex);
+					if (matches) {
+						_.each(matches, function (match) {
+							countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
+						});
+					}
 				});
-			}
+
+				var emoticonCounts = _(countMap).map(function (value, key) {
+					return {count: value, emoticon: key, name: key.replace(/:/g,'')};
+				}).sortBy('count').reverse().value();
+
+				cacheLoadedCb(err, emoticonCounts);
+			});
 		});
+	}
 
-		var emoticonCounts = _(countMap).map(function (value, key) {
-			return {count: value, emoticon: key};
-		}).sortBy('count').reverse().value();
-
-		res.ok(emoticonCounts);
-	});
+	function done(err, messages) {
+		res.ok(messages)
+	}
 };
 
 // Sanitize a message, no tags allow currently

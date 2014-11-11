@@ -1,17 +1,14 @@
-app.controller('HeaderController', function ($rootScope, $stateParams, $state, user, rooms, emoticons) {
+app.controller('HeaderController', function ($rootScope, $stateParams, $state, user, rooms) {
 	var self = this;
 	this.user = user.current;
 	this.memberships = user.memberships;
 	this.settings = user.settings;
-	this.emoticons = emoticons;
 	this.showOptions = function () {
 		return !$state.is('lobby');
 	};
 
-	this.changeSetting = function (setting) {
-		self.settings[setting] = !self.settings[setting];
-		self.settings.$save();
-	};
+	this.changeSetting = user.toggleSetting;
+
 	this.leaveRoom = function () {
 		rooms.leave($stateParams.roomId);
 		$state.go('lobby');

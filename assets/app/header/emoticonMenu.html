@@ -1,8 +1,22 @@
-<ol class="col-md-6 list-unstyled" ng-repeat="list in ::emoticonMenuLists">
-	<li ng-repeat="emoticon in ::list">
-		<a ng-click="appendEmoticonToChat(emoticon)">
-			<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon}}"/>
-			:{{::emoticon|emoticonName}}:
+<div class="sortEmoticons">
+	<form class="form-inline" role="form">
+		<div class="form-group">
+			<input ng-model="search" class="form-control input-sm" type="text" placeholder="search">
+		</div>
+		<div class="checkbox">
+			<label>
+				<input ng-model="settings.sortEmoticonsByPopularity" ng-change="saveSettings()" type="checkbox">
+				Popular Sort
+			</label>
+		</div>
+	</form>
+</div>
+<hr>
+<ol class="col-md-6 list-unstyled" ng-repeat="list in emoticonMenuLists">
+	<li ng-repeat="emoticon in list | fuzzyBy: 'name': search">
+		<a ng-click="appendEmoticonToChat(emoticon.file)">
+			<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon.file}}"/>
+			:{{::emoticon.name}}:
 		</a>
 	</li>
 </ol>

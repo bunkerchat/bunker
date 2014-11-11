@@ -19,6 +19,10 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: false
 		},
+		sortEmoticonsByPopularity: {
+			type: 'boolean',
+			defaultsTo: false
+		},
 		user: {
 			model: 'User'
 		}

@@ -113,18 +113,27 @@ app.factory('emoticons', function () {
 		'woop.gif',
 		'words.gif',
 		'xd.gif',
-		'yaycloud.gif'];
+		'yaycloud.gif'
+	];
+
+	var list = [];
+
+	for (var i = 0; i < files.length; i++) {
+		var emoticon = files[i];
+		list.push({name: emoticonName(emoticon), file: emoticon, $count: 0});
+	}
 
 	return {
-		names: _.map(files, function (file) {
-			return file.replace(/.\w+$/, '');
-		}),
+		list: list,
+		names: _.map(files, emoticonName),
 		files: files
 	};
 });
 
 app.filter("emoticonName", function(){
-	return function(input){
-		return input.replace(/.\w+$/, '');
-	};
+	return emoticonName;
 });
+
+function emoticonName(input){
+	return input.replace(/.\w+$/, '');
+}
