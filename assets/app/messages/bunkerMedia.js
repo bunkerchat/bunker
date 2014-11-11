@@ -2,7 +2,7 @@ app.directive('bunkerMedia', function (user) {
 	'use strict';
 
 	return {
-		templateUrl: '/assets/app/directives/bunkerMedia.html',
+		templateUrl: '/assets/app/messages/bunkerMedia.html',
 		transclude:true,
 		scope: {
 			link: '@bunkerMedia'
