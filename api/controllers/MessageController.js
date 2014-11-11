@@ -35,8 +35,8 @@ exports.create = function (req, res) {
 					.then(function () {
 						User.publishUpdate(userId, {nick: user.nick});
 
-						RoomMember.find().where({user: userId}).exec(function(err, memberships) {
-							var rooms = _.pluck(memberships, 'room');
+						RoomMember.find().where({user: userId}).exec(function(err, roomMembers) {
+							var rooms = _.pluck(roomMembers, 'room');
 							RoomService.messageRooms(rooms, currentNick + ' changed their handle to ' + user.nick);
 						});
 					})

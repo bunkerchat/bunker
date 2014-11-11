@@ -4,7 +4,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 	var messageEditWindowSeconds = 10;
 	var roomId = $stateParams.roomId;
 	var currentRoom = rooms.get(roomId);
-	var memberships = bunkerApi.roomMember.query({ room: roomId});
+	var roomMembers = bunkerApi.roomMember.query({room: roomId});
 
 	var searchStates = {
 		NONE: 'none',
@@ -95,7 +95,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 				this.messageText = this.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
 			}
 			else if (searchState === searchStates.NICK) {
-				var members = _.pluck(memberships, 'user');
+				var members = _.pluck(roomMembers, 'user');
 				var matchingNames = _.filter(currentRoom && members, function (item) {
 					return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
 				});

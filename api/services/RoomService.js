@@ -1,11 +1,11 @@
 var uuid = require('node-uuid');
 
 module.exports.updateAllWithUser = function (userId, systemMessage) {
-	RoomMember.find().where({user: userId}).populate('room').exec(function (error, memberships) {
+	RoomMember.find().where({user: userId}).populate('room').exec(function (error, roomMembers) {
 		if (error) return false;
-		if (!memberships) return true;
+		if (!roomMembers) return true;
 
-		_(memberships).pluck('room').each(function (room) {
+		_(roomMembers).pluck('room').each(function (room) {
 			Room.publishUpdate(room.id, room);
 
 			// If we were provided a message, send it down to affected rooms
