@@ -11,7 +11,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 	this.leaveRoom = function () {
 		var room = rooms($stateParams.roomId);
 		room.$leave(function () {
-			$state.go('lobby');
+			$
 		});
 	};
 

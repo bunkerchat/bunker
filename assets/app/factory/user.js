@@ -1,4 +1,4 @@
-app.factory('user', function(bunkerApi, $timeout) {
+app.factory('user', function (bunkerApi, $timeout) {
 
 	var typingTimeout;
 	var userId = window.userId;
@@ -10,15 +10,19 @@ app.factory('user', function(bunkerApi, $timeout) {
 		settings.$save();
 	}
 
-	function broadcastTyping(roomId){
-		if(!user.$resolved) return; // Not ready yet
+	function saveSettings() {
+		settings.$save();
+	}
 
-		if(user.typingIn != roomId) { // Only need to do anything if it's not already set
+	function broadcastTyping(roomId) {
+		if (!user.$resolved) return; // Not ready yet
+
+		if (user.typingIn != roomId) { // Only need to do anything if it's not already set
 			user.typingIn = roomId;
 			user.$activity();
 		}
 
-		if(user.typingIn) { // Only need to reset in 2 seconds if room is set
+		if (user.typingIn) { // Only need to reset in 2 seconds if room is set
 			if (typingTimeout) $timeout.cancel(typingTimeout); // Cancel current timeout (if any)
 			typingTimeout = $timeout(function () {
 				user.typingIn = null;
@@ -32,6 +36,7 @@ app.factory('user', function(bunkerApi, $timeout) {
 		current: user,
 		settings: settings,
 		toggleSetting: toggleSetting,
+		saveSettings: saveSettings,
 		broadcastTyping: broadcastTyping
 	};
 });

@@ -119,12 +119,12 @@ nav,
 	text-decoration: none;
 }
 
-.sortEmoticons {
-	display:block;
+.sortEmoticons a {
+	margin: 17px;
 }
 
-.sortEmoticons a{
-	 margin: 17px;
+.sortEmoticons input {
+	margin: 9px 2px 4px 12px;
 }
 
 /* bunker stuff */
