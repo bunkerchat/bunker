@@ -23,6 +23,12 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 				scope.emoticonCounts = bunkerApi.message.emoticonCounts();
 			});
 
+			scope.$watch('visible', function (visible, oldVal) {
+				if (!visible || !scope.settings.sortEmoticonsByPopularity || visible == oldVal) return;
+				console.log('yay')
+				scope.emoticonCounts = bunkerApi.message.emoticonCounts();
+			});
+
 			scope.$watchCollection('emoticonCounts', function (emoteCounts, oldVal) {
 				if (emoteCounts == oldVal) return;
 
