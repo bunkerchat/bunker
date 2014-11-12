@@ -98,7 +98,7 @@ exports.create = function (req, res) {
 // PUT /message/:id
 // Update a message (the edit functionality)
 exports.update = function (req, res) {
-	var messageEditWindowSeconds = 10;
+	var messageEditWindowSeconds = 30;
 	var pk = actionUtil.requirePk(req);
 
 	Message.findOne(pk).exec(function (error, message) {

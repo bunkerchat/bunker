@@ -1,4 +1,5 @@
 var uuid = require('node-uuid');
+var serverWarmup = require('./serverWarmup');
 
 module.exports.updateAllWithUser = function (userId, systemMessage) {
 	RoomMember.find().where({user: userId}).populate('room').exec(function (error, roomMembers) {
@@ -9,7 +10,7 @@ module.exports.updateAllWithUser = function (userId, systemMessage) {
 			Room.publishUpdate(room.id, room);
 
 			// If we were provided a message, send it down to affected rooms
-			if (systemMessage) {
+			if (systemMessage && serverWarmup.done) {
 				Room.message(room.id, {
 					id: uuid.v4(),
 					text: systemMessage,
@@ -25,6 +26,8 @@ module.exports.updateAllWithUser = function (userId, systemMessage) {
 
 
 module.exports.messageRoom = function(room, message) {
+	if(!serverWarmup.done) return;
+
 	var roomId = room.id ? room.id : room;
 	Room.message(roomId, {
 		id: uuid.v4(),
@@ -35,6 +38,8 @@ module.exports.messageRoom = function(room, message) {
 };
 
 module.exports.messageRooms = function (rooms, message) {
+	if(!serverWarmup.done) return;
+
 	_.each(rooms, function (room) {
 		module.exports.messageRoom(room, message);
 	});
