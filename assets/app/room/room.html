@@ -75,7 +75,7 @@
 			<!-- member list -->
 			<ul class="list-group">
 				<li class="list-group-item"
-						ng-init="member = room.memberLookup[roomMember.user.id]" ng-repeat="roomMember in room.roomMembers | roomMemberFilter">
+						ng-init="member = room.memberLookup[roomMember.user.id]" ng-repeat="roomMember in room.current.$members | roomMemberFilter">
 					<span ng-switch="member.user.typingIn == room.current.id" class="user-icon" title="{{member.role}}">
 						<span ng-switch-when="true">
 							<i class="fa fa-ellipsis-h"></i>

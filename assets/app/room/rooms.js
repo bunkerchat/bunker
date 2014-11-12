@@ -13,6 +13,8 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
 						addMessage(roomId, message);
 					});
 				});
+
+				rooms[roomId].$members = bunkerApi.roomMember.query({room: roomId});
 			});
 			rooms[roomId].$messages = [];
 		}

@@ -1,8 +1,7 @@
-app.controller('RoomController', function ($scope, bunkerApi, user, currentRoom) {
+app.controller('RoomController', function ($scope, user, currentRoom) {
 	var self = this;
 	this.userService = user;
 	this.current = currentRoom;
-	this.roomMembers = bunkerApi.roomMember.query({room: currentRoom.id});
 
 	this.now = function () {
 		return moment().format('YYYY-MM-DD');
@@ -12,9 +11,9 @@ app.controller('RoomController', function ($scope, bunkerApi, user, currentRoom)
 		$scope.$broadcast('inputText', '@' + userNick);
 	};
 
-	$scope.$watch('room.roomMembers', function (newVal, oldVal) {
+	$scope.$watch('room.current.$members', function (newVal, oldVal) {
 		if (!oldVal) return;
-		self.memberLookup = _.indexBy(self.roomMembers, function (roomMember) {
+		self.memberLookup = _.indexBy(self.current.$members, function (roomMember) {
 			return roomMember.user.id;
 		});
 	}, true);
