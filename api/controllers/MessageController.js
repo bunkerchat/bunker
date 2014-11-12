@@ -56,7 +56,7 @@ exports.create = function (req, res) {
 			if (roomMember.role == 'administrator' || roomMember.role == 'moderator') {
 
 				var topicMatches = text.match(/\/topic\s+(.+)/i);
-				var topic = topicMatches ? topicMatches[1] : null;
+				var topic = topicMatches ? topicMatches[1].substr(0, 200) : null;
 
 				Room.update(roomId, {topic: topic}).exec(function (error, room) {
 					if (error) return res.serverError(error);

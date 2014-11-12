@@ -20,9 +20,13 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
 		scope: {
-			text: '@bunkerMessage'
+			text: '@bunkerMessage',
+			media: '@'
 		},
 		link: function (scope, elem) {
+
+			var parseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
+
 			scope.$watch('text', function (text) {
 				var formatted = text,
 					replacedEmotes = {},
@@ -53,17 +57,20 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 				// Parse links
 				var attachedMedia;
 				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
-					if (/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedMedia) {
-						// Image link
-						attachedMedia = angular.element('<div bunker-media="' + link + '"><img src="'+link+'"/></div>');
-					}
 
-					if (/(www\.youtube\.com|youtu\.?be)/i.test(link)){
-						//var videoId = extractVideoID(link);
-						attachedMedia = angular.element('' +
-						'<div class="default-video-height" bunker-media="' + link + '">' +
-						'<youtube-video video-url="\''+ link + '\'"></youtube-video>' +
-						'</div>');
+					// Only parse media (images, youtube) if asked to
+					if(parseMedia) {
+						if (/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedMedia) {
+							// Image link
+							attachedMedia = angular.element('<div bunker-media="' + link + '"><img src="' + link + '"/></div>');
+						}
+
+						if (/(www\.youtube\.com|youtu\.?be)/i.test(link)) {
+							attachedMedia = angular.element('' +
+								'<div class="default-video-height" bunker-media="' + link + '">' +
+								'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
+								'</div>');
+						}
 					}
 
 					if (!replacedLinks[link]) {

@@ -12,7 +12,10 @@ module.exports = {
 			type: 'string',
 			required: true
 		},
-		topic: 'string',
+		topic: {
+			type: 'string',
+			maxLength: 200
+		},
 		isPrivate: {
 			type: 'boolean',
 			defaultsTo: false // TODO make this true when privacy controls are in place
