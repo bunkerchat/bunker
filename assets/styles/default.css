@@ -214,31 +214,6 @@ nav,
 	height: 420px;
 }
 
-/* message history */
-
-.message-history-anchor {
-	position: relative;
-}
-
-.message-history {
-	position: absolute;
-	background-color: white;
-	border: 1px black solid;
-	z-index: 100;
-	right: 30px;
-	top: -86px;
-	padding: 8px;
-	box-shadow: #888 3px 5px 3px;
-}
-
-.message-history ul {
-	padding: 0px;
-}
-
-.message-history li {
-	list-style: none;
-}
-
 .message-info {
 	position: absolute;
 	top: 0;

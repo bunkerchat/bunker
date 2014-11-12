@@ -1,7 +1,7 @@
 app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
 
 	var self = this;
-	var messageEditWindowSeconds = 10;
+	var messageEditWindowSeconds = 30;
 	var roomId = $stateParams.roomId;
 	var currentRoom = rooms.get(roomId);
 	var roomMembers = bunkerApi.roomMember.query({room: roomId});
@@ -35,13 +35,13 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			text: this.messageText
 		});
 
-		var chosenMessage = this.selectedMessageIndex > -1 ?  this.submittedMessages[this.selectedMessageIndex] : {createdAt : null};
-		var historicMessage = { text: this.messageText, createdAt: Date.now(), history : ''};
+		var chosenMessage = this.selectedMessageIndex > -1 ? this.submittedMessages[this.selectedMessageIndex] : {createdAt: null};
+		var historicMessage = {text: this.messageText, createdAt: Date.now(), history: ''};
 
-		if (!this.editMode ||
-			previousText == this.messageText ||
-			chosenMessage.edited ||
-			!datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
+		if (!this.editMode
+			|| previousText == this.messageText
+			|| chosenMessage.edited
+			|| !datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
 			newMessage.$save(function (result) {
 				// TODO use the result of this? currently this object is just forgotten about
 				historicMessage.id = result.id;
@@ -53,9 +53,6 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 			self.submittedMessages[self.selectedMessageIndex].text = self.messageText;
 			newMessage.id = this.submittedMessages[this.selectedMessageIndex].id;
 			newMessage.edited = true;
-			newMessage.history = chosenMessage.history || '';
-			newMessage.history += (',' + previousText);
-			chosenMessage.history = newMessage.history;
 			chosenMessage.edited = true;
 			newMessage.$save();
 		}
@@ -164,8 +161,8 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 		}
 	};
 
-	function datesWithinSeconds(date1, date2, seconds){
-		if (!date1 || ! date2) return false;
+	function datesWithinSeconds(date1, date2, seconds) {
+		if (!date1 || !date2) return false;
 		var elapsed = Math.abs(date1 - date2) / 1000;
 		return elapsed < seconds;
 	}

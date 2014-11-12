@@ -16,11 +16,6 @@ module.exports = {
 			type: 'boolean',
 			required: false,
 			defaultsTo: false
-		},
-		history: {
-			type: 'string',
-			required: false,
-			defaultsTo: ''
 		}
 	}
 };
