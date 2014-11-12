@@ -1,31 +1,36 @@
-<div class="container">
-	<div class="row">
-		<h2>Rooms</h2>
-		<ul class="list-unstyled">
-			<li class="panel panel-default col-md-2" ng-repeat="membership in lobby.memberships">
-				<div class="panel-heading">
-					<a ui-sref="room({roomId: membership.room.id})">
-						<h4>{{membership.room.name}}</h4>
-					</a>
-				</div>
-				<div class="panel-body">
-				</div>
-			</li>
-		</ul>
-	</div>
-	<div class="row">
-		<ul class="list-unstyled">
-			<li class="panel panel-default col-md-2">
-				<div class="panel-heading">
-					<h4>New room</h4>
-				</div>
-				<form class="panel-body" ng-submit="lobby.createRoom(newRoomName)">
-					<input type="text" class="form-control" ng-model="newRoomName" placeholder="New room name"/>
-					<span class="input-group-btn">
-							<button class="btn btn-success">Create</button>
-					</span>
-				</form>
-			</li>
-		</ul>
-	</div>
+<div class="container-fluid">
+
+	<h3>Known rooms</h3>
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Topic</th>
+			<th><i class="fa fa-user"></i> Online</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="room in lobby.rooms | orderBy:'name'">
+			<td>
+				<a ui-sref="room({roomId: room.id})">{{room.name}}</a>
+			</td>
+			<td>{{room.topic}}</td>
+			<td>{{room.$onlineMemberCount}} / {{room.$memberCount}}</td>
+		</tr>
+		</tbody>
+	</table>
+
+	<form class="col-md-3" ng-submit="lobby.createRoom(newRoomName)">
+
+		<div class="input-group">
+			<input type="text" class="form-control" placeholder="New room name"
+						 ng-model="newRoomName" ng-required="true"/>
+
+			<span class="input-group-btn">
+					<button class="btn btn-success">Create</button>
+			</span>
+		</div>
+
+	</form>
+
 </div>
