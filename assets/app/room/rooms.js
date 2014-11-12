@@ -1,4 +1,4 @@
-app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
+app.factory('rooms', function ($rootScope, bunkerApi, uuid, $timeout) {
 	var rooms = {};
 	var messageLookup = {};
 
@@ -29,8 +29,8 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
 	function leaveRoom(roomId) {
 		// TODO need to retrieve before leaving? me thinks not
 		var room = getRoom(roomId);
-		room.$promise.then(function() {
-			room.$leave(function() {
+		room.$promise.then(function () {
+			room.$leave(function () {
 				delete rooms[roomId];
 			});
 		});
@@ -69,12 +69,21 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid) {
 		}
 	});
 
+	var disconnectMessage;
+
 	// Handle disconnect
 	$rootScope.$on('$sailsDisconnected', function () {
+		disconnectMessage = {text: 'Disconnected', id: uuid.v4(), createdAt: new Date().toISOString()};
 		_.each(rooms, function (room) {
-			addMessage(room.id, {text: 'Disconnected', id: uuid.v4(), createdAt: new Date().toISOString()})
+			addMessage(room.id, disconnectMessage);
 		});
 	});
+
+	$rootScope.$on('$sailsConnected', function () {
+		if (!disconnectMessage)return;
+		disconnectMessage.text = 'Connected';
+	});
+
 
 	return {
 		get: getRoom,
