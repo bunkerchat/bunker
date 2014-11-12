@@ -28,9 +28,7 @@
 										 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
 									<span bunker-message="{{message.text}}"></span>
 								<span class="message-info text-muted">
-									<i class="fa fa-pencil" title="View message history"
-										 ng-click="message.showHistory = !message.showHistory"
-										 ng-if="message.edited"></i>
+									<i class="fa fa-pencil"ng-if="message.edited"></i>
 									<span ng-if="::message.$firstInSeries">
 										<a ui-sref="roomHistory({roomId: room.current.id, date: message.createdAt, message: message.id})"
 											 class="text-muted">
@@ -51,18 +49,6 @@
 							<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
 							</small>
 						</span>
-						</div>
-
-						<div class="message-history-anchor">
-							<div class="message-history"
-									 ng-if="message.history && message.showHistory">
-								<div class="small">Previous content:</div>
-								<ul>
-									<li ng-repeat="history in message.history.substring(1).split(',')">
-										{{::history}}
-									</li>
-								</ul>
-							</div>
 						</div>
 					</li>
 				</ol>
