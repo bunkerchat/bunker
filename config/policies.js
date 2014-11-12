@@ -54,6 +54,10 @@ module.exports.policies = {
 		'latest': 'isLoggedIn',
 		'history': 'isLoggedIn'
 	},
+	RoomMemberController: {
+		'*': false,
+		'find': 'isLoggedIn'
+	},
 	MessageController: {
 		'*': false,
 		'create': 'isLoggedIn',

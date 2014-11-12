@@ -11,6 +11,8 @@ app.controller('RoomController', function ($scope, user, currentRoom) {
 		$scope.$broadcast('inputText', '@' + userNick);
 	};
 
+	// Watch for updates to the room members
+	// Only applies to users who join the room for the first time or leave it entirely
 	$scope.$watch('room.current.$members', function (newVal, oldVal) {
 		if (!oldVal) return;
 		self.memberLookup = _.indexBy(self.current.$members, function (roomMember) {
@@ -18,6 +20,8 @@ app.controller('RoomController', function ($scope, user, currentRoom) {
 		});
 	}, true);
 
+	// Watch for socket.io updates to users
+	// Apply changes to our list of users, if they are in this room
 	$scope.$on('$sailsResourceUpdated', function (evt, resource) {
 		if (resource.model == 'user') {
 			var roomMember = self.memberLookup[resource.id];
@@ -28,14 +32,11 @@ app.controller('RoomController', function ($scope, user, currentRoom) {
 	});
 });
 
-app.filter('roomMemberFilter', function () {
+app.filter('membersOrderBy', function () {
 	return function (members) {
 		return _(members)
 			.sortBy(function (member) {
 				return member.user.nick.toLowerCase();
-			})
-			.filter(function (member) {
-				return member.user.connected;
 			})
 			.value();
 	};
