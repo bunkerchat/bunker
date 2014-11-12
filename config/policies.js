@@ -26,28 +26,27 @@ module.exports.policies = {
 	 *                                                                          *
 	 ***************************************************************************/
 
-	'*': true,
+	'*': false,
+	AuthController: {
+		'*': true
+	},
 	ViewController: {
 		'*': 'isLoggedIn',
 		'login': true,
 		'logout': true
 	},
 	UserController: {
-		'*': false,
 		'findOne': 'isLoggedIn',
 		'activity': ['isLoggedIn', 'isCurrentUser'],
 		'update': ['isLoggedIn', 'isCurrentUser']
 	},
 	UserSettingsController: {
-		'*': false,
 		'find': 'isLoggedIn',
 		'findOne': 'isLoggedIn',
 		'update': 'isLoggedIn',
 		'current': 'isLoggedIn'
 	},
 	RoomController: {
-		'*': false,
-		'find': 'isLoggedIn',
 		'findOne': 'isLoggedIn',
 		'create': 'isLoggedIn',
 		'leave': 'isLoggedIn',
@@ -55,11 +54,9 @@ module.exports.policies = {
 		'history': 'isLoggedIn'
 	},
 	RoomMemberController: {
-		'*': false,
 		'find': 'isLoggedIn'
 	},
 	MessageController: {
-		'*': false,
 		'create': 'isLoggedIn',
 		'update': 'isLoggedIn',
 		'emoticonCounts': true
