@@ -2,6 +2,7 @@ app.controller('RoomController', function ($scope, user, currentRoom) {
 	var self = this;
 	this.userService = user;
 	this.current = currentRoom;
+	console.log(this.current);
 
 	this.now = function () {
 		return moment().format('YYYY-MM-DD');

@@ -5,12 +5,14 @@
 			<div class="topic" ng-show="room.current.topic">
 				<span bunker-message="{{room.current.topic}}" media="false"></span>
 			</div>
-			<div ng-controller="MessageLogController as log">
 
-				<ol class="list-unstyled message-list" fill auto-scroll="{{log.messages[log.messages.length - 1].id}}">
-					<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in log.messages"
+			<!-- message log -->
+			<div>
+
+				<ol class="list-unstyled message-list" fill auto-scroll="{{room.current.$messages[room.current.$messages.length - 1].id}}">
+					<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in room.current.$messages"
 							id="{{::message.id}}">
-						<div class="message" ng-class="::{ local: message.author.id == log.user.id }">
+						<div class="message" ng-class="::{ local: message.author.id == room.userService.current.id }">
 
 							<!-- standard message -->
 							<div ng-switch-when="true"
