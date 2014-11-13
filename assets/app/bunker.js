@@ -48,12 +48,4 @@ window.app = angular.module('bunker', [
 		gravatarServiceProvider.defaults = {
 			'default': 'identicon'
 		};
-	})
-	.run(function($window) {
-		// Disconnect socket when user closes tab/window
-		$window.onbeforeunload = function () {
-			if($window.io) {
-				$window.io.socket.disconnect();
-			}
-		};
 	});
