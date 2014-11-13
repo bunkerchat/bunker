@@ -39,8 +39,9 @@ module.exports.sockets = {
 			user.typingIn = null;
 			user.save()
 				.then(function () {
+					User.publishUpdate(user.id, user);
 					if (!previouslyConnected) {
-						RoomService.updateAllWithUser(user.id, user.nick + ' joined the room');
+						RoomService.messageRoomsWithUser(user.id, user.nick + ' joined the room');
 					}
 				})
 				.catch(function () {
@@ -74,8 +75,9 @@ module.exports.sockets = {
 					user.connected = user.sockets.length > 0;
 					user.save()
 						.then(function () {
+							User.publishUpdate(user.id, user);
 							if (!user.connected) {
-								RoomService.updateAllWithUser(user.id, user.nick + ' left the room');
+								RoomService.messageRoomsWithUser(user.id, user.nick + ' left the room');
 							}
 						})
 						.catch(function () {
