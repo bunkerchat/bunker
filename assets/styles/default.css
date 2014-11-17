@@ -9,39 +9,42 @@ a, [ng-click] {
 }
 
 nav,
-.navbar,
-.navbar > .container-fluid .navbar-brand {
+.navbar {
 	min-height: 40px;
 	height: 40px;
 	margin-bottom: 0px;
 }
 
 .navbar-default {
-	background-color: #969696;
+	background-color: #252C34;
 	border-color: #A5A5A5;
+}
+
+.navbar-brand {
+	height: 40px;
+	padding: 10px 20px;
+	font-size: 20px;
+	font-weight: bold;
 }
 
 .navbar-default .navbar-nav a {
 	padding: 6px 12px;
+	border: solid #999;
+	border-width: 0 1px 0 0;
+}
+.navbar-default .navbar-nav li:first-child a,
+.navbar-default .navbar-nav li:last-child a {
+	border-width: 0 1px;
 }
 
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-	background-color: #727272;
-}
-
-.navbar-brand {
-	padding: 16px 15px;
-}
-
-.nav,
-.navbar-brand {
-	line-height: 4px;
+	background-color: #79828C;
 }
 
 .navbar .nav > li > a {
-	padding: 0;
+	padding: 0 20px;
 	text-transform: none;
 	font-size: 16px;
 	font-weight: normal;
