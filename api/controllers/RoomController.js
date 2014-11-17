@@ -14,7 +14,7 @@ var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUt
 
 // POST /room
 // Create a room
-module.exports.create = function(req, res) {
+module.exports.create = function (req, res) {
 	var userId = req.session.userId;
 	var name = req.param('name') || 'Untitled';
 
@@ -22,7 +22,7 @@ module.exports.create = function(req, res) {
 	Room.create({name: name}).exec(function (err, room) {
 
 		// Make user an administrator
-		RoomMember.create({room: room.id, user: userId, role: 'administrator'}).exec(function(error, roomMember) {
+		RoomMember.create({room: room.id, user: userId, role: 'administrator'}).exec(function (error, roomMember) {
 			RoomMember.publishCreate(roomMember);
 
 			// WARNING
@@ -45,27 +45,43 @@ module.exports.findOne = function (req, res) {
 		if (err) return res.serverError(err);
 		if (!room) return res.notFound();
 
-		res.ok(room);
+		res.ok(room); // Can return the room info immediately; perform the subscriptions asynchronously below
 
 		// Subscribe the socket to message and updates of this room
 		// Socket will now receive messages when a new message is created
 		Room.subscribe(req, pk, ['message', 'update']);
-		RoomMember.subscribe(req, ['create', 'destroy']);
+		RoomMember.subscribe(req, ['create', 'destroy']); // TODO seems like an information leak, but ARS won't get messages without it
 
+		// Lookup all current room members of this room
 		RoomMember.find().where({room: pk}).exec(function (err, roomMembers) {
 
-			_.each(roomMembers, function (member) {
-				User.subscribe(req, member.user, ['message', 'update']); // Subscribe to all room members
-			});
-
+			var tasks = []; // Tasks needed to join this member to the room (will be none if they are already a member)
 			if (!_.find(roomMembers, {user: userId})) { // Do we need to add as a member?
-				RoomMember.create({
-					room: pk,
-					user: userId
-				}).exec(function (err, roomMember) {
-					RoomMember.publishCreate(roomMember);
+				tasks.push(function (cb) { // If so, add it to our list of tasks
+
+					RoomMember.create({room: pk, user: userId}).exec(function (err, roomMember) {
+						if (!err && roomMember) {
+							RoomMember.publishCreate(roomMember);
+						}
+						cb(err, roomMember);
+					});
 				});
 			}
+
+			async.series(tasks, function (err) { // Complete all tasks then
+				if (err) return res.serverError(error);
+
+				// Subscribe the new user to every existing user
+				_.each(roomMembers, function (member) {
+					User.subscribe(req, member.user, ['message', 'update']);
+				});
+
+				// Subscribe all of the existing subscribers to this new user
+				_.each(Room.subscribers(pk, 'update'), function (subscriber) {
+					User.subscribe(subscriber, userId, ['message', 'update']);
+				});
+			});
+
 		});
 	});
 };
@@ -82,14 +98,15 @@ module.exports.leave = function (req, res) {
 
 		res.ok(room);
 
-		// Unsubscribe socket for this room
+		// Unsubscribe socket from this room
 		Room.unsubscribe(req, pk, ['message', 'update']);
 		// TODO unsubscribe all members? probably not... need to figure out which ones
 
 		// Remove room membership
-		RoomMember.destroy({ room: pk, user: userId }).exec(function(err, destroyedRecords) {
-			_.each(destroyedRecords, function(destroyed) {
+		RoomMember.destroy({room: pk, user: userId}).exec(function (err, destroyedRecords) {
+			_.each(destroyedRecords, function (destroyed) {
 				RoomMember.publishDestroy(destroyed.id);
+				RoomMember.retire(destroyed);
 			});
 		});
 	});
