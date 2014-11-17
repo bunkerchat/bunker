@@ -93,6 +93,9 @@ nav,
 input:focus, .form-control:focus {
 	border: solid #ccc 1px;
 }
+.list-group-item {
+	border-color: #ccc;
+}
 
 
 /* augments */
