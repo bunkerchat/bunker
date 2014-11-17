@@ -1,6 +1,7 @@
 app.factory('emoticons', function () {
 	var files = [
 		'3.gif',
+		'achievementunlocked.gif',
 		'allthethings.png',
 		'argh.gif',
 		'arya.png',
