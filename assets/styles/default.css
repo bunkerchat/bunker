@@ -27,13 +27,13 @@ nav,
 	font-weight: bold;
 }
 
-.navbar-default .navbar-nav a {
+.navbar-default .navbar-nav > li > a {
 	padding: 6px 12px;
 	border: solid #999;
 	border-width: 0 1px 0 0;
 }
-.navbar-default .navbar-nav li:first-child a,
-.navbar-default .navbar-nav li:last-child a {
+.navbar-default .navbar-nav > li:first-child > a,
+.navbar-default .navbar-nav > li:last-child > a {
 	border-width: 0 1px;
 }
 
@@ -64,6 +64,36 @@ nav,
 	right: -3px;
 	z-index: 1;
 }
+
+/* debrowning things */
+.dropdown-menu {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+.dropdown-menu > li > a {
+	padding: 10px 20px;
+	color: #333;
+	font-size: 12px;
+}
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+	background-color: #eee;
+	color: #333;
+}
+.dropdown-menu .divider {
+	margin: 0;
+	background-color: #ccc;
+}
+.table > thead > tr > th {
+	border-bottom: 2px solid #ccc;
+}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+	border-top: 1px solid #ccc;
+}
+.form-control,
+input:focus, .form-control:focus {
+	border: solid #ccc 1px;
+}
+
 
 /* augments */
 
