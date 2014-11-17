@@ -40,6 +40,10 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid, $timeout) {
 	function addMessage(roomId, message) {
 		if (messageLookup[message.id]) return; // already exists!
 
+		if(!message.id){
+			message.id = uuid.v4();
+		}
+
 		var room = getRoom(roomId);
 		var lastMessage = _.last(room.$messages);
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
@@ -69,19 +73,23 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid, $timeout) {
 		}
 	});
 
-	var disconnectMessage;
+	var disconnectMessages = [];
 
 	// Handle disconnect
 	$rootScope.$on('$sailsDisconnected', function () {
-		disconnectMessage = {text: 'Disconnected', id: uuid.v4(), createdAt: new Date().toISOString()};
 		_.each(rooms, function (room) {
-			addMessage(room.id, disconnectMessage);
+			var message = {text: 'Disconnected', createdAt: new Date().toISOString()};
+			disconnectMessages.push(message);
+			addMessage(room.id, message);
 		});
 	});
 
 	$rootScope.$on('$sailsConnected', function () {
-		if (!disconnectMessage)return;
-		disconnectMessage.text = 'Connected';
+		if (!disconnectMessages.length)return;
+		_.each(disconnectMessages, function (message) {
+			message.text = 'Connected';
+		});
+		disconnectMessages = [];
 	});
 
 
