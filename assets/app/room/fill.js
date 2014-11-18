@@ -16,7 +16,7 @@ app.directive('fill', function ($window, $timeout) {
 					});
 				}
 				else {
-					var fillHeight = $window.innerHeight - el.offset().top - marginBottom - 2;
+					var fillHeight = Math.ceil($window.innerHeight - el.offset().top - marginBottom - 1);
 					el.css({
 						height: fillHeight + 'px',
 						margin: 0

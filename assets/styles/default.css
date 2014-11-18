@@ -16,8 +16,8 @@ nav,
 }
 
 .navbar-default {
-	background-color: #252C34;
-	border-color: #A5A5A5;
+	background-color: #79828C;
+	border-bottom: 0;
 }
 
 .navbar-brand {
@@ -29,11 +29,10 @@ nav,
 
 .navbar-default .navbar-nav > li > a {
 	padding: 6px 12px;
-	border: solid #999;
+	border: solid #8e98a2;
 	border-width: 0 1px 0 0;
 }
-.navbar-default .navbar-nav > li:first-child > a,
-.navbar-default .navbar-nav > li:last-child > a {
+.navbar-default .navbar-nav > li:first-child > a {
 	border-width: 0 1px;
 }
 
