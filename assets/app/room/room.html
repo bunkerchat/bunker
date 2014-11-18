@@ -30,7 +30,7 @@
 										 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
 									<span bunker-message="{{message.text}}"></span>
 								<span class="message-info text-muted">
-									<i class="fa fa-pencil"ng-if="message.edited"></i>
+									<i class="fa fa-pencil" ng-if="message.edited"></i>
 									<span ng-if="::message.$firstInSeries">
 										<a ui-sref="roomHistory({roomId: room.current.id, date: message.createdAt, message: message.id})"
 											 class="text-muted">
@@ -62,21 +62,26 @@
 
 			<!-- member list -->
 			<ul class="list-group">
-				<li class="list-group-item" ng-repeat="member in room.memberLookup | membersOrderBy" ng-if="member.user.connected">
-					<span ng-switch="member.user.typingIn == room.current.id" class="user-icon" title="{{member.role}}">
+				<li class="list-group-item" ng-repeat="member in room.memberLookup | membersOrderBy"
+						ng-if="member.user.connected">
+					<span ng-switch="member.user.typingIn == room.current.id" class="user-icon">
 						<span ng-switch-when="true">
 							<i class="fa fa-ellipsis-h"></i>
 						</span>
 						<span ng-switch-when="false">
-							<span class="badge" ng-show="member.role != 'member'" ng-switch="member.role">
-								<i class="fa fa-star" ng-switch-when="administrator"></i>
-								<i class="fa fa-star-half" ng-switch-when="moderator"></i>
-							</span>
 							<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
 						</span>
 					</span>
+
 					<a ng-click="room.mentionUser(member.user.nick)">{{member.user.nick}}</a>
-					<span class="pull-right" status="member.user"></span>
+
+					<div class="pull-right">
+						<span ng-show="member.role != 'member'" ng-switch="member.role" title="{{member.role}}">
+							<i class="fa fa-gavel" ng-switch-when="administrator"></i>
+							<i class="fa fa-comments" ng-switch-when="moderator"></i>
+						</span>
+						<span status="member.user"></span>
+					</div>
 				</li>
 			</ul>
 

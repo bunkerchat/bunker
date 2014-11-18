@@ -326,17 +326,12 @@ img.emoticon {
 	text-align: center;
 }
 
-.member-list .status.pull-right {
-	margin-top: 8px;
+.member-list .status {
+	margin-bottom: 4px;
 }
 
-.member-list .badge {
-	position: absolute;
-	top: 0;
-	left: 0;
-	background: none;
-	color: #00dd00;
-	font-size: 13px;
+.member-list i {
+	margin-right: 4px;
 }
 
 /* file upload related styles */
