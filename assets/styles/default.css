@@ -330,6 +330,15 @@ img.emoticon {
 	margin-top: 8px;
 }
 
+.member-list .badge {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: none;
+	color: #00dd00;
+	font-size: 13px;
+}
+
 /* file upload related styles */
 #bunker-dropzone-overlay {
 	position: absolute;

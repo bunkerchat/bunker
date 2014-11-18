@@ -68,6 +68,10 @@
 							<i class="fa fa-ellipsis-h"></i>
 						</span>
 						<span ng-switch-when="false">
+							<span class="badge" ng-show="member.role != 'member'" ng-switch="member.role">
+								<i class="fa fa-star" ng-switch-when="administrator"></i>
+								<i class="fa fa-star-half" ng-switch-when="moderator"></i>
+							</span>
 							<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
 						</span>
 					</span>
