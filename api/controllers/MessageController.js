@@ -47,6 +47,32 @@ exports.create = function (req, res) {
 		}
 		res.ok();
 	}
+	else if (/^\/(up|down)\s+/i.test(text)) { // Karma system, unfinished
+
+		var nickMatches = text.match(/^\/(?:up|down)\s+@?(\w+)/i);
+		if(!nickMatches) return;
+		var nick = nickMatches[1];
+		var rating = text.match(/up/i) ? 1 : -1;
+
+		// TODO would need to limit how many times a user can vote
+
+		RoomMember.find().where({room: roomId}).populate('user').exec(function(error, roomMembers) {
+			var matchingMember = _.find(roomMembers, function(roomMember) {
+				return roomMember.user.nick == nick;
+			});
+
+			if(!matchingMember) return;
+
+			if(typeof matchingMember.rating === 'undefined') {
+				matchingMember.rating = 0;
+			}
+
+			matchingMember.rating += rating;
+			// Not actually going to save right now as this is not completed
+			//matchingMember.save();
+			res.ok();
+		});
+	}
 	else if (/^\/topic/i.test(text)) { // Change room topic
 
 		RoomMember.findOne({room: roomId, user: userId}).populate('user').exec(function (error, roomMember) {
