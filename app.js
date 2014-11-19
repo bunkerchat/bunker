@@ -22,6 +22,12 @@
 // no matter where we actually lift from.
 process.chdir(__dirname);
 
+if(process.env.NODETIME_ACCOUNT_KEY) {
+	require('nodetime').profile({
+		accountKey: process.env.NODETIME_ACCOUNT_KEY
+	});
+}
+
 // Ensure a "sails" can be located:
 (function() {
 	var mongoConnectClient = require('./mongoConnectClient');

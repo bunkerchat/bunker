@@ -27,6 +27,7 @@
     "moment": "^2.8.3",
     "mongodb": "^1.4.19",
     "node-uuid": "^1.4.1",
+    "nodetime": "^0.8.15",
     "passport": "^0.2.1",
     "passport-google-oauth": "^0.1.5",
     "passport-local": "^1.0.0",
