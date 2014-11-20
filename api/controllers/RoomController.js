@@ -65,7 +65,7 @@ module.exports.findOne = function (req, res) {
 
 							// Create system message to inform other users of this user joining
 							User.findOne(userId).exec(function(err, user) {
-								if(err || !user) return;
+								if(err) return res.serverError(err);
 								RoomService.messageRoom(pk, user.nick + ' has joined the room');
 							});
 						}
@@ -116,7 +116,7 @@ module.exports.leave = function (req, res) {
 
 				// Create system message to inform other users of this user leaving
 				User.findOne(userId).exec(function(err, user) {
-					if(err || !user) return;
+					if(err) return res.serverError(err);
 					RoomService.messageRoom(pk, user.nick + ' has left the room');
 				});
 			});
