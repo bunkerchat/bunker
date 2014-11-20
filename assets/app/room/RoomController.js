@@ -3,10 +3,6 @@ app.controller('RoomController', function ($scope, user, currentRoom) {
 	this.userService = user;
 	this.current = currentRoom;
 
-	this.now = function () {
-		return moment().format('YYYY-MM-DD');
-	};
-
 	this.mentionUser = function (userNick) {
 		$scope.$broadcast('inputText', '@' + userNick);
 	};
