@@ -62,6 +62,12 @@ module.exports.findOne = function (req, res) {
 					RoomMember.create({room: pk, user: userId}).exec(function (err, roomMember) {
 						if (!err && roomMember) {
 							RoomMember.publishCreate(roomMember);
+
+							// Create system message to inform other users of this user joining
+							User.findOne(userId).exec(function(err, user) {
+								if(err || !user) return;
+								RoomService.messageRoom(pk, user.nick + ' has joined the room');
+							});
 						}
 						cb(err, roomMember);
 					});
@@ -107,6 +113,12 @@ module.exports.leave = function (req, res) {
 			_.each(destroyedRecords, function (destroyed) {
 				RoomMember.publishDestroy(destroyed.id);
 				RoomMember.retire(destroyed);
+
+				// Create system message to inform other users of this user leaving
+				User.findOne(userId).exec(function(err, user) {
+					if(err || !user) return;
+					RoomService.messageRoom(pk, user.nick + ' has left the room');
+				});
 			});
 		});
 	});
