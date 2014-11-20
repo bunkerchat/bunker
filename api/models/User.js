@@ -1,7 +1,9 @@
 /* global module */
 
 module.exports = {
+
 	attributes: {
+
 		token: {
 			type: 'string',
 			required: true,
@@ -35,8 +37,18 @@ module.exports = {
 		},
 		settings: {
 			model: 'UserSettings'
+		},
+
+		// Remove secret things
+		toJSON: function() {
+			var obj = this.toObject();
+			delete obj.token;
+			delete obj.sockets;
+			return obj;
 		}
 	},
+
+	// Add the settings object
 	afterCreate: function (user, cb) {
 		// Create a UserSettings object for the user.
 		UserSettings.create({user: user.id}).exec(function (error, userSettings) {

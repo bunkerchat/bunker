@@ -12,6 +12,7 @@
 
 var moment = require('moment');
 var pendingTasks = {};
+var connectionUpdateWaitSeconds = 15;
 
 module.exports.sockets = {
 
@@ -47,7 +48,7 @@ module.exports.sockets = {
 					User.publishUpdate(user.id, user);
 
 					// Send connecting message, if not previously connected or reconnecting
-					if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > 15) {
+					if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > connectionUpdateWaitSeconds) {
 						RoomService.messageRoomsWithUser(user.id, user.nick + ' is now online');
 					}
 
@@ -102,7 +103,7 @@ module.exports.sockets = {
 								}
 								pendingTasks[user.id] = null; // clear
 
-							}, 15000);
+							}, connectionUpdateWaitSeconds * 1000);
 						})
 						.catch(function () {
 							// TODO error handling
