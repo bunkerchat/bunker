@@ -12,7 +12,7 @@
 	</form>
 </div>
 <hr>
-<ol class="col-md-6 list-unstyled" ng-repeat="list in emoticonMenuLists">
+<ol class="col-xs-6 list-unstyled" ng-repeat="list in emoticonMenuLists">
 	<li ng-repeat="emoticon in list | fuzzyBy: 'name': search">
 		<a ng-click="appendEmoticonToChat(emoticon.file)">
 			<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon.file}}"/>

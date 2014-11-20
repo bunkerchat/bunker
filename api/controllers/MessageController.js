@@ -26,7 +26,7 @@ exports.create = function (req, res) {
 	}
 	else if (/^\/nick\s+/i.test(text)) { // Change the current user's nick
 
-		var newNick = text.match(/\/nick\s+([\w\s-]{1,20})/i);
+		var newNick = text.match(/\/nick\s+([\w\s\-\.]{1,20})/i);
 		if (newNick) {
 			User.findOne(userId).exec(function (error, user) { // find the user in the db (don't want to use session version)
 				var currentNick = user.nick;

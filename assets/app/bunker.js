@@ -4,7 +4,6 @@ window.app = angular.module('bunker', [
 	'ui.router',
 	'ui.gravatar',
 	'angularMoment',
-	'ngResource',
 	'ui.bootstrap',
 	'youtube-embed',
 	'angular.filter'

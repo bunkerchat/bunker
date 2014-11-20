@@ -1,7 +1,6 @@
 app.factory('emoticons', function () {
 	var files = [
 		'3.gif',
-		'achievementunlocked.gif',
 		'allthethings.png',
 		'argh.gif',
 		'arya.png',
@@ -99,6 +98,7 @@ app.factory('emoticons', function () {
 		'suspense.gif',
 		'sweatdrop.gif',
 		'tableflip.png',
+		'therent.png',
 		'thumbsdown.png',
 		'thumbsnone.png',
 		'thumbsup.png',
@@ -106,6 +106,7 @@ app.factory('emoticons', function () {
 		'toot.gif',
 		'trollface.png',
 		'truestory.png',
+		'unlocked.gif',
 		'unsmith.gif',
 		'v.gif',
 		'waffenss.gif',
@@ -117,24 +118,21 @@ app.factory('emoticons', function () {
 		'yaycloud.gif'
 	];
 
-	var list = [];
-
-	for (var i = 0; i < files.length; i++) {
-		var emoticon = files[i];
-		list.push({name: emoticonName(emoticon), file: emoticon, $count: 0});
-	}
+	var list = _.map(files, function (file) {
+		return {name: emoticonName(file), file: file, $count: 0};
+	});
 
 	return {
 		list: list,
-		names: _.map(files, emoticonName),
-		files: files
+		names: _.pluck(list, 'name'),
+		files: _.pluck(list, 'file')
 	};
 });
 
-app.filter("emoticonName", function(){
+app.filter("emoticonName", function () {
 	return emoticonName;
 });
 
-function emoticonName(input){
+function emoticonName(input) {
 	return input.replace(/.\w+$/, '');
 }
