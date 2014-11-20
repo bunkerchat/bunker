@@ -10,6 +10,9 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.sockets.html
  */
 
+var moment = require('moment');
+var pendingTasks = {};
+
 module.exports.sockets = {
 
 	/***************************************************************************
@@ -31,18 +34,29 @@ module.exports.sockets = {
 
 			console.log('connecting ' + socketId + ' for ' + user.nick);
 
+			var lastConnected = user.lastConnected;
 			var previouslyConnected = user.connected;
 
 			if (!user.sockets) user.sockets = [];
 			user.sockets.push(socketId);
 			user.connected = true;
+			user.lastConnected = new Date().toISOString();
 			user.typingIn = null;
 			user.save()
 				.then(function () {
 					User.publishUpdate(user.id, user);
-					if (!previouslyConnected) {
-						RoomService.messageRoomsWithUser(user.id, user.nick + ' joined the room');
+
+					// Send connecting message, if not previously connected or reconnecting
+					if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > 15) {
+						RoomService.messageRoomsWithUser(user.id, user.nick + ' is now online');
 					}
+
+					// Clear any disconnect messages that haven't gone out yet
+					if(pendingTasks[user.id]) {
+						clearTimeout(pendingTasks[user.id]);
+						pendingTasks[user.id] = null;
+					}
+
 				})
 				.catch(function () {
 					// TODO error handling
@@ -73,12 +87,22 @@ module.exports.sockets = {
 				.each(function (user) {
 					user.sockets = _.without(user.sockets, socketId);
 					user.connected = user.sockets.length > 0;
+					user.lastConnected = new Date().toISOString();
+					user.typingIn = null;
 					user.save()
 						.then(function () {
-							User.publishUpdate(user.id, user);
-							if (!user.connected) {
-								RoomService.messageRoomsWithUser(user.id, user.nick + ' left the room');
-							}
+
+							// Wait 15 seconds before performing the update and/or sending disconnect message
+							// Allows time for reconnection
+							pendingTasks[user.id] = setTimeout(function() {
+
+								User.publishUpdate(user.id, user);
+								if (!user.connected) {
+									RoomService.messageRoomsWithUser(user.id, user.nick + ' has gone offline');
+								}
+								pendingTasks[user.id] = null; // clear
+
+							}, 15000);
 						})
 						.catch(function () {
 							// TODO error handling

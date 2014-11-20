@@ -51,14 +51,15 @@ window.app = angular.module('bunker', [
 	.run(function($rootScope, $window, user) {
 		// Handle user away notification on window focus/blur
 		var win = angular.element($window);
+
 		win.bind('focus', function () {
-			console.log('focused');
 			$rootScope.$apply(function() {
 				user.current.present = true;
 				user.current.lastActivity = new Date().toISOString();
 				user.current.$activity();
 			});
 		});
+
 		win.bind('blur', function () {
 			$rootScope.$apply(function() {
 				user.current.present = false;

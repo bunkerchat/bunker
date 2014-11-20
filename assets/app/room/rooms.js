@@ -39,11 +39,12 @@ app.factory('rooms', function ($rootScope, bunkerApi, user, uuid) {
 
 	// Add a message
 	function addMessage(roomId, message) {
-		if (messageLookup[message.id]) return; // already exists!
 
 		if(!message.id){
-			message.id = uuid.v4();
+			message.id = uuid.v4(); // All messages need ids
 		}
+
+		if (messageLookup[message.id]) return; // already exists!
 
 		var room = getRoom(roomId);
 		var lastMessage = _.last(room.$messages);
@@ -97,7 +98,6 @@ app.factory('rooms', function ($rootScope, bunkerApi, user, uuid) {
 	// Apply changes to our list of users, if they are in this room
 	$rootScope.$on('$sailsResourceUpdated', function (evt, resource) {
 		if (resource.model == 'user') {
-			console.log(resource);
 			_(rooms).flatten('$members').where({ 'user': {id: resource.id}}).each(function(roomMember) {
 				angular.extend(roomMember.user, resource.data);
 			});

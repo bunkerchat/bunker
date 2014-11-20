@@ -22,6 +22,9 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: false
 		},
+		lastConnected: {
+			type: 'date'
+		},
 		present: {
 			type: 'boolean',
 			defaultsTo: true
