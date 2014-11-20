@@ -1,4 +1,4 @@
-app.factory('rooms', function ($rootScope, bunkerApi, uuid, $timeout) {
+app.factory('rooms', function ($rootScope, bunkerApi, user, uuid) {
 	var rooms = {};
 	var messageLookup = {};
 
@@ -17,6 +17,7 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid, $timeout) {
 				rooms[roomId].$members = bunkerApi.roomMember.query({room: roomId});
 			});
 			rooms[roomId].$messages = [];
+			rooms[roomId].$members = [];
 		}
 
 		return rooms[roomId];
@@ -92,6 +93,16 @@ app.factory('rooms', function ($rootScope, bunkerApi, uuid, $timeout) {
 		disconnectMessages = [];
 	});
 
+	// Watch for socket.io updates to users
+	// Apply changes to our list of users, if they are in this room
+	$rootScope.$on('$sailsResourceUpdated', function (evt, resource) {
+		if (resource.model == 'user') {
+			console.log(resource);
+			_(rooms).flatten('$members').where({ 'user': {id: resource.id}}).each(function(roomMember) {
+				angular.extend(roomMember.user, resource.data);
+			});
+		}
+	});
 
 	return {
 		get: getRoom,

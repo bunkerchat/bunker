@@ -2,7 +2,6 @@ app.controller('RoomController', function ($scope, user, currentRoom) {
 	var self = this;
 	this.userService = user;
 	this.current = currentRoom;
-	console.log(this.current);
 
 	this.now = function () {
 		return moment().format('YYYY-MM-DD');
@@ -20,17 +19,6 @@ app.controller('RoomController', function ($scope, user, currentRoom) {
 			return roomMember.user.id;
 		});
 	}, true);
-
-	// Watch for socket.io updates to users
-	// Apply changes to our list of users, if they are in this room
-	$scope.$on('$sailsResourceUpdated', function (evt, resource) {
-		if (resource.model == 'user') {
-			var roomMember = self.memberLookup[resource.id];
-			if (roomMember) {
-				angular.extend(roomMember.user, resource.data);
-			}
-		}
-	});
 });
 
 app.filter('membersOrderBy', function () {

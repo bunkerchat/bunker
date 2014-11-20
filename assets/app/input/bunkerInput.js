@@ -23,21 +23,6 @@ app.directive('bunkerInput', function($stateParams, $window, user) {
 				if(!value || !oldValue || value == oldValue) return;
 				user.broadcastTyping($stateParams.roomId);
 			});
-
-			// Handle user away notification on window focus/blur
-			var win = angular.element($window);
-			win.bind('focus', function () {
-				scope.$apply(function() {
-					user.current.present = true;
-					user.current.$activity();
-				});
-			});
-			win.bind('blur', function () {
-				scope.$apply(function() {
-					user.current.present = false;
-					user.current.$activity();
-				});
-			});
 		}
 	};
 });
