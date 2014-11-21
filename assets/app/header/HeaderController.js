@@ -15,16 +15,19 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 	};
 
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		if (resource.model == 'room' && resource.id != $stateParams.roomId && resource.data.author && !resource.data.edited) {
-			var otherRoom = _(self.memberships).pluck('room').find({id: resource.id});
-			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
+		if (resource.model != 'room' || resource.id == $stateParams.roomId ||
+			!user.current.$resolved || !resource.data.author || resource.data.author.id == user.current.id || resource.data.edited) {
+			return;
 		}
+
+		var otherRoom = _(self.memberships).pluck('room').find({id: resource.id});
+		otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
 	});
 
 	$rootScope.$on('$stateChangeSuccess', function () {
 		if ($stateParams.roomId) {
 			var currentRoom = _(self.memberships).pluck('room').find({id: $stateParams.roomId});
-			if(currentRoom) {
+			if (currentRoom) {
 				currentRoom.$unreadMessages = 0;
 			}
 		}

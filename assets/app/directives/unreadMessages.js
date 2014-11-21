@@ -19,19 +19,21 @@ app.directive('unreadMessages', function ($rootScope, $window, user) {
 		});
 
 		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-			if (!hasFocus && resource.model == 'room' && resource.data.author && user.current.$resolved) {
-				unreadMessages++;
-				if (new RegExp(user.current.nick, 'i').test(resource.data.text)) {
-					// TODO this probably won't work if user changes their nick
-					mentioned = true;
-				}
+			if (hasFocus || resource.model != 'room' || !resource.data.author || !user.current.$resolved ||
+				resource.data.author == user.current.id) return;
 
-				var newTitle = [];
-				if (mentioned) newTitle.push('*');
-				newTitle.push('(' + unreadMessages + ') ');
-				newTitle.push(original);
-				el.text(newTitle.join(''));
+			unreadMessages++;
+			if (new RegExp(user.current.nick, 'i').test(resource.data.text)) {
+				// TODO this probably won't work if user changes their nick
+				mentioned = true;
 			}
+
+			var newTitle = [];
+			if (mentioned) newTitle.push('*');
+			newTitle.push('(' + unreadMessages + ') ');
+			newTitle.push(original);
+			el.text(newTitle.join(''));
 		});
 	};
-});
+})
+;
