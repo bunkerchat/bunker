@@ -13,7 +13,7 @@ nav,
 .navbar {
 	min-height: 40px;
 	height: 40px;
-	margin-bottom: 0px;
+	margin-bottom: 0;
 }
 
 .navbar-default {
@@ -135,7 +135,7 @@ input:focus, .form-control:focus {
 	width: 325px;
 	height: 500px;
 	margin-left: -300px;
-	border: solid #ddd 3px;
+	border: solid #ddd;
 	border-width: 0 0 3px 3px;
 	border-bottom-left-radius: 4px;
 	background: #fff;
@@ -246,6 +246,12 @@ input:focus, .form-control:focus {
 .message-body .panel {
 	margin: 0;
 }
+.message-body blockquote {
+	font-size: 14px;
+	border: dotted #ccc 2px;
+	border-radius: 3px;
+	background: #FAFAFA;
+}
 
 .message-body .default-video-height .panel-body {
 	height: 420px;
@@ -270,6 +276,10 @@ input:focus, .form-control:focus {
 	background-color: lightyellow;
 }
 
+.message-input textarea {
+	resize: none;
+	overflow: hidden;
+}
 .message-input input[type=text],
 .message-input button {
 	border-radius: 0;
@@ -283,9 +293,7 @@ input:focus, .form-control:focus {
 	width: 0;
 	height: 0;
 	border-bottom: 8px solid #fff;
-	border-bottom: 8px solid rgba(255, 255, 255, 0);
 	border-top: 8px solid #fff;
-	border-top: 8px solid rgba(255, 255, 255, 0);
 	border-right: 8px solid #fff;
 }
 
@@ -420,7 +428,7 @@ img.emoticon {
 	background-image: -webkit-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
 	background-image: -ms-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
 	background-image: linear-gradient(to bottom, #00FF00 0%, #00BD00 100%);
-	box-shadow: 0px 0px 2px #00BD00;
+	box-shadow: 0 0 2px #00BD00;
 }
 
 [status].away {
@@ -430,7 +438,7 @@ img.emoticon {
 	background-image: -webkit-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
 	background-image: -ms-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
 	background-image: linear-gradient(to bottom, #FFFF00 0%, #D4D400 100%);
-	box-shadow: 0px 0px 2px #D4D400;
+	box-shadow: 0 0 2px #D4D400;
 }
 
 .room-options {

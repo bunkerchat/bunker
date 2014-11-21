@@ -67,7 +67,11 @@ app.controller('InputController', function ($rootScope, $stateParams, bunkerApi,
 	};
 
 	this.keyDown = function (evt) {
-		if (evt.keyCode == 9) { // tab
+		if(evt.keyCode == 13) { // enter
+			evt.preventDefault();
+			self.sendMessage();
+		}
+		else if (evt.keyCode == 9) { // tab
 			evt.preventDefault(); // prevent tabbing out of the text input
 
 			if (searchState === searchStates.EMOTE) { // if we're in a search
