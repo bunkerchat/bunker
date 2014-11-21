@@ -34,15 +34,25 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 
 				// Parse quotes
 				if(text.match(/\n[^$]/g)) {
-					// Put in blockquote
-					var paragraphs = formatted.split('\n');
 
+					// Scan for overtabs
+					var lines = formatted.split('\n');
+					var firstLineSpacingMatch = _.first(lines).match(/^(\s+)/);
+
+					// If we have some spacing on the first line, remove the same spacing from all other lines (detabs everything)
+					if(firstLineSpacingMatch) {
+						var firstLineSpacingExpression = new RegExp('^' + firstLineSpacingMatch[1] + '');
+						var spacingRemoved = _.map(lines, function (line) {
+							return line.replace(firstLineSpacingExpression, '');
+						});
+						formatted = spacingRemoved.join('\n');
+					}
+
+					// Put in code block
 					var quote = [];
-					quote.push('<div class="panel"><blockquote>');
-					_.each(paragraphs, function(paragraph) {
-						quote.push('<p>' + paragraph + '</p>');
-					});
-					quote.push('</blockquote></div>');
+					quote.push('<div class="panel"><pre>');
+					quote.push(formatted);
+					quote.push('</pre></div>');
 
 					formatted = quote.join('');
 				}

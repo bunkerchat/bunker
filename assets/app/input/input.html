@@ -4,6 +4,7 @@
 			<div class="input-group">
 				<textarea rows="1" class="form-control"
 							 ng-model="input.messageText"
+							 ng-trim="false"
 							 ng-keyup="input.keyUp($event)"
 							 ng-keydown="input.keyDown($event)"
 							 bunker-input="input.messageText"></textarea>

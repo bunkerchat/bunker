@@ -246,11 +246,13 @@ input:focus, .form-control:focus {
 .message-body .panel {
 	margin: 0;
 }
-.message-body blockquote {
-	font-size: 14px;
+
+.message-body pre {
+	margin-top: 10px;
 	border: dotted #ccc 2px;
 	border-radius: 3px;
 	background: #FAFAFA;
+	color: #666;
 }
 
 .message-body .default-video-height .panel-body {
