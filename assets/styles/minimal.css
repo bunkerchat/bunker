@@ -210,6 +210,13 @@ nav,
 	margin: 0;
 }
 
+.message-body blockquote {
+	font-size: 14px;
+	border: dotted #ccc 2px;
+	border-radius: 3px;
+	background: #FAFAFA;
+}
+
 .message-body .default-video-height .panel-body {
 	height: 420px;
 }

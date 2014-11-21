@@ -293,7 +293,9 @@ input:focus, .form-control:focus {
 	width: 0;
 	height: 0;
 	border-bottom: 8px solid #fff;
+	border-bottom: 8px solid rgba(255, 255, 255, 0);
 	border-top: 8px solid #fff;
+	border-top: 8px solid rgba(255, 255, 255, 0);
 	border-right: 8px solid #fff;
 }
 
