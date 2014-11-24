@@ -253,6 +253,7 @@ input:focus, .form-control:focus {
 	border-radius: 3px;
 	background: #FAFAFA;
 	color: #666;
+	tab-size: 4;
 }
 
 .message-body .default-video-height .panel-body {
