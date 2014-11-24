@@ -45,7 +45,7 @@
 						<!-- system message -->
 						<div class="new-message-body" ng-switch-default>
 							<div class="alert alert-message text-muted">
-								{{message.text}}
+								<span bunker-message="{{message.text}}"></span>
 							</div>
 						<span class="message-info text-muted">
 							<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">

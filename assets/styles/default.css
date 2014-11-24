@@ -8,6 +8,11 @@ a, [ng-click] {
 	cursor: pointer;
 }
 
+.alert a, .alert .alert-link {
+	color: #93c54b;
+	text-decoration: none;
+}
+
 /* navbar */
 nav,
 .navbar {
