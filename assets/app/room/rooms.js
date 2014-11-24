@@ -40,11 +40,12 @@ app.factory('rooms', function ($rootScope, bunkerApi, user, uuid) {
 	// Add a message
 	function addMessage(roomId, message) {
 
-		if(!message.id){
+		if (!message.id) {
 			message.id = uuid.v4(); // All messages need ids
 		}
 
-		if (messageLookup[message.id]) return; // already exists!
+		if (messageLookup[message.id]) return; // Message already exists!
+		if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
 
 		var room = getRoom(roomId);
 		var lastMessage = _.last(room.$messages);
@@ -98,7 +99,7 @@ app.factory('rooms', function ($rootScope, bunkerApi, user, uuid) {
 	// Apply changes to our list of users, if they are in this room
 	$rootScope.$on('$sailsResourceUpdated', function (evt, resource) {
 		if (resource.model == 'user') {
-			_(rooms).flatten('$members').where({ 'user': {id: resource.id}}).each(function(roomMember) {
+			_(rooms).flatten('$members').where({'user': {id: resource.id}}).each(function (roomMember) {
 				angular.extend(roomMember.user, resource.data);
 			});
 		}

@@ -15,6 +15,10 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: true
 		},
+		showNotifications: {
+			type: 'boolean',
+			defaultsTo: true
+		},
 		minimalView: {
 			type: 'boolean',
 			defaultsTo: false

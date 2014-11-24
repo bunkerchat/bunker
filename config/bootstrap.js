@@ -28,16 +28,17 @@ module.exports.bootstrap = function (cb) {
 
 	// Clear user socket data
 	User.update({}, {sockets: [], connected: false, typingIn: null}).exec(function (error) {
-		// Make sure all users have settings objects properly associated to them.
-		User.find({settings: null}).exec(function (error, users) {
-			async.each(users, function (user, cb) {
-				UserSettings.create({user: user}).exec(function (error, userSettings) {
-					user.settings = userSettings;
-					user.save(cb);
-				});
-			});
+	});
+
+	// show notifcations migration
+	UserSettings.find().where().exec(function (error, settings) {
+		var nullSettings = _.filter(settings, function(setting) { return typeof setting.showNotifications == 'undefined'; })
+		async.each(nullSettings, function (setting, cb) {
+			setting.showNotifications = true;
+			setting.save(cb);
 		});
 	});
+
 
 	passport.serializeUser(function (user, done) {
 		done(null, user.id);
