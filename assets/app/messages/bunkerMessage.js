@@ -59,12 +59,12 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 				else {
 
 					// Parse bold
-					_.each(text.match(/(?:[^A-Za-z0-9]|^)(\*[A-Za-z0-9\s]+\*)(?:[^A-Za-z0-9]|$)/g), function (bold) {
+					_.each(text.match(/(?:[^A-Za-z0-9]|^)(\*[A-Za-z0-9\s'\-]+\*)(?:[^A-Za-z0-9]|$)/g), function (bold) {
 						formatted = replaceAll(formatted, bold, '<strong>' + bold.replace(/\*/g, '') + '</strong>');
 					});
 
 					// Parse italics
-					_.each(text.match(/(?:[^A-Za-z0-9]|^)(_[A-Za-z0-9\s]+_)(?:[^A-Za-z0-9]|$)/g), function (italics) {
+					_.each(text.match(/(?:[^A-Za-z0-9]|^)(_[A-Za-z0-9\s'\-]+_)(?:[^A-Za-z0-9]|$)/g), function (italics) {
 						formatted = replaceAll(formatted, italics, '<em>' + italics.replace(/_/g, '') + '</em>');
 					});
 
@@ -91,7 +91,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 								attachedMedia = angular.element('<div bunker-media="' + link + '"><img src="' + link + '"/></div>');
 							}
 
-							if (/(www\.youtube\.com|youtu\.?be)/i.test(link)) {
+							if (/(www\.)?(youtube\.com|youtu\.?be)\/watch/i.test(link)) {
 								attachedMedia = angular.element('' +
 								'<div class="default-video-height" bunker-media="' + link + '">' +
 								'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
