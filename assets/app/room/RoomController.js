@@ -1,10 +1,10 @@
-app.controller('RoomController', function ($scope, user, currentRoom) {
+app.controller('RoomController', function ($rootScope, $scope, user, currentRoom) {
 	var self = this;
 	this.userService = user;
 	this.current = currentRoom;
 
 	this.mentionUser = function (userNick) {
-		$scope.$broadcast('inputText', '@' + userNick);
+		$rootScope.$broadcast('inputText', '@' + userNick);
 	};
 
 	// Watch for updates to the room members
