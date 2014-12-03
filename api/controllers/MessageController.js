@@ -50,20 +50,20 @@ exports.create = function (req, res) {
 	else if (/^\/(up|down)\s+/i.test(text)) { // Karma system, unfinished
 
 		var nickMatches = text.match(/^\/(?:up|down)\s+@?(\w+)/i);
-		if(!nickMatches) return;
+		if (!nickMatches) return;
 		var nick = nickMatches[1];
 		var rating = text.match(/up/i) ? 1 : -1;
 
 		// TODO would need to limit how many times a user can vote
 
-		RoomMember.find().where({room: roomId}).populate('user').exec(function(error, roomMembers) {
-			var matchingMember = _.find(roomMembers, function(roomMember) {
+		RoomMember.find().where({room: roomId}).populate('user').exec(function (error, roomMembers) {
+			var matchingMember = _.find(roomMembers, function (roomMember) {
 				return roomMember.user.nick == nick;
 			});
 
-			if(!matchingMember) return;
+			if (!matchingMember) return;
 
-			if(typeof matchingMember.rating === 'undefined') {
+			if (typeof matchingMember.rating === 'undefined') {
 				matchingMember.rating = 0;
 			}
 
@@ -89,8 +89,7 @@ exports.create = function (req, res) {
 					if (!room) return res.notFound();
 
 					var room = room[0];
-					var message = topic ? roomMember.user.nick + ' changed the topic to ' + room.topic :
-						roomMember.user.nick + ' cleared the topic';
+					var message = roomMember.user.nick + (topic ? ' changed the topic to "' + topic + '"' : ' cleared the topic');
 
 					Room.publishUpdate(room.id, room);
 					RoomService.messageRoom(roomId, message);
@@ -104,6 +103,36 @@ exports.create = function (req, res) {
 
 		});
 	}
+	else if (/^\/roll/i.test(text)) {
+		var matches = text.match(/\/roll\s+(.+)/i);
+		var roll = matches ? matches[1] : null;
+
+		// Determine outcome
+		var rollOutcome;
+
+		if(_.isNumber(+roll) && !_.isNaN(+roll)) {
+			var max = +roll;
+			rollOutcome = 'rolled ' + Math.ceil(Math.random() * max) + ' out of ' + max;
+		}
+		// d20 case for D&D nerds
+		//else if(/^d\d{1,4}/i.test(roll)) { // a dice roll
+		//	rollOutcome = 'rolled a ' + roll + ' for ' + 100;
+		//}
+		else { // Doesn't fit any of our cases
+			return;
+		}
+
+		User.findOne(userId).exec(function (error, user) {
+			Message.create({
+				room: roomId,
+				author: null,
+				text: user.nick + ' ' + rollOutcome
+			}).exec(function (error, message) {
+				res.ok(); // send back the message to the original caller
+				broadcastMessage(message);
+			});
+		});
+	}
 	else { // base case, a regular chat message
 		// Create a message model object in the db
 		Message.create({ // the model to add into db
@@ -112,11 +141,7 @@ exports.create = function (req, res) {
 			text: text
 		}).exec(function (error, message) {
 			res.ok(message); // send back the message to the original caller
-
-			// now that message has been created, get the populated version
-			Message.findOne(message.id).populateAll().exec(function (error, message) {
-				Room.message(roomId, message); // message all subscribers of the room that with the new message as data
-			});
+			broadcastMessage(message);
 		});
 	}
 };
@@ -146,16 +171,7 @@ exports.update = function (req, res) {
 
 		Message.update(pk, updates).exec(function (error) {
 			if (error) return res.serverError(error);
-
-			// Have to repopulate in order to deliver a full message. This would typically not be necessarily
-			// except we're informing clients of the update via the Room.message command, not a publishUpdate
-
-			Message.findOne(pk).populateAll().exec(function (error, message) { // Repopulate
-				// message all subscribers of the room that with the new message as data
-				// this message is flagged with 'edited' so the client will know to perform an edit
-				Room.message(message.room, message);
-				res.ok(message);
-			});
+			broadcastMessage(message);
 		});
 	});
 };
@@ -202,5 +218,12 @@ exports.emoticonCounts = function (req, res) {
 function sanitizeMessage(original) {
 	return require('sanitize-html')(original, {
 		allowedTags: []
+	});
+}
+
+function broadcastMessage(message) {
+	// now that message has been created, get the populated version
+	Message.findOne(message.id).populateAll().exec(function (error, message) {
+		Room.message(message.room, message); // message all subscribers of the room that with the new message as data
 	});
 }
