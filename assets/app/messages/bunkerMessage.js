@@ -33,14 +33,14 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					replacedLinks = {};
 
 				// Parse quotes
-				if(text.match(/\n[^$]/g)) {
+				if (text.match(/\n[^$]/g)) {
 
 					// Scan for overtabs
 					var lines = formatted.split('\n');
 					var firstLineSpacingMatch = _.first(lines).match(/^(\s+)/);
 
 					// If we have some spacing on the first line, remove the same spacing from all other lines (detabs everything)
-					if(firstLineSpacingMatch) {
+					if (firstLineSpacingMatch) {
 						var firstLineSpacingExpression = new RegExp('^' + firstLineSpacingMatch[1] + '');
 						var spacingRemoved = _.map(lines, function (line) {
 							return line.replace(firstLineSpacingExpression, '');
@@ -90,8 +90,13 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 								// Image link
 								attachedMedia = angular.element('<div bunker-media="' + link + '"><img src="' + link + '"/></div>');
 							}
-
-							if (/(www\.)?(youtube\.com|youtu\.?be)\/watch/i.test(link)) {
+							else if(/\.(gifv|mp4)$/i.test(link) && !attachedMedia) {
+								attachedMedia = angular.element('' +
+								'<div bunker-media="' + link + '">' +
+								'<video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4')  + '"></video>' +
+								'</div>');
+							}
+							else if (/(www\.)?(youtube\.com|youtu\.?be)\/watch/i.test(link) && !attachedMedia) {
 								attachedMedia = angular.element('' +
 								'<div class="default-video-height" bunker-media="' + link + '">' +
 								'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
