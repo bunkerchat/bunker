@@ -7,7 +7,8 @@ module.exports.jenkinsBestBuy = function (req, res) {
 	if (build.phase != 'FINISHED') return res.ok('thanks');
 
 	var roomId;
-	var text = 'Build Notification: ' + notification.name + ' | Status: ' + build.status + ' | ' + build.full_url;
+	var parrot = build.status == 'FAILURE' ? ' :parrot:' : '';
+	var text = 'Build Notification: ' + notification.name + ' | Status: ' + build.status + parrot + ' | ' + build.full_url;
 
 	Room.findOne({name: 'BestBuy'})
 		.then(function (room) {
