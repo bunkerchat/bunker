@@ -9,7 +9,10 @@
 			<!-- message log -->
 			<div>
 
-				<ol class="list-unstyled message-list" fill auto-scroll="{{room.current.$messages[room.current.$messages.length - 1].id}}">
+				<ol class="list-unstyled message-list"
+						fill
+						message-log-scroll="{{room.current.$messages[room.current.$messages.length - 1].id}}"
+						on-scroll-top="room.loadPreviousMessages()">
 					<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in room.current.$messages"
 							id="{{::message.id}}">
 						<div class="message" ng-class="::{ local: message.author.id == room.userService.current.id }">

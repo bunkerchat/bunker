@@ -1,7 +1,8 @@
-app.directive('autoScroll', function ($timeout) {
+app.directive('messageLogScroll', function ($timeout) {
 	return {
 		scope: {
-			messageId: '@autoScroll'
+			messageId: '@messageLogScroll',
+			onScrollTop: '&'
 		},
 		link: function (scope, elem) {
 			var el = elem[0];
@@ -19,6 +20,13 @@ app.directive('autoScroll', function ($timeout) {
 					} else { // Otherwise scroll immediately
 						scroll();
 					}
+				}
+			});
+
+			// Watch scrolling to top, execute given function
+			angular.element(el).bind('scroll', function() {
+				if (el.scrollTop == 0 && angular.isFunction(scope.onScrollTop)) { // We're at the top
+					scope.onScrollTop();
 				}
 			});
 

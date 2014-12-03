@@ -1,10 +1,13 @@
-app.controller('RoomController', function ($rootScope, $scope, user, currentRoom) {
+app.controller('RoomController', function ($rootScope, $scope, user, rooms, currentRoom) {
 	var self = this;
 	this.userService = user;
 	this.current = currentRoom;
 
 	this.mentionUser = function (userNick) {
 		$rootScope.$broadcast('inputText', '@' + userNick);
+	};
+	this.loadPreviousMessages = function() {
+		rooms.loadMessages(self.current.id);
 	};
 
 	// Watch for updates to the room members

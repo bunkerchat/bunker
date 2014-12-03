@@ -8,12 +8,7 @@ app.factory('rooms', function ($rootScope, bunkerApi, user, uuid) {
 
 		if (!rooms[roomId]) {
 			rooms[roomId] = bunkerApi.room.get({id: roomId}, function () {
-				bunkerApi.room.latest({roomId: roomId}, function (messages) {
-					_(messages).sortBy('createdAt').each(function (message) {
-						addMessage(roomId, message);
-					});
-				});
-
+				loadMessages(roomId);
 				rooms[roomId].$members = bunkerApi.roomMember.query({room: roomId});
 			});
 			rooms[roomId].$messages = [];
@@ -21,6 +16,21 @@ app.factory('rooms', function ($rootScope, bunkerApi, user, uuid) {
 		}
 
 		return rooms[roomId];
+	}
+
+	function loadMessages(roomId) {
+		if (!rooms[roomId]) {
+			throw 'Cannot load previous messages of an unknown room; fetch room first';
+		}
+
+		var skipAmount = rooms[roomId].$messages.length;
+		bunkerApi.room.messages({roomId: roomId, skip: skipAmount}, function (messages) {
+			_(messages).each(function (message) {
+				addMessage(roomId, message);
+			});
+
+			rooms[roomId].$messages = _.sortBy(rooms[roomId].$messages, 'createdAt'); // Resort messages
+		});
 	}
 
 	function joinRoom() {
@@ -107,6 +117,7 @@ app.factory('rooms', function ($rootScope, bunkerApi, user, uuid) {
 
 	return {
 		get: getRoom,
+		loadMessages: loadMessages,
 		join: joinRoom,
 		leave: leaveRoom
 	};

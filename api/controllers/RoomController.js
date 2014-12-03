@@ -124,16 +124,17 @@ module.exports.leave = function (req, res) {
 	});
 };
 
-// GET /room/:id/latest
-// Get the latest 50 messages of a room
-module.exports.latest = function (req, res) {
+// GET /room/:id/messages
+// Get the messages of a room, with optional skip amount
+module.exports.messages = function (req, res) {
 	var roomId = actionUtil.requirePk(req);
+	var skip = req.param('skip') || 0;
 	// TODO check for roomId and user values
 
 	// find finds multiple instances of a model, using the where criteria (in this case the roomId
 	// we also want to sort in DESCing (latest) order and limit to 50
 	// populateAll hydrates all of the associations
-	Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).populateAll().exec(function (error, messages) {
+	Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).skip(skip).populateAll().exec(function (error, messages) {
 		res.ok(messages); // send the messages
 	});
 };
