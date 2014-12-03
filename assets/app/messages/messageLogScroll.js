@@ -26,7 +26,12 @@ app.directive('messageLogScroll', function ($timeout) {
 			// Watch scrolling to top, execute given function
 			angular.element(el).bind('scroll', function() {
 				if (el.scrollTop == 0 && angular.isFunction(scope.onScrollTop)) { // We're at the top
-					scope.onScrollTop();
+					var originalHeight = el.scrollHeight;
+					scope.onScrollTop().then(function() {
+						$timeout(function() {
+							el.scrollTop = el.scrollHeight - originalHeight;
+						});
+					});
 				}
 			});
 
