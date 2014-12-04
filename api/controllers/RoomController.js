@@ -134,7 +134,7 @@ module.exports.messages = function (req, res) {
 	// find finds multiple instances of a model, using the where criteria (in this case the roomId
 	// we also want to sort in DESCing (latest) order and limit to 50
 	// populateAll hydrates all of the associations
-	Message.find().where({room: roomId}).sort('createdAt DESC').limit(50).skip(skip).populateAll().exec(function (error, messages) {
+	Message.find().where({room: roomId}).sort('createdAt DESC').skip(skip).limit(50).populateAll().exec(function (error, messages) {
 		res.ok(messages); // send the messages
 	});
 };

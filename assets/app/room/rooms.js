@@ -32,6 +32,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 			});
 
 			rooms[roomId].$messages = _.sortBy(rooms[roomId].$messages, 'createdAt'); // Resort messages
+			decorateMessages(rooms[roomId].$messages);
 			deferred.resolve();
 		});
 
@@ -68,6 +69,13 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 
 		room.$messages.push(message);
 		messageLookup[message.id] = message.id; // Store messages in lookup object, this allows us to check for duplicates quickly
+	}
+
+	function decorateMessages(messages) {
+		_.each(messages, function (message, index) {
+			var lastMessage = index > 0 && index < messages.length ? messages[index - 1] : null;
+			message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+		});
 	}
 
 	// Edit a message
