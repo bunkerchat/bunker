@@ -21,7 +21,9 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 		}
 
 		var otherRoom = _(self.memberships).pluck('room').find({id: resource.id});
-		otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
+		if(otherRoom) {
+			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
+		}
 	});
 
 	$rootScope.$on('$stateChangeSuccess', function () {

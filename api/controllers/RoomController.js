@@ -12,6 +12,18 @@
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
+// GET /room/:id
+// Overridden from sails blueprint to disable subscribing
+module.exports.findOne = function (req, res) {
+	var pk = actionUtil.requirePk(req);
+	Room.findOne(pk).populateAll().exec(function found(err, matchingRecord) {
+		if (err) return res.serverError(err);
+		if(!matchingRecord) return res.notFound('No record found with the specified `id`.');
+		res.ok(matchingRecord);
+	});
+};
+
+
 // POST /room
 // Create a room
 module.exports.create = function (req, res) {
@@ -34,9 +46,8 @@ module.exports.create = function (req, res) {
 	});
 };
 
-// Find a single room, this will respond for GET /room/:roomId
-// This acts as the room join for now
-// TODO should be /room/:id/join
+// GET /room/:id/join
+// Join a room
 module.exports.join = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;
@@ -49,8 +60,7 @@ module.exports.join = function (req, res) {
 
 		// Subscribe the socket to message and updates of this room
 		// Socket will now receive messages when a new message is created
-		Room.subscribe(req, pk, ['message', 'update']);
-		RoomMember.subscribe(req, ['create', 'destroy']); // TODO seems like an information leak, but ARS won't get messages without it
+		Room.subscribe(req, room, ['message', 'update']);
 
 		// Lookup all current room members of this room
 		RoomMember.find().where({room: pk}).exec(function (err, roomMembers) {
@@ -64,8 +74,8 @@ module.exports.join = function (req, res) {
 							RoomMember.publishCreate(roomMember);
 
 							// Create system message to inform other users of this user joining
-							User.findOne(userId).exec(function(err, user) {
-								if(err) return res.serverError(err);
+							User.findOne(userId).exec(function (err, user) {
+								if (err) return res.serverError(err);
 								RoomService.messageRoom(pk, user.nick + ' has joined the room');
 							});
 						}
@@ -105,7 +115,7 @@ module.exports.leave = function (req, res) {
 		res.ok(room);
 
 		// Unsubscribe socket from this room
-		Room.unsubscribe(req, pk, ['message', 'update']);
+		Room.unsubscribe(req, room, ['message', 'update']);
 		// TODO unsubscribe all members? probably not... need to figure out which ones
 
 		// Remove room membership
@@ -115,8 +125,8 @@ module.exports.leave = function (req, res) {
 				RoomMember.retire(destroyed);
 
 				// Create system message to inform other users of this user leaving
-				User.findOne(userId).exec(function(err, user) {
-					if(err) return res.serverError(err);
+				User.findOne(userId).exec(function (err, user) {
+					if (err) return res.serverError(err);
 					RoomService.messageRoom(pk, user.nick + ' has left the room');
 				});
 			});

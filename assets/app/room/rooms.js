@@ -74,6 +74,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 			message.id = uuid.v4(); // All messages need ids
 		}
 
+		if (!rooms[roomId]) throw 'Received message from a room we are not a member of!';
 		if (messageLookup[roomId][message.id]) return; // Message already exists!
 		if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
 
