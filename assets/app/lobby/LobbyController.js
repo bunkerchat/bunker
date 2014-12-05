@@ -1,6 +1,7 @@
 app.controller('LobbyController', function ($state, bunkerApi, rooms, user) {
 	var self = this;
 
+	// TODO this shows a room after it's been left :I
 	user.memberships.$promise.then(function (memberships) {
 		self.rooms = [];
 		// Get all known rooms and populate with member counts
