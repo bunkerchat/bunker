@@ -11,8 +11,9 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 				loadMessages(roomId);
 				rooms[roomId].$members = bunkerApi.roomMember.query({room: roomId});
 			});
-			rooms[roomId].$messages = [];
 			rooms[roomId].$members = [];
+			rooms[roomId].$messages = [];
+			messageLookup[roomId] = {}; // create lookup table for this room
 		}
 
 		return rooms[roomId];
@@ -59,6 +60,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 		}
 
 		room.$leave(function () {
+			delete messageLookup[roomId];
 			delete rooms[roomId];
 		});
 
@@ -72,7 +74,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 			message.id = uuid.v4(); // All messages need ids
 		}
 
-		if (messageLookup[message.id]) return; // Message already exists!
+		if (messageLookup[roomId][message.id]) return; // Message already exists!
 		if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
 
 		var room = rooms[roomId];
@@ -80,7 +82,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
 
 		room.$messages.push(message);
-		messageLookup[message.id] = message.id; // Store messages in lookup object, this allows us to check for duplicates quickly
+		messageLookup[roomId][message.id] = true; // Store messages in lookup object, this allows us to check for duplicates quickly
 	}
 
 	function decorateMessages(messages) {

@@ -131,6 +131,10 @@ input:focus, .form-control:focus {
 	width: auto;
 }
 
+section {
+	margin: 20px 0;
+}
+
 /* emoticon */
 
 [emoticon-menu] {
