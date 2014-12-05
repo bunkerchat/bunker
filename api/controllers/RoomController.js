@@ -61,6 +61,7 @@ module.exports.join = function (req, res) {
 		// Subscribe the socket to message and updates of this room
 		// Socket will now receive messages when a new message is created
 		Room.subscribe(req, room, ['message', 'update']);
+		RoomMember.watch(req); // TODO probably an information leak but ARS can't update without it
 
 		// Lookup all current room members of this room
 		RoomMember.find().where({room: pk}).exec(function (err, roomMembers) {

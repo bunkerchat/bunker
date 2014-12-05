@@ -7,7 +7,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 	function getRoom(roomId) {
 
 		if (!rooms[roomId]) {
-			rooms[roomId] = bunkerApi.room.get({id: roomId}, function () {
+			rooms[roomId] = bunkerApi.room.join({id: roomId}, function () {
 				loadMessages(roomId);
 				rooms[roomId].$members = bunkerApi.roomMember.query({room: roomId});
 			});
