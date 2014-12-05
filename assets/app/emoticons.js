@@ -13,6 +13,7 @@ app.factory('emoticons', function () {
 		'boom.gif',
 		'bravo.gif',
 		'buddy.gif',
+		'buildchicken.jpg',
 		'burger.gif',
 		'cacodemon.gif',
 		'cake.png',

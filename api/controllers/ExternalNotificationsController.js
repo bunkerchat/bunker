@@ -4,11 +4,12 @@ module.exports.jenkinsBestBuy = function (req, res) {
 	var build = notification.build;
 
 	if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
-	if (build.phase != 'FINISHED') return res.ok('thanks');
+	if (build.phase != 'COMPLETED') return res.ok('thanks');
 
 	var roomId;
-	var parrot = build.status == 'FAILURE' ? ' :parrot:' : '';
-	var text = 'Build Notification: ' + notification.name + ' | Status: ' + build.status + parrot + ' | ' + build.full_url;
+	var chicken = build.status == 'FAILURE' ? ' :buildchicken:' : '';
+	var url = build.full_url + "/console";
+	var text = 'Build Notification: ' + notification.name + ' | Status: ' + build.status + chicken + ' | ' + url;
 
 	Room.findOne({name: 'BestBuy'})
 		.then(function (room) {
