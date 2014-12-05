@@ -1,6 +1,27 @@
 <div class="container-fluid">
 
-	<h3>Known rooms</h3>
+	<div class="row">
+		<div class="col-md-9">
+			<h3>Known rooms</h3>
+		</div>
+		<div class="col-md-3">
+			<form ng-submit="lobby.joinRoom(roomGuid)">
+
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Existing room guid"
+								 ng-model="roomGuid" ng-required="true"/>
+
+					<span class="input-group-btn">
+							<button class="btn btn-success">Join</button>
+					</span>
+				</div>
+
+			</form>
+		</div>
+
+	</div>
+
+
 	<table class="table">
 		<thead>
 		<tr>

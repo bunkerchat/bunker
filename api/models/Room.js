@@ -23,6 +23,13 @@ module.exports = {
 		messages: {
 			collection: 'Message',
 			via: 'room'
+		},
+
+		// Remove secret things
+		toJSON: function() {
+			var obj = this.toObject();
+			delete obj.messages;
+			return obj;
 		}
 	}
 };

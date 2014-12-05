@@ -26,7 +26,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 		var deferred = $q.defer();
 		var skipAmount = rooms[roomId].$messages.length;
 
-		bunkerApi.room.messages({roomId: roomId, skip: skipAmount}, function (messages) {
+		bunkerApi.room.messages({id: roomId, skip: skipAmount}, function (messages) {
 			_(messages).each(function (message) {
 				addMessage(roomId, message);
 			});
@@ -39,18 +39,30 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 		return deferred.promise;
 	}
 
-	function joinRoom() {
-		// TODO not in use, retrieval causes join
+	function joinRoom(roomId) {
+		var room = bunkerApi.room.join({id: roomId});
+
+		room.$promise
+			.catch(function (error) {
+				// TODO error handling
+				console.log('failed to join ' + roomId, error);
+			});
+
+		return room.$promise;
 	}
 
 	function leaveRoom(roomId) {
 		// TODO need to retrieve before leaving? me thinks not
-		var room = getRoom(roomId);
-		room.$promise.then(function () {
-			room.$leave(function () {
-				delete rooms[roomId];
-			});
+		var room = rooms[roomId];
+		if (!room) {
+			throw 'Tried to leave unknown room';
+		}
+
+		room.$leave(function () {
+			delete rooms[roomId];
 		});
+
+		return room.$promise;
 	}
 
 	// Add a message
@@ -63,7 +75,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 		if (messageLookup[message.id]) return; // Message already exists!
 		if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
 
-		var room = getRoom(roomId);
+		var room = rooms[roomId];
 		var lastMessage = _.last(room.$messages);
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
 
@@ -80,7 +92,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 
 	// Edit a message
 	function editMessage(roomId, message) {
-		var room = getRoom(roomId);
+		var room = rooms[roomId];
 		var currentMessage = _.find(room.$messages, {id: message.id});
 		if (currentMessage) {
 			angular.extend(currentMessage, message);

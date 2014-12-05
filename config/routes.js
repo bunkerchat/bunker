@@ -36,7 +36,8 @@ module.exports.routes = {
 	'/login': 'ViewController.login',
 	'/logout': 'AuthController.logout',
 	'/user/current/activity': 'UserController.activity',
-	'/room/leave': 'RoomController.leave',
+	'/room/:id/join': 'RoomController.join',
+	'/room/:id/leave': 'RoomController.leave',
 	'/room/:id/messages': 'RoomController.messages',
 	'/room/:id/history': 'RoomController.history',
 	'/message/emoticons': 'MessageController.emoticonCounts'

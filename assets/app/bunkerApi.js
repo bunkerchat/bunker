@@ -11,9 +11,10 @@ app.factory('bunkerApi', function (sailsResource) {
 		}),
 		room: sailsResource('room', {
 			get: {method: 'GET', fetchAfterReconnect: true},
-			leave: {method: 'PUT', url: '/room/leave'},
-			messages: {method: 'GET', isArray: true, cache: false, url: '/room/:roomId/messages', fetchAfterReconnect: true},
-			history: {method: 'GET', isArray: true, url: '/room/:roomId/history'}
+			join: {method: 'GET', cache: false, url: '/room/:id/join'},
+			leave: {method: 'PUT', url: '/room/:id/leave'},
+			messages: {method: 'GET', isArray: true, cache: false, url: '/room/:id/messages', fetchAfterReconnect: true},
+			history: {method: 'GET', isArray: true, url: '/room/:id/history'}
 		})
 	};
 });

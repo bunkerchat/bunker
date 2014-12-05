@@ -52,6 +52,7 @@ module.exports.policies = {
 	RoomController: {
 		'findOne': 'isLoggedIn',
 		'create': 'isLoggedIn',
+		'join': 'isLoggedIn',
 		'leave': 'isLoggedIn',
 		'messages': 'isLoggedIn',
 		'history': 'isLoggedIn'

@@ -1,18 +1,26 @@
-app.controller('LobbyController', function ($state, bunkerApi, user) {
+app.controller('LobbyController', function ($state, bunkerApi, rooms, user) {
 	var self = this;
 
-	user.memberships.$promise.then(function(memberships) {
+	user.memberships.$promise.then(function (memberships) {
 		self.rooms = [];
 		// Get all known rooms and populate with member counts
 
-		_(memberships).pluck('room').each(function(room) {
-			bunkerApi.roomMember.query({room: room.id}, function(roomMembers) {
+		_(memberships).pluck('room').each(function (room) {
+			bunkerApi.roomMember.query({room: room.id}, function (roomMembers) {
 				room.$memberCount = roomMembers.length;
-				room.$onlineMemberCount = _.filter(roomMembers, function(roomMember) { return roomMember.user.connected; }).length;
+				room.$onlineMemberCount = _.filter(roomMembers, function (roomMember) {
+					return roomMember.user.connected;
+				}).length;
 				self.rooms.push(room);
 			});
 		});
 	});
+
+	this.joinRoom = function (roomGuid) {
+		rooms.join(roomGuid).then(function (room) {
+			$state.go('room', {roomId: room.id});
+		});
+	};
 
 	this.createRoom = function (roomName) {
 		var newRoom = new bunkerApi.room({name: roomName});

@@ -37,7 +37,7 @@ module.exports.create = function (req, res) {
 // Find a single room, this will respond for GET /room/:roomId
 // This acts as the room join for now
 // TODO should be /room/:id/join
-module.exports.findOne = function (req, res) {
+module.exports.join = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;
 
