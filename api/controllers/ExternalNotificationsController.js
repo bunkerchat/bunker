@@ -8,7 +8,7 @@ module.exports.jenkinsBestBuy = function (req, res) {
 
 	var roomId;
 	var chicken = build.status == 'FAILURE' ? ' :buildchicken:' : '';
-	var url = build.full_url + "/console";
+	var url = build.full_url + "console";
 	var text = 'Build Notification: ' + notification.name + ' | Status: ' + build.status + chicken + ' | ' + url;
 
 	Room.findOne({name: 'BestBuy'})
