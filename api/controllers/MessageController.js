@@ -133,12 +133,12 @@ exports.create = function (req, res) {
 			});
 		});
 	}
-	else if(/^\/me/i.test(text)){
+	else if(/^\/me\s+/i.test(text)){
 		User.findOne(userId).exec(function (error, user) {
 			Message.create({
 				room: roomId,
 				author: null,
-				text: user.nick +  text.substring(3) //hardcoded to simply nuke the '/me' part and keep the space for free
+				text: user.nick +  text.substring(3)
 			}).exec(function (error, message) {
 				res.ok();
 				broadcastMessage(message);
