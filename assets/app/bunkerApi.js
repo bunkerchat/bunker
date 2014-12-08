@@ -10,8 +10,8 @@ app.factory('bunkerApi', function (sailsResource) {
 			emoticonCounts: {method: 'GET', isArray: true, cache: false, url: '/message/emoticonCounts'}
 		}),
 		room: sailsResource('room', {
-			get: {method: 'GET', fetchAfterReconnect: true},
-			join: {method: 'GET', cache: false, url: '/room/:id/join'},
+			get: {method: 'GET'},
+			join: {method: 'GET', cache: false, url: '/room/:id/join', fetchAfterReconnect: true},
 			leave: {method: 'PUT', url: '/room/:id/leave'},
 			messages: {method: 'GET', isArray: true, cache: false, url: '/room/:id/messages', fetchAfterReconnect: true},
 			history: {method: 'GET', isArray: true, url: '/room/:id/history'}
