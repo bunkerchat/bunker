@@ -8,6 +8,8 @@ node_js:
 #  app: bunker-chat
 #  on:
 #    repo: angular-resource-sails/bunker
+before_script:
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 before_install:
 - npm install pm2 -g
 - openssl aes-256-cbc -K $encrypted_b1cbe67b30e5_key -iv $encrypted_b1cbe67b30e5_iv
