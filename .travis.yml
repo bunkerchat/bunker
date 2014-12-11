@@ -16,5 +16,6 @@ before_install:
   -in node_bunker.pem.enc -out node_bunker.pem -d
 after_success:
   - chmod 600 node_bunker.pem
+  - exec ssh-agent bash
   - ssh-add node_bunker.pem
   - pm2 deploy ecosystem.json production
