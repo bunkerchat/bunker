@@ -1,16 +1,15 @@
 language: node_js
 node_js:
 - 0.1
+#deploy:
+#  provider: heroku
+#  api_key:
+#    secure: U5Cs8z7k4GsipZOD0BqIsHvhMCXU7/naBbAvjRTIGrE011ldEzGIVwgMBC7SlGDwmJSfzCWu4yT/pzvXzQacvJUrgezpNuZgWlrAAnQo3bNrev8dS0kxNXD000gPnz9TOD38kIVg8tZsxub9X2zoU/MZPG5nndzQWe8tRXHaIsg=
+#  app: bunker-chat
+#  on:
+#    repo: angular-resource-sails/bunker
 before_install:
 - npm install pm2 -g
-deploy:
-  provider: heroku
-  api_key:
-    secure: U5Cs8z7k4GsipZOD0BqIsHvhMCXU7/naBbAvjRTIGrE011ldEzGIVwgMBC7SlGDwmJSfzCWu4yT/pzvXzQacvJUrgezpNuZgWlrAAnQo3bNrev8dS0kxNXD000gPnz9TOD38kIVg8tZsxub9X2zoU/MZPG5nndzQWe8tRXHaIsg=
-  app: bunker-chat
-  on:
-    repo: angular-resource-sails/bunker
-before_install:
 - openssl aes-256-cbc -K $encrypted_b1cbe67b30e5_key -iv $encrypted_b1cbe67b30e5_iv
   -in node_bunker.pem.enc -out node_bunker.pem -d
 after_success:
