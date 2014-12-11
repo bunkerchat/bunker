@@ -2,7 +2,11 @@
 	"apps": [
 		{
 			"name": "bunker",
-			"script": "app.js"
+			"script": "app.js",
+			"env_production": {
+				"NODE_ENV": "production",
+				"PORT": 8080
+			}
 		}
 	],
 	"deploy": {
