@@ -8,3 +8,6 @@ deploy:
   app: bunker-chat
   on:
     repo: angular-resource-sails/bunker
+before_install:
+- openssl aes-256-cbc -K $encrypted_b1cbe67b30e5_key -iv $encrypted_b1cbe67b30e5_iv
+  -in node_bunker.pem.enc -out node_bunker.pem -d
