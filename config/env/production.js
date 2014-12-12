@@ -14,7 +14,7 @@ console.log('env', process.env.google_clientID, process.env.google_clientSecret)
 
 module.exports = {
 
-	url: 'http://bunker-chat.herokuapp.com',
+	url: 'http://bunkerchat.net',
 	google: {
 		clientID: process.env.google_clientID,
 		clientSecret: process.env.google_clientSecret
