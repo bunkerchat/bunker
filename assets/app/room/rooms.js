@@ -142,11 +142,23 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 			});
 		}
 	});
+	function clearOldMessages(roomId) {
+		if (rooms[roomId].$messages.length < 60) return;
+
+		// gets all but the last 60 messages
+		var messagesToRemove = _.initial(rooms[roomId].$messages, 60);
+		rooms[roomId].$messages = _.difference(rooms[roomId].$messages, messagesToRemove);
+
+		_.each(messagesToRemove, function (message) {
+			delete messageLookup[roomId][message.id];
+		});
+	}
 
 	return {
 		get: getRoom,
 		loadMessages: loadMessages,
 		join: joinRoom,
-		leave: leaveRoom
+		leave: leaveRoom,
+		clearOldMessages: clearOldMessages
 	};
 });
