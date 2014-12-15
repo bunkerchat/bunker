@@ -18,7 +18,7 @@ module.exports.findOne = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	Room.findOne(pk).populateAll().exec(function found(err, matchingRecord) {
 		if (err) return res.serverError(err);
-		if(!matchingRecord) return res.notFound('No record found with the specified `id`.');
+		if (!matchingRecord) return res.notFound('No record found with the specified `id`.');
 		res.ok(matchingRecord);
 	});
 };
@@ -63,31 +63,23 @@ module.exports.join = function (req, res) {
 		Room.subscribe(req, room, ['message', 'update']);
 		RoomMember.watch(req); // TODO probably an information leak but ARS can't update without it
 
-		// Lookup all current room members of this room
-		RoomMember.find().where({room: pk}).exec(function (err, roomMembers) {
+		RoomMember.find().where({room: pk})
+			.then(function (roomMembers) {
+				if (_.find(roomMembers, {user: userId})) { // Do we need to add as a member?
+					return roomMembers;
+				}
 
-			var tasks = []; // Tasks needed to join this member to the room (will be none if they are already a member)
-			if (!_.find(roomMembers, {user: userId})) { // Do we need to add as a member?
-				tasks.push(function (cb) { // If so, add it to our list of tasks
+				return RoomMember.create({room: pk, user: userId}).then(function (roomMember) {
+					RoomMember.publishCreate(roomMember);
 
-					RoomMember.create({room: pk, user: userId}).exec(function (err, roomMember) {
-						if (!err && roomMember) {
-							RoomMember.publishCreate(roomMember);
-
-							// Create system message to inform other users of this user joining
-							User.findOne(userId).exec(function (err, user) {
-								if (err) return res.serverError(err);
-								RoomService.messageRoom(pk, user.nick + ' has joined the room');
-							});
-						}
-						cb(err, roomMember);
+					// Create system message to inform other users of this user joining
+					User.findOne(userId).then(function (user) {
+						RoomService.messageRoom(pk, user.nick + ' has joined the room');
 					});
+					return roomMembers;
 				});
-			}
-
-			async.series(tasks, function (err) { // Complete all tasks then
-				if (err) return res.serverError(error);
-
+			})
+			.then(function (roomMembers) {
 				// Subscribe the new user to every existing user
 				_.each(roomMembers, function (member) {
 					User.subscribe(req, member.user, ['message', 'update']);
@@ -97,9 +89,8 @@ module.exports.join = function (req, res) {
 				_.each(Room.subscribers(pk, 'update'), function (subscriber) {
 					User.subscribe(subscriber, userId, ['message', 'update']);
 				});
-			});
-
-		});
+			})
+			.catch(res.serverError);
 	});
 };
 
