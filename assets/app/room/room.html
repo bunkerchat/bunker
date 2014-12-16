@@ -3,7 +3,7 @@
 
 		<div class="col-md-10 col-xs-12 no-gutter">
 			<div class="topic" ng-show="room.current.topic">
-				<span bunker-message="{{room.current.topic}}" media="false"></span>
+				<span bunker-message="room.current" media="false"></span>
 			</div>
 
 			<!-- message log -->
@@ -31,7 +31,7 @@
 								<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 								<div class="message-body"
 										 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
-									<span bunker-message="{{message.text}}"></span>
+									<span bunker-message="message"></span>
 								<span class="message-info text-muted">
 									<i class="fa fa-pencil" ng-if="message.edited"></i>
 									<span ng-if="::message.$firstInSeries">
@@ -48,7 +48,7 @@
 						<!-- system message -->
 						<div class="new-message-body" ng-switch-default>
 							<div class="alert alert-message text-muted">
-								<span bunker-message="{{message.text}}"></span>
+								<span bunker-message="message"></span>
 							</div>
 						<span class="message-info text-muted">
 							<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">

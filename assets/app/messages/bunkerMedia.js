@@ -5,10 +5,13 @@ app.directive('bunkerMedia', function (user) {
 		templateUrl: '/assets/app/messages/bunkerMedia.html',
 		transclude:true,
 		scope: {
-			link: '@bunkerMedia'
+			link: '@bunkerMedia',
+			message: '='
 		},
 		link: function (scope) {
-			scope.visible = user.settings.showImages;
+			if(!("$visible" in scope.message)){
+				scope.message.$visible = user.settings.showImages;
+			}
 		}
 	};
 });

@@ -20,14 +20,19 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 	return {
 		template: '<span ng-bind-html="formatted"></span>',
 		scope: {
-			text: '@bunkerMessage',
+			bunkerMessage: '=',
 			media: '@'
 		},
 		link: function (scope, elem) {
-
 			var parseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
 
-			scope.$watch('text', function (text) {
+			// since we are passing in a bunker message OR room, run the watch on the room topic
+			scope.$watch('bunkerMessage.text', textWatch);
+			scope.$watch('bunkerMessage.topic', textWatch);
+
+			function textWatch(text) {
+				if (!text) return;
+
 				var formatted = text,
 					replacedEmotes = {},
 					replacedLinks = {};
@@ -88,12 +93,12 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 						if (parseMedia) {
 							if (/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedMedia) {
 								// Image link
-								attachedMedia = angular.element('<div bunker-media="' + link + '"><img src="' + link + '"/></div>');
+								attachedMedia = angular.element('<div message="bunkerMessage" bunker-media="' + link + '"><img src="' + link + '"/></div>');
 							}
-							else if(/\.(gifv|mp4)$/i.test(link) && !attachedMedia) {
+							else if (/\.(gifv|mp4)$/i.test(link) && !attachedMedia) {
 								attachedMedia = angular.element('' +
 								'<div bunker-media="' + link + '">' +
-								'<video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4')  + '"></video>' +
+								'<video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video>' +
 								'</div>');
 							}
 							else if (/(www\.)?(youtube\.com|youtu\.?be)\/watch/i.test(link) && !attachedMedia) {
@@ -118,7 +123,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 				}
 
 				scope.formatted = formatted;
-			});
+			}
 		}
 	};
 });

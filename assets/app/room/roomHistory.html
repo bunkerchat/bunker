@@ -17,7 +17,7 @@
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
-								<span bunker-message="{{::message.text}}"></span>
+								<span bunker-message="message"></span>
 							<span class="message-info text-muted">
 									<i class="fa fa-pencil" title="View message history"
 										 ng-click="message.showHistory = !message.showHistory"
