@@ -16,7 +16,7 @@
 			"ref": "origin/master",
 			"repo": "https://github.com/angular-resource-sails/bunker.git",
 			"path": "/var/www/production",
-			"post-deploy": "npm install && pm2 startOrRestart app.js -x -- --prod",
+			"post-deploy": "npm install && pm2 stop app && pm2 start app.js -x -- --prod",
 			"env": {
 				"NODE_ENV": "production",
 				"PORT": 8080
