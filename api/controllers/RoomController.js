@@ -136,9 +136,9 @@ module.exports.messages = function (req, res) {
 	// find finds multiple instances of a model, using the where criteria (in this case the roomId
 	// we also want to sort in DESCing (latest) order and limit to 50
 	// populateAll hydrates all of the associations
-	Message.find().where({room: roomId}).sort('createdAt DESC').skip(skip).limit(50).populateAll().exec(function (error, messages) {
-		res.ok(messages); // send the messages
-	});
+	Message.find().where({room: roomId}).sort('createdAt DESC').skip(skip).limit(50).populateAll()
+		.then(res.ok)
+		.catch(res.serverError);
 };
 
 // GET /room/:id/history
@@ -148,10 +148,8 @@ module.exports.history = function (req, res) {
 	var startDate = req.param('startDate');
 	var endDate = req.param('endDate');
 
-	Message.find({room: roomId, createdAt: {'>': moment(startDate).toDate(), '<': moment(endDate).toDate()}})
+	Message.find({room: roomId, createdAt: {'>': new Date(startDate), '<': new Date(endDate)}})
 		.populate('author')
-		.exec(function (err, messages) {
-			if (err) return res.serverError(err);
-			res.ok(messages);
-		});
+		.then(res.ok)
+		.catch(res.serverError);
 };
