@@ -24,20 +24,16 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 			throw 'Cannot load previous messages of an unknown room; fetch room first';
 		}
 
-		var deferred = $q.defer();
 		var skipAmount = rooms[roomId].$messages.length;
 
-		bunkerApi.room.messages({id: roomId, skip: skipAmount}, function (messages) {
+		return bunkerApi.room.messages({id: roomId, skip: skipAmount}).$promise.then(function (messages) {
 			_(messages).each(function (message) {
 				addMessage(roomId, message);
 			});
 
 			rooms[roomId].$messages = _.sortBy(rooms[roomId].$messages, 'createdAt'); // Resort messages
 			decorateMessages(rooms[roomId].$messages);
-			deferred.resolve();
-		});
-
-		return deferred.promise;
+		})
 	}
 
 	function joinRoom(roomId) {
