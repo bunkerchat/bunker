@@ -14,7 +14,8 @@
 <hr>
 <ol class="col-xs-6 list-unstyled" ng-repeat="list in emoticonMenuLists">
 	<li ng-repeat="emoticon in list | fuzzyBy: 'name': search">
-		<a ng-click="appendEmoticonToChat(emoticon.file)">
+		<a ng-click="appendEmoticonToChat(emoticon.file)"
+			 title="{{settings.sortEmoticonsByPopularity ? 'Times Used: ' + emoticon.$count : ''}}">
 			<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon.file}}"/>
 			:{{::emoticon.name}}:
 		</a>
