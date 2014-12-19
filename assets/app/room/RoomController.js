@@ -7,7 +7,7 @@ app.controller('RoomController', function ($rootScope, $scope, user, rooms, curr
 		$rootScope.$broadcast('inputText', '@' + userNick);
 	};
 	this.loadPreviousMessages = function() {
-		return rooms.loadMessages(self.current.id);
+		return rooms.loadMessages(self.current.id, self.current.$messages.length);
 	};
 
 	// Watch for updates to the room members
