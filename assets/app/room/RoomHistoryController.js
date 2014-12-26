@@ -12,16 +12,16 @@ app.controller('RoomHistoryController', function ($scope, bunkerApi, currentUser
 	this.members = {};
 
 	this.subDay = function () {
-		self.date = moment(self.date).add(-1,'days').toDate();
+		self.date = moment(self.date).add(-1, 'days').toDate();
 	};
 
 	this.addDay = function () {
-		self.date = moment(self.date).add(1,'days').toDate();
+		self.date = moment(self.date).add(1, 'days').toDate();
 	};
 
 	// hack :-( ng-changed doesn't work
 	$scope.$watch('room.date', function (newVal, oldVal) {
-		if(!oldVal || newVal == oldVal) return;
+		if (!oldVal || newVal == oldVal) return;
 
 		setStartAndEnd(self.date);
 
@@ -33,20 +33,22 @@ app.controller('RoomHistoryController', function ($scope, bunkerApi, currentUser
 	setStartAndEnd($stateParams.date);
 	getMessages();
 
-	function getMessages(){
-		var query = { id: self.roomId, startDate: startDate, endDate: endDate};
+	function getMessages() {
+		var query = {id: self.roomId, startDate: startDate, endDate: endDate};
 		self.rawMessages = bunkerApi.room.history(query, function (messages) {
 			_(messages).each(function (message) {
 				addMessage(message);
-				self.members[message.author.id] = message.author;
+				if (message.author) {
+					self.members[message.author.id] = message.author;
+				}
 			});
 
-			if(self.message) {
+			if (self.message) {
 				// scroll to message
-				$timeout(function() {
+				$timeout(function () {
 					$location.hash(self.message);
 					$anchorScroll();
-				},1000);
+				}, 1000);
 			}
 		});
 	}
@@ -57,13 +59,13 @@ app.controller('RoomHistoryController', function ($scope, bunkerApi, currentUser
 		self.messages.push(message);
 	}
 
-	function setStartAndEnd(date){
+	function setStartAndEnd(date) {
 		startDate = moment(date).format('YYYY-MM-DD');
 		endDate = moment(date).add(1, 'days').format('YYYY-MM-DD');
 		self.date = moment(date).toDate();
 	}
 
-	this.openCalendar = function($event) {
+	this.openCalendar = function ($event) {
 		$event.preventDefault();
 		$event.stopPropagation();
 
