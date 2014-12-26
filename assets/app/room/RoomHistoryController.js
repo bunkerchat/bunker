@@ -38,7 +38,9 @@ app.controller('RoomHistoryController', function ($scope, bunkerApi, currentUser
 		self.rawMessages = bunkerApi.room.history(query, function (messages) {
 			_(messages).each(function (message) {
 				addMessage(message);
-				self.members[message.author.id] = message.author;
+				if (message.author) {
+					self.members[message.author.id] = message.author;
+				}
 			});
 
 			if(self.message) {
