@@ -278,9 +278,11 @@ section {
 
 /* make input box smaller */
 
-.message-input input[type=text] {
+.message-input textarea {
 	height: 32px;
 	padding: 3px;
+	resize: none;
+	overflow: hidden;
 }
 .message-input button {
 	height: 32px;

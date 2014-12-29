@@ -6,11 +6,9 @@ app.factory('bunkerApi', function (sailsResource) {
 		userSettings: sailsResource('userSettings'),
 		roomMember: sailsResource('roomMember'),
 		message: sailsResource('message', {
-			update: {method: 'PUT', isArray: false, cache: false},
 			emoticonCounts: {method: 'GET', isArray: true, cache: false, url: '/message/emoticonCounts'}
 		}),
 		room: sailsResource('room', {
-			get: {method: 'GET'},
 			join: {method: 'GET', cache: false, url: '/room/:id/join', fetchAfterReconnect: true},
 			leave: {method: 'PUT', url: '/room/:id/leave'},
 			messages: {method: 'GET', isArray: true, cache: false, url: '/room/:id/messages', fetchAfterReconnect: true},
