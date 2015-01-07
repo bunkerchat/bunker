@@ -1,4 +1,4 @@
-app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
+app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $stateParams) {
 	var rooms = {};
 	var messageLookup = {};
 
@@ -68,7 +68,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 			message.id = uuid.v4(); // All messages need ids
 		}
 
-		if (!rooms[roomId]) throw 'Received message from a room we are not a member of!';
+		if (!rooms[roomId]) throw new Error('Received message from a room we are not a member of!');
 		if (messageLookup[roomId][message.id]) return; // Message already exists!
 		if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
 
@@ -117,6 +117,11 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid) {
 		}
 		else {
 			editMessage(resource.id, resource.data)
+		}
+
+		// if user is not in this room, remove history so when we tab switch its not slow
+		if($stateParams.roomId != resource.id){
+			clearOldMessages(resource.id);
 		}
 	});
 
