@@ -42,6 +42,13 @@ window.app = angular.module('bunker', [
 	.config(function ($compileProvider) {
 		// This is where we might customize the sanitize whitelist some day
 		// $compileProvider.imgSrcSanitizationWhitelist();
+
+
+		// disable debug info
+		$compileProvider.debugInfoEnabled(!window.isProduction);
+
+		// to reenable in prod, use
+		// angular.reloadWithDebugInfo()
 	})
 	.config(function (gravatarServiceProvider) {
 		gravatarServiceProvider.defaults = {

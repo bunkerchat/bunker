@@ -1,7 +1,8 @@
 module.exports = {
 	index: function (req, res) {
 		res.view('index', {
-			userId: req.session.userId
+			userId: req.session.userId,
+			isProduction: sails.config.environment === 'production'
 		});
 	},
 	login: function (req, res) {
