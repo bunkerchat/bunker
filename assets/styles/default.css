@@ -70,6 +70,10 @@ nav,
 	z-index: 1;
 }
 
+.panel-heading {
+	line-height: 7px;
+}
+
 /* debrowning things */
 
 .dropdown-menu {
