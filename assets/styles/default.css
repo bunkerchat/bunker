@@ -270,7 +270,7 @@ section {
 }
 
 .message-body .default-video-height .panel-body {
-	height: 420px;
+	/* height: 420px; */
 }
 
 .message-info {

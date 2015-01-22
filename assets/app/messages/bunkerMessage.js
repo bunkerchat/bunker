@@ -110,7 +110,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 						else if (/(www\.)?(youtube\.com|youtu\.?be)\/watch/i.test(link) && !attachedMedia) {
 							attachedMedia = angular.element('' +
 							'<div class="default-video-height" message="bunkerMessage" bunker-media="' + link + '">' +
-							'<youtube-video player-width="\'100%\'" player-height="\'100%\'" video-url="\'' + link + '\'"></youtube-video>' +
+							'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
 							'</div>');
 						}
 					}
