@@ -49,13 +49,11 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					text = spacingRemoved.join('\n');
 				}
 
-				// Put in code block
-				var quote = [];
-				quote.push('<div class="panel"><pre>');
-				quote.push(text);
-				quote.push('</pre></div>');
+				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
+				angular.element(elem).append(attachedMedia);
+				$compile(attachedMedia)(scope.$new());
 
-				return quote.join('');
+				return '';
 			}
 
 			function parseEmoticons(text) {
@@ -112,7 +110,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 						else if (/(www\.)?(youtube\.com|youtu\.?be)\/watch/i.test(link) && !attachedMedia) {
 							attachedMedia = angular.element('' +
 							'<div class="default-video-height" message="bunkerMessage" bunker-media="' + link + '">' +
-							'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
+							'<youtube-video player-width="\'100%\'" video-url="\'' + link + '\'"></youtube-video>' +
 							'</div>');
 						}
 					}

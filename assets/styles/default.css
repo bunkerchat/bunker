@@ -256,9 +256,13 @@ section {
 	margin: 0;
 }
 
+.message-body .panel-body{
+	padding:0px;
+}
+
 .message-body pre {
-	margin-top: 10px;
-	border: dotted #ccc 2px;
+	border: none;
+	margin: 0;
 	border-radius: 3px;
 	background: #FAFAFA;
 	color: #666;
