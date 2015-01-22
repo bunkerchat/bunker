@@ -1,20 +1,20 @@
-app.directive('unreadMessages', function ($rootScope, $window, user) {
+app.directive('unreadMessages', function ($rootScope, user) {
 	return function (scope, elem) {
 		var el = angular.element(elem);
-		var win = angular.element($window);
 
 		var hasFocus = true;
 		var unreadMessages = 0;
 		var mentioned = false;
 		var original = el.text();
 
-		win.bind('focus', function () {
+		$rootScope.$on('visibilityShow', function () {
 			hasFocus = true;
 			unreadMessages = 0;
 			mentioned = false;
 			el.text(original);
 		});
-		win.bind('blur', function () {
+
+		$rootScope.$on('visibilityHide', function () {
 			hasFocus = false;
 		});
 

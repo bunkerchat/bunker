@@ -55,23 +55,22 @@ window.app = angular.module('bunker', [
 			'default': 'identicon'
 		};
 	})
-	.run(function($rootScope, $window, user) {
-		// Handle user away notification on window focus/blur
-		var win = angular.element($window);
-
-		win.bind('focus', function () {
-			$rootScope.$apply(function() {
-				user.current.present = true;
-				user.current.lastActivity = new Date().toISOString();
-				user.current.$activity();
-			});
+	.run(function ($rootScope, $document, user) {
+		// html5 visibility api instead of win.focus or win.blur
+		$document.on("visibilitychange", function () {
+			$rootScope.$broadcast(document.hidden ? 'visibilityHide': 'visibilityShow');
 		});
 
-		win.bind('blur', function () {
-			$rootScope.$apply(function() {
-				user.current.present = false;
-				user.current.lastActivity = new Date().toISOString();
-				user.current.$activity();
-			});
+		// Handle user away notification on window focus/blur
+		$rootScope.$on('visibilityShow', function () {
+			user.current.present = true;
+			user.current.lastActivity = new Date().toISOString();
+			user.current.$activity();
+		});
+
+		$rootScope.$on('visibilityHide', function () {
+			user.current.present = false;
+			user.current.lastActivity = new Date().toISOString();
+			user.current.$activity();
 		});
 	});
