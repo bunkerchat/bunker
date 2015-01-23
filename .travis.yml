@@ -21,3 +21,6 @@ after_success:
   - eval `ssh-agent -s`
   - ssh-add node_bunker.pem
   - pm2 deploy ecosystem.json production
+branches:
+  only:
+    - master

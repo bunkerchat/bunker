@@ -13,7 +13,6 @@ var moment = require('moment');
 // It can only be called by the current user.
 // It's sole purpose is to enable away and typing notifications.
 module.exports.activity = function (req, res) {
-	console.log('activity')
 	var userId = req.session.userId;
 
 	// Only allow updates for the following values
@@ -61,7 +60,6 @@ module.exports.connect = function (req, res) {
 				clearTimeout(userService.pendingTasks[user.id]);
 				userService.pendingTasks[user.id] = null;
 			}
-			console.log('connected user: ', user.id);
 
 			// ARS wasn't seeing a data object, so return an empty one?
 			res.ok({});
