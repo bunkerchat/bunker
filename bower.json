@@ -15,7 +15,6 @@
   "dependencies": {
     "angular": "~1.3.0",
     "bootstrap": "~3.2.0",
-    "angular-resource-sails": "1.0.x",
     "angular-ui-router": "~0.2.12-pre1",
     "lodash": "~2.4.1",
     "angular-gravatar": "~0.2.1",
@@ -23,12 +22,12 @@
     "bootswatch": "~3.2.0",
     "angular-sanitize": "~1.2.26",
     "angular-moment": "~0.8.2",
-    "AngularAgility": "~0.8.13",
     "angular-bootstrap": "~0.11.2",
     "font-awesome": "~4.2.0",
     "angular-youtube-mb": "~0.1.3",
     "jquery.dragbetter": "~0.1.3",
-    "angular-filter": "~0.4.9"
+    "angular-filter": "~0.4.9",
+    "angular-resource-sails": "~1.1.2"
   },
   "resolutions": {
     "angular": "~1.3.0"

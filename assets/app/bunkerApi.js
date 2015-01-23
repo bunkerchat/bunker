@@ -1,7 +1,8 @@
 app.factory('bunkerApi', function (sailsResource) {
 	return {
 		user: sailsResource('user', {
-			activity: {method: 'PUT', url: '/user/current/activity'}
+			activity: {method: 'PUT', url: '/user/current/activity'},
+			connect: {method: 'PUT', url:'/user/current/connect'}
 		}),
 		userSettings: sailsResource('userSettings'),
 		roomMember: sailsResource('roomMember'),

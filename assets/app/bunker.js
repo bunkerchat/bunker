@@ -73,4 +73,8 @@ window.app = angular.module('bunker', [
 			user.current.lastActivity = new Date().toISOString();
 			user.current.$activity();
 		});
+
+		$rootScope.$on('$sailsConnected', function () {
+			user.current.$connect();
+		});
 	});
