@@ -10,7 +10,7 @@ window.app = angular.module('bunker', [
 ])
 	.config(function (sailsResourceProvider, $stateProvider, $urlRouterProvider) {
 		sailsResourceProvider.configuration = {
-			verbose: true
+			verbose: false
 		};
 
 		$urlRouterProvider.otherwise('/');
