@@ -56,7 +56,8 @@ module.exports.policies = {
 		'join': 'isLoggedIn',
 		'leave': 'isLoggedIn',
 		'messages': 'isLoggedIn',
-		'history': 'isLoggedIn'
+		'history': 'isLoggedIn',
+		'media': 'isLoggedIn'
 	},
 	RoomMemberController: {
 		'find': 'isLoggedIn'

@@ -11,6 +11,7 @@
 
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+var ObjectId = require('mongodb').ObjectID;
 
 // GET /room/:id
 // Overridden from sails blueprint to disable subscribing
@@ -152,4 +153,27 @@ module.exports.history = function (req, res) {
 		.populate('author')
 		.then(res.ok)
 		.catch(res.serverError);
+};
+
+// GET /room/:id/media
+// Get media messages posted in this room
+module.exports.media = function (req, res) {
+	var roomId = actionUtil.requirePk(req);
+	var mediaRegex = /https?:\/\//gi;
+
+	// Native mongo query so we can use a regex
+	Message.native(function (err, messageCollection) {
+		if (err) res.serverError(err);
+
+		messageCollection.find({room: ObjectId(roomId), text: {$regex: mediaRegex}}).sort({createdAt: -1}).toArray(function (err, messages) {
+			if(err) res.serverError(err);
+
+			res.ok(_.map(messages, function(message) {
+				return _(message)
+					.pick(['author', 'text', 'createdAt'])
+					.extend({id: message._id})
+					.value();
+			}));
+		});
+	});
 };
