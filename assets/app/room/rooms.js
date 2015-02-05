@@ -120,7 +120,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $statePara
 		}
 
 		// if user is not in this room, remove history so when we tab switch its not slow
-		if($stateParams.roomId != resource.id){
+		if ($stateParams.roomId != resource.id) {
 			clearOldMessages(resource.id);
 		}
 	});

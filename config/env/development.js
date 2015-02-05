@@ -19,13 +19,13 @@ module.exports = {
 		clientSecret: 'Gm4OujzY9YLyFUWYeaNE-o48'
 	}
 
-  /***************************************************************************
-   * Set the default database connection for models in the development       *
-   * environment (see config/connections.js and config/models.js )           *
-   ***************************************************************************/
+	/***************************************************************************
+	 * Set the default database connection for models in the development       *
+	 * environment (see config/connections.js and config/models.js )           *
+	 ***************************************************************************/
 
-  //models: {
-  //   connection: 'mongo'
-  //}
+	//models: {
+	//   connection: 'mongo'
+	//}
 
 };

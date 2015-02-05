@@ -67,7 +67,7 @@ app.controller('InputController', function ($rootScope, $stateParams, bunkerApi,
 	};
 
 	this.keyDown = function (evt) {
-		if(evt.keyCode == 13) { // enter
+		if (evt.keyCode == 13) { // enter
 			evt.preventDefault();
 			self.sendMessage();
 		}
@@ -167,9 +167,9 @@ app.controller('InputController', function ($rootScope, $stateParams, bunkerApi,
 		}
 	};
 
-	$rootScope.$on('$stateChangeSuccess', function(evt, toState) {
-			self.visible = toState.name == 'room';
-			self.roomId = $stateParams.roomId;
+	$rootScope.$on('$stateChangeSuccess', function (evt, toState) {
+		self.visible = toState.name == 'room';
+		self.roomId = $stateParams.roomId;
 	});
 
 	function datesWithinSeconds(date1, date2, seconds) {

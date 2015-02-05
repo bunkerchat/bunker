@@ -32,7 +32,9 @@ module.exports.bootstrap = function (cb) {
 
 	// show notifcations migration
 	UserSettings.find().where().exec(function (error, settings) {
-		var nullSettings = _.filter(settings, function(setting) { return typeof setting.showNotifications == 'undefined'; })
+		var nullSettings = _.filter(settings, function (setting) {
+			return typeof setting.showNotifications == 'undefined';
+		})
 		async.each(nullSettings, function (setting, cb) {
 			setting.showNotifications = true;
 			setting.save(cb);

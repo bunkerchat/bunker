@@ -4,7 +4,7 @@ var assert = require('assert');
 var url = process.env.MONGO_URL_SESSION || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/bunker_sessions';
 
 
-module.exports = new function() {
+module.exports = new function () {
 	var self = this;
 
 	this.db;

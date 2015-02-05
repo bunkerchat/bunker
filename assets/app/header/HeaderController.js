@@ -15,13 +15,12 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 	};
 
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		if (resource.model != 'room' || resource.id == $stateParams.roomId ||
-			!user.current.$resolved || !resource.data.author || resource.data.author.id == user.current.id || resource.data.edited) {
+		if (resource.model != 'room' || resource.id == $stateParams.roomId || !user.current.$resolved || !resource.data.author || resource.data.author.id == user.current.id || resource.data.edited) {
 			return;
 		}
 
 		var otherRoom = _(self.memberships).pluck('room').find({id: resource.id});
-		if(otherRoom) {
+		if (otherRoom) {
 			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
 		}
 	});

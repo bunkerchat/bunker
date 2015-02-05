@@ -6,7 +6,7 @@ app.controller('RoomController', function ($rootScope, $scope, user, rooms, curr
 	this.mentionUser = function (userNick) {
 		$rootScope.$broadcast('inputText', '@' + userNick);
 	};
-	this.loadPreviousMessages = function() {
+	this.loadPreviousMessages = function () {
 		return rooms.loadMessages(self.current.id, self.current.$messages.length);
 	};
 

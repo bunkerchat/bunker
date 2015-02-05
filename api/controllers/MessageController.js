@@ -110,7 +110,7 @@ exports.create = function (req, res) {
 		// Determine outcome
 		var rollOutcome;
 
-		if(_.isNumber(+roll) && !_.isNaN(+roll)) {
+		if (_.isNumber(+roll) && !_.isNaN(+roll)) {
 			var max = +roll;
 			rollOutcome = 'rolled ' + Math.ceil(Math.random() * max) + ' out of ' + max;
 		}
@@ -133,12 +133,12 @@ exports.create = function (req, res) {
 			});
 		});
 	}
-	else if(/^\/me\s+/i.test(text)){
+	else if (/^\/me\s+/i.test(text)) {
 		User.findOne(userId).exec(function (error, user) {
 			Message.create({
 				room: roomId,
 				author: null,
-				text: user.nick +  text.substring(3)
+				text: user.nick + text.substring(3)
 			}).exec(function (error, message) {
 				res.ok();
 				broadcastMessage(message);

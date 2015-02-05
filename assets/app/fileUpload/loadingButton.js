@@ -1,4 +1,4 @@
-app.directive("loadingButton", function($document) {
+app.directive("loadingButton", function ($document) {
 	return {
 		restrict: 'E',
 		transclude: true,
@@ -7,12 +7,12 @@ app.directive("loadingButton", function($document) {
 		scope: {
 			action: "&"
 		},
-		controller: function($scope){
+		controller: function ($scope) {
 			var self = this;
 
 			this.isProcessing = false;
 
-			this.triggerAction = function() {
+			this.triggerAction = function () {
 				if (!$scope.action) {
 					return;
 				}
@@ -24,22 +24,22 @@ app.directive("loadingButton", function($document) {
 
 				self.isProcessing = true;
 
-				promise.then(function(){
+				promise.then(function () {
 					self.isProcessing = false;
-				}, function() {
+				}, function () {
 					self.isProcessing = false;
 				});
 			};
 		},
 		controllerAs: "loadingButton",
-		link: function(scope, element, attrs, ctrl) {
+		link: function (scope, element, attrs, ctrl) {
 
 			// I don't think i like dis. Doesn't work if multiple instances of this directive are
 			// in the dom at the same time.
 			if (attrs.bindtoenter && attrs.bindtoenter === 'true') {
-				$document.on('keydown.loadingButton', function(e) {
+				$document.on('keydown.loadingButton', function (e) {
 					if (e.which === 13) {
-						scope.$apply(function() {
+						scope.$apply(function () {
 							ctrl.triggerAction();
 						});
 

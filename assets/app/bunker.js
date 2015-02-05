@@ -62,7 +62,7 @@ window.app = angular.module('bunker', [
 	.run(function ($rootScope, $document, user) {
 		// html5 visibility api instead of win.focus or win.blur
 		$document.on("visibilitychange", function () {
-			$rootScope.$broadcast(document.hidden ? 'visibilityHide': 'visibilityShow');
+			$rootScope.$broadcast(document.hidden ? 'visibilityHide' : 'visibilityShow');
 		});
 
 		// Handle user away notification on window focus/blur

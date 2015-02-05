@@ -30,8 +30,8 @@ module.exports.http = {
 		 *                                                                          *
 		 ***************************************************************************/
 
-		passportInit    : require('passport').initialize(),
-		passportSession : require('passport').session(),
+		passportInit: require('passport').initialize(),
+		passportSession: require('passport').session(),
 
 		order: [
 			'startRequestTimer',

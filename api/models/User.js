@@ -40,7 +40,7 @@ module.exports = {
 		},
 
 		// Remove secret things
-		toJSON: function() {
+		toJSON: function () {
 			var obj = this.toObject();
 			delete obj.token;
 			delete obj.sockets;

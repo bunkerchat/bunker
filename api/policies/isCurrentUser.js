@@ -4,7 +4,7 @@ module.exports = function (req, res, next) {
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;
 
-	if(pk == userId) {
+	if (pk == userId) {
 		return next();
 	}
 	return res.forbidden();

@@ -68,7 +68,7 @@ module.exports.session = {
 	 *                                                                          *
 	 ***************************************************************************/
 
-	client:redisClient,
+	client: redisClient,
 	// host: 'localhost',
 	// port: 6379,
 	// ttl: <redis session TTL in seconds>,
@@ -86,7 +86,7 @@ module.exports.session = {
 
 	adapter: adapter,
 	//url: mongoUrl + '/bunker_user_sessions'
-	db:mongoConnectClient.db,
+	db: mongoConnectClient.db,
 	// host: 'localhost',
 	// port: 27017,
 	// db: 'sails',

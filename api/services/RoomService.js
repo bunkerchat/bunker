@@ -1,8 +1,8 @@
 var uuid = require('node-uuid');
 var serverWarmup = require('./serverWarmup');
 
-module.exports.messageRoom = function(room, message) {
-	if(!serverWarmup.done) return;
+module.exports.messageRoom = function (room, message) {
+	if (!serverWarmup.done) return;
 
 	var roomId = room.id ? room.id : room;
 	Room.message(roomId, {
@@ -14,7 +14,7 @@ module.exports.messageRoom = function(room, message) {
 };
 
 module.exports.messageRooms = function (rooms, message) {
-	if(!serverWarmup.done) return;
+	if (!serverWarmup.done) return;
 
 	_.each(rooms, function (room) {
 		module.exports.messageRoom(room, message);
