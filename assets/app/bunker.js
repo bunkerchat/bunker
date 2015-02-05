@@ -8,7 +8,11 @@ window.app = angular.module('bunker', [
 	'youtube-embed',
 	'angular.filter'
 ])
-	.config(function ($stateProvider, $urlRouterProvider) {
+	.config(function (sailsResourceProvider, $stateProvider, $urlRouterProvider) {
+		sailsResourceProvider.configuration = {
+			verbose: true
+		};
+
 		$urlRouterProvider.otherwise('/');
 		$stateProvider
 			.state('lobby', {
