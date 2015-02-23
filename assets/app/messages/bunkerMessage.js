@@ -1,5 +1,13 @@
 /* global app, _ */
 
+// callback from twitter to embed tweet html
+window.addTweet = function(data){
+	var id = data.url.substr(data.url.lastIndexOf('/') + 1);
+	var element = $('.tweet_' + id);
+	element.empty();
+	element.append(data.html);
+};
+
 app.directive('bunkerMessage', function ($compile, emoticons) {
 	'use strict';
 
@@ -119,6 +127,16 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 							'<div class="default-video-height" message="bunkerMessage" bunker-media="' + link + '">' +
 							'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
 							'</div>');
+						}
+						else if (/(www\.)?(twitter\.com\/)/i.test(link) && !attachedMedia) {
+							var id = link.substr(link.lastIndexOf('/') + 1);
+							if (id) { /* don't embed tweet if we can't get the id from the link */
+								attachedMedia = angular.element('' +
+								'<div message="bunkerMessage" bunker-media="' + link + '">' +
+								'<div class="tweet_' + id + '">' +
+								'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp;omit_script=true">' +
+								'</script></div></div>');
+							}
 						}
 					}
 
