@@ -9,7 +9,7 @@ Install [mongodb](http://www.mongodb.org/downloads)
 
 ```npm install sails -g```
 
-```sails lift```
+```node app.js```
 
 
 Howto: Rebase your fork
