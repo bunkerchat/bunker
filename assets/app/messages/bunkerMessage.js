@@ -1,12 +1,18 @@
 /* global app, _ */
 
 // callback from twitter to embed tweet html
-window.addTweet = function(data){
+window.addTweet = function (data) {
 	var id = data.url.substr(data.url.lastIndexOf('/') + 1);
 	var element = $('.tweet_' + id);
 	element.empty();
 	element.append(data.html);
 };
+
+app.filter('trusted', ['$sce', function ($sce) {
+	return function (url) {
+		return $sce.trustAsResourceUrl(url);
+	};
+}]);
 
 app.directive('bunkerMessage', function ($compile, emoticons) {
 	'use strict';
@@ -137,6 +143,14 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 								'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp;omit_script=true">' +
 								'</script></div></div>');
 							}
+						}
+						else if (/(www\.)?(soundcloud\.com\/[a-zA-Z0-9])/i.test(link) && !attachedMedia) {
+							attachedMedia = angular.element('' +
+							'<div message="bunkerMessage" bunker-media="' + link + '">' +
+							'<div plangular="' + link + '">' +
+							'<iframe width="100%" height="166" scrolling="no" frameborder="no" ' +
+							'src="{{ \'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/\' + id + \'&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false\' | trusted}}"></iframe>' +
+							'</div></div>');
 						}
 					}
 
