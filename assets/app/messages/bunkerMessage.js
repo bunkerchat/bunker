@@ -140,7 +140,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 								attachedMedia = angular.element('' +
 								'<div message="bunkerMessage" bunker-media="' + link + '">' +
 								'<div class="tweet_' + id + '">' +
-								'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp;omit_script=true">' +
+								'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp">' +
 								'</script></div></div>');
 							}
 						}
