@@ -11,6 +11,7 @@
 
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+var ent = require('ent');
 
 // POST /message
 // Create a new message. We're overriding the blueprint route provided by sails in order to do
@@ -20,7 +21,9 @@ exports.create = function (req, res) {
 	var roomId = req.param('room');
 
 	// TODO if author is not a member of the roomId, cancel
-	var text = sanitizeMessage(req.param('text'));
+
+	// block the trolls
+	var text = ent.encode(req.param('text'));
 	if (!text || !text.length) {
 		return res.badRequest();
 	}
@@ -225,13 +228,6 @@ exports.emoticonCounts = function (req, res) {
 		res.ok(messages)
 	}
 };
-
-// Sanitize a message, no tags allow currently
-function sanitizeMessage(original) {
-	return require('sanitize-html')(original, {
-		allowedTags: []
-	});
-}
 
 function broadcastMessage(message) {
 	// now that message has been created, get the populated version

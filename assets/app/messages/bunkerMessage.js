@@ -38,6 +38,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 
 				// Parse quotes
 				if (text.match(/\n[^$]/g)) {
+
 					text = createQuotedBlock(text);
 				}
 				else {
