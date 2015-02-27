@@ -262,11 +262,6 @@ section {
 
 .message-body pre {
 	padding:0;
-	/*border: none;*/
-	/*margin: 0;*/
-	/*border-radius: 3px;*/
-	/*background: #FAFAFA;*/
-	/*color: #666;*/
 	tab-size: 4;
 }
 

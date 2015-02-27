@@ -37,7 +37,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 				if (!text) return;
 
 				// Parse quotes
-				if (text.match(/\n[^$]/g)) {
+				if (text.match(/&#10;/g)) {
 
 					text = createQuotedBlock(text);
 				}
@@ -52,8 +52,8 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 
 			function createQuotedBlock(text) {
 				// Scan for overtabs
-				var lines = text.split('\n');
-				var firstLineSpacingMatch = _.first(lines).match(/^(\s+)/);
+				var lines = text.split('&#10;');
+				var firstLineSpacingMatch = _.first(lines).match(/^((&#9;)*)/);
 
 				// If we have some spacing on the first line, remove the same spacing from all other lines (detabs everything)
 				if (firstLineSpacingMatch) {
@@ -61,10 +61,10 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					var spacingRemoved = _.map(lines, function (line) {
 						return line.replace(firstLineSpacingExpression, '');
 					});
-					text = spacingRemoved.join('\n');
+					text = spacingRemoved.join('&#10;');
 				}
 
-				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><div hljs>' + text + '</div></div>');
+				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>');
 				angular.element(elem).append(attachedMedia);
 				$compile(attachedMedia)(scope.$new());
 
