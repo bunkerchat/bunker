@@ -63,7 +63,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 					text = spacingRemoved.join('\n');
 				}
 
-				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
+				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><div hljs>' + text + '</div></div>');
 				angular.element(elem).append(attachedMedia);
 				$compile(attachedMedia)(scope.$new());
 
