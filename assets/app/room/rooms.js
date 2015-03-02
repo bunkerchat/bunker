@@ -97,6 +97,8 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $statePara
 	}
 
 	function clearOldMessages(roomId) {
+		if(!roomId) return;
+
 		if (rooms[roomId].$messages.length < 40) return;
 
 		// gets all but the last 60 messages
