@@ -2,6 +2,7 @@
 
 body {
 	padding-top: 40px;
+	overflow:hidden;
 }
 
 a, [ng-click] {

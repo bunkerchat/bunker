@@ -1,7 +1,8 @@
-app.controller('RoomController', function ($rootScope, $scope, user, rooms, currentRoom) {
+app.controller('RoomController', function ($rootScope, $scope, user, rooms) {
 	var self = this;
 	this.userService = user;
-	this.current = currentRoom;
+	this.roomid = $scope.roomid;
+	this.current = rooms.get($scope.roomid);
 
 	this.mentionUser = function (userNick) {
 		$rootScope.$broadcast('inputText', '@' + userNick);

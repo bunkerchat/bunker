@@ -61,7 +61,7 @@ window.app = angular.module('bunker', [
 			'default': 'identicon'
 		};
 	})
-	.run(function ($rootScope, $document, user) {
+	.run(function ($rootScope, $document, user, $window) {
 		// html5 visibility api instead of win.focus or win.blur
 		$document.on("visibilitychange", function () {
 			$rootScope.$broadcast(document.hidden ? 'visibilityHide' : 'visibilityShow');
@@ -82,5 +82,16 @@ window.app = angular.module('bunker', [
 
 		$rootScope.$on('$sailsConnected', function () {
 			user.current.$connect();
+		});
+
+		// watch room ids change
+		$rootScope.$watch(function () {
+			return $window.location.hash;
+		}, function (newVal, oldVal) {
+			var newMatch = /^#\/rooms\/(.*)$/g.exec(newVal) || [];
+			var oldMatch = /^#\/rooms\/(.*)$/g.exec(oldVal) || [];
+
+			$rootScope.$broadcast('roomIdChanged', newMatch[1], oldMatch[1]);
+			$rootScope.roomid = newMatch[1];
 		});
 	});

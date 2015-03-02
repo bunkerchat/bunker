@@ -97,16 +97,21 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $statePara
 	}
 
 	function clearOldMessages(roomId) {
-		if (rooms[roomId].$messages.length < 60) return;
+		if (rooms[roomId].$messages.length < 40) return;
 
 		// gets all but the last 60 messages
-		var messagesToRemove = _.initial(rooms[roomId].$messages, 60);
+		var messagesToRemove = _.initial(rooms[roomId].$messages, 40);
 		rooms[roomId].$messages = _.difference(rooms[roomId].$messages, messagesToRemove);
 
 		_.each(messagesToRemove, function (message) {
 			delete messageLookup[roomId][message.id];
 		});
 	}
+
+	// room change updates
+	$rootScope.$on('roomIdChanged', function (evt, newId, oldId) {
+		clearOldMessages(oldId);
+	});
 
 	// Handle incoming messages
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {

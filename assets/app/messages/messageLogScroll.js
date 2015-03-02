@@ -46,8 +46,8 @@ app.directive('messageLogScroll', function ($timeout, $stateParams, rooms) {
 			});
 
 			// Scroll after state changes
-			scope.$on('$stateChangeSuccess', function () {
-				scroll(500);
+			scope.$on('roomIdChanged', function () {
+				scroll();
 			});
 
 			function scroll(waitTime) {

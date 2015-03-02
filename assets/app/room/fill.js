@@ -31,12 +31,10 @@ app.directive('fill', function ($window, $timeout) {
 			}, 500);
 
 			// Room updates
-			scope.$on('$sailsResourceUpdated', function (evt, resource) {
-				if (resource.model == 'room') {
-					$timeout(function () {
-						windowEl.resize();
-					}, 500);
-				}
+			scope.$on('roomIdChanged', function (evt, newId, oldId) {
+				$timeout(function () {
+					windowEl.resize();
+				});
 			});
 		}
 	};
