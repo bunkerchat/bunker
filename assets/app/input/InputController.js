@@ -1,4 +1,4 @@
-app.controller('InputController', function ($rootScope, $stateParams, bunkerApi, emoticons, rooms) {
+app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
 
 	var self = this;
 	var messageEditWindowSeconds = 30;
@@ -166,11 +166,6 @@ app.controller('InputController', function ($rootScope, $stateParams, bunkerApi,
 			}
 		}
 	};
-
-	$rootScope.$on('$stateChangeSuccess', function (evt, toState) {
-		self.visible = toState.name == 'room';
-		self.roomId = $stateParams.roomId;
-	});
 
 	function datesWithinSeconds(date1, date2, seconds) {
 		if (!date1 || !date2) return false;

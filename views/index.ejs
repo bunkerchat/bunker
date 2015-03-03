@@ -71,7 +71,7 @@
 	<div roomid="{{membership.room.id}}" ng-repeat="membership in rooms.memberships">
 	</div>
 </div>
-<div ng-include="'/assets/app/input/input.html'"></div>
+<div ng-include="'/assets/app/input/input.html'" ng-controller="InputController as input"></div>
 
 <script>
 	window.userId = '<%= userId %>';

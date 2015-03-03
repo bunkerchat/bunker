@@ -1,5 +1,4 @@
-<div class="container-fluid message-input" ng-show="input.visible" ng-class="{'edit-mode' : input.editMode}"
-		 ng-controller="InputController as input">
+<div class="container-fluid message-input" ng-show="$root.roomId" ng-class="{'edit-mode' : input.editMode}">
 	<div class="row">
 		<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
 			<div class="input-group">
@@ -16,7 +15,7 @@
 		</form>
 		<div class="col-md-2">
 			<div class="room-options">
-				<a ui-sref="roomHistory({roomId: input.roomId, date:input.now()})" class="btn btn-link">
+				<a ng-sref="#/rooms/{{$root.roomId}}/history?date={{input.now()}}" class="btn btn-link">
 					History
 				</a>
 			</div>

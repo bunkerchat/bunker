@@ -78,6 +78,6 @@ window.app = angular.module('bunker', [
 			var oldMatch = /^#\/rooms\/(.*)$/g.exec(oldVal) || [];
 
 			$rootScope.$broadcast('roomIdChanged', newMatch[1], oldMatch[1]);
-			$rootScope.roomid = newMatch[1];
+			$rootScope.roomId = newMatch[1];
 		});
 	});
