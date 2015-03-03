@@ -23,26 +23,12 @@ window.app = angular.module('bunker', [
 				controller: 'LobbyController as lobby'
 			})
 			.state('room', {
-				url: '/rooms/{roomId}',
-				templateUrl: '/assets/app/room/room.html',
-				controller: 'RoomController as room',
-				resolve: {
-					currentRoom: function ($stateParams, rooms) {
-						// Angular UI router will complete this before creating the controller if a $promise is returned
-						var currentRoom = rooms.get($stateParams.roomId);
-						return currentRoom.$resolved ? currentRoom : currentRoom.$promise;
-					}
-				}
+				url: '/rooms/{roomId}'
 			})
 			.state('roomHistory', {
 				url: '/rooms/{roomId}/history?date&message',
 				templateUrl: '/assets/app/room/roomHistory.html',
-				controller: 'RoomHistoryController as room',
-				resolve: {
-					currentUser: function (user) {
-						return user.current.$promise;
-					}
-				}
+				controller: 'RoomHistoryController as room'
 			});
 	})
 	.config(function ($compileProvider) {

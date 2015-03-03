@@ -1,8 +1,8 @@
-app.controller('RoomHistoryController', function ($scope, bunkerApi, currentUser, $stateParams, $state, $location, $anchorScroll, $timeout) {
+app.controller('RoomHistoryController', function ($scope, bunkerApi, user, $stateParams, $state, $location, $anchorScroll, $timeout) {
 	var self = this;
 	this.roomId = $stateParams.roomId;
 	this.message = $stateParams.message;
-	this.currentUser = currentUser;
+	this.userService = user;
 
 	var startDate;
 	var endDate;

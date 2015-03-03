@@ -5,33 +5,49 @@
 
 			<h2 ng-if="room.rawMessages.$resolved && room.rawMessages.length == 0">No messages</h2>
 
-			<ol class="list-unstyled message-list" fill auto-scroll>
-				<li class="message-container" id="{{::message.id}}" ng-repeat="message in room.messages">
-					<div class="message">
-						<div message-mention="{{::room.currentUser.nick}}"
+			<ol class="list-unstyled message-list" fill>
+				<li class="message-container" id="{{::message.id}}" ng-switch="::!!message.author"
+						ng-repeat="message in room.messages">
+					<div class="message" ng-class="::{ local: message.author.id == room.userService.current.id }">
+
+						<!-- standard message -->
+						<div ng-switch-when="true"
+								 message-mention="{{::room.userService.current.nick}}"
 								 message-mention-text="{{::message.text}}">
 							<div class="message-author">
-							<span ng-if="::message.$firstInSeries">
-								<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
-								<div class="name">{{::message.author.nick}}</div>
-							</span>
+								<span ng-if="::message.$firstInSeries">
+									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
+									<div class="name">{{::message.author.nick}}</div>
+									<span status="room.memberLookup[message.author.id].user"></span>
+								</span>
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
-							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
+							<div class="message-body"
+									 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
 								<span bunker-message="message"></span>
-							<span class="message-info text-muted">
-									<i class="fa fa-pencil" title="View message history"
-										 ng-click="message.showHistory = !message.showHistory"
-										 ng-if="::message.edited"></i>
+								<span class="message-info text-muted">
+									<i class="fa fa-pencil" ng-if="message.edited"></i>
 									<span ng-if="::message.$firstInSeries">
-										<a ui-sref="roomHistory({roomId: room.roomId, date: message.createdAt, message: message.id})"
+										<a ui-sref="roomHistory({roomId: room.current.id, date: message.createdAt, message: message.id})"
 											 class="text-muted">
-											<small>{{::message.createdAt | date:'medium'}}</small>
+											<small>{{::message.createdAt | date:'h:mm:ss a'}}</small>
 										</a>
 									</span>
 								</span>
 							</div>
 						</div>
+					</div>
+
+					<!-- system message -->
+					<div class="new-message-body" ng-switch-default>
+						<div class="alert alert-message text-muted">
+							<span bunker-message="message"></span>
+						</div>
+						<span class="message-info text-muted">
+							<small>
+								{{::message.createdAt | date:'h:mm:ss a'}}
+							</small>
+						</span>
 					</div>
 				</li>
 			</ol>
