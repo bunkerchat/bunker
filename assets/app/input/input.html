@@ -1,4 +1,5 @@
-<div class="container-fluid message-input" ng-show="$root.roomId" ng-class="{'edit-mode' : input.editMode}">
+<div class="container-fluid message-input" ng-show="$root.roomId" ng-class="{'edit-mode' : input.editMode}"
+		 ng-controller="InputController as input">
 	<div class="row">
 		<form class="col-md-10 no-gutter" ng-submit="input.sendMessage()">
 			<div class="input-group">
