@@ -1,4 +1,4 @@
-app.controller('InputController', function ($stateParams, bunkerApi, emoticons, rooms) {
+app.controller('InputController', function ($rootScope, bunkerApi, emoticons, rooms) {
 
 	var self = this;
 	var messageEditWindowSeconds = 30;
@@ -32,7 +32,7 @@ app.controller('InputController', function ($stateParams, bunkerApi, emoticons, 
 		if (!this.messageText) return;
 
 		var newMessage = new bunkerApi.message({
-			room: self.roomId,
+			room: $rootScope.roomId,
 			text: this.messageText
 		});
 
