@@ -148,16 +148,23 @@ exports.create = function (req, res) {
 			})
 		});
 	}
-	else { // base case, a regular chat message
+	else {
+
+		// base case, a regular chat message
 		// Create a message model object in the db
-		Message.create({ // the model to add into db
+
+		var message = {
 			room: roomId,
 			author: userId,
 			text: text
-		}).exec(function (error, message) {
-			res.ok(message); // send back the message to the original caller
-			broadcastMessage(message);
-		});
+		};
+
+		Message.create(message)
+			.then(function (message) {
+				res.ok(message); // send back the message to the original caller
+				broadcastMessage(message);
+			})
+			.catch(res.serverError)
 	}
 };
 

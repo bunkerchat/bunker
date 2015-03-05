@@ -1,4 +1,4 @@
-app.directive('messageLogScroll', function ($timeout, $stateParams, rooms) {
+app.directive('messageLogScroll', function ($timeout, $rootScope, rooms) {
 	return {
 		scope: {
 			messageId: '@messageLogScroll',
@@ -25,7 +25,7 @@ app.directive('messageLogScroll', function ($timeout, $stateParams, rooms) {
 					// if the user is only watching new messages, trim the message log
 					clearMessageCounter++;
 					if (clearMessageCounter > 5) {
-						rooms.clearOldMessages($stateParams.roomId);
+						rooms.clearOldMessages($rootScope.roomId);
 						clearMessageCounter = 0;
 					}
 				} else {

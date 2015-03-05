@@ -97,7 +97,7 @@ app.controller('InputController', function ($rootScope, bunkerApi, emoticons, ro
 				this.messageText = this.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
 			}
 			else if (searchState === searchStates.NICK) {
-				var currentRoom = rooms.get(self.roomId);
+				var currentRoom = rooms.get($rootScope.roomId);
 				var members = _.pluck(currentRoom.$members, 'user');
 				var matchingNames = _.filter(currentRoom && members, function (item) {
 					return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();

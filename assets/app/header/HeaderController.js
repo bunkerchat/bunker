@@ -10,12 +10,12 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 	this.changeSetting = user.toggleSetting;
 
 	this.leaveRoom = function () {
-		rooms.leave($stateParams.roomId);
+		rooms.leave($rootScope.roomId);
 		$state.go('lobby');
 	};
 
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		if (resource.model != 'room' || resource.id == $stateParams.roomId || !user.current.$resolved || !resource.data.author || resource.data.author.id == user.current.id || resource.data.edited) {
+		if (resource.model != 'room' || resource.id == $rootScope.roomId || !user.current.$resolved || !resource.data.author || resource.data.author.id == user.current.id || resource.data.edited) {
 			return;
 		}
 
@@ -25,9 +25,9 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 		}
 	});
 
-	$rootScope.$on('$stateChangeSuccess', function () {
-		if ($stateParams.roomId) {
-			var currentRoom = _(self.memberships).pluck('room').find({id: $stateParams.roomId});
+	$rootScope.$on('roomIdChanged', function () {
+		if ($rootScope.roomId) {
+			var currentRoom = _(self.memberships).pluck('room').find({id: $rootScope.roomId});
 			if (currentRoom) {
 				currentRoom.$unreadMessages = 0;
 			}

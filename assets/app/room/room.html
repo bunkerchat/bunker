@@ -67,7 +67,7 @@
 			<ul class="list-group">
 				<li class="list-group-item" ng-repeat="member in room.memberLookup | membersOrderBy"
 						ng-if="member.user.connected">
-					<span ng-switch="member.user.typingIn == room.current.id" class="user-icon">
+					<span ng-switch="member.user.typingIn == $root.roomId" class="user-icon">
 						<span ng-switch-when="true">
 							<i class="fa fa-ellipsis-h"></i>
 						</span>
