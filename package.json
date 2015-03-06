@@ -11,6 +11,7 @@
     "cache-manager": "^0.14.0",
     "connect-mongo": "^0.4.1",
     "connect-redis": "^1.4.5",
+    "css-loader": "^0.9.1",
     "ejs": "^0.8.8",
     "ent": "^2.2.0",
     "grunt": "^0.4.2",
@@ -37,7 +38,8 @@
     "redis": "^0.12.1",
     "sails": "^0.11.0-rc9",
     "sails-mongo": "^0.10.5",
-    "sanitize-html": "^1.4.2"
+    "sanitize-html": "^1.4.2",
+    "style-loader": "^0.8.3"
   },
   "scripts": {
     "start": "node app.js",
