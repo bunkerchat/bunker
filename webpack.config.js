@@ -2,6 +2,7 @@ module.exports = {
 	entry: "./assets/app_react/entry.js",
 	output: {
 		path: __dirname + '/assets/bundled',
+		publicPath: '/assets/bundled/',
 		filename: "bundle.js"
 	},
 	module: {
