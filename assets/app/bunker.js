@@ -77,7 +77,7 @@ window.app = angular.module('bunker', [
 			var newMatch = /^#\/rooms\/(.*)$/g.exec(newVal) || [];
 			var oldMatch = /^#\/rooms\/(.*)$/g.exec(oldVal) || [];
 
-			$rootScope.$broadcast('roomIdChanged', newMatch[1], oldMatch[1]);
 			$rootScope.roomId = newMatch[1];
+			$rootScope.$broadcast('roomIdChanged', newMatch[1], oldMatch[1]);
 		});
 	});
