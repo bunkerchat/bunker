@@ -30,7 +30,8 @@
     "angular-resource-sails": "~1.1.2",
     "sails.io.js": "https://github.com/JasonMore/sails.io.js.git#426d5ffb801af84630e853250c1eeeb284562265",
     "angular-highlightjs": "~0.4.1",
-    "highlightjs": "~8.4.0"
+    "highlightjs": "~8.4.0",
+    "react": "~0.12.2"
   },
   "resolutions": {
     "angular": "~1.3.0",

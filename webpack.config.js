@@ -1,17 +1,16 @@
 module.exports = {
 	entry: "./assets/app_react/entry.js",
 	output: {
-		path: __dirname,
-		filename: "./bundle.js"
+		path: __dirname + '/assets/bundled',
+		filename: "bundle.js"
 	},
 	module: {
 		loaders: [
 			{test: /\.css$/, loader: "style!css"},
 			{test: /\.jsx$/, loader: "jsx-loader"},
-			{test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=application/font-woff"},
-			{test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=application/octet-stream"},
-			{test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file"},
-			{test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=image/svg+xml"}
+			{test: /\.jpe?g$|\.gif$|\.png$|\.wav$|\.mp3$/, loader: "file-loader"},
+			{test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&minetype=application/font-woff"},
+			{test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader"}
 		]
 	}
 };
