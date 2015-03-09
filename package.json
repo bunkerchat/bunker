@@ -46,12 +46,13 @@
     "sails-mongo": "^0.10.5",
     "sanitize-html": "^1.4.2",
     "style-loader": "^0.8.3",
-    "url-loader": "^0.5.5"
+    "url-loader": "^0.5.5",
+    "webpack": "^1.7.2"
   },
   "scripts": {
     "start": "node app.js",
     "debug": "node debug app.js",
-    "postinstall": "node node_modules/bower/bin/bower install"
+    "postinstall": "node node_modules/bower/bin/bower install && node node_modules/webpack/bin/webpack.js"
   },
   "main": "app.js",
   "repository": {
