@@ -2,6 +2,7 @@
 var MembershipStore = require('./../user/membershipStore');
 
 module.exports = React.createClass({
+
 	render: function () {
 		var rooms = this.rooms();
 		return (
