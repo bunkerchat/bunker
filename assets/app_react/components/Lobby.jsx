@@ -2,9 +2,34 @@
 var MembershipStore = require('./../user/membershipStore');
 
 module.exports = React.createClass({
+	mixins: [Reflux.listenTo(MembershipStore, 'onStoreUpdate')],
+
+	getInitialState: function() {
+		return {
+			roomMembers: []
+		}
+	},
+
+	onStoreUpdate: function(roomMembers) {
+		this.setState({
+			roomMembers: roomMembers
+		});
+	},
 
 	render: function () {
-		var rooms = this.rooms();
+		var rooms = this.state.roomMembers.map(function (roomMember) {
+			var room = roomMember.room;
+			return (
+				<tr >
+					<td>
+						<a href="#/rooms/{room.id}">{room.name}</a>
+					</td>
+					<td>{room.topic}</td>
+					<td>x / x</td>
+				</tr>
+			)
+		});
+
 		return (
 			<div className="container-fluid" >
 
@@ -56,20 +81,5 @@ module.exports = React.createClass({
 
 			</div>
 		);
-	},
-
-	rooms: function () {
-		return MembershipStore.memberships.map(function (roomMember) {
-			var room = roomMember.room;
-			return (
-				<tr >
-					<td>
-						<a href="#/rooms/{room.id}">{room.name}</a>
-					</td>
-					<td>{room.topic}</td>
-					<td>x / x</td>
-				</tr>
-			)
-		});
 	}
 });
