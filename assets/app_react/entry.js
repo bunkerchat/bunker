@@ -9,13 +9,3 @@ require("!style!css!./../styles/default.css");
 var App = require("./components/App.jsx");
 React.render(React.createElement(App), document.getElementById("app"));
 
-io.socket.put('/user/current/connect', function serverResponded (body, JWR) {
-
-	// JWR ==> "JSON WebSocket Response"
-	console.log('Sails responded with: ', body);
-	console.log('with headers: ', JWR.headers);
-	console.log('and with status code: ', JWR.statusCode);
-
-	// first argument `body` === `JWR.body`
-	// (just for convenience, and to maintain familiar usage, a la `JQuery.get()`)
-});

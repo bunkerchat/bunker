@@ -1,8 +1,9 @@
 /** @jsx React.DOM */
+var MembershipStore = require('./../user/membershipStore');
 
 module.exports = React.createClass({
-
 	render: function () {
+		var rooms = this.rooms();
 		return (
 			<div className="container-fluid" >
 
@@ -36,41 +37,7 @@ module.exports = React.createClass({
 						</tr>
 					</thead>
 					<tbody>
-						<tr >
-							<td>
-								<a ui-sref="room({roomId: room.id})" href="#/rooms/545b9e7fb1d3970200c0e4a2">BestBuy</a>
-							</td>
-							<td>are you guys using a requirements randomization engine with bonus obfuscation to gather your requirements</td>
-							<td>3 / 7</td>
-						</tr>
-						<tr >
-							<td>
-								<a ui-sref="room({roomId: room.id})" href="#/rooms/54490412e7dde30200eb8b41">Classic</a>
-							</td>
-							<td>Just because I have an opinion doesn't mean I care</td>
-							<td>5 / 13</td>
-						</tr>
-						<tr >
-							<td>
-								<a ui-sref="room({roomId: room.id})" href="#/rooms/5432ebadc75d67020069f18c">First Room</a>
-							</td>
-							<td>message refresh fixed :successkid:</td>
-							<td>8 / 22</td>
-						</tr>
-						<tr >
-							<td>
-								<a ui-sref="room({roomId: room.id})" href="#/rooms/54b5867c9db480f346317812">SecondaryMarkets</a>
-							</td>
-							<td></td>
-							<td>3 / 5</td>
-						</tr>
-						<tr >
-							<td>
-								<a ui-sref="room({roomId: room.id})" href="#/rooms/54905996b39886cf2fb76612">The Vidja</a>
-							</td>
-							<td>the place to sperg about video games :awthanks:</td>
-							<td>9 / 15</td>
-						</tr>
+						{rooms}
 					</tbody>
 				</table>
 
@@ -88,5 +55,20 @@ module.exports = React.createClass({
 
 			</div>
 		);
+	},
+
+	rooms: function () {
+		return MembershipStore.memberships.map(function (roomMember) {
+			var room = roomMember.room;
+			return (
+				<tr >
+					<td>
+						<a href="#/rooms/{room.id}">{room.name}</a>
+					</td>
+					<td>{room.topic}</td>
+					<td>x / x</td>
+				</tr>
+			)
+		});
 	}
 });
