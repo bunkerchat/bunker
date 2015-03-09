@@ -1,12 +1,33 @@
 /** @jsx React.DOM */
 
 var MembershipStore = require('../user/membershipStore');
-var UserStore = require('../user/userStore');
 
 module.exports = React.createClass({
+	mixins: [Reflux.listenTo(MembershipStore, 'onStoreUpdate')],
+
+	getInitialState: function () {
+		return {
+			roomMembers: []
+		}
+	},
+
+	onStoreUpdate: function (roomMembers) {
+		this.setState({
+			roomMembers: roomMembers
+		});
+	},
 
 	render: function () {
-		var rooms = this.rooms();
+		var rooms = this.state.roomMembers.map(function (roomMember) {
+			var room = roomMember.room;
+			return (
+				<li >
+					<a title="{room.topic}" href="#/rooms/{room.id}">{room.name}</a>
+					<span className="badge"></span>
+				</li>
+			)
+		});
+
 		return (
 			<nav className="navbar navbar-default navbar-fixed-top navbar-background" role="navigation" ng-controller="HeaderController as header">
 				<div className="container-fluid">
@@ -19,17 +40,5 @@ module.exports = React.createClass({
 				</div>
 			</nav>
 		);
-	},
-
-	rooms: function () {
-		return MembershipStore.memberships.map(function (roomMember) {
-			var room = roomMember.room;
-			return (
-				<li >
-					<a title="{room.topic}" href="#/rooms/{room.id}">{room.name}</a>
-					<span className="badge"></span>
-				</li>
-			)
-		});
 	}
 });
