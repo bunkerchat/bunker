@@ -1,11 +1,38 @@
-//require("./../vendor/bootstrap/dist/css/bootstrap.css");
-//require("!style!css!./../vendor/bootswatch/sandstone/bootstrap.css");
-//require("!style!css!./../vendor/font-awesome/css/font-awesome.css");
-//require("!style!css!./../vendor/highlightjs/styles/github.css");
 require("!style!css!./../styles/default.css");
 
-//var Header = require("./components/Header.jsx");
+var Router = require('react-router');
 
-var App = require("./components/App.jsx");
-React.render(React.createElement(App), document.getElementById("app"));
+var DefaultRoute = Router.DefaultRoute;
+var Link = Router.Link;
+var Route = Router.Route;
+var RouteHandler = Router.RouteHandler;
 
+var MembershipStore = require('./user/membershipStore');
+var UserStore = require('./user/userStore');
+var RoomStore = require('./room/roomStore');
+
+var Header = require('./components/Header.jsx');
+var Lobby = require('./components/Lobby.jsx');
+
+var App =  React.createClass({
+	render () {
+		return (
+			<div>
+				<Header />
+				<RouteHandler/>
+			</div>
+		);
+	}
+});
+
+var routes = (
+	<Route name="app" path="/" handler={App}>
+		<DefaultRoute handler={Lobby}/>
+	</Route>
+);
+
+Router.run(routes, function (Handler) {
+	React.render(<Handler/>, document.body);
+});
+
+module.exports = App;

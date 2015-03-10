@@ -4,19 +4,17 @@ module.exports = Reflux.createStore({
 	listenables: [UserActions],
 	memberships: [],
 
-	getDefaultData: function () {
+	getDefaultData() {
 		return {
 			memberships: []
 		}
 	},
 
-	init: function () {
-		io.socket.get('/roomMember', {user: window.userId}, this.serverResponded.bind(this));
+	init() {
+		io.socket.get('/roomMember', {user: window.userId}, (body, JWR) => {
+			console.log('roomMember', body);
+			this.memberships = body;
+			this.trigger(this.memberships);
+		});
 	},
-
-	serverResponded: function(body, JWR) {
-		console.log('roomMember', body);
-		this.memberships = body;
-		this.trigger(this.memberships);
-	}
 });

@@ -3,19 +3,17 @@ var RoomStore = require('../roomStore');
 module.exports = React.createClass({
 	mixins: [Reflux.listenTo(MembershipStore, 'onStoreUpdate')],
 
-	getInitialState: function () {
+	getInitialState() {
 		return {
 			roomMembers: []
 		}
 	},
 
-	onStoreUpdate: function (roomMembers) {
-		this.setState({
-			roomMembers: roomMembers
-		});
+	onStoreUpdate(roomMembers) {
+		this.setState({roomMembers});
 	},
 
-	render: function () {
+	render() {
 		var rooms = this.state.roomMembers.map(function (roomMember) {
 			var room = roomMember.room;
 			return (

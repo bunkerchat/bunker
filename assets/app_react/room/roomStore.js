@@ -5,23 +5,24 @@ module.exports = Reflux.createStore({
 	listenables: [UserActions],
 	rooms: [],
 
-	getDefaultData: function () {
+	getDefaultData() {
 		return {
-			rooms:[]
+			rooms: []
 		}
 	},
 
-	init: function () {
-		this.listenTo(MembershipStore,this.onMembershipLoaded);
+	init() {
+		this.listenTo(MembershipStore, this.onMembershipLoaded);
 	},
 
-	onMembershipLoaded: function (memberships) {
-		memberships.forEach(function (membership) {
-			io.socket.get('/room/'+membership.room.id, this.serverResponded.bind(this));
-		})
+	onMembershipLoaded(memberships) {
+		memberships.forEach(membership => {
+			var url = '/room/' + membership.room.id;
+			io.socket.get(url, this.serverResponded);
+		});
 	},
 
-	serverResponded: function(body, JWR) {
+	serverResponded(body, JWR) {
 		console.log('room', body);
 		this.rooms.push(body);
 		this.trigger(this.rooms);
