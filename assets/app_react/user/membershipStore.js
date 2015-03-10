@@ -6,7 +6,7 @@ module.exports = Reflux.createStore({
 
 	getDefaultData: function () {
 		return {
-			memberships: [],
+			memberships: []
 		}
 	},
 

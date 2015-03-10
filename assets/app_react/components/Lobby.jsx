@@ -1,33 +1,43 @@
 /** @jsx React.DOM */
 var MembershipStore = require('./../user/membershipStore');
 
-module.exports = React.createClass({
+
+var Room = React.createClass({
+	render(){
+		var room = this.props.room;
+		return (
+			<tr>
+				<td>
+					<a href="#/rooms/{room.id}">{room.name}</a>
+				</td>
+				<td>{room.topic}</td>
+				<td>x / x</td>
+			</tr>
+		)
+	}
+});
+
+var Lobby = React.createClass({
 	mixins: [Reflux.listenTo(MembershipStore, 'onStoreUpdate')],
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			roomMembers: []
 		}
 	},
 
-	onStoreUpdate: function(roomMembers) {
+	onStoreUpdate(roomMembers) {
 		this.setState({
 			roomMembers: roomMembers
 		});
 	},
 
-	render: function () {
+	render() {
 		var rooms = this.state.roomMembers.map(function (roomMember) {
 			var room = roomMember.room;
 			return (
-				<tr >
-					<td>
-						<a href="#/rooms/{room.id}">{room.name}</a>
-					</td>
-					<td>{room.topic}</td>
-					<td>x / x</td>
-				</tr>
-			)
+				<Room key={room.id} room={room}/>
+			);
 		});
 
 		return (
@@ -83,3 +93,5 @@ module.exports = React.createClass({
 		);
 	}
 });
+
+module.exports = Lobby;
