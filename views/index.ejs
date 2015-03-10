@@ -56,7 +56,7 @@
 	<script src="/assets/app/room/RoomHistoryController.js"></script>
 	<script src="/assets/app/room/RoomsController.js"></script>
 	<script src="/assets/app/room/room.js"></script>
-	<script src="/assets/app/input/InputController.js"></script>
+	<script src="/assets/app/input/messageBox.js"></script>
 	<script src="/assets/app/room/rooms.js"></script>
 	<script src="/assets/app/factory/uuid.js"></script>
 	<script src="/assets/app/factory/user.js"></script>
@@ -71,7 +71,8 @@
 	<div roomid="{{membership.room.id}}" ng-repeat="membership in rooms.memberships">
 	</div>
 </div>
-<div ng-include="'/assets/app/input/input.html'"></div>
+<!--<div ng-include="'/assets/app/input/input.html'"></div>-->
+<div message-box></div>
 
 <script>
 	window.userId = '<%= userId %>';
