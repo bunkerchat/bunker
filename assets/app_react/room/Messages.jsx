@@ -1,37 +1,6 @@
 var Router = require('react-router');
 var RoomStore = require('./roomStore');
-
-var Message = React.createClass({
-	render() {
-		var message = this.props.message;
-		return (
-			<li className="message-container">
-				<div className="message">
-					<div>
-						<div className="message-author">
-							<span>
-								<div className="name">yay</div>
-								<span>x</span>
-							</span>
-						</div>
-						<div className="message-caret"></div>
-						<div className="message-body new-message-body">
-							<span>{message.text}</span>
-							<span className="message-info text-muted">
-								<i className="fa fa-pencil"></i>
-								<span>
-									<a className="text-muted">
-										<small>time</small>
-									</a>
-								</span>
-							</span>
-						</div>
-					</div>
-				</div>
-			</li>
-		)
-	}
-});
+var Message = require('./Message.jsx');
 
 var Messages = React.createClass({
 	mixins: [
@@ -49,19 +18,6 @@ var Messages = React.createClass({
 	getInitialState: function () {
 		return this.getStateFromStore();
 	},
-
-	//componentDidMount: function () {
-	//	this.listenTo(RoomStore, this.onStoreUpdate);
-	//},
-	//
-	//componentWillUnmount: function () {
-	//	ContactStore.removeChangeListener(this.updateContact);
-	//},
-	//
-	//componentWillReceiveProps: function () {
-	//	this.setState(this.getStateFromStore());
-	//},
-
 
 	onStoreUpdate(rooms) {
 		this.setState(this.getStateFromStore());
