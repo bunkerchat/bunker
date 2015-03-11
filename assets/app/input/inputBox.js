@@ -1,4 +1,4 @@
-app.directive('messageBox', function($rootScope, bunkerApi, emoticons, rooms) {
+app.directive('inputBox', function($rootScope, bunkerApi, emoticons, rooms) {
 
 		var messageEditWindowSeconds = 30;
 
