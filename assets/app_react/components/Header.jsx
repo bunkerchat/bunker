@@ -1,33 +1,28 @@
 /** @jsx React.DOM */
 var Router = require('react-router');
-
-var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
-var Route = Router.Route;
-var RouteHandler = Router.RouteHandler;
 
 var MembershipStore = require('../user/membershipStore');
 
 var Header = React.createClass({
 	mixins: [Reflux.listenTo(MembershipStore, 'onStoreUpdate')],
 
-	getInitialState () {
+	getInitialState() {
 		return {
 			roomMembers: []
 		}
 	},
 
-	onStoreUpdate (roomMembers) {
-		this.setState({ roomMembers });
+	onStoreUpdate(roomMembers) {
+		this.setState({roomMembers});
 	},
 
-	render: function () {
-		var rooms = this.state.roomMembers.map(function (roomMember) {
+	render() {
+		var rooms = this.state.roomMembers.map(roomMember => {
 			var room = roomMember.room;
-			var url = `#/rooms/${room.id}`;
 			return (
 				<li >
-					<a title="{room.topic}" href="{url}">{room.name}</a>
+					<Link title="room.topic" to="rooms" params={{roomId: room.id}}>{room.name}</Link>
 					<span className="badge"></span>
 				</li>
 			)

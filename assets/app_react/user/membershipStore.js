@@ -1,6 +1,6 @@
 var UserActions = require('./userActions');
 
-module.exports = Reflux.createStore({
+var MembershipStore = Reflux.createStore({
 	listenables: [UserActions],
 	memberships: [],
 
@@ -18,3 +18,5 @@ module.exports = Reflux.createStore({
 		});
 	},
 });
+
+module.exports = MembershipStore;

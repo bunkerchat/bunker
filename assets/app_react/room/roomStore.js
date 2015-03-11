@@ -1,30 +1,29 @@
 var UserActions = require('../user/userActions');
 var MembershipStore = require('../user/membershipStore');
 
-module.exports = Reflux.createStore({
+var RoomStore = Reflux.createStore({
 	listenables: [UserActions],
 	rooms: [],
 
 	getDefaultData() {
 		return {
-			rooms: []
+			rooms: {}
 		}
 	},
 
 	init() {
-		this.listenTo(MembershipStore, this.onMembershipLoaded);
-	},
-
-	onMembershipLoaded(memberships) {
-		memberships.forEach(membership => {
-			var url = '/room/' + membership.room.id;
-			io.socket.get(url, this.serverResponded);
+		this.listenTo(MembershipStore, memberships => {
+			memberships.forEach(membership => {
+				io.socket.get(`/room/${membership.room.id}/join`, (room, JWR) =>{
+					io.socket.get(`/room/${room.id}/messages`, (messages, JWR) =>{
+						room.$messages = messages;
+						this.rooms[room.id] = room;
+						this.trigger(this.rooms);
+					});
+				});
+			});
 		});
-	},
-
-	serverResponded(body, JWR) {
-		console.log('room', body);
-		this.rooms.push(body);
-		this.trigger(this.rooms);
 	}
 });
+
+module.exports = RoomStore;

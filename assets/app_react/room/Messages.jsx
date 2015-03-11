@@ -1,20 +1,16 @@
 var Router = require('react-router');
-var RouteHandler = Router.RouteHandler;
+var RoomStore = require('./roomStore');
 
-//var RoomStore = require('./roomStore');
-var Messages = require('./Messages.jsx');
-
-var Room = React.createClass({
+var Messages = React.createClass({
 	mixins: [
 		Router.Navigation,
 		Router.State,
-		//Reflux.listenTo(RoomStore, 'onStoreUpdate'),
-		//Reflux.ListenerMixin
+		Reflux.listenTo(RoomStore, 'onStoreUpdate')
 	],
 
 	getStateFromStore: function () {
 		return {
-			//room: RoomStore.rooms[this.getParams().roomId]
+			room: RoomStore.rooms[this.getParams().roomId]
 		};
 	},
 
@@ -36,16 +32,17 @@ var Room = React.createClass({
 
 
 	onStoreUpdate(rooms) {
-		//this.setState(this.getStateFromStore());
+		this.setState(this.getStateFromStore());
 	},
 
 	render() {
+		var room = this.state.room;
+		if(!room) return <div></div>;
+
 		return (
-			<div>
-				<RouteHandler/>
-			</div>
+			<div>yay room</div>
 		);
 	}
 });
 
-module.exports = Room;
+module.exports = Messages;

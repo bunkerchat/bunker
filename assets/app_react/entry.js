@@ -6,6 +6,7 @@ var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var Route = Router.Route;
 var RouteHandler = Router.RouteHandler;
+var NotFoundRoute = Router.NotFoundRoute;
 
 var MembershipStore = require('./user/membershipStore');
 var UserStore = require('./user/userStore');
@@ -13,6 +14,9 @@ var RoomStore = require('./room/roomStore');
 
 var Header = require('./components/Header.jsx');
 var Lobby = require('./components/Lobby.jsx');
+var Room = require('./room/Room.jsx');
+var RoomNotFound = require('./room/RoomNotFound.jsx');
+var Messages = require('./room/Messages.jsx');
 
 var App =  React.createClass({
 	render () {
@@ -27,6 +31,13 @@ var App =  React.createClass({
 
 var routes = (
 	<Route name="app" path="/" handler={App}>
+
+		<Route name="rooms" path="/rooms" handler={Room}>
+			<NotFoundRoute handler={RoomNotFound}/>
+			<Route name="messages" path="/rooms/:roomId" handler={Messages}/>
+			<DefaultRoute handler={Lobby}/>
+		</Route>
+
 		<DefaultRoute handler={Lobby}/>
 	</Route>
 );
