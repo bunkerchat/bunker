@@ -1,22 +1,17 @@
 app.directive('messageBox', function($rootScope, bunkerApi, emoticons, rooms) {
 
-		// put locals here
+		var messageEditWindowSeconds = 30;
+
+		var searchStates = {
+			NONE: 'none',
+			EMOTE: 'emote',
+			NICK: 'nick'
+		};
 
 		return {
 			scope: true,
-			templateUrl: '/assets/app/input/messageBox.html',
-			//controller: 'InputController',
-			//controllerAs: 'input',
-			link: function(scope, elem, attrs) {
-
-				var self = this;
-				var messageEditWindowSeconds = 30;
-
-				var searchStates = {
-					NONE: 'none',
-					EMOTE: 'emote',
-					NICK: 'nick'
-				};
+			templateUrl: '/assets/app/input/inputBox.html',
+			link: function(scope, elem) {
 
 				var searchState = searchStates.NONE;
 
@@ -73,14 +68,13 @@ app.directive('messageBox', function($rootScope, bunkerApi, emoticons, rooms) {
 					previousText = null;
 					emoticonSearch = '';
 					emoticonSearchIndex = -1;
-					// $digest
 				};
 
-				scope.keyDown = function (evt) {
+				var keyDown = function (evt) {
 					if (evt.keyCode == 13) { // enter
 						evt.preventDefault();
 						scope.sendMessage();
-						// $scope.$apply
+						scope.$apply();
 					}
 					else if (evt.keyCode == 9) { // tab
 						evt.preventDefault(); // prevent tabbing out of the text input
@@ -105,8 +99,8 @@ app.directive('messageBox', function($rootScope, bunkerApi, emoticons, rooms) {
 							}
 
 							// Replace the last emoticon text with a match
-							// $digest
 							scope.messageText = scope.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
+							scope.$digest();
 						}
 						else if (searchState === searchStates.NICK) {
 							var currentRoom = rooms.get($rootScope.roomId);
@@ -128,12 +122,13 @@ app.directive('messageBox', function($rootScope, bunkerApi, emoticons, rooms) {
 									: 0;
 							}
 
-							// $digest
 							scope.messageText = scope.messageText.replace(/@[\w ]*?$/, '@' + matchingNames[nickSearchIndex].nick + ' ');
+							scope.$digest();
 						}
 					}
 				};
-				scope.keyUp = function (evt) {
+
+				var keyUp = function (evt) {
 					if (evt.keyCode == 38 || evt.keyCode == 40) {// choose previous message to edit
 						scope.selectedMessageIndex += evt.keyCode == 38 ? 1 : -1;
 
@@ -149,21 +144,22 @@ app.directive('messageBox', function($rootScope, bunkerApi, emoticons, rooms) {
 
 						scope.messageText = chosenMessage.text;
 
-						// scope.$digest
 						if (datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
 							scope.editMode = true;
 						} else {
 							scope.editMode = false;
 						}
+
+						scope.$digest();
 					} else if (evt.keyCode == 27) { // 'escape'
 						// Reset all the things
-						// $digest i think
 						scope.selectedMessageIndex = -1;
 						scope.messageText = '';
 						scope.editMode = false;
 						previousText = null;
 						emoticonSearch = '';
 						emoticonSearchIndex = -1;
+						scope.$digest();
 					} else if (evt.keyCode != 9 && evt.keyCode != 16) {
 						if (/:\w+$/.test(scope.messageText)) {
 							searchState = searchStates.EMOTE;
@@ -188,11 +184,10 @@ app.directive('messageBox', function($rootScope, bunkerApi, emoticons, rooms) {
 					return elapsed < seconds;
 				}
 
-				$('textarea', elem).keyup(function() {
-					//alert('wat');
-				});
-
-
+				// bind our keyup/down funcs to input box.
+				$('textarea', elem)
+					.keydown(keyDown)
+					.keyup(keyUp);
 			}
 		};
 	});

@@ -5,8 +5,6 @@
 				<textarea rows="1" class="form-control"
 						  ng-model="messageText"
 						  ng-trim="false"
-						  ng-keyup="keyUp($event)"
-						  ng-keydown="keyDown($event)"
 						  bunker-input="messageText"></textarea>
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-success">{{editMode? 'EDIT' : 'SEND'}}</button>
