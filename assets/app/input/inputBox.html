@@ -1,0 +1,23 @@
+<div class="container-fluid message-input" ng-show="$root.roomId" ng-class="{'edit-mode' : editMode}">
+	<div class="row">
+		<form class="col-md-10 no-gutter" ng-submit="sendMessage()">
+			<div class="input-group">
+				<textarea rows="1" class="form-control"
+									ng-model="messageText"
+									ng-trim="false"
+									bunker-input="messageText"
+									autofocus></textarea>
+					<span class="input-group-btn">
+						<button type="submit" class="btn btn-success">{{editMode? 'EDIT' : 'SEND'}}</button>
+					</span>
+			</div>
+		</form>
+		<div class="col-md-2">
+			<div class="room-options">
+				<a ng-sref="#/rooms/{{$root.roomId}}/history?date={{now()}}" class="btn btn-link">
+					History
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
