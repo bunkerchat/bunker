@@ -4,6 +4,10 @@ app.controller('RoomController', function ($rootScope, $scope, user, rooms) {
 	this.roomId = $scope.roomId;
 	this.current = rooms.get($scope.roomId);
 
+	this.now = function () {
+		return moment().format('YYYY-MM-DD');
+	};
+
 	this.mentionUser = function (userNick) {
 		$rootScope.$broadcast('inputText', '@' + userNick);
 	};
