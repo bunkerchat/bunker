@@ -153,6 +153,13 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 							'src="{{ \'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/\' + id + \'&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false\' | trusted}}"></iframe>' +
 							'</div></div>');
 						}
+						else if (/vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.test(link) && !attachedMedia) {
+							var match = /vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.exec(link);
+							attachedMedia = angular.element('' +
+							'<div message="bunkerMessage" bunker-media="' + link + '">' +
+							'<iframe src="https://player.vimeo.com/video/' + match[1] + '?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
+							'</div>');
+						}
 					}
 
 					if (!replacedLinks[link]) {
