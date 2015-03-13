@@ -77,6 +77,7 @@ app.factory('emoticons', function () {
 		'motherofgod.gif',
 		'munch.gif',
 		'ninja.gif',
+		'nelson.jpg',
 		'nyan.gif',
 		'notbad.png',
 		'notsureif.png',
