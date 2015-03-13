@@ -1,6 +1,5 @@
 app.directive('roomid', function () {
 	return {
-		//replace:true,
 		scope:{
 			roomId:'@roomid'
 		},

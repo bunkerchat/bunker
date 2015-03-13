@@ -74,8 +74,8 @@ window.app = angular.module('bunker', [
 		$rootScope.$watch(function () {
 			return $window.location.hash;
 		}, function (newVal, oldVal) {
-			var newMatch = /^#\/rooms\/(.*)$/g.exec(newVal) || [];
-			var oldMatch = /^#\/rooms\/(.*)$/g.exec(oldVal) || [];
+			var newMatch = /^#\/rooms\/([A-z0-9]*)(?:.*)?$/g.exec(newVal) || [];
+			var oldMatch = /^#\/rooms\/([A-z0-9]*)(?:.*)?$/g.exec(oldVal) || [];
 
 			$rootScope.roomId = newMatch[1];
 			$rootScope.$broadcast('roomIdChanged', newMatch[1], oldMatch[1]);
