@@ -1,6 +1,7 @@
-app.controller('RoomController', function ($rootScope, $scope, user, rooms) {
+app.controller('RoomController', function ($rootScope, $stateParams, $scope, user, rooms) {
 	var self = this;
 	this.userService = user;
+	this.$stateParams = $stateParams;
 	this.roomId = $scope.roomId;
 	this.current = rooms.get($scope.roomId);
 

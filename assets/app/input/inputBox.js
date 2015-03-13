@@ -1,4 +1,4 @@
-app.directive('inputBox', function ($rootScope, bunkerApi, emoticons, rooms) {
+app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emoticons, rooms) {
 
 	var messageEditWindowSeconds = 30;
 
@@ -18,6 +18,7 @@ app.directive('inputBox', function ($rootScope, bunkerApi, emoticons, rooms) {
 			var nickSearch = '';
 			var nickSearchIndex = -1;
 
+			scope.$stateParams = $stateParams;
 			scope.messageText = '';
 			scope.submittedMessages = [];
 			scope.selectedMessageIndex = -1;
