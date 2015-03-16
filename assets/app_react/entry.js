@@ -1,9 +1,8 @@
 require("!style!css!./../styles/default.css");
 
-var Router = require('react-router');
-var DefaultRoute = Router.DefaultRoute;
-var Route = Router.Route;
-var NotFoundRoute = Router.NotFoundRoute;
+var DefaultRoute = ReactRouter.DefaultRoute;
+var Route = ReactRouter.Route;
+var NotFoundRoute = ReactRouter.NotFoundRoute;
 
 var Header = require('./components/Header.jsx');
 var Lobby = require('./components/Lobby.jsx');
@@ -19,7 +18,7 @@ var routes = (
 	</Route>
 );
 
-Router.run(routes, function (Handler) {
+ReactRouter.run(routes, function (Handler) {
 	React.render(<Handler/>, document.getElementById('app'));
 });
 

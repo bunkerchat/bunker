@@ -1,11 +1,9 @@
-var Router = require('react-router');
-var RoomStore = require('./../stores/roomStore');
 var Message = require('./Message.jsx');
 
 var Messages = React.createClass({
 	mixins: [
-		Router.Navigation,
-		Router.State,
+		//Router.Navigation,
+		//Router.State,
 		//Reflux.listenTo(RoomStore, 'onStoreUpdate')
 	],
 
@@ -27,25 +25,27 @@ var Messages = React.createClass({
 		var room = this.props.room;
 		if (!room) return <div></div>;
 
-		var messages = room.$messages.map(message => {
-			return (
-				<Message key={message.id} message={message}/>
-			)
-		});
-
 		return (
 			<div className="container-fluid">
 				<div className="row">
 					<div className="col-md-10 col-xs-12 no-gutter">
 						<div>
 							<ol className="list-unstyled message-list">
-								{messages}
+								{this.getMessages()}
 							</ol>
 						</div>
 					</div>
 				</div>
 			</div>
 		);
+	},
+
+	getMessages(){
+		return this.props.room.$messages.map(message => {
+			return (
+				<Message key={message.id} message={message}/>
+			)
+		});
 	}
 });
 

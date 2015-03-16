@@ -1,5 +1,5 @@
 /** @jsx React.DOM */
-var Link = require('react-router').Link;
+var Link = ReactRouter.Link;
 var RoomStore = require('./../stores/roomStore');
 
 var Header = React.createClass({
@@ -32,7 +32,7 @@ var Header = React.createClass({
 		return _.map(this.state.rooms, room => {
 			return (
 				<li>
-					<Link to="rooms" params={{roomId: room.id}}>{room.name}</Link>
+					<Link to="rooms" params={{roomId: room.id}} key={room.id}>{room.name}</Link>
 					<span className="badge"></span>
 				</li>
 			)

@@ -1,4 +1,4 @@
-var RouteHandler = require('react-router').RouteHandler;
+var RouteHandler = ReactRouter.RouteHandler;
 var Header = require('./components/Header.jsx');
 
 //var MembershipStore = require('./user/membershipStore');
