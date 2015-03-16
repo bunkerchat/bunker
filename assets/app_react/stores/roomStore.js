@@ -4,7 +4,7 @@ var MembershipStore = require('./membershipStore');
 var RoomStore = Reflux.createStore({
 	listenables: [UserActions],
 
-	rooms:{},
+	rooms: {},
 
 	getDefaultData() {
 		return {
@@ -15,11 +15,10 @@ var RoomStore = Reflux.createStore({
 	init() {
 		this.listenTo(MembershipStore, memberships => {
 			memberships.forEach(membership => {
-				io.socket.get(`/room/${membership.room.id}/join`, (room, JWR) =>{
-					io.socket.get(`/room/${room.id}/messages`, (messages, JWR) =>{
+				io.socket.get(`/room/${membership.room.id}/join`, (room, JWR) => {
+					io.socket.get(`/room/${room.id}/messages`, (messages, JWR) => {
 						room.$messages = messages;
 						this.rooms[room.id] = room;
-						console.log('room', room)
 						this.trigger(this.rooms);
 					});
 				});

@@ -1,14 +1,15 @@
 /** @jsx React.DOM */
+var Link = require('react-router').Link;
 var RoomStore = require('./../stores/roomStore');
 
 var Header = React.createClass({
-	mixins:[Reflux.listenTo(RoomStore, 'onUpdate')],
+	mixins: [Reflux.listenTo(RoomStore, 'onUpdate')],
 
 	getInitialState() {
 		return RoomStore.getDefaultData();
 	},
 
-	onUpdate(rooms){
+	onUpdate(rooms) {
 		this.setState({rooms});
 	},
 
@@ -29,10 +30,9 @@ var Header = React.createClass({
 
 	getRooms() {
 		return _.map(this.state.rooms, room => {
-			var roomLink = `#/rooms/${room.id}`;
 			return (
 				<li>
-					<a title={room.topic} href={roomLink}>{room.name}</a>
+					<Link to="rooms" params={{roomId: room.id}}>{room.name}</Link>
 					<span className="badge"></span>
 				</li>
 			)

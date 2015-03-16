@@ -1,4 +1,5 @@
 /** @jsx React.DOM */
+var Link = require('react-router').Link;
 var RoomStore = require('./../stores/roomStore');
 
 var Room = React.createClass({
@@ -7,7 +8,7 @@ var Room = React.createClass({
 		return (
 			<tr>
 				<td>
-					<a href="#/rooms/{room.id}">{room.name}</a>
+					<Link to="rooms" params={{roomId: room.id}} title={room.topic} >{room.name}</Link>
 				</td>
 				<td>{room.topic}</td>
 				<td>x / x</td>
