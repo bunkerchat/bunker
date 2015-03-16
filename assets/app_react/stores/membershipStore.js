@@ -4,9 +4,9 @@ var MembershipStore = Reflux.createStore({
 	listenables: [UserActions],
 	memberships: [],
 
-	getDefaultData() {
+	getState() {
 		return {
-			memberships: []
+			memberships: this.memberships
 		}
 	},
 
@@ -16,7 +16,7 @@ var MembershipStore = Reflux.createStore({
 			this.memberships = body;
 			this.trigger(this.memberships);
 		});
-	},
+	}
 });
 
 module.exports = MembershipStore;

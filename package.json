@@ -60,5 +60,6 @@
     "url": "git://github.com/anonymous node/sails user/bunker.git"
   },
   "author": "anonymous node/sails user",
-  "license": ""
+  "license": "",
+  "devDependencies": {}
 }
