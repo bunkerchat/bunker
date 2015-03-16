@@ -1,4 +1,4 @@
-var UserActions = require('./userActions');
+var UserActions = require('./../user/userActions');
 
 var MembershipStore = Reflux.createStore({
 	listenables: [UserActions],

@@ -1,45 +1,42 @@
 /** @jsx React.DOM */
-var Router = require('react-router');
-var Link = Router.Link;
-
-var MembershipStore = require('../user/membershipStore');
+var RoomStore = require('./../stores/roomStore');
 
 var Header = React.createClass({
-	mixins: [Reflux.listenTo(MembershipStore, 'onStoreUpdate')],
+	mixins:[Reflux.listenTo(RoomStore, 'onUpdate')],
 
 	getInitialState() {
-		return {
-			roomMembers: []
-		}
+		return RoomStore.getDefaultData();
 	},
 
-	onStoreUpdate(roomMembers) {
-		this.setState({roomMembers});
+	onUpdate(rooms){
+		this.setState({rooms});
 	},
 
 	render() {
-		var rooms = this.state.roomMembers.map(roomMember => {
-			var room = roomMember.room;
-			return (
-				<li >
-					<Link title="room.topic" to="rooms" params={{roomId: room.id}}>{room.name}</Link>
-					<span className="badge"></span>
-				</li>
-			)
-		});
-
 		return (
 			<nav className="navbar navbar-default navbar-fixed-top navbar-background" role="navigation">
 				<div className="container-fluid">
 					<div className="navbar-header">
-						<Link className="navbar-brand" to="app">Bunker</Link>
+						<a href="#" className="navbar-brand">Bunker</a>
 					</div>
 					<ul className="nav navbar-nav hidden-xs">
-						{rooms}
+						{this.getRooms()}
 					</ul>
 				</div>
 			</nav>
 		);
+	},
+
+	getRooms() {
+		return _.map(this.state.rooms, room => {
+			var roomLink = `#/rooms/${room.id}`;
+			return (
+				<li>
+					<a title={room.topic} href={roomLink}>{room.name}</a>
+					<span className="badge"></span>
+				</li>
+			)
+		});
 	}
 });
 

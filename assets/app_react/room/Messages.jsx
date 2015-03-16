@@ -1,30 +1,30 @@
 var Router = require('react-router');
-var RoomStore = require('./roomStore');
+var RoomStore = require('./../stores/roomStore');
 var Message = require('./Message.jsx');
 
 var Messages = React.createClass({
 	mixins: [
 		Router.Navigation,
 		Router.State,
-		Reflux.listenTo(RoomStore, 'onStoreUpdate')
+		//Reflux.listenTo(RoomStore, 'onStoreUpdate')
 	],
 
-	getStateFromStore: function () {
-		return {
-			room: RoomStore.rooms[this.getParams().roomId]
-		};
-	},
-
-	getInitialState: function () {
-		return this.getStateFromStore();
-	},
-
-	onStoreUpdate(rooms) {
-		this.setState(this.getStateFromStore());
-	},
+	//getStateFromStore: function () {
+	//	return {
+	//		room: RoomStore.rooms[this.getParams().roomId]
+	//	};
+	//},
+	//
+	//getInitialState: function () {
+	//	return this.getStateFromStore();
+	//},
+	//
+	//onStoreUpdate(rooms) {
+	//	this.setState(this.getStateFromStore());
+	//},
 
 	render() {
-		var room = this.state.room;
+		var room = this.props.room;
 		if (!room) return <div></div>;
 
 		var messages = room.$messages.map(message => {

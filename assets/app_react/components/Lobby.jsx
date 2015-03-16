@@ -1,9 +1,8 @@
 /** @jsx React.DOM */
-var MembershipStore = require('./../user/membershipStore');
-
+var RoomStore = require('./../stores/roomStore');
 
 var Room = React.createClass({
-	render(){
+	render() {
 		var room = this.props.room;
 		return (
 			<tr>
@@ -18,28 +17,17 @@ var Room = React.createClass({
 });
 
 var Lobby = React.createClass({
-	mixins: [Reflux.listenTo(MembershipStore, 'onStoreUpdate')],
+	mixins: [Reflux.listenTo(RoomStore, 'onStoreUpdate')],
 
 	getInitialState() {
-		return {
-			roomMembers: []
-		}
+		return RoomStore.getDefaultData();
 	},
 
-	onStoreUpdate(roomMembers) {
-		this.setState({
-			roomMembers: roomMembers
-		});
+	onStoreUpdate(rooms) {
+		this.setState({rooms});
 	},
 
 	render() {
-		var rooms = this.state.roomMembers.map(function (roomMember) {
-			var room = roomMember.room;
-			return (
-				<Room key={room.id} room={room}/>
-			);
-		});
-
 		return (
 			<div className="container-fluid" >
 
@@ -73,7 +61,7 @@ var Lobby = React.createClass({
 						</tr>
 					</thead>
 					<tbody>
-						{rooms}
+						{this.getRooms()}
 					</tbody>
 				</table>
 
@@ -91,6 +79,14 @@ var Lobby = React.createClass({
 
 			</div>
 		);
+	},
+
+	getRooms() {
+		return _.map(this.state.rooms, room => {
+			return (
+				<Room key={room.id} room={room}/>
+			);
+		});
 	}
 });
 

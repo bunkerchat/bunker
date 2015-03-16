@@ -69,7 +69,7 @@ assets/bundled
 node_modules
 bower_components
 assets/vendor
-
+assets/bundled
 
 
 ################################################

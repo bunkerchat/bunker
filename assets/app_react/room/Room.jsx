@@ -42,7 +42,7 @@ var Room = React.createClass({
 	render() {
 		return (
 			<div>
-				<RouteHandler/>
+				<RouteHandler {...this.props}/>
 			</div>
 		);
 	}
