@@ -6,9 +6,9 @@ var RoomStore = Reflux.createStore({
 
 	rooms: {},
 
-	getDefaultData() {
+	getState() {
 		return {
-			rooms: {}
+			rooms: this.rooms
 		}
 	},
 

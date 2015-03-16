@@ -34,6 +34,9 @@ var Room = React.createClass({
 	//	this.setState(this.getStateFromStore());
 	//},
 
+	componentWillReceiveProps: function () {
+		this.setState(this.getStateFromStore());
+	},
 
 	onStoreUpdate(rooms) {
 		this.setState(this.getStateFromStore());

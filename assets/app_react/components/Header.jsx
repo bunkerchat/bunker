@@ -6,11 +6,11 @@ var Header = React.createClass({
 	mixins: [Reflux.listenTo(RoomStore, 'onUpdate')],
 
 	getInitialState() {
-		return RoomStore.getDefaultData();
+		return RoomStore.getState();
 	},
 
-	onUpdate(rooms) {
-		this.setState({rooms});
+	onUpdate() {
+		this.setState(RoomStore.getState());
 	},
 
 	render() {

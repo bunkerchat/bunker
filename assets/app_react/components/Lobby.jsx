@@ -21,11 +21,11 @@ var Lobby = React.createClass({
 	mixins: [Reflux.listenTo(RoomStore, 'onStoreUpdate')],
 
 	getInitialState() {
-		return RoomStore.getDefaultData();
+		return RoomStore.getState();
 	},
 
-	onStoreUpdate(rooms) {
-		this.setState({rooms});
+	onStoreUpdate() {
+		this.setState(RoomStore.getState());
 	},
 
 	render() {
