@@ -1,6 +1,5 @@
 module.exports = Reflux.createActions([
-
-
+	"sendMessage"
 	//"toggleItem",     // called by button in TodoItem
 	//"toggleAllItems", // called by button in TodoMain (even though you'd think TodoHeader)
 	//"addItem",        // called by hitting enter in field in TodoHeader

@@ -24,6 +24,18 @@ var RoomStore = Reflux.createStore({
 				});
 			});
 		});
+	},
+
+	// actions
+
+	onSendMessage(roomId, message) {
+		io.socket.post('/message', {"room": roomId, "text": message}, (message, JWR) => {
+			if(JWR.statusCode !== 200){
+				//UserActions.sendMessage.failed(message);
+			}
+			//UserActions.sendMessage.completed(message);
+			//this.
+		});
 	}
 });
 

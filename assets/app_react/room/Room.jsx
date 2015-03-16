@@ -79,7 +79,7 @@ var Room = React.createClass({
 		return (
 			<div>
 				<Messages room={room}/>
-				<InputBox/>
+				<InputBox room={room}/>
 			</div>
 		);
 	}
