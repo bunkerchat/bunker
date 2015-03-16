@@ -17,7 +17,7 @@ var RoomStore = Reflux.createStore({
 			memberships.forEach(membership => {
 				io.socket.get(`/room/${membership.room.id}/join`, (room, JWR) => {
 					io.socket.get(`/room/${room.id}/messages`, (messages, JWR) => {
-						room.$messages = messages;
+						room.$messages = messages.reverse();
 						this.rooms[room.id] = room;
 						this.trigger(this.rooms);
 					});

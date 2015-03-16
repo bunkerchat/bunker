@@ -12,7 +12,6 @@ var MembershipStore = Reflux.createStore({
 
 	init() {
 		io.socket.get('/roomMember', {user: window.userId}, (body, JWR) => {
-			console.log('roomMember', body);
 			this.memberships = body;
 			this.trigger(this.memberships);
 		});
