@@ -63,6 +63,7 @@ var Message = React.createClass({
 
 		var statusClass = cx({
 			'status': true,
+			'here':true
 			//'here': user.connected && !away(),
 			//'local': user.connected && away()
 		});
