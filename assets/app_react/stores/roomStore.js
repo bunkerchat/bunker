@@ -26,6 +26,11 @@ var RoomStore = Reflux.createStore({
 						this.messageLookup[room.id] = {};
 						this.trigger(this.rooms);
 					});
+
+					io.socket.get('/roomMember', {room: room.id}, (members, JWR)=> {
+						room.$members = members;
+						this.trigger(this.rooms);
+					});
 				});
 			});
 		});
