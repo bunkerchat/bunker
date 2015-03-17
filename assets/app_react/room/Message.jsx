@@ -1,3 +1,5 @@
+var Gravatar = require('./../components/Gravatar');
+
 var Message = React.createClass({
 	render() {
 		var message = this.props.message;
@@ -7,6 +9,7 @@ var Message = React.createClass({
 					<div>
 						<div className="message-author">
 							<span>
+								<Gravatar email={message.author.email} size="20"/>
 								<div className="name">{message.author.nick}</div>
 								<span>x</span>
 							</span>
