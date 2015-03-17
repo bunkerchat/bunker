@@ -7,7 +7,7 @@ var Message = React.createClass({
 					<div>
 						<div className="message-author">
 							<span>
-								<div className="name">yay</div>
+								<div className="name">{message.author.nick}</div>
 								<span>x</span>
 							</span>
 						</div>
