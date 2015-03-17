@@ -1,16 +1,16 @@
 /** @jsx React.DOM */
 var Link = ReactRouter.Link;
-var RoomStore = require('./../stores/roomStore');
+var MembershipStore = require('./../stores/membershipStore');
 
 var Header = React.createClass({
-	mixins: [Reflux.listenTo(RoomStore, 'onUpdate')],
+	mixins: [Reflux.listenTo(MembershipStore, 'onUpdate')],
 
 	getInitialState() {
-		return RoomStore.getState();
+		return MembershipStore.getState();
 	},
 
 	onUpdate() {
-		this.setState(RoomStore.getState());
+		this.setState(MembershipStore.getState());
 	},
 
 	render() {
@@ -29,7 +29,8 @@ var Header = React.createClass({
 	},
 
 	getRooms() {
-		return _.map(this.state.rooms, room => {
+		return _.map(this.state.memberships, membership => {
+			var room = membership.room;
 			return (
 				<li>
 					<Link to="rooms" params={{roomId: room.id}} key={room.id}>{room.name}</Link>
