@@ -34,7 +34,7 @@
 				<a ui-sref="room({roomId: room.id})">{{room.name}}</a>
 			</td>
 			<td>{{room.topic}}</td>
-			<td>{{room.$onlineMemberCount}} / {{room.$memberCount}}</td>
+			<td>{{(room.members|online).length}} / {{room.members.length}}</td>
 		</tr>
 		</tbody>
 	</table>

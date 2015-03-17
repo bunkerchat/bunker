@@ -39,6 +39,7 @@ module.exports.policies = {
 		'logout': true
 	},
 	UserController: {
+		'init': 'isLoggedIn',
 		'findOne': 'isLoggedIn',
 		'activity': ['isLoggedIn', 'isCurrentUser'],
 		'connect': ['isLoggedIn', 'isCurrentUser'],
