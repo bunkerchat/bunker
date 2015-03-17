@@ -432,7 +432,7 @@ img.emoticon {
 
 /* status */
 
-[status] {
+.status {
 	width: 6px;
 	height: 6px;
 	display: inline-block;
@@ -441,7 +441,7 @@ img.emoticon {
 	margin-left: 4px;
 }
 
-[status].here {
+.status.here {
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #00FF00), color-stop(1, #00BD00));
 	background-image: -o-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
 	background-image: -moz-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
@@ -451,7 +451,7 @@ img.emoticon {
 	box-shadow: 0 0 2px #00BD00;
 }
 
-[status].away {
+.status.away {
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFF00), color-stop(1, #D4D400));
 	background-image: -o-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
 	background-image: -moz-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
