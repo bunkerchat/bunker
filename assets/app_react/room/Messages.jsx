@@ -20,18 +20,18 @@ var Messages = React.createClass({
 	},
 
 	componentDidMount() {
-		var el = $(this.getDOMNode()).find('ol');
+		var el = $(this.getDOMNode());
 		el.scrollTop(1000);
 	},
 
 	componentDidUpdate() {
-		var el = $(this.getDOMNode()).find('ol');
+		var el = $(this.getDOMNode());
 		el.scrollTop(1000);
 	},
 
 	onStoreUpdate(rooms) {
 		//var el = $(this.getDOMNode()).find('ol');
-		var el = $(this.getDOMNode()).find('ol');
+		var el = $(this.getDOMNode());
 
 		el.scrollTop(1000);
 
@@ -43,17 +43,9 @@ var Messages = React.createClass({
 
 	render() {
 		return (
-			<div className="container-fluid">
-				<div className="row">
-					<div className="col-md-10 col-xs-12 no-gutter">
-						<div>
-							<ol className="list-unstyled message-list">
-								{this.getMessages()}
-							</ol>
-						</div>
-					</div>
-				</div>
-			</div>
+			<ol className="list-unstyled message-list">
+				{this.getMessages()}
+			</ol>
 		);
 	},
 

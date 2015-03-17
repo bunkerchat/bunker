@@ -1,6 +1,7 @@
 var RoomStore = require('./../stores/roomStore');
 var Messages = require('./Messages.jsx');
 var InputBox = require('./InputBox.jsx');
+var MemberList = require('./MemberList.jsx');
 
 var Room = React.createClass({
 	mixins: [
@@ -78,7 +79,14 @@ var Room = React.createClass({
 
 		return (
 			<div>
-				<Messages room={room}/>
+				<div className="container-fluid">
+					<div className="row">
+						<div className="col-md-10 col-xs-12 no-gutter">
+							<Messages room={room}/>
+						</div>
+						<MemberList room={room}/>
+					</div>
+				</div>
 				<InputBox room={room}/>
 			</div>
 		);

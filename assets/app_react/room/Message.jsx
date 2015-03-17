@@ -1,4 +1,5 @@
 var Gravatar = require('./../components/Gravatar');
+var Status = require('./Status.jsx');
 var cx = require('classnames');
 
 var Message = React.createClass({
@@ -58,21 +59,6 @@ var Message = React.createClass({
 		)
 	},
 
-	authorStatus(){
-		var room = this.props.room;
-
-		var statusClass = cx({
-			'status': true,
-			'here':true
-			//'here': user.connected && !away(),
-			//'local': user.connected && away()
-		});
-
-		return (
-			<span className={statusClass}></span>
-		)
-	},
-
 	authorInfo() {
 		var message = this.props.message;
 		if (!message.$firstInSeries)return;
@@ -80,7 +66,7 @@ var Message = React.createClass({
 			<span>
 				<Gravatar email={message.author.email} size={20} default="identicon"/>
 				<div className="name">{message.author.nick}</div>
-				{this.authorStatus()}
+				<Status />
 			</span>
 		)
 	},
