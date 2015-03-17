@@ -6,6 +6,11 @@ var Message = React.createClass({
 		var message = this.props.message;
 
 		var messageClass = cx({
+			'message': true,
+			'local': message.author.id == window.userId
+		});
+
+		var messageBodyClass = cx({
 			'message-body': true,
 			'new-message-body': message.$firstInSeries,
 			'edited': message.edited
@@ -13,13 +18,13 @@ var Message = React.createClass({
 
 		return (
 			<li className="message-container">
-				<div className="message">
+				<div className={messageClass}>
 					<div>
 						<div className="message-author">
 							{this.authorInfo(message)}
 						</div>
 							{this.caret(message)}
-						<div className={messageClass}>
+						<div className={messageBodyClass}>
 							<span>{message.text}</span>
 							<span className="message-info text-muted">
 								{this.edited(message)}

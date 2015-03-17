@@ -31,7 +31,7 @@ var RoomStore = Reflux.createStore({
 		});
 
 		io.socket.on('room', msg => {
-			if(msg.verb == 'messaged'){
+			if (msg.verb == 'messaged') {
 				this.addMessage(msg.id, msg.data);
 				this.trigger(this.rooms);
 			}

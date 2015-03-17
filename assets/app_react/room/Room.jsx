@@ -6,7 +6,7 @@ var Room = React.createClass({
 	mixins: [
 		ReactRouter.Navigation,
 		ReactRouter.State,
-		Reflux.listenTo(RoomStore, 'onStoreUpdate'),
+		Reflux.listenTo(RoomStore, 'onStoreUpdate')
 	],
 
 	room: {},
@@ -23,26 +23,26 @@ var Room = React.createClass({
 
 	componentWillReceiveProps: function () {
 		this.setState(this.getStateFromStore());
-		this._placedInputBox = false;
-		this.placeInputbox();
+		this._filled = false;
+		this.fill();
 	},
 
 	onStoreUpdate(rooms) {
 		var state = this.getStateFromStore();
 		this.setState(state);
-		this.placeInputbox();
+		this.fill();
 	},
 
 	componentDidMount: function () {
-		this.placeInputbox();
+		this.fill();
 	},
 
 	componentWillUnmount: function () {
-		this._placedInputBox = false;
+		this._filled = false;
 	},
 
-	placeInputbox() {
-		if(this._placedInputBox || !this.state.room || !this.state.room.$messages.length) return;
+	fill() {
+		if(this._filled || !this.state.room || !this.state.room.$messages.length) return;
 
 		var windowEl = $(window);
 		var el = $(this.getDOMNode()).find('ol.message-list');
@@ -68,7 +68,7 @@ var Room = React.createClass({
 
 		windowEl.resize();
 
-		this._placedInputBox = true;
+		this._filled = true;
 	},
 
 
