@@ -6,13 +6,22 @@ var Input = React.createClass({
 		UserActions.sendMessage(this.props.room.id, text);
 	},
 
+	handleKeyDown(evt) {
+		if (evt.keyCode == 13) { // enter
+			evt.preventDefault();
+			this.sendMessage();
+			this.refs.inputBox.getDOMNode().value = '';
+		}
+	},
+
 	render() {
 		return (
 			<div className="container-fluid message-input">
 				<div className="row">
 					<form className="col-md-10 no-gutter">
 						<div className="input-group">
-							<textarea rows="1" className="form-control"  ref="inputBox" autofocus></textarea>
+							<textarea rows="1" className="form-control"
+								ref="inputBox" onKeyDown={this.handleKeyDown} autofocus></textarea>
 							<span className="input-group-btn">
 								<button type="submit" className="btn btn-success" onClick={this.sendMessage}>Send</button>
 							</span>

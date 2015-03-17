@@ -23,10 +23,18 @@ var RoomStore = Reflux.createStore({
 						this.decorateMessages(room.$messages);
 
 						this.rooms[room.id] = room;
+						this.messageLookup[room.id] = {};
 						this.trigger(this.rooms);
 					});
 				});
 			});
+		});
+
+		io.socket.on('room', msg => {
+			if(msg.verb == 'messaged'){
+				this.addMessage(msg.id, msg.data);
+				this.trigger(this.rooms);
+			}
 		});
 	},
 
@@ -42,7 +50,7 @@ var RoomStore = Reflux.createStore({
 			message.id = uuid.v4(); // All messages need ids
 		}
 
-		var room = rooms[roomId];
+		var room = this.rooms[roomId];
 		if (!room) throw new Error('Received message from a room we are not a member of!');
 		if (this.messageLookup[roomId][message.id]) return; // Message already exists!
 		//if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
@@ -61,8 +69,6 @@ var RoomStore = Reflux.createStore({
 			if (JWR.statusCode !== 200) {
 				throw new Error(JWR);
 			}
-			this.addMessage(roomId, message);
-			this.trigger(this.rooms);
 		});
 	}
 });

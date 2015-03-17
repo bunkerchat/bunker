@@ -22,7 +22,7 @@ var Message = React.createClass({
 						<div className={messageClass}>
 							<span>{message.text}</span>
 							<span className="message-info text-muted">
-								<i className="fa fa-pencil"></i>
+								{this.edited(message)}
 								<span>
 									<a className="text-muted">
 										<small>time</small>
@@ -51,6 +51,13 @@ var Message = React.createClass({
 		if (!message.$firstInSeries)return;
 		return (
 			<div className="message-caret"></div>
+		)
+	},
+
+	edited(message) {
+		if (!message.edited)return;
+		return (
+			<i className="fa fa-pencil"></i>
 		)
 	}
 });
