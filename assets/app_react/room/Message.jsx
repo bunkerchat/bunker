@@ -10,6 +10,17 @@ var Message = React.createClass({
 			'local': message.author.id == window.userId
 		});
 
+		return (
+			<li className="message-container">
+				<div className={messageClass}>
+					{message.author ? this.renderMessage() : this.systemMessage()}
+				</div>
+			</li>
+		)
+	},
+
+	renderMessage() {
+		var message = this.props.message;
 		var messageBodyClass = cx({
 			'message-body': true,
 			'new-message-body': message.$firstInSeries,
@@ -17,52 +28,79 @@ var Message = React.createClass({
 		});
 
 		return (
-			<li className="message-container">
-				<div className={messageClass}>
-					<div>
-						<div className="message-author">
-							{this.authorInfo(message)}
-						</div>
-							{this.caret(message)}
-						<div className={messageBodyClass}>
-							<span>{message.text}</span>
-							<span className="message-info text-muted">
-								{this.edited(message)}
-								{this.timeStamp(message)}
-							</span>
-						</div>
-					</div>
+			<div>
+				<div className="message-author">
+					{this.authorInfo()}
 				</div>
-			</li>
+				{this.caret()}
+				<div className={messageBodyClass}>
+					<span>{message.text}</span>
+					<span className="message-info text-muted">
+						{this.edited()}
+						{this.timeStamp()}
+					</span>
+				</div>
+			</div>
 		)
 	},
 
-	authorInfo(message) {
+	systemMessage() {
+		var message = this.props.message;
+		return (
+			<div class="new-message-body">
+				<div class="alert alert-message text-muted">
+					<span>{message.text}</span>
+				</div>
+				<span class="message-info text-muted">
+					{this.timeStamp()}
+				</span>
+			</div>
+		)
+	},
+
+	authorStatus(){
+		var room = this.props.room;
+
+		var statusClass = cx({
+			'status': true,
+			//'here': user.connected && !away(),
+			//'local': user.connected && away()
+		});
+
+		return (
+			<span className={statusClass}></span>
+		)
+	},
+
+	authorInfo() {
+		var message = this.props.message;
 		if (!message.$firstInSeries)return;
 		return (
 			<span>
 				<Gravatar email={message.author.email} size={20} default="identicon"/>
 				<div className="name">{message.author.nick}</div>
-				<span>x</span>
+				{this.authorStatus()}
 			</span>
 		)
 	},
 
-	caret(message) {
+	caret() {
+		var message = this.props.message;
 		if (!message.$firstInSeries)return;
 		return (
 			<div className="message-caret"></div>
 		)
 	},
 
-	edited(message) {
-		if (!message.edited)return;
+	edited() {
+		if (!this.props.message.edited)return;
 		return (
 			<i className="fa fa-pencil"></i>
 		)
 	},
 
-	timeStamp(message){
+	timeStamp() {
+		var message = this.props.message;
 		if (!message.$firstInSeries)return;
 		return (
 			<span>

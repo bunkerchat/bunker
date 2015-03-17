@@ -25,7 +25,11 @@ var Lobby = React.createClass({
 	],
 
 	getInitialState() {
-		return RoomStore.getState();
+		return MembershipStore.getState();
+	},
+
+	componentDidMount: function () {
+		this.setState(MembershipStore.getState());
 	},
 
 	onRoomStoreUpdate() {

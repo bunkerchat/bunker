@@ -58,9 +58,10 @@ var Messages = React.createClass({
 	},
 
 	getMessages() {
-		return _(this.props.room.$messages).map(message => {
+		var room = this.props.room;
+		return _(room.$messages).map(message => {
 			return (
-				<Message key={message.id} message={message}/>
+				<Message key={message.id} message={message} room={room}/>
 			)
 		});
 	}
