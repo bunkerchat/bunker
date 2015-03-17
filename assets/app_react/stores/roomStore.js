@@ -38,10 +38,15 @@ var RoomStore = Reflux.createStore({
 		});
 	},
 
+	decorateMessage(lastMessage, message){
+		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+		message.createdAt = moment(message.createdAt);
+	},
+
 	decorateMessages(messages) {
-		_.each(messages, function (message, index) {
+		_.each(messages, (message, index) => {
 			var lastMessage = index > 0 && index < messages.length ? messages[index - 1] : null;
-			message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+			this.decorateMessage(lastMessage, message);
 		});
 	},
 
@@ -56,7 +61,7 @@ var RoomStore = Reflux.createStore({
 		//if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
 
 		var lastMessage = _.last(room.$messages);
-		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+		this.decorateMessage(lastMessage, message);
 
 		room.$messages.push(message);
 		this.messageLookup[roomId][message.id] = true; // Store messages in lookup object, this allows us to check for duplicates quickly

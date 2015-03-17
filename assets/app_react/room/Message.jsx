@@ -28,11 +28,7 @@ var Message = React.createClass({
 							<span>{message.text}</span>
 							<span className="message-info text-muted">
 								{this.edited(message)}
-								<span>
-									<a className="text-muted">
-										<small>time</small>
-									</a>
-								</span>
+								{this.timeStamp(message)}
 							</span>
 						</div>
 					</div>
@@ -63,6 +59,17 @@ var Message = React.createClass({
 		if (!message.edited)return;
 		return (
 			<i className="fa fa-pencil"></i>
+		)
+	},
+
+	timeStamp(message){
+		if (!message.$firstInSeries)return;
+		return (
+			<span>
+				<a className="text-muted">
+					<small>{message.createdAt.format('l LTS')}</small>
+				</a>
+			</span>
 		)
 	}
 });
