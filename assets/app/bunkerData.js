@@ -30,7 +30,7 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		switch (evt.verb) {
 			case 'messaged': {
 				var room = _.find(bunkerData.rooms, {id: evt.data.room.id});
-				room.messages.push(evt.data);
+				room.$messages.push(evt.data);
 				$rootScope.$digest();
 				break;
 			}

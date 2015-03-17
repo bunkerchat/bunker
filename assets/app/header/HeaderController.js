@@ -1,7 +1,7 @@
-app.controller('HeaderController', function ($rootScope, $stateParams, $state, user, rooms) {
+app.controller('HeaderController', function ($rootScope, $stateParams, $state, bunkerData, user, rooms) {
 	var self = this;
 	this.user = user.current;
-	this.memberships = user.memberships;
+	this.rooms = bunkerData.rooms;
 	this.settings = user.settings;
 	this.showOptions = function () {
 		return !$state.is('lobby');
@@ -19,7 +19,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 			return;
 		}
 
-		var otherRoom = _(self.memberships).pluck('room').find({id: resource.id});
+		var otherRoom = _.find(self.rooms, {id: resource.id});
 		if (otherRoom) {
 			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
 		}
@@ -27,7 +27,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, u
 
 	$rootScope.$on('roomIdChanged', function () {
 		if ($rootScope.roomId) {
-			var currentRoom = _(self.memberships).pluck('room').find({id: $rootScope.roomId});
+			var currentRoom = _.find(self.rooms, {id: $rootScope.roomId});
 			if (currentRoom) {
 				currentRoom.$unreadMessages = 0;
 			}

@@ -34,8 +34,8 @@ module.exports.init = function (req, res) {
 					RoomMember.find({room: room.id}).populateAll()
 				)
 					.spread(function (messages, members) {
-						room.messages = messages;
-						room.members = members;
+						room.$messages = messages;
+						room.$members = members;
 					});
 			});
 		})
