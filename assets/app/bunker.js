@@ -22,6 +22,11 @@ window.app = angular.module('bunker', [
 				templateUrl: '/assets/app/lobby/lobby.html',
 				controller: 'LobbyController as lobby'
 			})
+			.state('chat', {
+				url: '/chat?roomId',
+				templateUrl: '/assets/app/chat/chat.html',
+				controller: 'ChatController as chat'
+			})
 			.state('room', {
 				url: '/rooms/{roomId}'
 			})
