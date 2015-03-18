@@ -6,30 +6,29 @@ var Message = React.createClass({
 	render() {
 		var message = this.props.message;
 
-		var messageClass = cx({
-			'message': true,
-			'local': message.author.id == window.userId
-		});
-
 		return (
 			<li className="message-container">
-				<div className={messageClass}>
-					{message.author ? this.renderMessage() : this.systemMessage()}
-				</div>
+				{message.author ? this.renderMessage() : this.systemMessage()}
 			</li>
 		)
 	},
 
 	renderMessage() {
 		var message = this.props.message;
+		var author = message.author;
+
+		var messageClass = cx({
+			'message': true,
+			'local': author && message.id == window.userId
+		});
+
 		var messageBodyClass = cx({
 			'message-body': true,
 			'new-message-body': message.$firstInSeries,
 			'edited': message.edited
 		});
-
 		return (
-			<div>
+			<div className={messageClass}>
 				<div className="message-author">
 					{this.authorInfo()}
 				</div>
@@ -48,11 +47,11 @@ var Message = React.createClass({
 	systemMessage() {
 		var message = this.props.message;
 		return (
-			<div class="new-message-body">
-				<div class="alert alert-message text-muted">
+			<div className="new-message-body">
+				<div className="alert alert-message text-muted">
 					<span>{message.text}</span>
 				</div>
-				<span class="message-info text-muted">
+				<span className="message-info text-muted">
 					{this.timeStamp()}
 				</span>
 			</div>
