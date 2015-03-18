@@ -1,4 +1,4 @@
-app.controller('HeaderController', function ($rootScope, $stateParams, $state, bunkerData, user, rooms) {
+app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, bunkerData, user, rooms) {
 	var self = this;
 	this.user = user.current;
 	this.rooms = bunkerData.rooms;
@@ -12,6 +12,14 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, b
 	this.leaveRoom = function () {
 		rooms.leave($rootScope.roomId);
 		$state.go('lobby');
+	};
+
+	this.showHelp = function () {
+		var modalInstance = $modal.open({
+			templateUrl: '/assets/app/help/help.html',
+			controller: 'HelpController',
+			size: 'lg'
+		});
 	};
 
 	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
