@@ -34,7 +34,7 @@ var Message = React.createClass({
 				</div>
 				{this.caret()}
 				<div className={messageBodyClass}>
-					<span>{message.text}</span>
+					<span dangerouslySetInnerHTML={{__html: message.text}}></span>
 					<span className="message-info text-muted">
 						{this.edited()}
 						{this.timeStamp()}
@@ -49,7 +49,7 @@ var Message = React.createClass({
 		return (
 			<div className="new-message-body">
 				<div className="alert alert-message text-muted">
-					<span>{message.text}</span>
+					<span dangerouslySetInnerHTML={{__html: message.text}}></span>
 				</div>
 				<span className="message-info text-muted">
 					{this.timeStamp()}
