@@ -19,7 +19,7 @@ var Message = React.createClass({
 
 		var messageClass = cx({
 			'message': true,
-			'local': author && message.id == window.userId
+			'local': author && author.id == window.userId
 		});
 
 		var messageBodyClass = cx({
