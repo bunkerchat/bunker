@@ -24,7 +24,7 @@ var MemberList = React.createClass({
 		var members = this.props.room.$members;
 		if(!members) return;
 
-		return members.map(member => {
+		return _.map(members, member => {
 			var user = member.user;
 			if(!user.connected) return;
 
@@ -40,7 +40,7 @@ var MemberList = React.createClass({
 
 					<div className="pull-right">
 						{this.memberRole(user)}
-						<Status/>
+						<Status roomMember={this.props.room.$members[user.id]}/>
 					</div>
 				</li>
 			)

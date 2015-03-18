@@ -27,6 +27,7 @@ var Message = React.createClass({
 			'new-message-body': message.$firstInSeries,
 			'edited': message.edited
 		});
+
 		return (
 			<div className={messageClass}>
 				<div className="message-author">
@@ -65,7 +66,7 @@ var Message = React.createClass({
 			<span>
 				<Gravatar email={message.author.email} size={20} default="identicon"/>
 				<div className="name">{message.author.nick}</div>
-				<Status />
+				<Status roomMember={this.props.room.$members[message.author.id]}/>
 			</span>
 		)
 	},
