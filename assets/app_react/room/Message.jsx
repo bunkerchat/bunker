@@ -62,6 +62,8 @@ var Message = React.createClass({
 	authorInfo() {
 		var message = this.props.message;
 		if (!message.$firstInSeries)return;
+		if (!this.props.room.$members)return;
+
 		return (
 			<span>
 				<Gravatar email={message.author.email} size={20} default="identicon"/>

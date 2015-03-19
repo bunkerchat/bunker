@@ -5,6 +5,8 @@ var tolerance = 31;
 
 var Messages = React.createClass({
 	mixins: [
+		ReactRouter.Navigation,
+		ReactRouter.State,
 		Reflux.listenTo(RoomStore, 'onStoreUpdate')
 	],
 
@@ -16,6 +18,9 @@ var Messages = React.createClass({
 		this.scroll();
 	},
 
+	//componentWillReceiveProps(){
+	//},
+
 	componentDidUpdate() {
 		this.scroll();
 	},
@@ -24,10 +29,19 @@ var Messages = React.createClass({
 		this.scroll();
 	},
 
-	scroll(){
+	scroll(forceScroll){
+		var roomId = this.getParams().roomId;
+
+		if(!forceScroll){
+			forceScroll = roomId != this._lastScrolledRoomId;
+		}
+
 		var el = this.getDOMNode();
-		if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) {
-			el.scrollTop = el.scrollHeight;
+		if (forceScroll || (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight)) {
+			setTimeout(() => {
+				el.scrollTop = el.scrollHeight;
+				this._lastScrolledRoomId = roomId;
+			});
 		}
 	},
 
