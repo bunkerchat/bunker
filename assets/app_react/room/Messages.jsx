@@ -9,36 +9,26 @@ var Messages = React.createClass({
 	],
 
 	initialize() {
-		//var el = this._el = $(this.getDOMNode()).find('ol');
-		//this.el.bind('scroll', function () {
-		//	// We're at the top
-		//	if (el.scrollTop == 0) {
-		//		var originalHeight = el.scrollHeight;
-		//		el.scrollTop = el.scrollHeight - originalHeight;
-		//	}
-		//});
+
 	},
 
 	componentDidMount() {
-		var el = $(this.getDOMNode());
-		el.scrollTop(1000);
+		this.scroll();
 	},
 
 	componentDidUpdate() {
-		var el = $(this.getDOMNode());
-		el.scrollTop(1000);
+		this.scroll();
 	},
 
 	onStoreUpdate(rooms) {
-		//var el = $(this.getDOMNode()).find('ol');
-		var el = $(this.getDOMNode());
+		this.scroll();
+	},
 
-		el.scrollTop(1000);
-
-		// We're at the bottom
-		//if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) {
-		//	el.scrollTop = el.scrollHeight;
-		//}
+	scroll(){
+		var el = this.getDOMNode();
+		if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) {
+			el.scrollTop = el.scrollHeight;
+		}
 	},
 
 	render() {
