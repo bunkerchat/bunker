@@ -272,7 +272,7 @@ section {
 	border-right-color: #faf2cc;
 }
 
-.message-input.edit-mode textarea {
+.message-input.edit-mode input {
 	background-color: lightyellow;
 }
 

@@ -1,5 +1,4 @@
-app.controller('LobbyController', function ($state,  bunkerApi, rooms, user) {
-
+app.controller('LobbyController', function ($state, bunkerApi, rooms, user) {
 	var self = this;
 
 	// TODO this shows a room after it's been left :I
@@ -33,13 +32,5 @@ app.controller('LobbyController', function ($state,  bunkerApi, rooms, user) {
 			function (error) {
 				// TODO show error
 			});
-	};
-});
-
-app.filter('online', function () {
-	return function (members) {
-		return _.filter(members, function (roomMember) {
-			return roomMember.user.connected;
-		});
 	};
 });
