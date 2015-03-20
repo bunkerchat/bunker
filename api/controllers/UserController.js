@@ -18,7 +18,7 @@ module.exports.init = function (req, res) {
 	User.findOne(req.session.userId)
 		.then(function (user) {
 			localUser = user;
-			return RoomMember.find().where({user: user.id}).populateAll();
+			return RoomMember.find({user: user.id}).populate('room');
 		})
 		.then(function (memberships) {
 
@@ -30,8 +30,8 @@ module.exports.init = function (req, res) {
 			// Get some initial messages
 			return Promise.each(rooms, function (room) {
 				return Promise.join(
-					Message.find({room: room.id}).limit(40).populateAll(),
-					RoomMember.find({room: room.id}).populateAll()
+					Message.find({room: room.id}).limit(40).populate('author'),
+					RoomMember.find({room: room.id}).populate('user')
 				)
 					.spread(function (messages, members) {
 						room.$messages = messages;
