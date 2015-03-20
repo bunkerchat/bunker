@@ -30,11 +30,11 @@ module.exports.init = function (req, res) {
 			// Get some initial messages
 			return Promise.each(rooms, function (room) {
 				return Promise.join(
-					Message.find({room: room.id}).limit(40).populate('author'),
+					//Message.find({room: room.id}).limit(40).populate('author'),
 					RoomMember.find({room: room.id}).populate('user')
 				)
-					.spread(function (messages, members) {
-						room.$messages = messages;
+					.spread(function (/*messages, */members) {
+						//room.$messages = messages;
 						room.$members = members;
 					});
 			});
