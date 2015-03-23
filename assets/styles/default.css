@@ -324,6 +324,11 @@ img.emoticon {
 	max-height: 30px;
 }
 
+.imgur-gifv {
+	position: relative;
+	width: 100%;
+}
+
 /* member list */
 
 .member-list li.list-group-item {
