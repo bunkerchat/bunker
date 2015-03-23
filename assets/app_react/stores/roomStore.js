@@ -17,6 +17,8 @@ var RoomStore = Reflux.createStore({
 	init() {
 		this.listenTo(MembershipStore, this.onMembershipStoreUpdate);
 		io.socket.on('room', this.onRoomMessage);
+		io.socket.on('user', this.onUserMessage);
+		io.socket.on('roommember', this.onRoomMemberMessage);
 	},
 
 	onMembershipStoreUpdate(memberships) {
@@ -44,10 +46,30 @@ var RoomStore = Reflux.createStore({
 	},
 
 	onRoomMessage(msg) {
+		console.log('msg: room', msg.verb, msg.data);
 		if (msg.verb == 'messaged') {
 			this.addMessage(msg.id, msg.data);
 			this.trigger(this.rooms);
 		}
+	},
+
+	onUserMessage(msg) {
+		console.log('msg: user', msg.verb, msg.data);
+
+		var updatedUser = this.decorateMember(msg.data);
+
+		// not sure if this is right
+		_.each(this.rooms, room => {
+			var roomMember = room.$members[msg.id];
+			if (!roomMember)return;
+			_.extend(roomMember.user, updatedUser);
+		});
+		this.trigger(this.rooms);
+	},
+
+	onRoomMemberMessage(msg) {
+		console.log('msg: roommember', msg.verb, msg.data);
+
 	},
 
 	decorateMessage(lastMessage, message) {
