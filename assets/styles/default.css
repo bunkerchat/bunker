@@ -285,7 +285,7 @@ section {
 	border-right-color: #faf2cc;
 }
 
-.message-input.edit-mode input {
+.message-input.edit-mode textarea {
 	background-color: lightyellow;
 }
 
@@ -322,6 +322,11 @@ section {
 
 img.emoticon {
 	max-height: 30px;
+}
+
+.imgur-gifv {
+	position: relative;
+	width: 100%;
 }
 
 /* member list */
