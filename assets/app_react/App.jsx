@@ -2,7 +2,7 @@ var RouteHandler = ReactRouter.RouteHandler;
 var Header = require('./components/Header.jsx');
 
 //var MembershipStore = require('./user/membershipStore');
-//var UserStore = require('./user/userStore');
+var CurrentUserStore = require('./stores/currentUserStore');
 //var RoomStore = require('./room/roomStore');
 
 var App =  React.createClass({

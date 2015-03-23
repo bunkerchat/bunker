@@ -12,6 +12,9 @@ var Input = React.createClass({
 			this.sendMessage();
 			this.refs.inputBox.getDOMNode().value = '';
 		}
+		else{
+			UserActions.typing(this.props.room.id);
+		}
 	},
 
 	render() {

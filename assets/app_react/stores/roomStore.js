@@ -49,8 +49,8 @@ var RoomStore = Reflux.createStore({
 		console.log('msg: room', msg.verb, msg.data);
 		if (msg.verb == 'messaged') {
 			this.addMessage(msg.id, msg.data);
-			this.trigger(this.rooms);
 		}
+		this.trigger(this.rooms);
 	},
 
 	onUserMessage(msg) {
@@ -58,12 +58,15 @@ var RoomStore = Reflux.createStore({
 
 		var updatedUser = this.decorateMember(msg.data);
 
-		// not sure if this is right
-		_.each(this.rooms, room => {
-			var roomMember = room.$members[msg.id];
-			if (!roomMember)return;
-			_.extend(roomMember.user, updatedUser);
-		});
+		if (msg.verb == 'updated') {
+			// not sure if this is right
+			_.each(this.rooms, room => {
+				var roomMember = room.$members[msg.id];
+				if (!roomMember)return;
+				_.extend(roomMember.user, updatedUser);
+			});
+		}
+
 		this.trigger(this.rooms);
 	},
 
