@@ -117,12 +117,10 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 							attachedMedia = angular.element('<div message="bunkerMessage" bunker-media="' + link + '"><img src="' + link + '"/></div>');
 						}
 						else if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
-							// Imgur gifv videos are annoying as fuck. They want you to use .jpg as the extension. -Weegee
-
-							var imgurLink = link.replace('webm', 'jpg').replace('mp4', 'jpg').replace('gifv', 'jpg');
+							var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
+							var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
 							attachedMedia = angular.element('' +
-							'<div message="bunkerMessage" bunker-media="' + link + '">' +
-							'<video class="imgur-gifv" poster="' + imgurLink + '#embed" preload="auto" autoplay muted webkit-playsinline loop>' +
+							'<div message="bunkerMessage" bunker-media="' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm +'"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
 							'</div>');
 						}
 						else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
