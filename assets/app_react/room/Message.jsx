@@ -1,5 +1,6 @@
 var Gravatar = require('./../components/Gravatar');
 var Status = require('./Status.jsx');
+var BunkerMessage = require('./BunkerMessage.jsx');
 var cx = require('classnames');
 
 var Message = React.createClass({
@@ -35,7 +36,7 @@ var Message = React.createClass({
 				</div>
 				{this.caret()}
 				<div className={messageBodyClass}>
-					<span dangerouslySetInnerHTML={{__html: message.text}}></span>
+					<BunkerMessage text={message.text}/>
 					<span className="message-info text-muted">
 						{this.edited()}
 						{this.timeStamp()}
