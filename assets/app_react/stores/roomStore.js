@@ -35,7 +35,6 @@ var RoomStore = Reflux.createStore({
 
 				io.socket.get('/roomMember', {room: room.id}, (members, JWR)=> {
 					room.$members = _(members)
-						.map(this.decorateMember)
 						.indexBy(roomMember => roomMember.user.id)
 						.value();
 
@@ -54,16 +53,14 @@ var RoomStore = Reflux.createStore({
 	},
 
 	onUserMessage(msg) {
-		console.log('msg: user', msg.verb, msg.data);
-
-		var updatedUser = this.decorateMember(msg.data);
+		console.log('msg: user', msg.id, msg.verb, msg.data);
 
 		if (msg.verb == 'updated') {
 			// not sure if this is right
 			_.each(this.rooms, room => {
 				var roomMember = room.$members[msg.id];
 				if (!roomMember)return;
-				_.extend(roomMember.user, updatedUser);
+				_.extend(roomMember.user, msg.data);
 			});
 		}
 
@@ -102,11 +99,6 @@ var RoomStore = Reflux.createStore({
 
 		room.$messages.push(message);
 		this.messageLookup[roomId][message.id] = true; // Store messages in lookup object, this allows us to check for duplicates quickly
-	},
-
-	decorateMember(member) {
-		member.lastActivity = moment(member.lastActivity);
-		return member;
 	},
 
 	// actions

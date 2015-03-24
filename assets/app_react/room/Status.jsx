@@ -2,11 +2,12 @@ var cx = require('classnames');
 
 var Status = React.createClass({
 	render() {
-		var roomMember = this.props.roomMember;;
+		var roomMember = this.props.roomMember;
+		var user = roomMember.user;
 		var statusClass = cx({
 			'status': true,
-			'here': roomMember && roomMember.user.connected && !this.away(roomMember),
-			'away': roomMember && roomMember.user.connected && this.away(roomMember)
+			'here': roomMember && user.connected && !this.away(user),
+			'away': roomMember && user.connected && this.away(user)
 		});
 
 		return (
@@ -14,8 +15,8 @@ var Status = React.createClass({
 		)
 	},
 
-	away(roomMember){
-		return !roomMember.present && roomMember.lastActivity.diff('minutes') > 5;
+	away(user){
+		return !user.present && moment().diff(moment(user.lastActivity), 'seconds') > 5;
 	}
 
 });
