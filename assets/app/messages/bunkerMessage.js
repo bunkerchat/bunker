@@ -89,15 +89,11 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 			}
 
 			function parseBoldAndItalics(text) {
-				// Parse bold
-				_.each(text.match(/(?:[^A-Za-z0-9]|^)(\*[^\*]+\*)(?:[^A-Za-z0-9]|$)/g), function (bold) {
-					text = replaceAll(text, bold, '<strong>' + bold.replace(/\*/g, '') + '</strong>');
-				});
+				// bold
+				text = text.replace(/\*(.+?)\*/g,'<strong>$1</strong>');
 
-				// Parse italics
-				_.each(text.match(/(?:[^A-Za-z0-9]|^)(_[^_]+_)(?:[^A-Za-z0-9]|$)/g), function (italics) {
-					text = replaceAll(text, italics, '<em>' + italics.replace(/_/g, '') + '</em>');
-				});
+				// italics
+				text = text.replace(/\_(.+?)\_/g,'<em>$1</em>');
 
 				return text;
 			}
