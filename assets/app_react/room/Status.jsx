@@ -16,7 +16,7 @@ var Status = React.createClass({
 	},
 
 	away(user){
-		return !user.present && moment().diff(moment(user.lastActivity), 'seconds') > 5;
+		return !user.present && moment().diff(moment(user.lastActivity), 'minutes') > 5;
 	}
 
 });
