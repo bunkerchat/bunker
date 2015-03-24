@@ -3,6 +3,8 @@ var cx = require('classnames');
 var Status = React.createClass({
 	render() {
 		var roomMember = this.props.roomMember;
+		if(!roomMember) return false;
+
 		var user = roomMember.user;
 		var statusClass = cx({
 			'status': true,

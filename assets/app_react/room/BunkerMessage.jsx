@@ -1,3 +1,5 @@
+var BunkerMedia = require('./BunkerMedia');
+
 var BunkerMessage = React.createClass({
 
 	render(){
@@ -10,12 +12,15 @@ var BunkerMessage = React.createClass({
 		//else {
 			text = this.parseBoldAndItalics(text);
 			//text = this.parseEmoticons(text);
-			//text = this.parseMedia(text);
+			text = this.parseLinks(text);
 		//}
 
 
 		return (
-			<span dangerouslySetInnerHTML={{__html: text}}></span>
+			<div>
+				<span dangerouslySetInnerHTML={{__html: text}}></span>
+				<BunkerMedia text={this.props.text}/>
+			</div>
 		)
 	},
 
@@ -29,9 +34,11 @@ var BunkerMessage = React.createClass({
 		return text;
 	},
 
-	media(text){
+	parseLinks(text){
+		return text.replace(/(https?:\/\/\S+)/gi, '<a href="$1">$1</a>');
+	},
 
-	}
+
 });
 
 function replaceAll(str, find, replace) {
