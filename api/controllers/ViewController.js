@@ -13,7 +13,7 @@ module.exports.index = function (req, res) {
 };
 module.exports.react = function (req, res) {
 	getEmoticonNamesFromDisk().then(function (emoticons) {
-		res.view('index', {
+		res.view('react', {
 			userId: req.session.userId,
 			isProduction: sails.config.environment === 'production',
 			emoticons: emoticons
