@@ -6,7 +6,7 @@
 		</div>
 		<ul class="nav navbar-nav hidden-xs">
 			<li ui-sref-active="active" ng-repeat="membership in header.memberships">
-				<a ui-sref="room({roomId: membership.room.id})" title="{{membership.room.topic}}">{{membership.room.name}}</a>
+				<a ui-sref="chat({roomId: membership.room.id})" title="{{membership.room.topic}}">{{membership.room.name}}</a>
 				<span class="badge" ng-show="membership.room.$unreadMessages > 0">{{membership.room.$unreadMessages}}</span>
 			</li>
 		</ul>

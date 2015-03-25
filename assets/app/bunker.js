@@ -22,9 +22,14 @@ window.app = angular.module('bunker', [
 				templateUrl: '/assets/app/lobby/lobby.html',
 				controller: 'LobbyController as lobby'
 			})
-			.state('room', {
-				url: '/rooms/{roomId}'
+			.state('chat', {
+				url: '/rooms/{roomId}',
+				templateUrl: '/assets/app/chat/chat.html',
+				controller: 'ChatController as chat'
 			})
+			//.state('room', {
+			//	url: '/rooms/{roomId}'
+			//})
 			.state('roomHistory', {
 				url: '/rooms/{roomId}/history?date&message',
 				templateUrl: '/assets/app/room/roomHistory.html',

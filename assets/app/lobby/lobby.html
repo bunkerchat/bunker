@@ -31,7 +31,7 @@
 		<tbody>
 		<tr ng-repeat="room in lobby.rooms | orderBy:'name'">
 			<td>
-				<a ui-sref="room({roomId: room.id})">{{room.name}}</a>
+				<a ui-sref="chat({roomId: room.id})">{{room.name}}</a>
 			</td>
 			<td>{{room.topic}}</td>
 			<td>{{room.$onlineMemberCount}} / {{room.$memberCount}}</td>

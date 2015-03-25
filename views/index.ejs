@@ -52,6 +52,7 @@
 	<script src="/assets/app/header/HeaderController.js"></script>
 	<script src="/assets/app/header/emoticonMenu.js"></script>
 	<script src="/assets/app/lobby/LobbyController.js"></script>
+	<script src="/assets/app/chat/ChatController.js"></script>
 	<script src="/assets/app/room/RoomController.js"></script>
 	<script src="/assets/app/room/RoomHistoryController.js"></script>
 	<script src="/assets/app/room/RoomsController.js"></script>
@@ -67,12 +68,6 @@
 
 <div ng-include="'/assets/app/header/header.html'"></div>
 <div ui-view></div>
-<!--<div ng-include="'/assets/app/lobby/lobby.html'" ng-controller="LobbyController as lobby"></div>-->
-<div ng-controller="RoomsController as rooms" bunker-dropzone>
-	<div roomid="{{membership.room.id}}" ng-repeat="membership in rooms.memberships">
-	</div>
-</div>
-<div input-box></div>
 
 <script>
 	window.userId = '<%= userId %>';

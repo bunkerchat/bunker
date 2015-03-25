@@ -8,7 +8,6 @@ app.controller('RoomController', function ($rootScope, $stateParams, $scope, use
 	this.now = function () {
 		return moment().format('YYYY-MM-DD');
 	};
-
 	this.mentionUser = function (userNick) {
 		$rootScope.$broadcast('inputText', '@' + userNick);
 	};
