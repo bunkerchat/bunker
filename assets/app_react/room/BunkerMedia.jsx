@@ -1,25 +1,39 @@
 var BunkerMedia = React.createClass({
+
+	getInitialState: function() {
+		return {visible: this.props.message.$visible};
+	},
+
+	toggle(){
+		this.props.message.$visible = !this.props.message.$visible;
+		this.setState({visible: this.props.message.$visible})
+	},
+
 	render() {
-		var text = this.props.text;
+		var text = this.props.message.text;
 
 		//make sure there is a link of some kind
-		if (!/https?:\/\/\S+/gi.test(text)) return false;
+		var match = text.match(/https?:\/\/\S+/gi);
+		if (!match) return false;
 
 		var content = this.images(text)
-				|| this.imgur(text)
-			;
+				|| this.imgur(text);
+
+		var panelBody = (
+			<div className="panel-body">
+					{content}
+			</div>
+		);
 
 		return (
 			<div className="panel panel-default">
-				<div className="panel-heading">
-					"quote"
+				<div className="panel-heading pointer" onClick={this.toggle}>
+					{match[0]}
 					<div className="pull-right">
 						Click to 'open'
 					</div>
 				</div>
-				<div className="panel-body">
-				{content}
-				</div>
+				{this.state.visible ? panelBody : false}
 			</div>
 		)
 	},
@@ -32,7 +46,7 @@ var BunkerMedia = React.createClass({
 	},
 
 	imgur(text) {
-		var match = text.match(/https?:\/\/\S+.imgur.com\/\w*\.(gifv|webm|mp4)$/i);
+		var match = text.match(/https?:\/\/\S+.(gifv|webm|mp4)$/i);
 		if (!match)return false;
 
 		var imgurLinkMpeg = match[0].replace('webm', 'mp4').replace('gifv', 'mp4');

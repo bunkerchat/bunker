@@ -75,6 +75,9 @@ var RoomStore = Reflux.createStore({
 	decorateMessage(lastMessage, message) {
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
 		message.createdAt = moment(message.createdAt);
+
+		// TODO: userstore setting
+		message.$visible = true;
 	},
 
 	decorateMessages(messages) {
@@ -98,7 +101,9 @@ var RoomStore = Reflux.createStore({
 		this.decorateMessage(lastMessage, message);
 
 		room.$messages.push(message);
-		this.messageLookup[roomId][message.id] = true; // Store messages in lookup object, this allows us to check for duplicates quickly
+
+		// Store messages in lookup object, this allows us to check for duplicates quickly
+		this.messageLookup[roomId][message.id] = message;
 	},
 
 	// actions
@@ -109,7 +114,7 @@ var RoomStore = Reflux.createStore({
 				throw new Error(JWR);
 			}
 		});
-	}
+	},
 });
 
 module.exports = RoomStore;

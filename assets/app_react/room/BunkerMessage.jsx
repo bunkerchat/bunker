@@ -1,9 +1,9 @@
-var BunkerMedia = require('./BunkerMedia');
+var BunkerMedia = require('./BunkerMedia.jsx');
 
 var BunkerMessage = React.createClass({
 
 	render(){
-		var text = this.props.text;
+		var text = this.props.message.text;
 
 		//if (text.match(/&#10;/g)) {
 		//
@@ -19,7 +19,7 @@ var BunkerMessage = React.createClass({
 		return (
 			<div>
 				<span dangerouslySetInnerHTML={{__html: text}}></span>
-				<BunkerMedia text={this.props.text}/>
+				<BunkerMedia message={this.props.message}/>
 			</div>
 		)
 	},
@@ -36,13 +36,9 @@ var BunkerMessage = React.createClass({
 
 	parseLinks(text){
 		return text.replace(/(https?:\/\/\S+)/gi, '<a href="$1">$1</a>');
-	},
+	}
 
 
 });
-
-function replaceAll(str, find, replace) {
-	return str.split(find).join(replace);
-}
 
 module.exports = BunkerMessage;

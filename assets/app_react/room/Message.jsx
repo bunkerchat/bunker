@@ -36,7 +36,7 @@ var Message = React.createClass({
 				</div>
 				{this.caret()}
 				<div className={messageBodyClass}>
-					<BunkerMessage text={message.text}/>
+					<BunkerMessage message={message}/>
 					<span className="message-info text-muted">
 						{this.edited()}
 						{this.timeStamp()}
@@ -94,7 +94,9 @@ var Message = React.createClass({
 		return (
 			<span>
 				<a className="text-muted">
-					<small>{message.createdAt.format('l LTS')}</small>
+					<small title={message.createdAt.format('l LTS')}>
+						{message.createdAt.fromNow()}
+					</small>
 				</a>
 			</span>
 		)
