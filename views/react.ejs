@@ -17,6 +17,7 @@
 <script>
 	window.userId = '<%= userId %>';
 	window.isProduction = <%= isProduction %>;
+	window.emoticons = <%- JSON.stringify(emoticons) %>;
 </script>
 <script src="/assets/vendor/jquery/dist/jquery.js"></script>
 <script src="/assets/vendor/react/react.js"></script>
