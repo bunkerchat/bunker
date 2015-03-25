@@ -1,12 +1,14 @@
 var uuid = require('node-uuid');
 var UserActions = require('../user/userActions');
 var MembershipStore = require('./membershipStore');
+var SettingsStore = require('./settingsStore');
 
 var RoomStore = Reflux.createStore({
 	listenables: [UserActions],
 
 	rooms: {},
 	messageLookup: {},
+	showImages: false,
 
 	getState() {
 		return {
@@ -75,9 +77,7 @@ var RoomStore = Reflux.createStore({
 	decorateMessage(lastMessage, message) {
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
 		message.createdAt = moment(message.createdAt);
-
-		// TODO: userstore setting
-		message.$visible = true;
+		message.$visible = SettingsStore.settings.showImages;
 	},
 
 	decorateMessages(messages) {
