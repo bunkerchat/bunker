@@ -13,8 +13,9 @@ var BunkerMedia = React.createClass({
 		var text = this.props.message.text;
 
 		//make sure there is a link of some kind
-		var match = text.match(/https?:\/\/\S+/gi);
-		if (!match) return false;
+		var link = text.match(/https?:\/\/\S+/gi);
+		if (!link) return false;
+		link = link[0]; // go from regex to value
 
 		var content = this.images(text)
 				|| this.imgur(text);
@@ -28,9 +29,9 @@ var BunkerMedia = React.createClass({
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading pointer" onClick={this.toggle}>
-					{match[0]}
+					{link}
 					<div className="pull-right">
-						Click to 'open'
+						Click to {this.state.visible ? 'close' : 'open'}
 					</div>
 				</div>
 				{this.state.visible ? panelBody : false}
