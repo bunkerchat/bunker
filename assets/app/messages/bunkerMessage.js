@@ -90,10 +90,10 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 
 			function parseBoldAndItalics(text) {
 				// bold
-				text = text.replace(/\*(.+?)\*/g,'<strong>$1</strong>');
+				text = text.replace(/(?:\s+|^)\*([\w\n]*?)\*(?:\s+|$)/g,' <strong>$1</strong> ');
 
 				// italics
-				text = text.replace(/\_(.+?)\_/g,'<em>$1</em>');
+				text = text.replace(/(?:\s+|^)_([\w\n]+?)_(?:\s+|$)/g,' <em>$1</em> ');
 
 				return text;
 			}
