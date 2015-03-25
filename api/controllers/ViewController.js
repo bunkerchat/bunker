@@ -11,6 +11,7 @@ module.exports.index = function (req, res) {
 		});
 	})
 };
+
 module.exports.react = function (req, res) {
 	getEmoticonNamesFromDisk().then(function (emoticons) {
 		res.view('react', {
@@ -20,10 +21,14 @@ module.exports.react = function (req, res) {
 		});
 	})
 };
+
 module.exports.login = function (req, res) {
 	res.view('login');
 };
 
+module.exports.login = function (req, res) {
+	res.view('login');
+};
 
 function getEmoticonNamesFromDisk() {
 	return fs.readdirAsync(path.join(__dirname, '..', '..','assets', 'images', 'emoticons'));
