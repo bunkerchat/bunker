@@ -23,13 +23,16 @@ window.app = angular.module('bunker', [
 				controller: 'LobbyController as lobby'
 			})
 			.state('chat', {
-				url: '/rooms/{roomId}',
+				abstract: true,
+				url: '/rooms',
 				templateUrl: '/assets/app/chat/chat.html',
 				controller: 'ChatController as chat'
 			})
-			//.state('room', {
-			//	url: '/rooms/{roomId}'
-			//})
+			.state('chat.room', {
+				// Having this be a child state stops the state from reloading view
+				// The 'chat' state/controller/view will be in use
+				url: '/{roomId}'
+			})
 			.state('roomHistory', {
 				url: '/rooms/{roomId}/history?date&message',
 				templateUrl: '/assets/app/room/roomHistory.html',
