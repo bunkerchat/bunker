@@ -21,17 +21,23 @@ module.exports.messageRooms = function (rooms, message) {
 	});
 };
 
-module.exports.messageRoomsWithUser = function (userId, systemMessage) {
-	RoomMember.find().where({user: userId}).populate('room').exec(function (error, roomMembers) {
+module.exports.messageRoomsWithUser = function (spec) {
+
+	var query = {user: spec.userId};
+	if (spec.roomId) {
+		query.room = spec.roomId;
+	}
+
+	RoomMember.find().where(query).populate('room').exec(function (error, roomMembers) {
 		if (error) return false;
 		if (!roomMembers) return true;
 
 		_(roomMembers).pluck('room').each(function (room) {
 			// If we were provided a message, send it down to affected rooms
-			if (systemMessage && serverWarmup.done) {
+			if (spec.systemMessage && serverWarmup.done) {
 				Room.message(room.id, {
 					id: uuid.v4(),
-					text: systemMessage,
+					text: spec.systemMessage,
 					room: room.id,
 					createdAt: new Date().toISOString()
 				});

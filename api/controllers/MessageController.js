@@ -50,6 +50,18 @@ exports.create = function (req, res) {
 		}
 		res.ok();
 	}
+	else if (/^\/help/i.test(text)) {
+
+		return helpService.getHelp(text)
+			.then(function(text){
+				RoomService.messageRoomsWithUser({
+					userId: userId,
+					systemMessage: "<pre>" + text + "</pre>",
+					roomId: roomId});
+				res.ok();
+
+			});
+	}
 	else if (/^\/(up|down)\s+/i.test(text)) { // Karma system, unfinished
 
 		var nickMatches = text.match(/^\/(?:up|down)\s+@?(\w+)/i);
