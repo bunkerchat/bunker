@@ -1,0 +1,23 @@
+O HAI I'm helping you. If you ever need help, just run the /help command. This will
+invoke private help messages that only you will see.
+
+Bunker has some commands that you can run from the chat message box.
+Type a slash and then the command name, like this:
+
+	/&lt;command&gt;
+
+COMMANDS:
+	help		shows this message
+	nick		change your nickname
+	roll		roll a die
+	me		make your avatar do something
+	topic		change the topic of the room
+
+TOPICS:
+	gravatar	how to change your gravatar
+	images		how to upload an image to the room
+
+To get help on a specific command or topic type '/help [command|topic]'.  Examples:
+
+	/help nick
+	/help images
