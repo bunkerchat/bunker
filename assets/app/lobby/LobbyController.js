@@ -19,7 +19,7 @@ app.controller('LobbyController', function ($state, bunkerApi, rooms, user) {
 
 	this.joinRoom = function (roomGuid) {
 		rooms.join(roomGuid).then(function (room) {
-			$state.go('room', {roomId: room.id});
+			$state.go('chat.room', {roomId: room.id});
 		});
 	};
 
@@ -27,7 +27,7 @@ app.controller('LobbyController', function ($state, bunkerApi, rooms, user) {
 		var newRoom = new bunkerApi.room({name: roomName});
 		newRoom.$save(
 			function (room) {
-				$state.go('room', {roomId: room.id});
+				$state.go('chat.room', {roomId: room.id});
 			},
 			function (error) {
 				// TODO show error

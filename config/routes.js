@@ -42,7 +42,9 @@ module.exports.routes = {
 	'/room/:id/messages': 'RoomController.messages',
 	'/room/:id/history': 'RoomController.history',
 	'/room/:id/media': 'RoomController.media',
-	'/message/emoticons': 'MessageController.emoticonCounts'
+	'/message/emoticons': 'MessageController.emoticonCounts',
+
+	'get /api2/init': 'UserController.init'
 
 	/***************************************************************************
 	 *                                                                          *

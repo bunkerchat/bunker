@@ -7,6 +7,47 @@
 
 'use strict';
 var moment = require('moment');
+var Promise = require('bluebird');
+
+// A connecting client will call this endpoint. It should subscribe them to all relevant data and
+// return all rooms and user data necessary to run the application.
+module.exports.init = function (req, res) {
+
+	var localUser;
+
+	User.findOne(req.session.userId)
+		.then(function (user) {
+			localUser = user;
+			return RoomMember.find({user: user.id}).populate('room');
+		})
+		.then(function (memberships) {
+
+			var rooms = _.pluck(memberships, 'room');
+
+			// Setup subscriptions
+			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
+
+			// Get some initial messages
+			return Promise.each(rooms, function (room) {
+				return Promise.join(
+					//Message.find({room: room.id}).limit(40).populate('author'),
+					RoomMember.find({room: room.id}).populate('user')
+				)
+					.spread(function (/*messages, */members) {
+						//room.$messages = messages;
+						room.$members = members;
+					});
+			});
+		})
+		.then(function (rooms) {
+			return {
+				user: localUser,
+				rooms: rooms
+			};
+		})
+		.then(res.ok)
+		.catch(res.serverError);
+};
 
 // Activity update route. This will respond to PUT /user/current/activity
 // This route only allows updates to present and typingIn.
