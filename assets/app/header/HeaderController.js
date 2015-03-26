@@ -17,8 +17,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	this.showHelp = function () {
 		$modal.open({
 			templateUrl: '/assets/app/help/help.html',
-			controller: 'HelpController',
-			size: 'lg'
+			controller: 'HelpController'
 		});
 	};
 

@@ -1,0 +1,15 @@
+Help you? Nobody can help you. KIDDING JEEZ.
+
+NAME
+	/me - make your avatar pretend to "do" something in the room
+
+SYNOPSIS
+	/me &lt;string&gt;
+
+EXAMPLE
+	/me gently cries himself to sleep.
+
+REMARKS
+	Use this command to pretend that your user is doing something in the room.
+	Refer to this informative article on pretending for more information:
+	http://en.wikipedia.org/wiki/Role-playing

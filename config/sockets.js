@@ -139,7 +139,9 @@ module.exports.sockets = {
 					userService.pendingTasks[user.id] = setTimeout(function () {
 						User.publishUpdate(user.id, user);
 						if (!user.connected) {
-							RoomService.messageRoomsWithUser(user.id, user.nick + ' has gone offline');
+							RoomService.messageRoomsWithUser({
+								userId: user.id,
+								systemMessage: user.nick + ' has gone offline'});
 						}
 						userService.pendingTasks[user.id] = null; // clear
 

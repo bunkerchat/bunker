@@ -5,7 +5,7 @@ body {
 	overflow:hidden;
 }
 
-a, [ng-click] {
+a, [ng-click], .pointer {
 	cursor: pointer;
 }
 
