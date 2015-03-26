@@ -54,10 +54,7 @@ exports.create = function (req, res) {
 
 		return helpService.getHelp(text)
 			.then(function(text){
-				RoomService.messageRoomsWithUser({
-					userId: userId,
-					systemMessage: "<pre>" + text + "</pre>",
-					roomId: roomId});
+				RoomService.messageUserInRoom(userId, roomId, text);
 				res.ok();
 
 			});

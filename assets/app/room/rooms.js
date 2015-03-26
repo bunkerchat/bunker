@@ -69,6 +69,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $statePara
 		}
 
 		if (!rooms[roomId]) throw new Error('Received message from a room we are not a member of!');
+
 		if (messageLookup[roomId][message.id]) return; // Message already exists!
 		if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
 
@@ -97,7 +98,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $statePara
 	}
 
 	function clearOldMessages(roomId) {
-		if(!roomId || !rooms[roomId]) return;
+		if (!roomId || !rooms[roomId]) return;
 
 		if (rooms[roomId].$messages.length < 40) return;
 
@@ -110,15 +111,7 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $statePara
 		});
 	}
 
-	// room change updates
-	$rootScope.$on('roomIdChanged', function (evt, newId, oldId) {
-		clearOldMessages(oldId);
-	});
-
-	// Handle incoming messages
-	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		if (resource.model != 'room') return;
-
+	function handleRoomMessage(resource) {
 		if (!resource.data.edited) {
 			addMessage(resource.id, resource.data);
 		}
@@ -129,6 +122,28 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $statePara
 		// if user is not in this room, remove history so when we tab switch its not slow
 		if ($stateParams.roomId != resource.id) {
 			clearOldMessages(resource.id);
+		}
+	}
+
+	// message for a single user in a room (not seen by others)
+	function handleRoomMemberMessage(resource){
+		if (resource.data.user === user.current.id && resource.data.room === $stateParams.roomId){
+			addMessage(resource.data.room, resource.data);
+		}
+
+	}
+
+	// room change updates
+	$rootScope.$on('roomIdChanged', function (evt, newId, oldId) {
+		clearOldMessages(oldId);
+	});
+
+	// Handle incoming messages
+	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
+		if (resource.model === 'room') {
+			handleRoomMessage(resource);
+		} else if (resource.model === 'roommember') {
+			handleRoomMemberMessage(resource);
 		}
 	});
 

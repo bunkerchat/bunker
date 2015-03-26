@@ -30,7 +30,7 @@ module.exports = {
 	readHelpFile: function (fileName) {
 		return fs.readFileAsync(helpDir + fileName, 'utf-8')
 			.then(function (data) {
-				return data;
+				return "<pre>" + data + "</pre>"; // ew, markup on server
 			});
 	}
 };

@@ -47,3 +47,18 @@ module.exports.messageRoomsWithUser = function (spec) {
 		return true;
 	});
 };
+
+module.exports.messageUserInRoom = function(userId, roomId, message){
+	RoomMember.find().where({room: roomId, user: userId}).exec(function(error, roomMembers){
+		// should only be one
+		if (roomMembers.length === 0) return;
+		var roomMember = roomMembers[0];
+		RoomMember.message(roomMember.id, {
+			id: uuid.v4(),
+			text: message,
+			room: roomMember.room,
+			user: roomMember.user,
+			createdAt: new Date().toISOString()
+		});
+	});
+};
