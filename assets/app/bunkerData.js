@@ -5,7 +5,14 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		user: null,
 		rooms: [],
 		$resolved: false,
-		$promise: null
+		$promise: null,
+		joinRoom: function () {
+			// TODO not finished
+			io.socket.get('/api2/room/join', function (room) {
+				room.$messages = room.$messages || [];
+				bunkerData.rooms.push(room);
+			});
+		}
 	};
 
 	// Initial state and send us some starter data
@@ -27,11 +34,24 @@ app.factory('bunkerData', function ($rootScope, $q) {
 	// Handle events
 	io.socket.on('room', function (evt) {
 		switch (evt.verb) {
-			case 'messaged': {
+			case 'messaged':
+			{
 				var room = _.find(bunkerData.rooms, {id: evt.data.room.id});
-				if(!room) return; // TODO we're not using this yet
+
+				if (!room) return; // TODO better handling of this scenario...
+				if (!room.$messages) room.$messages = [];
+
 				room.$messages.push(evt.data);
 				$rootScope.$digest();
+				break;
+			}
+		}
+	});
+
+	io.socket.on('roommember', function (evt) {
+		switch (evt.verb) {
+			case 'updated':
+			{
 				break;
 			}
 		}

@@ -1,14 +1,18 @@
-app.controller('ChatController', function ($rootScope, $scope, $stateParams, $state, user) {
+app.controller('ChatController', function ($rootScope, $scope, $stateParams, $state, user, bunkerData) {
 	var self = this;
 
-	$scope.$watch(function () {return user.memberships; }, function () {
-		self.rooms = _.pluck(user.memberships, 'room');
-		selectRoom();
-	}, true);
+	this.rooms = bunkerData.rooms;
 
+	bunkerData.$promise.then(selectRoom);
 	$rootScope.$on('roomIdChanged', selectRoom);
 
 	function selectRoom() {
+
+		if (!_.any(self.rooms, {id: $rootScope.roomId})) {
+			// Functionality to allow users to join a room by entering it's URL
+			self.rooms.push({id: $rootScope.roomId})
+		}
+
 		_.each(self.rooms, function (room) {
 			room.$selected = room.id == $rootScope.roomId;
 		});

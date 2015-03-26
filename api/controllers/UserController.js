@@ -15,26 +15,27 @@ module.exports.init = function (req, res) {
 
 	var localUser;
 
-	User.findOne(req.session.userId)
-		.then(function (user) {
-			localUser = user;
-			return RoomMember.find({user: user.id}).populate('room');
-		})
-		.then(function (memberships) {
+	Promise.join(
+		User.findOne(req.session.userId),
+		RoomMember.find({user: req.session.userId}).populate('room')
+	)
+		.spread(function (user, memberships) {
 
+			localUser = user;
 			var rooms = _.pluck(memberships, 'room');
 
 			// Setup subscriptions
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 
 			// Get some initial messages
-			return Promise.each(rooms, function (room) {
+			return Promise.all(rooms, function (room) {
 				return Promise.join(
-					//Message.find({room: room.id}).limit(40).populate('author'),
+					Message.find({room: room.id}).limit(40).populate('author'),
 					RoomMember.find({room: room.id}).populate('user')
 				)
-					.spread(function (/*messages, */members) {
-						//room.$messages = messages;
+					.spread(function (messages, members) {
+						RoomMember.subscribe(req, members, ['update', 'destroy', 'message']);
+						room.$messages = messages;
 						room.$members = members;
 					});
 			});
