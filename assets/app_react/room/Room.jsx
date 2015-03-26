@@ -1,7 +1,7 @@
 var RoomStore = require('./../stores/roomStore');
 var Messages = require('./Messages.jsx');
 var InputBox = require('./InputBox.jsx');
-var MemberList = require('./MemberList.jsx');
+var MemberList = require('./Memberlist.jsx');
 
 var Room = React.createClass({
 	mixins: [
