@@ -1,4 +1,4 @@
-app.directive('roomid', function ($rootScope, $stateParams, user, rooms) {
+app.directive('roomid', function ($rootScope, $stateParams, user, rooms, bunkerData) {
 	return {
 		scope: {
 			roomId: '@roomid'
@@ -8,7 +8,13 @@ app.directive('roomid', function ($rootScope, $stateParams, user, rooms) {
 
 			$scope.userService = user;
 			$scope.$stateParams = $stateParams;
-			$scope.current = rooms.get($scope.roomId);
+
+			bunkerData.$promise.then(function () {
+				$scope.current = _.find(bunkerData.rooms, {id: $scope.roomId});
+				$scope.memberLookup = _.indexBy($scope.current.$members, function (roomMember) {
+					return roomMember.user.id;
+				});
+			});
 
 			$scope.now = function () {
 				return moment().format('YYYY-MM-DD');
@@ -17,17 +23,8 @@ app.directive('roomid', function ($rootScope, $stateParams, user, rooms) {
 				$rootScope.$broadcast('inputText', '@' + userNick);
 			};
 			$scope.loadPreviousMessages = function () {
-				return rooms.loadMessages($scope.current.id, $scope.current.$messages.length);
+				return bunkerData.loadMessages($scope.current, $scope.current.$messages.length);
 			};
-
-			// Watch for updates to the room members
-			// Only applies to users who join the room for the first time or leave it entirely
-			$scope.$watch('current.$members', function (newVal, oldVal) {
-				if (!oldVal) return;
-				$scope.memberLookup = _.indexBy($scope.current.$members, function (roomMember) {
-					return roomMember.user.id;
-				});
-			}, true);
 		}
 	}
 });

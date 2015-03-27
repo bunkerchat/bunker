@@ -28,15 +28,17 @@ module.exports.init = function (req, res) {
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 
 			// Get some initial messages
-			return Promise.all(rooms, function (room) {
+			return Promise.map(rooms, function (room) {
 				return Promise.join(
 					Message.find({room: room.id}).limit(40).populate('author'),
 					RoomMember.find({room: room.id}).populate('user')
 				)
 					.spread(function (messages, members) {
 						RoomMember.subscribe(req, members, ['update', 'destroy', 'message']);
+
 						room.$messages = messages;
 						room.$members = members;
+						return room;
 					});
 			});
 		})
