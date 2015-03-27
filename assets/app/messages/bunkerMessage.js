@@ -31,7 +31,7 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 
 			// since we are passing in a bunker message OR room, run the watch on the room topic
 			scope.$watch('bunkerMessage.text', textWatch);
-			scope.$watch('bunkerMessage.topic', textWatch);
+			scope.$watch('bunkerMessage.topic', textWatch, true);
 
 			function textWatch(text) {
 				if (!text) return;
