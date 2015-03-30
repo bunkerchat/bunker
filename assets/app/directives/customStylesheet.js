@@ -1,20 +1,18 @@
 app.directive('customStylesheet', function (user, $window, $timeout) {
 	return {
 		link: function (scope) {
-			scope.stylesheet = 'default';
+			scope.loadMinimal = false;
+
 			scope.$watch(function () {
 				return user.settings;
 			}, function () {
 				if (!user.settings.$resolved) return;
-				var originalStylesheet = scope.stylesheet;
-				scope.stylesheet = user.settings.minimalView ? 'minimal' : 'default';
+				scope.loadMinimal = user.settings.minimalView;
 
-				// If we're changing stylesheets, trigger a window resize
-				if (originalStylesheet != scope.stylesheet) {
-					$timeout(function () {
-						angular.element($window).resize();
-					}, 500);
-				}
+				// if we change stylesheets, trigger a resize
+				$timeout(function () {
+					angular.element($window).resize();
+				}, 500);
 			}, true);
 		}
 	};
