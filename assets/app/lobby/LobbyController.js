@@ -3,6 +3,12 @@ app.controller('LobbyController', function ($state, bunkerApi, bunkerData, rooms
 
 	this.bunkerData = bunkerData;
 
+	bunkerData.$promise.then(function () {
+		_.each(bunkerData.rooms, function (room) {
+			console.log(room.name, room.members)
+		})
+	});
+
 	this.joinRoom = function (roomGuid) {
 		rooms.join(roomGuid).then(function (room) {
 			$state.go('chat.room', {roomId: room.id});
