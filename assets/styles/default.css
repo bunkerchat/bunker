@@ -488,6 +488,7 @@ img.emoticon {
 		bottom: 40px;
 		left: 0px;
 		right: 0px;
+		-webkit-overflow-scrolling: touch;
 	}
 
 	.message-author {
