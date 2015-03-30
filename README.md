@@ -13,6 +13,7 @@ Install [mongodb](http://www.mongodb.org/downloads)
 
 
 Howto: Rebase your fork
+======
 
 Open Terminal, navigate to the solution folder and run the following
 
@@ -21,3 +22,11 @@ Open Terminal, navigate to the solution folder and run the following
 ```git fetch upstream```
 
 ```git rebase upstream/master```
+
+
+Howto: Use Browser-Sync
+======
+
+Type in Terminal
+
+```browser-sync start --files "assets/styles/**" --proxy localhost:9002 --logLevel debug```

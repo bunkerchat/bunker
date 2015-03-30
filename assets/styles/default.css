@@ -482,7 +482,12 @@ img.emoticon {
 @media (max-width: 480px) {
 
 	.message-list {
-		margin-bottom: 47px;
+		overflow-y: scroll;
+		position: fixed;
+		top: 40px;
+		bottom: 40px;
+		left: 0px;
+		right: 0px;
 	}
 
 	.message-author {
