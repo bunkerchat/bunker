@@ -52,7 +52,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, rooms) {
 
 			function scroll(waitTime) {
 				$timeout(function () {
-					el.scrollTop = el.scrollHeight;
+					elem.scrollTop(el.scrollHeight);
 				}, waitTime || 0);
 			}
 		}
