@@ -7,9 +7,9 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		$resolved: false,
 		$promise: null,
 
-		loadMessages: function(room, skip) {
-			return $q(function(resolve) {
-				io.socket.get('/room/' + room.id + '/messages?skip=' + skip || 0, function(messages) {
+		loadMessages: function (room, skip) {
+			return $q(function (resolve) {
+				io.socket.get('/room/' + room.id + '/messages?skip=' + skip || 0, function (messages) {
 					room.$messages = room.$messages.concat(messages);
 					decorateMessages(room);
 					resolve();
@@ -61,37 +61,52 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		});
 	}
 
-	// Handle events
-	io.socket.on('room', function (evt) {
+	function handleRoomEvent(evt) {
+		var room = _.find(bunkerData.rooms, {id: evt.id});
+		if (!room) throw new Error('Received a message from a room we did not know about: ' + JSON.stringify(evt));
+
 		switch (evt.verb) {
 			case 'messaged':
-			{
-				var room = _.find(bunkerData.rooms, {id: evt.data.room.id});
-
-				if (!room) return; // TODO better handling of this scenario...
 				if (!room.$messages) room.$messages = [];
 				addMessage(room, evt.data);
-
-				$rootScope.$digest();
 				break;
-			}
+			case 'updated':
+				_.assign(room, evt.data);
+				break;
 		}
-	});
+	}
 
-	io.socket.on('roommember', function (evt) {
-		var roomMembers =_(bunkerData.rooms).flatten('$members').filter({id: evt.id}).value();
+	function handleUserEvent(evt) {
+		var users = _(bunkerData.rooms).flatten('$members').pluck('user').filter({id: evt.id}).value();
+
 		switch (evt.verb) {
 			case 'updated':
-			{
-				_.each(roomMembers, function(member) {
-					// TODO assign more things
-					if(evt.data.user) {
-						_.assign(member.user, evt.data.user);
-					}
+				_.each(users, function (user) {
+					_.assign(user, evt.data);
 				});
 				break;
-			}
 		}
+	}
+
+	// Handle events
+	var listeners = [
+		{
+			name: 'room',
+			handler: handleRoomEvent
+		},
+		{
+			name: 'user',
+			handler: handleUserEvent
+		}
+	];
+
+	_.each(listeners, function (listener) {
+		io.socket.on(listener.name, function (evt) {
+			// Ensure we have data back before responding to events
+			bunkerData.$promise.then(function () {
+				listener.handler(evt);
+			});
+		});
 	});
 
 	return bunkerData;

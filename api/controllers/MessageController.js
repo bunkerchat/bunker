@@ -42,12 +42,8 @@ exports.create = function (req, res) {
 					.then(function(roomMembers) {
 						var rooms = _.pluck(roomMembers, 'room');
 						RoomService.messageRooms(rooms, currentNick + ' changed their handle to ' + user.nick);
-						_.each(_.pluck(roomMembers, 'id'), function(roomMemberId) {
-							RoomMember.publishUpdate(roomMemberId, { user: {nick: user.nick}});
-						});
 					})
 					.catch(function (error) {
-						console.error(error);
 						// TODO error handling
 					});
 			});
@@ -60,7 +56,6 @@ exports.create = function (req, res) {
 			.then(function(text){
 				RoomService.messageUserInRoom(userId, roomId, text);
 				res.ok();
-
 			});
 	}
 	else if (/^\/(up|down)\s+/i.test(text)) { // Karma system, unfinished
