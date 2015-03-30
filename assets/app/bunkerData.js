@@ -79,9 +79,16 @@ app.factory('bunkerData', function ($rootScope, $q) {
 	});
 
 	io.socket.on('roommember', function (evt) {
+		var roomMembers =_(bunkerData.rooms).flatten('$members').filter({id: evt.id}).value();
 		switch (evt.verb) {
 			case 'updated':
 			{
+				_.each(roomMembers, function(member) {
+					// TODO assign more things
+					if(evt.data.user) {
+						_.assign(member.user, evt.data.user);
+					}
+				});
 				break;
 			}
 		}

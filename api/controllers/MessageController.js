@@ -37,13 +37,17 @@ exports.create = function (req, res) {
 				user.save() // save the model with the updated nick
 					.then(function () {
 						User.publishUpdate(userId, {nick: user.nick});
-
-						RoomMember.find().where({user: userId}).exec(function (err, roomMembers) {
-							var rooms = _.pluck(roomMembers, 'room');
-							RoomService.messageRooms(rooms, currentNick + ' changed their handle to ' + user.nick);
+						return RoomMember.find({user: userId});
+					})
+					.then(function(roomMembers) {
+						var rooms = _.pluck(roomMembers, 'room');
+						RoomService.messageRooms(rooms, currentNick + ' changed their handle to ' + user.nick);
+						_.each(_.pluck(roomMembers, 'id'), function(roomMemberId) {
+							RoomMember.publishUpdate(roomMemberId, { user: {nick: user.nick}});
 						});
 					})
-					.catch(function () {
+					.catch(function (error) {
+						console.error(error);
 						// TODO error handling
 					});
 			});
