@@ -22,7 +22,7 @@ module.exports.init = function (req, res) {
 		.spread(function (user, memberships) {
 
 			localUser = user;
-			var rooms = _.pluck(memberships, 'room');
+			var rooms = _(memberships).pluck('room').compact().value();
 
 			// Setup subscriptions
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
@@ -34,7 +34,8 @@ module.exports.init = function (req, res) {
 					RoomMember.find({room: room.id}).populate('user')
 				)
 					.spread(function (messages, members) {
-						RoomMember.subscribe(req, members, ['update', 'destroy', 'message']);
+						RoomMember.subscribe(req, members, ['update', 'destroy']);
+						User.subscribe(req, _.pluck(members, 'user'), 'update');
 
 						room.$messages = messages;
 						room.$members = members;
@@ -92,6 +93,7 @@ module.exports.connect = function (req, res) {
 			return user.save();
 		})
 		.then(function (user) {
+			user.connected = true; // Ensure this goes out
 			User.publishUpdate(user.id, user);
 
 			// Send connecting message, if not previously connected or reconnecting
@@ -108,7 +110,8 @@ module.exports.connect = function (req, res) {
 			}
 
 			// ARS wasn't seeing a data object, so return an empty one?
-			res.ok({});
+			return {};
 		})
+		.then(res.ok)
 		.catch(res.serverError);
 };

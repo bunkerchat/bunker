@@ -55,7 +55,7 @@ window.app = angular.module('bunker', [
 			'default': 'identicon'
 		};
 	})
-	.run(function ($rootScope, $document, user, $window) {
+	.run(function ($rootScope, $document, user, $window, bunkerListener) {
 		// html5 visibility api instead of win.focus or win.blur
 		$document.on("visibilitychange", function () {
 			$rootScope.$broadcast(document.hidden ? 'visibilityHide' : 'visibilityShow');
@@ -88,4 +88,6 @@ window.app = angular.module('bunker', [
 			$rootScope.roomId = newMatch[1];
 			$rootScope.$broadcast('roomIdChanged', newMatch[1], oldMatch[1]);
 		});
+
+		bunkerListener.init();
 	});

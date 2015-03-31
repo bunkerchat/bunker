@@ -1,4 +1,4 @@
-app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emoticons, rooms) {
+app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emoticons, bunkerData) {
 
 	var messageEditWindowSeconds = 30;
 
@@ -102,7 +102,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 						scope.$digest();
 					}
 					else if (searchState === searchStates.NICK) {
-						var currentRoom = rooms.get($rootScope.roomId);
+						var currentRoom = bunkerData.getRoom($rootScope.roomId);
 						var members = _.pluck(currentRoom.$members, 'user');
 						var matchingNames = _.filter(currentRoom && members, function (item) {
 							return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();

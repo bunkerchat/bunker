@@ -1,98 +1,107 @@
 app.factory('bunkerData', function ($rootScope, $q) {
 
-	// In the beginning...
+	var roomLookup = []; // For fast room lookup
 	var bunkerData = {
 		user: null,
 		rooms: [],
 		$resolved: false,
 		$promise: null,
 
-		loadMessages: function(room, skip) {
-			return $q(function(resolve) {
-				io.socket.get('/room/' + room.id + '/messages?skip=' + skip || 0, function(messages) {
+		init: function () {
+			bunkerData.$resolved = false;
+			return $q(function (resolve) {
+
+				io.socket.get('/api2/init', function (initialData) {
+
+					// Clear rooms array
+					while(bunkerData.rooms.length > 0) {
+						bunkerData.rooms.pop();
+					}
+
+					_.each(initialData.rooms, function (room) {
+
+						var messages = room.$messages;
+						room.$messages = [];
+						_.each(messages, function (message) {
+							bunkerData.addMessage(room, message);
+						});
+
+						bunkerData.rooms.push(room);
+					});
+
+					_.assign(bunkerData, _.omit(initialData, 'rooms')); // Merge in the remaining data
+					roomLookup = _.indexBy(bunkerData.rooms, 'id');
+					bunkerData.$resolved = true;
+
+					resolve(bunkerData);
+					$rootScope.$digest();
+				});
+			});
+		},
+		loadMessages: function (room, skip) {
+			return $q(function (resolve) {
+				io.socket.get('/room/' + room.id + '/messages?skip=' + skip || 0, function (messages) {
 					room.$messages = room.$messages.concat(messages);
 					decorateMessages(room);
-					resolve();
+					resolve(room);
 				});
-			})
-		},
-		joinRoom: function () {
-			// TODO not finished
-			io.socket.get('/api2/room/join', function (room) {
-				room.$messages = room.$messages || [];
-				bunkerData.rooms.push(room);
 			});
+		},
+		clearOldMessages: function(id) {
+			if (!id || !roomLookup[id] || roomLookup[id].$messages.length < 40) return;
+
+			// gets all but the last 60 messages
+			var messagesToRemove = _.initial(roomLookup[id].$messages, 40);
+			roomLookup[id].$messages = _.difference(roomLookup[id].$messages, messagesToRemove);
+		},
+		getRoom: function(id) {
+			return roomLookup[id];
+		},
+		createRoom: function (roomName) {
+			return $q(function (resolve) {
+				io.socket.post('/room', {name: roomName}, function (room) {
+					bunkerData.init().then(function () {
+						resolve(room);
+					});
+				});
+			});
+		},
+		joinRoom: function (roomId) {
+			return $q(function (resolve) {
+				io.socket.post('/api2/room/' + roomId + '/join', function (room) {
+					bunkerData.init().then(function () {
+						resolve(room);
+					});
+				});
+			});
+		},
+		leaveRoom: function (roomId) {
+			return $q(function (resolve) {
+				io.socket.put('/api2/room/' + roomId + '/leave', function () {
+					bunkerData.init().then(function () {
+						resolve();
+					});
+				});
+			});
+		},
+		addMessage: function addMessage(room, message) {
+			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
+			room.$messages.push(message);
 		}
 	};
-
-	// Initial state and send us some starter data
-	bunkerData.$promise = $q(function (resolve) {
-		io.socket.get('/api2/init', function (initialData) {
-
-			_.each(initialData.rooms, function (room) {
-				var messages = room.$messages;
-				room.$messages = [];
-				_.each(messages, function (message) {
-					addMessage(room, message);
-				});
-
-				bunkerData.rooms.push(room);
-			});
-
-			_.assign(bunkerData, _.omit(initialData, 'rooms')); // Merge in the remaining data
-
-			bunkerData.$resolved = true;
-			resolve();
-			$rootScope.$digest();
-		});
-	});
-
-	function addMessage(room, message) {
-		var lastMessage = _.last(room.$messages);
-		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
-		room.$messages.push(message);
-	}
 
 	function decorateMessages(room) {
 		room.$messages = _.sortBy(room.$messages, 'createdAt'); // Resort messages
 		_.each(room.$messages, function (message, index) {
 			var lastMessage = index > 0 && index < room.$messages.length ? room.$messages[index - 1] : null;
-			message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+			message.$firstInSeries = isFirstInSeries(lastMessage, message);
 		});
 	}
 
-	// Handle events
-	io.socket.on('room', function (evt) {
-		switch (evt.verb) {
-			case 'messaged':
-			{
-				var room = _.find(bunkerData.rooms, {id: evt.data.room.id});
+	function isFirstInSeries(lastMessage, message) {
+		return !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+	}
 
-				if (!room) return; // TODO better handling of this scenario...
-				if (!room.$messages) room.$messages = [];
-				addMessage(room, evt.data);
-
-				$rootScope.$digest();
-				break;
-			}
-		}
-	});
-
-	io.socket.on('roommember', function (evt) {
-		var roomMembers =_(bunkerData.rooms).flatten('$members').filter({id: evt.id}).value();
-		switch (evt.verb) {
-			case 'updated':
-			{
-				_.each(roomMembers, function(member) {
-					// TODO assign more things
-					if(evt.data.user) {
-						_.assign(member.user, evt.data.user);
-					}
-				});
-				break;
-			}
-		}
-	});
-
+	bunkerData.$promise = bunkerData.init();
 	return bunkerData;
 });

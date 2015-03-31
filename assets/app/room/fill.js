@@ -11,9 +11,7 @@ app.directive('fill', function ($window, $timeout) {
 				marginBottom = angular.element('.message-input').height();
 
 				if ($window.innerWidth <= 480) {
-					el.css({
-						height: 'auto'
-					});
+					el.removeAttr("style");
 				}
 				else {
 					var fillHeight = Math.ceil($window.innerHeight - el.offset().top - marginBottom - 1);
@@ -21,6 +19,7 @@ app.directive('fill', function ($window, $timeout) {
 						height: fillHeight + 'px',
 						margin: 0
 					});
+
 				}
 			});
 

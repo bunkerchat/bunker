@@ -1,4 +1,4 @@
-app.directive('messageLogScroll', function ($timeout, $rootScope, rooms) {
+app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 	return {
 		scope: {
 			messageId: '@messageLogScroll',
@@ -25,7 +25,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, rooms) {
 					// if the user is only watching new messages, trim the message log
 					clearMessageCounter++;
 					if (clearMessageCounter > 5) {
-						rooms.clearOldMessages($rootScope.roomId);
+						bunkerData.clearOldMessages($rootScope.roomId);
 						clearMessageCounter = 0;
 					}
 				} else {
@@ -50,9 +50,13 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, rooms) {
 				scroll();
 			});
 
+			$rootScope.$on('youtube.player.ready', function ($event, player) {
+				scroll();
+			});
+
 			function scroll(waitTime) {
 				$timeout(function () {
-					el.scrollTop = el.scrollHeight;
+					elem.scrollTop(el.scrollHeight);
 				}, waitTime || 0);
 			}
 		}

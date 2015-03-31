@@ -1,6 +1,11 @@
-app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, user, rooms) {
+app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, user, bunkerData) {
 	var self = this;
 	this.user = user.current;
+
+	bunkerData.$promise.then(function() {
+		self.rooms = bunkerData.rooms;
+	});
+
 	this.memberships = user.memberships;
 	this.settings = user.settings;
 	this.showOptions = function () {
@@ -10,8 +15,10 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	this.changeSetting = user.toggleSetting;
 
 	this.leaveRoom = function () {
-		rooms.leave($rootScope.roomId);
-		$state.go('lobby');
+		bunkerData.leaveRoom($rootScope.roomId)
+			.then(function () {
+				$state.go('lobby');
+			});
 	};
 
 	this.showHelp = function () {
@@ -27,7 +34,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 			return;
 		}
 
-		var otherRoom = _(self.memberships).pluck('room').find({id: resource.id});
+		var otherRoom = _.find(bunkerData.rooms, {id: resource.id});
 		if (otherRoom) {
 			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
 		}
@@ -35,10 +42,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 
 	$rootScope.$on('roomIdChanged', function () {
 		if ($rootScope.roomId) {
-			var currentRoom = _(self.memberships).pluck('room').find({id: $rootScope.roomId});
-			if (currentRoom) {
-				currentRoom.$unreadMessages = 0;
-			}
+			_.find(bunkerData.rooms, {id: $rootScope.roomId}).$unreadMessages = 0;
 		}
 	});
 });
