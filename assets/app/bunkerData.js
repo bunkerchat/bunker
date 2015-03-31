@@ -52,9 +52,8 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		joinRoom: function (roomId) {
 			return $q(function (resolve) {
 				io.socket.post('/api2/room/' + roomId + '/join', function () {
-					io.socket.get('/api2/room/' + roomId, function (room) {
-						bunkerData.rooms.push(room);
-						resolve();
+					bunkerData.init().then(function () {
+						resolve(room);
 					});
 				});
 			});
