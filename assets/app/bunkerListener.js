@@ -9,7 +9,7 @@ app.factory('bunkerListener', function (bunkerData) {
 				var message = evt.data;
 				if (message.edited) {
 					var otherMessage = _.find(room.$messages, {id: message.id});
-					if(otherMessage) {
+					if (otherMessage) {
 						_.assign(otherMessage, message);
 					}
 				}
@@ -25,7 +25,7 @@ app.factory('bunkerListener', function (bunkerData) {
 	}
 
 	function handleUserEvent(evt) {
-		var users = _(bunkerData.rooms).flatten('$members').pluck('user').filter({id: evt.id}).value();
+		var users = _(bunkerData.rooms).pluck('$members').flatten().pluck('user').filter({id: evt.id}).value();
 
 		switch (evt.verb) {
 			case 'updated':
