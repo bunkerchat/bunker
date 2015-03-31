@@ -14,7 +14,8 @@ module.exports = {
 			model: 'Room'
 		},
 		playSoundOnMessage:{
-
+			type: 'boolean',
+			defaultsTo: false
 		},
 		showMessageDesktopNotification: {
 			type: 'boolean',

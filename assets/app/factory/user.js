@@ -1,4 +1,4 @@
-app.factory('user', function (bunkerApi, $timeout) {
+app.factory('user', function (bunkerApi, $timeout, $notification) {
 
 	var typingTimeout;
 	var userId = window.userId;
@@ -9,10 +9,22 @@ app.factory('user', function (bunkerApi, $timeout) {
 	function toggleSetting(setting) {
 		settings[setting] = !settings[setting];
 		settings.$save();
+
+		checkForDesktopNotifications();
 	}
 
 	function saveSettings() {
 		settings.$save();
+	}
+
+	function checkForDesktopNotifications(){
+		var hasRoomNotifications = _.any(memberships, function (membership) {
+			return membership.showMessageDesktopNotification;
+		});
+
+		if(hasRoomNotifications || settings.desktopMentionNotifications){
+			$notification.requestPermission();
+		}
 	}
 
 	function broadcastTyping(roomId) {
