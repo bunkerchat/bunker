@@ -30,7 +30,7 @@ module.exports.init = function (req, res) {
 			// Get some initial messages
 			return Promise.map(rooms, function (room) {
 				return Promise.join(
-					Message.find({room: room.id}).limit(40).populate('author'),
+					Message.find({room: room.id}).sort('createdAt DESC').limit(40).populate('author'),
 					RoomMember.find({room: room.id}).populate('user')
 				)
 					.spread(function (messages, members) {

@@ -19,13 +19,7 @@ app.factory('bunkerData', function ($rootScope, $q) {
 					}
 
 					_.each(initialData.rooms, function (room) {
-
-						var messages = room.$messages;
-						room.$messages = [];
-						_.each(messages, function (message) {
-							bunkerData.addMessage(room, message);
-						});
-
+						decorateMessages(room);
 						bunkerData.rooms.push(room);
 					});
 
@@ -41,7 +35,9 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		loadMessages: function (room, skip) {
 			return $q(function (resolve) {
 				io.socket.get('/room/' + room.id + '/messages?skip=' + skip || 0, function (messages) {
-					room.$messages = room.$messages.concat(messages);
+					_.eachRight(messages, function(message) {
+						room.$messages.unshift(message);
+					});
 					decorateMessages(room);
 					resolve(room);
 				});
@@ -49,10 +45,7 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		},
 		clearOldMessages: function(id) {
 			if (!id || !roomLookup[id] || roomLookup[id].$messages.length < 40) return;
-
-			// gets all but the last 60 messages
-			var messagesToRemove = _.initial(roomLookup[id].$messages, 40);
-			roomLookup[id].$messages = _.difference(roomLookup[id].$messages, messagesToRemove);
+			roomLookup[id].$messages = _.takeRight(roomLookup[id].$messages, 40);
 		},
 		getRoom: function(id) {
 			return roomLookup[id];
@@ -84,7 +77,7 @@ app.factory('bunkerData', function ($rootScope, $q) {
 				});
 			});
 		},
-		addMessage: function addMessage(room, message) {
+		addMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			room.$messages.push(message);
 		}
