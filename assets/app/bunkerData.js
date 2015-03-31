@@ -1,6 +1,7 @@
 app.factory('bunkerData', function ($rootScope, $q) {
 
 	// In the beginning...
+	var roomLookup = [];
 	var bunkerData = {
 		user: null,
 		rooms: [],
@@ -17,16 +18,17 @@ app.factory('bunkerData', function ($rootScope, $q) {
 						var messages = room.$messages;
 						room.$messages = [];
 						_.each(messages, function (message) {
-							addMessage(room, message);
+							bunkerData.addMessage(room, message);
 						});
 
 						bunkerData.rooms.push(room);
 					});
 
 					_.assign(bunkerData, _.omit(initialData, 'rooms')); // Merge in the remaining data
-
+					roomLookup = _.indexBy(bunkerData.rooms, 'id');
 					bunkerData.$resolved = true;
-					resolve();
+
+					resolve(bunkerData);
 					$rootScope.$digest();
 				});
 			});
@@ -36,9 +38,19 @@ app.factory('bunkerData', function ($rootScope, $q) {
 				io.socket.get('/room/' + room.id + '/messages?skip=' + skip || 0, function (messages) {
 					room.$messages = room.$messages.concat(messages);
 					decorateMessages(room);
-					resolve();
+					resolve(room);
 				});
 			});
+		},
+		clearOldMessages: function(id) {
+			if (!id || !roomLookup[id] || roomLookup[id].$messages.length < 40) return;
+
+			// gets all but the last 60 messages
+			var messagesToRemove = _.initial(roomLookup[id].$messages, 40);
+			roomLookup[id].$messages = _.difference(roomLookup[id].$messages, messagesToRemove);
+		},
+		getRoom: function(id) {
+			return roomLookup[id];
 		},
 		createRoom: function (roomName) {
 			return $q(function (resolve) {
@@ -47,7 +59,7 @@ app.factory('bunkerData', function ($rootScope, $q) {
 						resolve(room);
 					});
 				});
-			})
+			});
 		},
 		joinRoom: function (roomId) {
 			return $q(function (resolve) {
@@ -61,73 +73,29 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		leaveRoom: function (roomId) {
 			return $q(function (resolve) {
 				io.socket.put('/api2/room/' + roomId + '/leave', function () {
-					resolve();
+					bunkerData.init().then(function () {
+						resolve();
+					});
 				});
 			});
+		},
+		addMessage: function addMessage(room, message) {
+			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
+			room.$messages.push(message);
 		}
 	};
-
-	function addMessage(room, message) {
-		var lastMessage = _.last(room.$messages);
-		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
-		room.$messages.push(message);
-	}
 
 	function decorateMessages(room) {
 		room.$messages = _.sortBy(room.$messages, 'createdAt'); // Resort messages
 		_.each(room.$messages, function (message, index) {
 			var lastMessage = index > 0 && index < room.$messages.length ? room.$messages[index - 1] : null;
-			message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+			message.$firstInSeries = isFirstInSeries(lastMessage, message);
 		});
 	}
 
-	function handleRoomEvent(evt) {
-		var room = _.find(bunkerData.rooms, {id: evt.id});
-		if (!room) throw new Error('Received a message from a room we did not know about: ' + JSON.stringify(evt));
-
-		switch (evt.verb) {
-			case 'messaged':
-				if (!room.$messages) room.$messages = [];
-				addMessage(room, evt.data);
-				break;
-			case 'updated':
-				_.assign(room, evt.data);
-				break;
-		}
+	function isFirstInSeries(lastMessage, message) {
+		return !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
 	}
-
-	function handleUserEvent(evt) {
-		var users = _(bunkerData.rooms).flatten('$members').pluck('user').filter({id: evt.id}).value();
-
-		switch (evt.verb) {
-			case 'updated':
-				_.each(users, function (user) {
-					_.assign(user, evt.data);
-				});
-				break;
-		}
-	}
-
-	// Handle events
-	var listeners = [
-		{
-			name: 'room',
-			handler: handleRoomEvent
-		},
-		{
-			name: 'user',
-			handler: handleUserEvent
-		}
-	];
-
-	_.each(listeners, function (listener) {
-		io.socket.on(listener.name.toLowerCase(), function (evt) {
-			// Ensure we have data back before responding to events
-			bunkerData.$promise.then(function () {
-				listener.handler(evt);
-			});
-		});
-	});
 
 	bunkerData.$promise = bunkerData.init();
 	return bunkerData;
