@@ -1,20 +1,12 @@
 app.controller('LobbyController', function ($state, bunkerApi, bunkerData, rooms, user) {
 	var self = this;
 
-	// TODO this shows a room after it's been left :I
-	user.memberships.$promise.then(function (memberships) {
-		self.rooms = [];
-		// Get all known rooms and populate with member counts
+	this.bunkerData = bunkerData;
 
-		_(memberships).pluck('room').each(function (room) {
-			bunkerApi.roomMember.query({room: room.id}, function (roomMembers) {
-				room.$memberCount = roomMembers.length;
-				room.$onlineMemberCount = _.filter(roomMembers, function (roomMember) {
-					return roomMember.user.connected;
-				}).length;
-				self.rooms.push(room);
-			});
-		});
+	bunkerData.$promise.then(function () {
+		_.each(bunkerData.rooms, function (room) {
+			console.log(room.name, room.members)
+		})
 	});
 
 	this.joinRoom = function (roomGuid) {
@@ -29,4 +21,14 @@ app.controller('LobbyController', function ($state, bunkerApi, bunkerData, rooms
 				$state.go('chat.room', {roomId: room.id});
 			});
 	};
+});
+
+app.filter('connectedUsersCount', function () {
+	return function(members){
+		if(!members) return 0;
+
+		return members.filter(function (member) {
+			return member.connected;
+		}).length;
+	}
 });

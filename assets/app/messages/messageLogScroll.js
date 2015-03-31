@@ -50,9 +50,13 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, rooms) {
 				scroll();
 			});
 
+			$rootScope.$on('youtube.player.ready', function ($event, player) {
+				scroll();
+			});
+
 			function scroll(waitTime) {
 				$timeout(function () {
-					el.scrollTop = el.scrollHeight;
+					elem.scrollTop(el.scrollHeight);
 				}, waitTime || 0);
 			}
 		}
