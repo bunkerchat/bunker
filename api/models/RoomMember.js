@@ -13,6 +13,13 @@ module.exports = {
 		room: {
 			model: 'Room'
 		},
+		playSoundOnMessage:{
+
+		},
+		showMessageDesktopNotification: {
+			type: 'boolean',
+			defaultsTo: false
+		},
 		role: {
 			type: 'string',
 			enum: ['member', 'moderator', 'administrator'],

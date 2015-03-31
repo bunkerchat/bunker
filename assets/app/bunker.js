@@ -8,7 +8,8 @@ window.app = angular.module('bunker', [
 	'youtube-embed',
 	'angular.filter',
 	'hljs',
-	'plangular' /* soundcloud embed */
+	'plangular', /* soundcloud embed */
+	'notification'
 ])
 	.config(function (sailsResourceProvider, $stateProvider, $urlRouterProvider) {
 		sailsResourceProvider.configuration = {

@@ -33,7 +33,8 @@
     "highlightjs": "~8.4.0",
     "react": "~0.12.2",
     "reflux": "~0.2.6",
-    "react-router": "~0.12.4"
+    "react-router": "~0.12.4",
+    "angular-notification": "~1.0.1"
   },
   "resolutions": {
     "angular": "~1.3.0",

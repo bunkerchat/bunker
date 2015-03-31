@@ -27,6 +27,14 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: false
 		},
+		playSoundOnMention: {
+			type:'boolean',
+			defaultsTo:false
+		},
+		desktopMentionNotifications:{
+			type: 'boolean',
+			defaultsTo: false
+		},
 		user: {
 			model: 'User'
 		}
