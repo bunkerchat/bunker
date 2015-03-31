@@ -58,6 +58,7 @@ module.exports.policies = {
 		'join': 'isLoggedIn',
 		'join2': 'isLoggedIn',
 		'leave': 'isLoggedIn',
+		'leave2': 'isLoggedIn',
 		'messages': 'isLoggedIn',
 		'history': 'isLoggedIn',
 		'media': 'isLoggedIn'

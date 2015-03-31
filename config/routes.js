@@ -47,7 +47,8 @@ module.exports.routes = {
 
 	'get /api2/init': 'UserController.init',
 	'get /api2/room/:id': 'RoomController.findOne2',
-	'post /api2/room/:id/join': 'RoomController.join2'
+	'post /api2/room/:id/join': 'RoomController.join2',
+	'put /api2/room/:id/leave': 'RoomController.leave2'
 
 	/***************************************************************************
 	 *                                                                          *

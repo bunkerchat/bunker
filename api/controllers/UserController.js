@@ -22,7 +22,7 @@ module.exports.init = function (req, res) {
 		.spread(function (user, memberships) {
 
 			localUser = user;
-			var rooms = _.pluck(memberships, 'room');
+			var rooms = _(memberships).pluck('room').compact().value();
 
 			// Setup subscriptions
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);

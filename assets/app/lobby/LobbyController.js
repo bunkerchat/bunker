@@ -1,4 +1,4 @@
-app.controller('LobbyController', function ($state, bunkerApi, rooms, user) {
+app.controller('LobbyController', function ($state, bunkerApi, bunkerData, rooms, user) {
 	var self = this;
 
 	// TODO this shows a room after it's been left :I
@@ -24,13 +24,9 @@ app.controller('LobbyController', function ($state, bunkerApi, rooms, user) {
 	};
 
 	this.createRoom = function (roomName) {
-		var newRoom = new bunkerApi.room({name: roomName});
-		newRoom.$save(
-			function (room) {
+		bunkerData.createRoom(roomName)
+			.then(function (room) {
 				$state.go('chat.room', {roomId: room.id});
-			},
-			function (error) {
-				// TODO show error
 			});
 	};
 });

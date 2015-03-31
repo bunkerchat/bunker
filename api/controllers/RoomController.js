@@ -25,7 +25,7 @@ module.exports.findOne = function (req, res) {
 	});
 };
 
-module.exports.findOne2 = function(req, res) {
+module.exports.findOne2 = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	Promise.all([
 		Room.findOne(pk),
@@ -185,6 +185,38 @@ module.exports.leave = function (req, res) {
 			});
 		});
 	});
+};
+
+module.exports.leave2 = function (req, res) {
+
+	var pk = actionUtil.requirePk(req);
+	var userId = req.session.userId;
+
+	RoomMember.count({room: pk, user: userId})
+		.then(function (existingRoomMember) {
+
+			if (existingRoomMember == 0) {
+				return null;
+			}
+
+			return RoomMember.destroy({room: pk, user: userId})
+				.then(function () {
+					return [
+						User.findOne(userId),
+						RoomMember.find({room: pk}).populate('user')
+					];
+				})
+				.spread(function (user, roomMembers) {
+					Room.publishUpdate(pk, {$members: roomMembers});
+
+					RoomService.messageRoom(pk, user.nick + ' has left the room');
+
+					Room.unsubscribe(req, pk, ['update', 'destroy', 'message']);
+					// TODO unsubscribe all members? probably not... need to figure out which ones
+				});
+		})
+		.then(res.ok)
+		.catch(res.serverError);
 };
 
 // GET /room/:id/messages
