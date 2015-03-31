@@ -1,6 +1,6 @@
-app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emoticons, bunkerData) {
+app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerData) {
 
-	var messageEditWindowSeconds = 30;
+	var messageEditWindowSeconds = 60;
 
 	var searchStates = {
 		NONE: 'none',
@@ -34,10 +34,10 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 			scope.sendMessage = function () {
 				if (!scope.messageText) return;
 
-				var newMessage = new bunkerApi.message({
+				var newMessage = {
 					room: $rootScope.roomId,
 					text: scope.messageText
-				});
+				};
 
 				var chosenMessage = scope.selectedMessageIndex > -1 ? scope.submittedMessages[scope.selectedMessageIndex] : {createdAt: null};
 				var historicMessage = {text: scope.messageText, createdAt: Date.now(), history: ''};
@@ -46,10 +46,11 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 					|| previousText == scope.messageText
 					|| chosenMessage.edited
 					|| !datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
-					newMessage.$save(function (result) {
-						// TODO use the result of this? currently this object is just forgotten about
-						historicMessage.id = result.id;
-					});
+
+					bunkerData.createMessage(newMessage.room, newMessage.text)
+						.then(function(result) {
+							historicMessage.id = result.id;
+						});
 
 					// Save message for up/down keys to retrieve
 					scope.submittedMessages.unshift(historicMessage);
@@ -58,7 +59,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 					newMessage.id = scope.submittedMessages[scope.selectedMessageIndex].id;
 					newMessage.edited = true;
 					chosenMessage.edited = true;
-					newMessage.$save();
+					bunkerData.editMessage(newMessage);
 				}
 				// Reset all the things
 				scope.selectedMessageIndex = -1;
@@ -182,7 +183,6 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 				var elapsed = Math.abs(date1 - date2) / 1000;
 				return elapsed < seconds;
 			}
-
 
 		}
 	};

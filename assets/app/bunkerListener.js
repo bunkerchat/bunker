@@ -6,8 +6,17 @@ app.factory('bunkerListener', function (bunkerData) {
 
 		switch (evt.verb) {
 			case 'messaged':
-				if (!room.$messages) room.$messages = [];
-				bunkerData.addMessage(room, evt.data);
+				var message = evt.data;
+				if (message.edited) {
+					var otherMessage = _.find(room.$messages, {id: message.id});
+					if(otherMessage) {
+						_.assign(otherMessage, message);
+					}
+				}
+				else {
+					if (!room.$messages) room.$messages = [];
+					bunkerData.addMessage(room, evt.data);
+				}
 				break;
 			case 'updated':
 				_.assign(room, evt.data);
@@ -40,7 +49,7 @@ app.factory('bunkerListener', function (bunkerData) {
 	];
 
 	return {
-		init: function() {
+		init: function () {
 			_.each(listeners, function (listener) {
 				io.socket.on(listener.name.toLowerCase(), function (evt) {
 					// Ensure we have data back before responding to events

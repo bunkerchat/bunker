@@ -39,7 +39,7 @@ exports.create = function (req, res) {
 						User.publishUpdate(userId, {nick: user.nick});
 						return RoomMember.find({user: userId});
 					})
-					.then(function(roomMembers) {
+					.then(function (roomMembers) {
 						var rooms = _.pluck(roomMembers, 'room');
 						RoomService.messageRooms(rooms, currentNick + ' changed their handle to ' + user.nick);
 					})
@@ -53,7 +53,7 @@ exports.create = function (req, res) {
 	else if (/^\/help/i.test(text)) {
 
 		return helpService.getHelp(text)
-			.then(function(text){
+			.then(function (text) {
 				RoomService.messageUserInRoom(userId, roomId, text);
 				res.ok();
 			});
@@ -179,31 +179,34 @@ exports.create = function (req, res) {
 // PUT /message/:id
 // Update a message (the edit functionality)
 exports.update = function (req, res) {
-	var messageEditWindowSeconds = 30;
+
+	var messageEditWindowSeconds = 60;
 	var pk = actionUtil.requirePk(req);
 
-	Message.findOne(pk).exec(function (error, message) {
-		if (error) return res.serverError(error);
-		if (!message) return res.notFound();
+	Message.findOne(pk)
+		.then(function (message) {
 
-		// TODO use moment here
-		var acceptableEditDate = new Date();
-		acceptableEditDate.setSeconds(acceptableEditDate.getSeconds() - messageEditWindowSeconds);
-		if (message.createdAt < acceptableEditDate) {
-			return;
-		}
+			if (moment(message.createdAt).isBefore(moment().subtract(messageEditWindowSeconds, 'seconds'))) {
+				throw new Error('Edit window has past');
+			}
+			else if (message.edited) {
+				throw new Error('Only one edit is allowed');
+			}
 
-		var updates = { // Only certain things are editable
-			text: req.param('text'),
-			history: req.param('history'),
-			edited: true
-		};
+			var updates = { // Only certain things are editable
+				text: req.param('text'),
+				history: req.param('history'),
+				edited: true
+			};
 
-		Message.update(pk, updates).exec(function (error) {
-			if (error) return res.serverError(error);
-			broadcastMessage(message);
-		});
-	});
+			return Message.update(pk, updates);
+		})
+		.then(function () {
+			return Message.findOne(pk).populate('author');
+		})
+		.then(broadcastMessage)
+		.then(res.ok)
+		.catch(res.serverError);
 };
 
 // GET /message/emoticons

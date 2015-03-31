@@ -32,6 +32,20 @@ app.factory('bunkerData', function ($rootScope, $q) {
 				});
 			});
 		},
+		createMessage: function(roomId, text) {
+			return $q(function(resolve) {
+				io.socket.post('/message', { room: roomId, text: text }, function(message) {
+					resolve(message);
+				});
+			});
+		},
+		editMessage: function(message) {
+			return $q(function(resolve) {
+				io.socket.put('/message/' + message.id, message, function(message) {
+					resolve(message);
+				});
+			});
+		},
 		loadMessages: function (room, skip) {
 			return $q(function (resolve) {
 				io.socket.get('/room/' + room.id + '/messages?skip=' + skip || 0, function (messages) {
