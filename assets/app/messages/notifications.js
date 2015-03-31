@@ -20,7 +20,7 @@ app.factory('notifications', function (user, $notification, $timeout, $log) {
 		// since there are a total of 1 + (n of rooms) possible notifications, each one of those
 		// needs to be tracked separately depending on the set user settings
 
-		notification = $notification(room.name, {
+		notification = $notification(room.name + " - bunker", {
 			body: message.text,
 			//dir: 'auto',
 			//lang: 'en',
@@ -29,8 +29,6 @@ app.factory('notifications', function (user, $notification, $timeout, $log) {
 			delay: 30000 // in ms
 			//focusWindowOnClick: true // focus the window on click
 		});
-
-
 
 		notification.$on('click', function () {
 			console.log('click');

@@ -45,8 +45,9 @@ app.factory('user', function (bunkerApi, $timeout, $notification) {
 		}
 	}
 
+	// check message for nick or @all
 	function checkForNickRegex(){
-		return new RegExp(user.nick + '\\b', 'i');
+		return new RegExp(user.nick + '\\b|@[Aa]ll', 'i');
 	}
 
 	return {
