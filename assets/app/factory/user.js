@@ -45,12 +45,17 @@ app.factory('user', function (bunkerApi, $timeout, $notification) {
 		}
 	}
 
+	function checkForNickRegex(){
+		return new RegExp(user.nick + '(?:[^@\\w]|$)', 'i')
+	}
+
 	return {
 		current: user,
 		memberships: memberships,
 		settings: settings,
 		toggleSetting: toggleSetting,
 		saveSettings: saveSettings,
-		broadcastTyping: broadcastTyping
+		broadcastTyping: broadcastTyping,
+		checkForNickRegex: checkForNickRegex
 	};
 });

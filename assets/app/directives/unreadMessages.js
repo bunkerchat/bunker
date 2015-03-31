@@ -23,7 +23,7 @@ app.directive('unreadMessages', function ($rootScope, user) {
 				resource.data.author == user.current.id) return;
 
 			unreadMessages++;
-			if (new RegExp(user.current.nick + '(?:[^@\\w]|$)', 'i').test(resource.data.text)) {
+			if (user.checkForNickRegex().test(resource.data.text)) {
 				// TODO this probably won't work if user changes their nick
 				mentioned = true;
 			}
