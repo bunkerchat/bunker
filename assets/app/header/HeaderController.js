@@ -1,4 +1,4 @@
-app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, user, rooms) {
+app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, user, rooms, bunkerData) {
 	var self = this;
 	this.user = user.current;
 	this.memberships = user.memberships;
@@ -10,8 +10,10 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	this.changeSetting = user.toggleSetting;
 
 	this.leaveRoom = function () {
-		rooms.leave($rootScope.roomId);
-		$state.go('lobby');
+		bunkerData.leaveRoom($rootScope.roomId)
+			.then(function () {
+				$state.go('lobby');
+			});
 	};
 
 	this.showHelp = function () {

@@ -45,7 +45,9 @@ module.exports.routes = {
 	'/room/:id/media': 'RoomController.media',
 	'/message/emoticons': 'MessageController.emoticonCounts',
 
-	'get /api2/init': 'UserController.init'
+	'get /api2/init': 'UserController.init',
+	'get /api2/room/:id': 'RoomController.findOne2',
+	'post /api2/room/:id/join': 'RoomController.join2'
 
 	/***************************************************************************
 	 *                                                                          *

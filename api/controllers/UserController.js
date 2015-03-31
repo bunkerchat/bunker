@@ -34,7 +34,7 @@ module.exports.init = function (req, res) {
 					RoomMember.find({room: room.id}).populate('user')
 				)
 					.spread(function (messages, members) {
-						RoomMember.subscribe(req, members, ['update', 'destroy', 'message']);
+						RoomMember.subscribe(req, members, ['update', 'destroy']);
 						User.subscribe(req, _.pluck(members, 'user'), 'update');
 
 						room.$messages = messages;

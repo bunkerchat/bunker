@@ -11,9 +11,14 @@ app.directive('roomid', function ($rootScope, $stateParams, user, rooms, bunkerD
 
 			bunkerData.$promise.then(function () {
 				$scope.current = _.find(bunkerData.rooms, {id: $scope.roomId});
-				$scope.memberLookup = _.indexBy($scope.current.$members, function (roomMember) {
-					return roomMember.user.id;
-				});
+
+				// Setup this watch once we have data
+				$scope.$watch(function() { return JSON.stringify($scope.current.$members); }, function () {
+					if (!$scope.current.$members) return;
+					$scope.memberLookup = _.indexBy($scope.current.$members, function (roomMember) {
+						return roomMember.user.id;
+					});
+				}, true);
 			});
 
 			$scope.now = function () {

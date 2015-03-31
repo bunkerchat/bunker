@@ -16,12 +16,22 @@ app.factory('bunkerData', function ($rootScope, $q) {
 				});
 			})
 		},
-		joinRoom: function () {
-			// TODO not finished
-			io.socket.get('/api2/room/join', function (room) {
-				room.$messages = room.$messages || [];
-				bunkerData.rooms.push(room);
-			});
+		joinRoom: function (roomId) {
+			return $q(function(resolve) {
+				io.socket.post('/api2/room/' + roomId + '/join', function () {
+					io.socket.get('/api2/room/' + roomId, function(room) {
+						bunkerData.rooms.push(room);
+						resolve();
+					});
+				});
+			})
+		},
+		leaveRoom: function(roomId) {
+			return $q(function(resolve) {
+				io.socket.put('/room/' + roomId + '/leave', function() {
+					resolve();
+				});
+			})
 		}
 	};
 
@@ -101,7 +111,7 @@ app.factory('bunkerData', function ($rootScope, $q) {
 	];
 
 	_.each(listeners, function (listener) {
-		io.socket.on(listener.name, function (evt) {
+		io.socket.on(listener.name.toLowerCase(), function (evt) {
 			// Ensure we have data back before responding to events
 			bunkerData.$promise.then(function () {
 				listener.handler(evt);

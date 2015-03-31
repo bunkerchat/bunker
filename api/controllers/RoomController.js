@@ -12,6 +12,7 @@
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 var ObjectId = require('mongodb').ObjectID;
+var Promise = require('bluebird');
 
 // GET /room/:id
 // Overridden from sails blueprint to disable subscribing
@@ -24,6 +25,21 @@ module.exports.findOne = function (req, res) {
 	});
 };
 
+module.exports.findOne2 = function(req, res) {
+	var pk = actionUtil.requirePk(req);
+	Promise.all([
+		Room.findOne(pk),
+		Message.find({room: pk}).limit(40).populate('author'),
+		RoomMember.find({room: pk}).populate('user')
+	])
+		.spread(function (room, messages, members) {
+			room.$messages = messages;
+			room.$members = members;
+			return room;
+		})
+		.then(res.ok)
+		.catch(res.serverError);
+};
 
 // POST /room
 // Create a room
@@ -93,6 +109,50 @@ module.exports.join = function (req, res) {
 			})
 			.catch(res.serverError);
 	});
+};
+
+module.exports.join2 = function (req, res) {
+	var pk = actionUtil.requirePk(req);
+	var userId = req.session.userId;
+
+	RoomMember.count({room: pk, user: userId})
+		.then(function (existingRoomMember) {
+
+			if (existingRoomMember > 0) {
+				// Already exists!
+				return RoomMember.findOne({room: pk, user: userId}).populate('user');
+			}
+
+			return RoomMember.create({room: pk, user: userId})
+				.then(function (createdRoomMember) {
+					return [
+						createdRoomMember,
+						User.findOne(userId),
+						RoomMember.find({room: pk}).populate('user')
+					];
+				})
+				.spread(function (createdRoomMember, user, roomMembers) {
+					Room.publishUpdate(pk, {$members: roomMembers});
+
+					// Create system message to inform other users of this user joining
+					RoomService.messageRoom(pk, user.nick + ' has joined the room');
+
+					// Add subscriptions for requestor
+					Room.subscribe(req, pk, ['update', 'destroy', 'message']);
+					RoomMember.subscribe(req, roomMembers, ['update', 'destroy']);
+					User.subscribe(req, _.pluck(roomMembers, 'user'), 'update');
+
+					// Add subscriptions for existing room members
+					_.each(Room.subscribers(pk, 'update'), function (subscriber) {
+						RoomMember.subscribe(subscriber, createdRoomMember, ['update', 'destroy']);
+						User.subscribe(subscriber, userId, 'update');
+					});
+
+					return createdRoomMember;
+				});
+		})
+		.then(res.ok)
+		.catch(res.serverError);
 };
 
 // PUT /room/:id/leave
@@ -165,10 +225,13 @@ module.exports.media = function (req, res) {
 	Message.native(function (err, messageCollection) {
 		if (err) res.serverError(err);
 
-		messageCollection.find({room: ObjectId(roomId), text: {$regex: mediaRegex}}).sort({createdAt: -1}).toArray(function (err, messages) {
-			if(err) res.serverError(err);
+		messageCollection.find({
+			room: ObjectId(roomId),
+			text: {$regex: mediaRegex}
+		}).sort({createdAt: -1}).toArray(function (err, messages) {
+			if (err) res.serverError(err);
 
-			res.ok(_.map(messages, function(message) {
+			res.ok(_.map(messages, function (message) {
 				return _(message)
 					.pick(['author', 'text', 'createdAt'])
 					.extend({id: message._id})
