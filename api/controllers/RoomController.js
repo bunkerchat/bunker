@@ -128,10 +128,11 @@ module.exports.join2 = function (req, res) {
 					return [
 						createdRoomMember,
 						User.findOne(userId),
+						Room.findOne(pk),
 						RoomMember.find({room: pk}).populate('user')
 					];
 				})
-				.spread(function (createdRoomMember, user, roomMembers) {
+				.spread(function (createdRoomMember, user, room, roomMembers) {
 					Room.publishUpdate(pk, {$members: roomMembers});
 
 					// Create system message to inform other users of this user joining
@@ -148,7 +149,7 @@ module.exports.join2 = function (req, res) {
 						User.subscribe(subscriber, userId, 'update');
 					});
 
-					return createdRoomMember;
+					return room;
 				});
 		})
 		.then(res.ok)

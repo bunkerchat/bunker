@@ -1,7 +1,6 @@
 app.factory('bunkerData', function ($rootScope, $q) {
 
-	// In the beginning...
-	var roomLookup = [];
+	var roomLookup = []; // For fast room lookup
 	var bunkerData = {
 		user: null,
 		rooms: [],
@@ -14,7 +13,13 @@ app.factory('bunkerData', function ($rootScope, $q) {
 
 				io.socket.get('/api2/init', function (initialData) {
 
+					// Clear rooms array
+					while(bunkerData.rooms.length > 0) {
+						bunkerData.rooms.pop();
+					}
+
 					_.each(initialData.rooms, function (room) {
+
 						var messages = room.$messages;
 						room.$messages = [];
 						_.each(messages, function (message) {
@@ -63,7 +68,7 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		},
 		joinRoom: function (roomId) {
 			return $q(function (resolve) {
-				io.socket.post('/api2/room/' + roomId + '/join', function () {
+				io.socket.post('/api2/room/' + roomId + '/join', function (room) {
 					bunkerData.init().then(function () {
 						resolve(room);
 					});
