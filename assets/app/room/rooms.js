@@ -1,4 +1,4 @@
-app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $stateParams) {
+app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $stateParams, notifications) {
 	var rooms = {};
 	var messageLookup = {};
 
@@ -79,6 +79,8 @@ app.factory('rooms', function ($q, $rootScope, bunkerApi, user, uuid, $statePara
 
 		room.$messages.push(message);
 		messageLookup[roomId][message.id] = true; // Store messages in lookup object, this allows us to check for duplicates quickly
+
+		notifications.newMessage(room, message);
 	}
 
 	function decorateMessages(messages) {

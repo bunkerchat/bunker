@@ -1,7 +1,7 @@
-app.directive('messageMention', function () {
+app.directive('messageMention', function (user) {
 	return {
 		link: function (scope, elem, attrs) {
-			if (new RegExp(attrs.messageMention + '(?:[^@\\w]|$)', 'i').test(attrs.messageMentionText)) {
+			if (user.checkForNickRegex().test(attrs.messageMention)) {
 				elem.addClass('message-mention');
 			}
 		}

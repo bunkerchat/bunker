@@ -21,20 +21,47 @@
 				<ul class="dropdown-menu" role="menu">
 					<li role="presentation">
 						<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('showImages')">
-							<i class="fa {{header.settings.showImages ? 'fa-check-square-o' : 'fa-square-o'}}"></i> Show Images
+							<i class="fa {{header.settings.showImages ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+							Show Images
 						</a>
 					</li>
 					<li role="presentation">
 						<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('showNotifications')">
-							<i class="fa {{header.settings.showNotifications ? 'fa-check-square-o' : 'fa-square-o'}}"></i> Show
-							Notifications
+							<i class="fa {{header.settings.showNotifications ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+							Show System Messages
 						</a>
 					</li>
 					<li role="presentation">
 						<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('minimalView')">
-							<i class="fa {{header.settings.minimalView ? 'fa-check-square-o' : 'fa-square-o'}}"></i> Minimalist UI
+							<i class="fa {{header.settings.minimalView ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+							Use Minimalist UI
 						</a>
 					</li>
+					<li role="presentation" class="divider"></li>
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('desktopMentionNotifications')">
+							<i class="fa {{header.settings.desktopMentionNotifications ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+							Show Notifications (@Nick)
+						</a>
+					</li>
+					<!--<li role="presentation">-->
+						<!--<a role="menuitem" tabindex="-1" >-->
+							<!--<i class="fa fa-check-square-o"></i>-->
+							<!--Show Notifications (Room)-->
+						<!--</a>-->
+					<!--</li>-->
+					<!--<li role="presentation">-->
+						<!--<a role="menuitem" tabindex="-1" >-->
+							<!--<i class="fa fa-check-square-o"></i>-->
+							<!--Play Sound (@Nick)-->
+						<!--</a>-->
+					<!--</li>-->
+					<!--<li role="presentation">-->
+						<!--<a role="menuitem" tabindex="-1" >-->
+							<!--<i class="fa fa-check-square-o"></i>-->
+							<!--Play Sound (Room)-->
+						<!--</a>-->
+					<!--</li>-->
 					<li role="presentation" class="divider"></li>
 					<li role="presentation">
 						<a role="menuitem" tabindex="-1" ng-click="header.showHelp()">

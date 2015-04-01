@@ -1,4 +1,4 @@
-app.factory('user', function (bunkerApi, $timeout) {
+app.factory('user', function (bunkerApi, $timeout, $notification) {
 
 	var typingTimeout;
 	var userId = window.userId;
@@ -9,10 +9,22 @@ app.factory('user', function (bunkerApi, $timeout) {
 	function toggleSetting(setting) {
 		settings[setting] = !settings[setting];
 		settings.$save();
+
+		checkForDesktopNotifications();
 	}
 
 	function saveSettings() {
 		settings.$save();
+	}
+
+	function checkForDesktopNotifications(){
+		var hasRoomNotifications = _.any(memberships, function (membership) {
+			return membership.showMessageDesktopNotification;
+		});
+
+		if(hasRoomNotifications || settings.desktopMentionNotifications){
+			$notification.requestPermission();
+		}
 	}
 
 	function broadcastTyping(roomId) {
@@ -33,12 +45,18 @@ app.factory('user', function (bunkerApi, $timeout) {
 		}
 	}
 
+	// check message for nick or @all
+	function checkForNickRegex(){
+		return new RegExp(user.nick + '\\b|@[Aa]ll', 'i');
+	}
+
 	return {
 		current: user,
 		memberships: memberships,
 		settings: settings,
 		toggleSetting: toggleSetting,
 		saveSettings: saveSettings,
-		broadcastTyping: broadcastTyping
+		broadcastTyping: broadcastTyping,
+		checkForNickRegex: checkForNickRegex
 	};
 });

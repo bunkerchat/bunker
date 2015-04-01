@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q) {
+app.factory('bunkerData', function ($rootScope, $q, notifications) {
 
 	var roomLookup = []; // For fast room lookup
 	var bunkerData = {
@@ -94,6 +94,7 @@ app.factory('bunkerData', function ($rootScope, $q) {
 		addMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			room.$messages.push(message);
+			notifications.newMessage(room, message);
 		}
 	};
 

@@ -16,11 +16,10 @@
 					id="{{::message.id}}">
 					<div class="message" ng-class="::{ local: message.author.id == userService.current.id }">
 
-						<!-- standard message -->
-						<div ng-switch-when="true"
-							 message-mention="{{::userService.current.nick}}"
-							 message-mention-text="{{::message.text}}">
-							<div class="message-author">
+							<!-- standard message -->
+							<div ng-switch-when="true"
+									 message-mention="{{::message.text}}">
+								<div class="message-author">
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
