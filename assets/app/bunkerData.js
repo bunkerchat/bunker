@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q, notifications) {
+app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 
 	var roomLookup = []; // For fast room lookup
 	var bunkerData = {
@@ -92,6 +92,8 @@ app.factory('bunkerData', function ($rootScope, $q, notifications) {
 			});
 		},
 		addMessage: function (room, message) {
+			if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
+
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			room.$messages.push(message);
 			notifications.newMessage(room, message);
