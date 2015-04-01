@@ -9,7 +9,8 @@ window.app = angular.module('bunker', [
 	'angular.filter',
 	'hljs',
 	'plangular', /* soundcloud embed */
-	'notification'
+	'notification',
+	'ngAudio'
 ])
 	.config(function (sailsResourceProvider, $stateProvider, $urlRouterProvider) {
 		sailsResourceProvider.configuration = {
