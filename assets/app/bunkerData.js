@@ -40,6 +40,10 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 			});
 		},
 
+		connect: function () {
+			io.socket.put('/user/current/connect');
+		},
+
 		// Messages
 
 		addMessage: function (room, message) {
@@ -131,13 +135,21 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 				}, 2000);
 			}
 		},
+		broadcastPresent: function (present) {
+			bunkerData.user.present = present;
+			bunkerData.user.lastActivity = new Date().toISOString();
+			io.socket.put('/user/current/activity', {
+				typingIn: present ? bunkerData.user.typingIn : null,
+				present: present
+			});
+		},
 
 		// UserSettings
 
-		saveUserSettings: function() {
+		saveUserSettings: function () {
 			io.socket.put('/usersettings/' + bunkerData.userSettings.id, bunkerData.userSettings);
 		},
-		toggleUserSetting: function(name) {
+		toggleUserSetting: function (name) {
 			bunkerData.userSettings[name] = !bunkerData.userSettings[name];
 			bunkerData.saveUserSettings();
 		},

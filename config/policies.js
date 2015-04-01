@@ -41,8 +41,8 @@ module.exports.policies = {
 	UserController: {
 		'init': 'isLoggedIn',
 		'findOne': 'isLoggedIn',
-		'activity': ['isLoggedIn'],
-		'connect': ['isLoggedIn', 'isCurrentUser'],
+		'activity': 'isLoggedIn',
+		'connect': 'isLoggedIn',
 		'update': ['isLoggedIn', 'isCurrentUser']
 	},
 	UserSettingsController: {

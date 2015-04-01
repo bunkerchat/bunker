@@ -70,26 +70,10 @@ window.app = angular.module('bunker', [
 		});
 	})
 	.run(function ($rootScope, $document, user, $window, bunkerListener) {
+
 		// html5 visibility api instead of win.focus or win.blur
-		$document.on("visibilitychange", function () {
+		$document.on('visibilitychange', function () {
 			$rootScope.$broadcast(document.hidden ? 'visibilityHide' : 'visibilityShow');
-		});
-
-		// Handle user away notification on window focus/blur
-		$rootScope.$on('visibilityShow', function () {
-			user.current.present = true;
-			user.current.lastActivity = new Date().toISOString();
-			user.current.$activity();
-		});
-
-		$rootScope.$on('visibilityHide', function () {
-			user.current.present = false;
-			user.current.lastActivity = new Date().toISOString();
-			user.current.$activity();
-		});
-
-		$rootScope.$on('$sailsConnected', function () {
-			user.current.$connect();
 		});
 
 		// watch room ids change

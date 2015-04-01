@@ -1,4 +1,4 @@
-app.factory('bunkerListener', function (bunkerData, $state, notifications) {
+app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifications) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt.id);
@@ -37,6 +37,18 @@ app.factory('bunkerListener', function (bunkerData, $state, notifications) {
 		}
 	}
 
+	function handleVisibilityShow() {
+		bunkerData.broadcastPresent(true);
+	}
+
+	function handleVisibilityHide() {
+		bunkerData.broadcastPresent(false);
+	}
+
+	function handleConnect() {
+		bunkerData.connect();
+	}
+
 	function handleReconnect() {
 		bunkerData.init().then(function () {
 			$state.go($state.current, {}, {reload: true});
@@ -45,21 +57,33 @@ app.factory('bunkerListener', function (bunkerData, $state, notifications) {
 
 	// Handle events
 	var listeners = [
-		{name: 'room', handler: handleRoomEvent},
-		{name: 'user', handler: handleUserEvent},
+		{name: 'room', type: 'socket', handler: handleRoomEvent},
+		{name: 'user', type: 'socket', handler: handleUserEvent},
 		// usersettings are only updated by the client and mirroring is off
-		{name: 'reconnect', handler: handleReconnect}
+		{name: 'reconnect', type: 'socket', handler: handleReconnect},
+		{name: '$sailsConnected', type: 'rootScope', handler: handleConnect},
+		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},
+		{name: 'visibilityHide', type: 'rootScope', handler: handleVisibilityHide}
 	];
 
 	return {
 		init: function () {
 			_.each(listeners, function (listener) {
-				io.socket.on(listener.name.toLowerCase(), function (evt) {
-					// Ensure we have data back before responding to events
-					bunkerData.$promise.then(function () {
-						listener.handler(evt);
+				if (listener.type == 'socket') {
+					io.socket.on(listener.name.toLowerCase(), function (evt) {
+						// Ensure we have data back before responding to events
+						bunkerData.$promise.then(function () {
+							listener.handler(evt);
+						});
 					});
-				});
+				}
+				else if (listener.type == 'rootScope') {
+					$rootScope.$on(listener.name, function (evt) {
+						bunkerData.$promise.then(function () {
+							listener.handler(evt);
+						});
+					});
+				}
 			});
 		}
 	};

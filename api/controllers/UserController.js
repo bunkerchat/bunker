@@ -66,8 +66,8 @@ module.exports.activity = function (req, res) {
 
 	// Only allow updates for the following values
 	// There's no need for us to save these in the db, this may change in the future
-	var typingIn = req.param('typingIn');
-	var present = req.param('present');
+	var typingIn = req.body.typingIn;
+	var present = req.body.present;
 	var updates = {
 		typingIn: typeof typingIn !== 'undefined' ? typingIn : null,
 		present: typeof present !== 'undefined' ? present : true,
@@ -91,10 +91,12 @@ module.exports.connect = function (req, res) {
 			user.connected = true;
 			user.lastConnected = new Date().toISOString();
 			user.typingIn = null;
+			user.present = true;
+
 			return user.save();
 		})
 		.then(function (user) {
-			user.connected = true; // Ensure this goes out
+
 			User.publishUpdate(user.id, user);
 
 			// Send connecting message, if not previously connected or reconnecting

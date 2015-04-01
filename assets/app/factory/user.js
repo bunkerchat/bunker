@@ -1,7 +1,6 @@
 app.factory('user', function (bunkerApi, bunkerData, $notification) {
 
 	var userId = window.userId;
-	var user = bunkerApi.user.get({id: userId});
 	var memberships = bunkerApi.roomMember.query({user: userId});
 
 	function toggleSetting(settingName) {
@@ -21,11 +20,11 @@ app.factory('user', function (bunkerApi, bunkerData, $notification) {
 
 	// check message for nick or @all
 	function checkForNickRegex() {
-		return new RegExp(user.nick + '\\b|@[Aa]ll', 'i');
+		return new RegExp(bunkerData.user.nick + '\\b|@[Aa]ll', 'i');
 	}
 
 	return {
-		current: user,
+		current: bunkerData.user,
 		memberships: memberships,
 		settings: bunkerData.userSettings, // should just use directly
 		toggleSetting: toggleSetting,
