@@ -1,4 +1,4 @@
-app.factory('notifications', function ($rootScope, user, $notification, $timeout, $log) {
+app.factory('notifications', function ($rootScope, user, $notification, $timeout, $log, $state) {
 	var loaded = false;
 	var bunkerIsVisible = true;
 
@@ -7,7 +7,9 @@ app.factory('notifications', function ($rootScope, user, $notification, $timeout
 	}, 5000);
 
 	function newMessage(room, message) {
-		if(!loaded || bunkerIsVisible) return;
+		//if(!loaded || bunkerIsVisible) return;
+
+		if(!loaded) return;
 
 		// check user settings and current room settings to see what kind of messages
 		// we are allowed to show
@@ -28,8 +30,7 @@ app.factory('notifications', function ($rootScope, user, $notification, $timeout
 			});
 
 			mention.$on('click', function () {
-				console.log('click');
-				// TODO: Set current the room to the clicked notification
+				$state.go('chat.room', {roomId: room.id});
 			});
 
 			mention.$on('close', function () {
