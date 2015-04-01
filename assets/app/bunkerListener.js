@@ -17,6 +17,7 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 					if (!room.$messages) room.$messages = [];
 					bunkerData.addMessage(room, message);
 					notifications.newMessage(room, message);
+					$rootScope.$broadcast('bunkerMessaged', message);
 				}
 				break;
 			case 'updated':

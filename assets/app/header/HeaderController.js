@@ -1,6 +1,5 @@
 app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, user, bunkerData) {
 	var self = this;
-	this.user = user.current;
 
 	bunkerData.$promise.then(function() {
 		self.rooms = bunkerData.rooms;
@@ -29,12 +28,12 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		});
 	};
 
-	$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-		if (resource.model != 'room' || resource.id == $rootScope.roomId || !user.current.$resolved || !resource.data.author || resource.data.author.id == user.current.id || resource.data.edited) {
+	$rootScope.$on('bunkerMessaged', function (evt, message) {
+		if (!bunkerData.$resolved || message.room.id == $rootScope.roomId || !message.author || message.author.id == bunkerData.user.id) {
 			return;
 		}
 
-		var otherRoom = _.find(bunkerData.rooms, {id: resource.id});
+		var otherRoom = bunkerData.getRoom(message.room.id);
 		if (otherRoom) {
 			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
 		}
@@ -42,7 +41,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 
 	$rootScope.$on('roomIdChanged', function () {
 		if ($rootScope.roomId) {
-			_.find(bunkerData.rooms, {id: $rootScope.roomId}).$unreadMessages = 0;
+			bunkerData.getRoom($rootScope.roomId).$unreadMessages = 0;
 		}
 	});
 });
