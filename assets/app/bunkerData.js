@@ -7,6 +7,8 @@ app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 		$resolved: false,
 		$promise: null,
 
+		// Initial data, also sets up subscriptions
+
 		init: function () {
 			bunkerData.$resolved = false;
 			return $q(function (resolve) {
@@ -14,7 +16,7 @@ app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 				io.socket.get('/api2/init', function (initialData) {
 
 					// Clear rooms array
-					while(bunkerData.rooms.length > 0) {
+					while (bunkerData.rooms.length > 0) {
 						bunkerData.rooms.pop();
 					}
 
@@ -32,16 +34,26 @@ app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 				});
 			});
 		},
-		createMessage: function(roomId, text) {
-			return $q(function(resolve) {
-				io.socket.post('/message', { room: roomId, text: text }, function(message) {
+
+		// Messages
+
+		addMessage: function (room, message) {
+			if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
+
+			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
+			room.$messages.push(message);
+			notifications.newMessage(room, message);
+		},
+		createMessage: function (roomId, text) {
+			return $q(function (resolve) {
+				io.socket.post('/message', {room: roomId, text: text}, function (message) {
 					resolve(message);
 				});
 			});
 		},
-		editMessage: function(message) {
-			return $q(function(resolve) {
-				io.socket.put('/message/' + message.id, message, function(message) {
+		editMessage: function (message) {
+			return $q(function (resolve) {
+				io.socket.put('/message/' + message.id, message, function (message) {
 					resolve(message);
 				});
 			});
@@ -49,7 +61,7 @@ app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 		loadMessages: function (room, skip) {
 			return $q(function (resolve) {
 				io.socket.get('/room/' + room.id + '/messages?skip=' + skip || 0, function (messages) {
-					_.eachRight(messages, function(message) {
+					_.eachRight(messages, function (message) {
 						room.$messages.unshift(message);
 					});
 					decorateMessages(room);
@@ -57,11 +69,14 @@ app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 				});
 			});
 		},
-		clearOldMessages: function(id) {
+		clearOldMessages: function (id) {
 			if (!id || !roomLookup[id] || roomLookup[id].$messages.length < 40) return;
 			roomLookup[id].$messages = _.takeRight(roomLookup[id].$messages, 40);
 		},
-		getRoom: function(id) {
+
+		// Rooms
+
+		getRoom: function (id) {
 			return roomLookup[id];
 		},
 		createRoom: function (roomName) {
@@ -91,12 +106,14 @@ app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 				});
 			});
 		},
-		addMessage: function (room, message) {
-			if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
 
-			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
-			room.$messages.push(message);
-			notifications.newMessage(room, message);
+		// Emoticons
+		getEmoticonCounts: function () {
+			return $q(function (resolve) {
+				io.socket.get('/message/emoticoncounts', function (counts) {
+					resolve(counts);
+				});
+			});
 		}
 	};
 
