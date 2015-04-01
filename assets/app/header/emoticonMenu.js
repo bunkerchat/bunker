@@ -66,8 +66,8 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 
 	function splitInHalf(list) {
 		return [
-			_.initial(list, Math.floor(list.length / 2)),
-			_.rest(list, Math.ceil(list.length / 2))
+			_.take(list, Math.floor(list.length / 2)),
+			_.takeRight(list, Math.ceil(list.length / 2))
 		];
 	}
 });
