@@ -1,4 +1,4 @@
-app.factory('notifications', function ($rootScope, user, $notification, $timeout, $log, $state) {
+app.factory('notifications', function ($rootScope, bunkerData, user, $notification, $timeout, $log, $state) {
 	var loaded = false;
 	var bunkerIsVisible = true;
 
@@ -7,14 +7,13 @@ app.factory('notifications', function ($rootScope, user, $notification, $timeout
 	}, 5000);
 
 	function newMessage(room, message) {
-		//if(!loaded || bunkerIsVisible) return;
 
-		if(!loaded) return;
+		if (!bunkerData.$resolved || !loaded) return;
 
 		// check user settings and current room settings to see what kind of messages
 		// we are allowed to show
 
-		if(user.settings.desktopMentionNotifications){
+		if (bunkerData.userSettings.desktopMentionNotifications) {
 			if (!user.checkForNickRegex().test(message.text)) return;
 
 			var decodedText = $('<div/>').html(message.text).text();
@@ -57,5 +56,5 @@ app.factory('notifications', function ($rootScope, user, $notification, $timeout
 
 	return {
 		newMessage: newMessage
-	}
+	};
 });

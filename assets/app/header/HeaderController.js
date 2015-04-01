@@ -4,10 +4,10 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 
 	bunkerData.$promise.then(function() {
 		self.rooms = bunkerData.rooms;
+		self.settings = bunkerData.userSettings;
 	});
 
 	this.memberships = user.memberships;
-	this.settings = user.settings;
 	this.showOptions = function () {
 		return !$state.is('lobby');
 	};

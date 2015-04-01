@@ -13,18 +13,22 @@ var Promise = require('bluebird');
 // return all rooms and user data necessary to run the application.
 module.exports.init = function (req, res) {
 
-	var localUser;
+	var localUser, localUserSettings;
 
 	Promise.join(
 		User.findOne(req.session.userId),
+		UserSettings.findOne({user: req.session.userId}),
 		RoomMember.find({user: req.session.userId}).populate('room')
 	)
-		.spread(function (user, memberships) {
+		.spread(function (user, userSettings, memberships) {
 
 			localUser = user;
+			localUserSettings = userSettings;
 			var rooms = _(memberships).pluck('room').compact().value();
 
 			// Setup subscriptions
+			User.subscribe(req, user, ['update', 'message']);
+			UserSettings.subscribe(req, userSettings, 'update');
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 
 			// Get some initial messages
@@ -46,6 +50,7 @@ module.exports.init = function (req, res) {
 		.then(function (rooms) {
 			return {
 				user: localUser,
+				userSettings: localUserSettings,
 				rooms: rooms
 			};
 		})
@@ -58,7 +63,6 @@ module.exports.init = function (req, res) {
 // It can only be called by the current user.
 // It's sole purpose is to enable away and typing notifications.
 module.exports.activity = function (req, res) {
-	var userId = req.session.userId;
 
 	// Only allow updates for the following values
 	// There's no need for us to save these in the db, this may change in the future
@@ -70,12 +74,9 @@ module.exports.activity = function (req, res) {
 		lastActivity: new Date().toISOString()
 	};
 
-	User.publishUpdate(userId, updates);
+	User.publishUpdate(req.session.userId, updates);
 	res.ok(updates);
 };
-
-//var pendingTasks = {};
-//var connectionUpdateWaitSeconds = 15;
 
 module.exports.connect = function (req, res) {
 	var lastConnected, previouslyConnected;

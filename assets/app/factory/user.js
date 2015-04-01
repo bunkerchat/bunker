@@ -1,62 +1,35 @@
-app.factory('user', function (bunkerApi, $timeout, $notification) {
+app.factory('user', function (bunkerApi, bunkerData, $notification) {
 
-	var typingTimeout;
 	var userId = window.userId;
 	var user = bunkerApi.user.get({id: userId});
 	var memberships = bunkerApi.roomMember.query({user: userId});
-	var settings = bunkerApi.userSettings.get({user: userId});
 
-	function toggleSetting(setting) {
-		settings[setting] = !settings[setting];
-		settings.$save();
-
+	function toggleSetting(settingName) {
+		bunkerData.toggleUserSetting(settingName);
 		checkForDesktopNotifications();
 	}
 
-	function saveSettings() {
-		settings.$save();
-	}
-
-	function checkForDesktopNotifications(){
+	function checkForDesktopNotifications() {
 		var hasRoomNotifications = _.any(memberships, function (membership) {
 			return membership.showMessageDesktopNotification;
 		});
 
-		if(hasRoomNotifications || settings.desktopMentionNotifications){
+		if (hasRoomNotifications || bunkerData.userSettings.desktopMentionNotifications) {
 			$notification.requestPermission();
 		}
 	}
 
-	function broadcastTyping(roomId) {
-		if (!user.$resolved) return; // Not ready yet
-
-		if (user.typingIn != roomId) { // Only need to do anything if it's not already set
-			user.typingIn = roomId;
-			user.$activity();
-		}
-
-		if (user.typingIn) { // Only need to reset in 2 seconds if room is set
-			if (typingTimeout) $timeout.cancel(typingTimeout); // Cancel current timeout (if any)
-			typingTimeout = $timeout(function () {
-				user.typingIn = null;
-				user.$activity();
-				typingTimeout = null;
-			}, 2000);
-		}
-	}
-
 	// check message for nick or @all
-	function checkForNickRegex(){
+	function checkForNickRegex() {
 		return new RegExp(user.nick + '\\b|@[Aa]ll', 'i');
 	}
 
 	return {
 		current: user,
 		memberships: memberships,
-		settings: settings,
+		settings: bunkerData.userSettings, // should just use directly
 		toggleSetting: toggleSetting,
-		saveSettings: saveSettings,
-		broadcastTyping: broadcastTyping,
+		saveSettings: bunkerData.saveUserSettings,
 		checkForNickRegex: checkForNickRegex
 	};
 });

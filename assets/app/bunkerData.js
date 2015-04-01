@@ -1,8 +1,11 @@
-app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
+app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 
 	var roomLookup = []; // For fast room lookup
+	var typingTimeout;
+
 	var bunkerData = {
-		user: null,
+		user: {},
+		userSettings: {},
 		rooms: [],
 		$resolved: false,
 		$promise: null,
@@ -25,7 +28,9 @@ app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 						bunkerData.rooms.push(room);
 					});
 
-					_.assign(bunkerData, _.omit(initialData, 'rooms')); // Merge in the remaining data
+					_.assign(bunkerData.user, initialData.user);
+					_.assign(bunkerData.userSettings, initialData.userSettings);
+
 					roomLookup = _.indexBy(bunkerData.rooms, 'id');
 					bunkerData.$resolved = true;
 
@@ -38,11 +43,10 @@ app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 		// Messages
 
 		addMessage: function (room, message) {
-			if (!user.settings.showNotifications && !message.author) return; // User does not want to see notifications
+			if (!bunkerData.userSettings.showNotifications && !message.author) return; // User does not want to see notifications
 
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			room.$messages.push(message);
-			notifications.newMessage(room, message);
 		},
 		createMessage: function (roomId, text) {
 			return $q(function (resolve) {
@@ -107,7 +111,39 @@ app.factory('bunkerData', function ($rootScope, $q, user, notifications) {
 			});
 		},
 
+		// User
+
+		broadcastTyping: function (roomId) {
+
+			if (!bunkerData.$resolved) return; // Not ready yet
+
+			if (bunkerData.user.typingIn != roomId) { // Only need to do anything if it's not already set
+				bunkerData.user.typingIn = roomId;
+				io.socket.put('/user/current/activity', {typingIn: roomId});
+			}
+
+			if (bunkerData.user.typingIn) { // Only need to reset in 2 seconds if room is set
+				if (typingTimeout) $timeout.cancel(typingTimeout); // Cancel current timeout (if any)
+				typingTimeout = $timeout(function () {
+					bunkerData.user.typingIn = null;
+					io.socket.put('/user/current/activity', {typingIn: null});
+					typingTimeout = null;
+				}, 2000);
+			}
+		},
+
+		// UserSettings
+
+		saveUserSettings: function() {
+			io.socket.put('/usersettings/' + bunkerData.userSettings.id, bunkerData.userSettings);
+		},
+		toggleUserSetting: function(name) {
+			bunkerData.userSettings[name] = !bunkerData.userSettings[name];
+			bunkerData.saveUserSettings();
+		},
+
 		// Emoticons
+
 		getEmoticonCounts: function () {
 			return $q(function (resolve) {
 				io.socket.get('/message/emoticoncounts', function (counts) {

@@ -151,7 +151,7 @@ exports.create = function (req, res) {
 				author: null,
 				text: user.nick + text.substring(3)
 			}).exec(function (error, message) {
-				res.ok();
+				res.ok(message);
 				broadcastMessage(message);
 			})
 		});

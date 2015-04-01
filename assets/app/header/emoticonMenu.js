@@ -1,4 +1,4 @@
-app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bunkerData) {
+app.directive('emoticonMenu', function ($rootScope, $filter, emoticons, bunkerData) {
 	return {
 		templateUrl: '/assets/app/header/emoticonMenu.html',
 		scope: {
@@ -7,8 +7,8 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 		link: function ($scope) {
 
 			$scope.search = '';
-			$scope.settings = user.settings;
-			$scope.saveSettings = user.saveSettings;
+			$scope.settings = bunkerData.userSettings;
+			$scope.saveSettings = bunkerData.saveUserSettings;
 			$scope.emoticonMenuLists = [];
 
 			function refreshCounts() {

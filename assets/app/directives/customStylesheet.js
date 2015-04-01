@@ -1,19 +1,23 @@
-app.directive('customStylesheet', function (user, $window, $timeout) {
+app.directive('customStylesheet', function (bunkerData, $window, $timeout) {
 	return {
-		link: function (scope) {
-			scope.loadMinimal = false;
+		link: function ($scope) {
 
-			scope.$watch(function () {
-				return user.settings;
-			}, function () {
-				if (!user.settings.$resolved) return;
-				scope.loadMinimal = user.settings.minimalView;
+			$scope.loadMinimal = false;
 
-				// if we change stylesheets, trigger a resize
-				$timeout(function () {
-					angular.element($window).resize();
-				}, 500);
-			}, true);
+			bunkerData.$promise.then(function () {
+
+				$scope.$watch(function () {
+					return bunkerData.userSettings;
+				}, function () {
+
+					$scope.loadMinimal = bunkerData.userSettings.minimalView;
+
+					// if we change stylesheets, trigger a resize
+					$timeout(function () {
+						angular.element($window).resize();
+					}, 500);
+				}, true);
+			});
 		}
 	};
 });

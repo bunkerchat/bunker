@@ -1,4 +1,4 @@
-app.factory('bunkerListener', function (bunkerData, $state) {
+app.factory('bunkerListener', function (bunkerData, $state, notifications) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt.id);
@@ -15,7 +15,8 @@ app.factory('bunkerListener', function (bunkerData, $state) {
 				}
 				else {
 					if (!room.$messages) room.$messages = [];
-					bunkerData.addMessage(room, evt.data);
+					bunkerData.addMessage(room, message);
+					notifications.newMessage(room, message);
 				}
 				break;
 			case 'updated':
@@ -44,18 +45,10 @@ app.factory('bunkerListener', function (bunkerData, $state) {
 
 	// Handle events
 	var listeners = [
-		{
-			name: 'room',
-			handler: handleRoomEvent
-		},
-		{
-			name: 'user',
-			handler: handleUserEvent
-		},
-		{
-			name: 'reconnect',
-			handler: handleReconnect
-		}
+		{name: 'room', handler: handleRoomEvent},
+		{name: 'user', handler: handleUserEvent},
+		// usersettings are only updated by the client and mirroring is off
+		{name: 'reconnect', handler: handleReconnect}
 	];
 
 	return {

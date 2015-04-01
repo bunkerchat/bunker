@@ -49,11 +49,12 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 
 					bunkerData.createMessage(newMessage.room, newMessage.text)
 						.then(function(result) {
-							historicMessage.id = result.id;
+							if(result.author) {
+								historicMessage.id = result.id;
+								scope.submittedMessages.unshift(historicMessage); // Save message for up/down keys to retrieve
+							}
 						});
 
-					// Save message for up/down keys to retrieve
-					scope.submittedMessages.unshift(historicMessage);
 				} else {
 					scope.submittedMessages[scope.selectedMessageIndex].text = scope.messageText;
 					newMessage.id = scope.submittedMessages[scope.selectedMessageIndex].id;
