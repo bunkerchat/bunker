@@ -13,7 +13,7 @@ var Promise = require('bluebird');
 // return all rooms and user data necessary to run the application.
 module.exports.init = function (req, res) {
 
-	var localUser, localUserSettings;
+	var localUser, localUserSettings, localMemberships;
 
 	Promise.join(
 		User.findOne(req.session.userId),
@@ -24,11 +24,13 @@ module.exports.init = function (req, res) {
 
 			localUser = user;
 			localUserSettings = userSettings;
+			localMemberships = memberships;
 			var rooms = _(memberships).pluck('room').compact().value();
 
 			// Setup subscriptions
 			User.subscribe(req, user, ['update', 'message']);
 			UserSettings.subscribe(req, userSettings, 'update');
+			RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 
 			// Get some initial messages
@@ -51,6 +53,7 @@ module.exports.init = function (req, res) {
 			return {
 				user: localUser,
 				userSettings: localUserSettings,
+				memberships: localMemberships,
 				rooms: rooms
 			};
 		})

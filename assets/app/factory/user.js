@@ -1,7 +1,4 @@
-app.factory('user', function (bunkerApi, bunkerData, $notification) {
-
-	var userId = window.userId;
-	var memberships = bunkerApi.roomMember.query({user: userId});
+app.factory('user', function (bunkerData, $notification) {
 
 	function toggleSetting(settingName) {
 		bunkerData.toggleUserSetting(settingName);
@@ -9,7 +6,7 @@ app.factory('user', function (bunkerApi, bunkerData, $notification) {
 	}
 
 	function checkForDesktopNotifications() {
-		var hasRoomNotifications = _.any(memberships, function (membership) {
+		var hasRoomNotifications = _.any(bunkerData.memberships, function (membership) {
 			return membership.showMessageDesktopNotification;
 		});
 
@@ -24,11 +21,11 @@ app.factory('user', function (bunkerApi, bunkerData, $notification) {
 	}
 
 	return {
-		current: bunkerData.user,
-		memberships: memberships,
+		current: bunkerData.user, // should just use directly
+		memberships: bunkerData.memberships, // should just use directly
 		settings: bunkerData.userSettings, // should just use directly
 		toggleSetting: toggleSetting,
-		saveSettings: bunkerData.saveUserSettings,
+		saveSettings: bunkerData.saveUserSettings, // should just use directly
 		checkForNickRegex: checkForNickRegex
 	};
 });

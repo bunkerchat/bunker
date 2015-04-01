@@ -38,6 +38,15 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 		}
 	}
 
+	function handleMembershipEvent(evt) {
+		var membership = _.find(bunkerData.memberships, {id: evt.id});
+		switch (evt.verb) {
+			case 'updated':
+				_.assign(membership, evt.data);
+				break;
+		}
+	}
+
 	function handleVisibilityShow() {
 		bunkerData.broadcastPresent(true);
 	}
@@ -61,6 +70,7 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 		{name: 'room', type: 'socket', handler: handleRoomEvent},
 		{name: 'user', type: 'socket', handler: handleUserEvent},
 		// usersettings are only updated by the client and mirroring is off
+		{name: 'roomMember', type: 'socket', handler: handleMembershipEvent},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
 		{name: '$sailsConnected', type: 'rootScope', handler: handleConnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},

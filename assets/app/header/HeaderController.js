@@ -6,7 +6,6 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		self.settings = bunkerData.userSettings;
 	});
 
-	this.memberships = user.memberships;
 	this.showOptions = function () {
 		return !$state.is('lobby');
 	};
