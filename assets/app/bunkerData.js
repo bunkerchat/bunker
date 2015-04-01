@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q, notifications, $state) {
+app.factory('bunkerData', function ($rootScope, $q, notifications) {
 
 	var roomLookup = []; // For fast room lookup
 	var bunkerData = {
@@ -97,12 +97,6 @@ app.factory('bunkerData', function ($rootScope, $q, notifications, $state) {
 			notifications.newMessage(room, message);
 		}
 	};
-
-	io.socket.on('reconnect', function () {
-		bunkerData.init().then(function () {
-			$state.go($state.current, {}, {reload: true});
-		});
-	});
 
 	function decorateMessages(room) {
 		room.$messages = _.sortBy(room.$messages, 'createdAt'); // Resort messages

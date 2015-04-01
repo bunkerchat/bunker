@@ -1,4 +1,4 @@
-app.factory('bunkerListener', function (bunkerData) {
+app.factory('bunkerListener', function (bunkerData, $state) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt.id);
@@ -36,6 +36,12 @@ app.factory('bunkerListener', function (bunkerData) {
 		}
 	}
 
+	function handleReconnect() {
+		bunkerData.init().then(function () {
+			$state.go($state.current, {}, {reload: true});
+		});
+	}
+
 	// Handle events
 	var listeners = [
 		{
@@ -45,6 +51,10 @@ app.factory('bunkerListener', function (bunkerData) {
 		{
 			name: 'user',
 			handler: handleUserEvent
+		},
+		{
+			name: 'reconnect',
+			handler: handleReconnect
 		}
 	];
 

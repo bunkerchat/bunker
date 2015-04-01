@@ -5,13 +5,14 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 			visible: '=ngShow'
 		},
 		link: function (scope) {
+
 			scope.search = '';
 			scope.settings = user.settings;
 			scope.saveSettings = user.saveSettings;
 			scope.emoticonMenuLists = [];
 			scope.emoticonCounts = bunkerApi.message.emoticonCounts();
 
-			var emotesByAlpha = splitInHalf(emoticons.list);
+			var emotesByAlpha = _.chunk(emoticons.list, Math.ceil(emoticons.list.length / 2));
 
 			scope.$watch('settings.sortEmoticonsByPopularity', function (sortEmoticonsByPopularity, oldVal) {
 				if (sortEmoticonsByPopularity == oldVal) return;
@@ -30,8 +31,7 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 				if (!visible) {
 					scope.search = '';
 				}
-
-				if (visible && scope.settings.sortEmoticonsByPopularity) {
+				else if (scope.settings.sortEmoticonsByPopularity) {
 					scope.emoticonCounts = bunkerApi.message.emoticonCounts();
 				}
 			});
@@ -48,7 +48,7 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 				});
 
 				var orderedList = _(emoticons.list).sortBy('$count').reverse().value();
-				scope.emoticonMenuLists = splitInHalf(orderedList);
+				scope.emoticonMenuLists = _.chunk(orderedList, Math.ceil(orderedList.length / 2));
 			});
 
 			scope.appendEmoticonToChat = function (emoticonFileName) {
@@ -63,15 +63,7 @@ app.directive('emoticonMenu', function ($rootScope, $filter, user, emoticons, bu
 			};
 		}
 	};
-
-	function splitInHalf(list) {
-		return [
-			_.take(list, Math.floor(list.length / 2)),
-			_.takeRight(list, Math.ceil(list.length / 2))
-		];
-	}
 });
-
 
 app.filter('toArray', function () {
 	return function (object) {
