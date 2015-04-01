@@ -41,21 +41,33 @@ window.app = angular.module('bunker', [
 				controller: 'RoomHistoryController as room'
 			});
 	})
-	.config(function ($compileProvider) {
-		// This is where we might customize the sanitize whitelist some day
-		// $compileProvider.imgSrcSanitizationWhitelist();
-
-
+	.config(function ($compileProvider, gravatarServiceProvider, hljsServiceProvider) {
 		// disable debug info
 		$compileProvider.debugInfoEnabled(!window.isProduction);
 
 		// to reenable in prod, use
 		// angular.reloadWithDebugInfo()
-	})
-	.config(function (gravatarServiceProvider) {
+
 		gravatarServiceProvider.defaults = {
 			'default': 'identicon'
 		};
+
+		hljsServiceProvider.setOptions({
+			// cs and scala are weird
+			languages:[
+				'css',
+				'javascript',
+				'bash',
+				//'cs', // c# ?
+				'json',
+				'xml',
+				'java',
+				'objectivec',
+				//'scala',
+				'markdown',
+				'lisp'
+			]
+		});
 	})
 	.run(function ($rootScope, $document, user, $window, bunkerListener) {
 		// html5 visibility api instead of win.focus or win.blur
