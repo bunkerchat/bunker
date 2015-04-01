@@ -50,12 +50,12 @@
 							<!--Show Notifications (Room)-->
 						<!--</a>-->
 					<!--</li>-->
-					<!--<li role="presentation">-->
-						<!--<a role="menuitem" tabindex="-1" >-->
-							<!--<i class="fa fa-check-square-o"></i>-->
-							<!--Play Sound (@Nick)-->
-						<!--</a>-->
-					<!--</li>-->
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('playSoundOnMention')">
+							<i class="fa {{header.settings.playSoundOnMention ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+							Play Sound (@Nick)
+						</a>
+					</li>
 					<!--<li role="presentation">-->
 						<!--<a role="menuitem" tabindex="-1" >-->
 							<!--<i class="fa fa-check-square-o"></i>-->

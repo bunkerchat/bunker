@@ -1,6 +1,8 @@
-app.factory('notifications', function ($rootScope, bunkerData, user, $notification, $timeout, $log, $state) {
+app.factory('notifications', function ($rootScope, bunkerData, user, $notification, $timeout, $log, $state, ngAudio) {
 	var loaded = false;
 	var bunkerIsVisible = true;
+	var mentionSound = ngAudio.load('/assets/sounds/mention.mp3');
+	var roomSound = ngAudio.load('/assets/sounds/room.mp3');
 
 	$timeout(function () {
 		loaded = true;
@@ -14,7 +16,25 @@ app.factory('notifications', function ($rootScope, bunkerData, user, $notificati
 		// we are allowed to show
 
 		if (bunkerData.userSettings.desktopMentionNotifications) {
+		if (user.settings.desktopMentionNotifications) {
+			desktopMentionNotify();
+		}
+
+		if (user.settings.playSoundOnMention) {
+			if (bunkerIsVisible || !user.checkForNickRegex().test(message.text)) return;
+
+			mentionSound.play();
+		}
+
+		// since there are a total of 1 + (n of rooms) possible notifications, each one of those
+		// needs to be tracked separately depending on the set user settings
+
+		function desktopMentionNotify() {
 			if (!user.checkForNickRegex().test(message.text)) return;
+
+			// if bunker is open and user is in room, don't show notification
+			if (bunkerIsVisible && $rootScope.roomId == room.id) return;
+			//if($rootScope.roomId == room.id) return;
 
 			var decodedText = $('<div/>').html(message.text).text();
 			//TODO: Check if creating event listeners like this causes memory leaks
@@ -41,10 +61,10 @@ app.factory('notifications', function ($rootScope, bunkerData, user, $notificati
 			});
 		}
 
-		// since there are a total of 1 + (n of rooms) possible notifications, each one of those
-		// needs to be tracked separately depending on the set user settings
-
 	}
+
+
+
 
 	$rootScope.$on('visibilityShow', function () {
 		bunkerIsVisible = true;
