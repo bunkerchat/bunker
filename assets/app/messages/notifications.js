@@ -7,8 +7,6 @@ app.factory('notifications', function ($rootScope, user, $notification, $timeout
 	}, 5000);
 
 	function newMessage(room, message) {
-		//if(!loaded || bunkerIsVisible) return;
-
 		if(!loaded) return;
 
 		// check user settings and current room settings to see what kind of messages
@@ -16,6 +14,10 @@ app.factory('notifications', function ($rootScope, user, $notification, $timeout
 
 		if(user.settings.desktopMentionNotifications){
 			if (!user.checkForNickRegex().test(message.text)) return;
+
+			// if bunker is open and user is in room, don't show notification
+			if(bunkerIsVisible && $rootScope.roomId == room.id) return;
+			//if($rootScope.roomId == room.id) return;
 
 			var decodedText = $('<div/>').html(message.text).text();
 			//TODO: Check if creating event listeners like this causes memory leaks

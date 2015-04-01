@@ -9,17 +9,17 @@
 			<!-- message log -->
 
 			<ol class="list-unstyled message-list"
-				fill
-				message-log-scroll="{{current.$messages[current.$messages.length - 1].id}}"
-				on-scroll-top="loadPreviousMessages()">
+					fill
+					message-log-scroll="{{current.$messages[current.$messages.length - 1].id}}"
+					on-scroll-top="loadPreviousMessages()">
 				<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in current.$messages"
-					id="{{::message.id}}">
+						id="{{::message.id}}">
 					<div class="message" ng-class="::{ local: message.author.id == userService.current.id }">
 
-							<!-- standard message -->
-							<div ng-switch-when="true"
-									 message-mention="{{::message.text}}">
-								<div class="message-author">
+						<!-- standard message -->
+						<div ng-switch-when="true"
+								 message-mention="{{::message.text}}">
+							<div class="message-author">
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
@@ -28,16 +28,12 @@
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body"
-								 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
+									 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
 								<span bunker-message="message"></span>
 								<span class="message-info text-muted">
 									<i class="fa fa-pencil" ng-if="message.edited"></i>
-									<span ng-if="::message.$firstInSeries">
-										<a ui-sref="roomHistory({roomId: current.id, date: message.createdAt, message: message.id})"
-										   class="text-muted">
-											<small am-time-ago="message.createdAt"
-												   title="{{::message.createdAt | date:'medium'}}"></small>
-										</a>
+									<span ng-if="::message.$firstInSeries" class="text-muted">
+											<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}"></small>
 									</span>
 								</span>
 							</div>
@@ -64,7 +60,7 @@
 			<!-- member list -->
 			<ul class="list-group">
 				<li class="list-group-item" ng-repeat="member in memberLookup | membersOrderBy"
-					ng-if="member.user.connected">
+						ng-if="member.user.connected">
 					<span ng-switch="member.user.typingIn == roomId" class="user-icon">
 						<span ng-switch-when="true">
 							<i class="fa fa-ellipsis-h"></i>
@@ -88,7 +84,7 @@
 
 			<div class="room-options">
 				<a ui-sref="roomHistory({roomId: roomId, date: now()})" ng-hide="$stateParams.date"
-				   class="btn btn-link">
+					 class="btn btn-link">
 					History
 				</a>
 			</div>
