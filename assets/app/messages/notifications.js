@@ -16,13 +16,11 @@ app.factory('notifications', function ($rootScope, bunkerData, user, $notificati
 		// we are allowed to show
 
 		if (bunkerData.userSettings.desktopMentionNotifications) {
-		if (user.settings.desktopMentionNotifications) {
 			desktopMentionNotify();
 		}
 
-		if (user.settings.playSoundOnMention) {
+		if (bunkerData.userSettings.playSoundOnMention) {
 			if (bunkerIsVisible || !user.checkForNickRegex().test(message.text)) return;
-
 			mentionSound.play();
 		}
 
@@ -62,9 +60,6 @@ app.factory('notifications', function ($rootScope, bunkerData, user, $notificati
 		}
 
 	}
-
-
-
 
 	$rootScope.$on('visibilityShow', function () {
 		bunkerIsVisible = true;
