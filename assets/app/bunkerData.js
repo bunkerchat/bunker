@@ -81,6 +81,14 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 			if (!id || !roomLookup[id] || roomLookup[id].$messages.length < 40) return;
 			roomLookup[id].$messages = _.takeRight(roomLookup[id].$messages, 40);
 		},
+		getHistoryMessages: function(roomId, startDate, endDate) {
+			var url = '/room/' + roomId + '/history?startDate=' + startDate + '&endDate=' + endDate
+			return $q(function(resolve) {
+				io.socket.get(url, function(messages) {
+					resolve(messages);
+				});
+			});
+		},
 
 		// Rooms
 

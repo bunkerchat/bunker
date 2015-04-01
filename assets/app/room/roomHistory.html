@@ -1,9 +1,8 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-10 col-xs-12 no-gutter">
-			<h2 ng-if="!room.rawMessages.$resolved">Loading...</h2>
-
-			<h2 ng-if="room.rawMessages.$resolved && room.rawMessages.length == 0">No messages</h2>
+			<h2 ng-if="!room.ready">Loading...</h2>
+			<h2 ng-if="room.ready && room.rawMessages.length == 0">No messages</h2>
 
 			<ol class="list-unstyled message-list" fill>
 				<li class="message-container" id="{{::message.id}}" ng-switch="::!!message.author"

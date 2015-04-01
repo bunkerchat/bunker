@@ -1,4 +1,4 @@
-app.controller('RoomHistoryController', function ($scope, bunkerApi, user, $stateParams, $state, $location, $anchorScroll, $timeout) {
+app.controller('RoomHistoryController', function ($scope, bunkerData, user, $stateParams, $state, $location, $anchorScroll, $timeout) {
 	var self = this;
 	this.roomId = $stateParams.roomId;
 	this.message = $stateParams.message;
@@ -34,23 +34,25 @@ app.controller('RoomHistoryController', function ($scope, bunkerApi, user, $stat
 	getMessages();
 
 	function getMessages() {
-		var query = {id: self.roomId, startDate: startDate, endDate: endDate};
-		self.rawMessages = bunkerApi.room.history(query, function (messages) {
-			_(messages).each(function (message) {
-				addMessage(message);
-				if (message.author) {
-					self.members[message.author.id] = message.author;
+		bunkerData.getHistoryMessages(self.roomId, startDate, endDate)
+			.then(function(messages) {
+				self.ready = true;
+				self.rawMessages = messages;
+				_.each(messages, function (message) {
+					addMessage(message);
+					if (message.author) {
+						self.members[message.author.id] = message.author;
+					}
+				});
+
+				if (self.message) {
+					// scroll to message
+					$timeout(function () {
+						$location.hash(self.message);
+						$anchorScroll();
+					}, 1000);
 				}
 			});
-
-			if (self.message) {
-				// scroll to message
-				$timeout(function () {
-					$location.hash(self.message);
-					$anchorScroll();
-				}, 1000);
-			}
-		});
 	}
 
 	function addMessage(message) {

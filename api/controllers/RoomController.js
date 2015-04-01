@@ -243,6 +243,7 @@ module.exports.history = function (req, res) {
 	var endDate = req.param('endDate');
 
 	Message.find({room: roomId, createdAt: {'>': new Date(startDate), '<': new Date(endDate)}})
+		.sort('createdAt DESC')
 		.populate('author')
 		.then(res.ok)
 		.catch(res.serverError);
