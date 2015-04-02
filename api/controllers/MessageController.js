@@ -12,6 +12,7 @@
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 var ent = require('ent');
+var Promise = require('bluebird');
 
 // POST /message
 // Create a new message. We're overriding the blueprint route provided by sails in order to do
@@ -49,6 +50,26 @@ exports.create = function (req, res) {
 			});
 		}
 		res.ok();
+	}
+	// away, afk, busy
+	else if (/^\/(away|afk|busy)/i.test(text)) {
+
+		return Promise.all([
+			User.findOne(userId),
+			RoomMember.find({user: userId})
+		])
+			.spread(function (user, memberships) {
+				return [User.update(userId, {busy: !user.busy}), memberships];
+			})
+			.spread(function (user, memberships) {
+				user = user[0];
+				var message = user.nick + ' is ' + (user.busy ? 'now away' : 'back');
+				// TODO let user supply some message
+				RoomService.messageRooms(_.pluck(memberships, 'room'), message);
+				User.publishUpdate(userId, {busy: user.busy});
+			})
+			.then(res.ok)
+			.catch(res.serverError);
 	}
 	else if (/^\/help/i.test(text)) {
 

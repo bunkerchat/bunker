@@ -61,12 +61,18 @@
 			<ul class="list-group">
 				<li class="list-group-item" ng-repeat="member in memberLookup | membersOrderBy"
 						ng-if="member.user.connected">
-					<span ng-switch="member.user.typingIn == roomId" class="user-icon">
+
+					<span ng-switch="member.user.busy" class="user-icon">
 						<span ng-switch-when="true">
-							<i class="fa fa-ellipsis-h"></i>
+							<i class="fa fa-clock-o"></i>
 						</span>
-						<span ng-switch-when="false">
-							<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
+						<span ng-switch-default ng-switch="member.user.typingIn == roomId">
+							<span ng-switch-when="true">
+								<i class="fa fa-ellipsis-h"></i>
+							</span>
+							<span ng-switch-default>
+								<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
+							</span>
 						</span>
 					</span>
 
