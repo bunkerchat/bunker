@@ -49,7 +49,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 
 					bunkerData.createMessage(newMessage.room, newMessage.text)
 						.then(function(result) {
-							if(result.author) {
+							if(result && result.author) {
 								historicMessage.id = result.id;
 								scope.submittedMessages.unshift(historicMessage); // Save message for up/down keys to retrieve
 							}
