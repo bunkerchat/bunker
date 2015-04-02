@@ -27,6 +27,14 @@ exports.create = function (req, res) {
 
 		var user = roomMember.user;
 
+		if (user.busy) {
+			// User is flagged as busy, we can now remove this flag since they are interacting with the app
+			User.update(user.id, {busy: false})
+				.then(function () {
+					User.publishUpdate(userId, {busy: false});
+				});
+		}
+
 		// block the trolls
 		var text = ent.encode(req.param('text'));
 		if (!text || !text.length) {
@@ -38,7 +46,7 @@ exports.create = function (req, res) {
 			if (!nickMatches) throw new InvalidInputError('Invalid nick');
 
 			var newNick = nickMatches[1];
-			if(user.nick == newNick) throw new InvalidInputError('Nick is already set');
+			if (user.nick == newNick) throw new InvalidInputError('Nick is already set');
 
 			return Promise.all([
 				User.update(user.id, {nick: newNick}),
@@ -50,7 +58,7 @@ exports.create = function (req, res) {
 					RoomService.messageRooms(_.pluck(memberships, 'room'), user.nick + ' changed their handle to ' + updatedUser.nick);
 				});
 		}
-		// away, afk, busy
+		// away, afk, busy (with optional message)
 		else if (/^\/(away|afk|busy)/i.test(text)) {
 
 			return Promise.all([
@@ -62,7 +70,13 @@ exports.create = function (req, res) {
 				})
 				.spread(function (user, memberships) {
 					user = user[0];
+
 					var message = user.nick + ' is ' + (user.busy ? 'now away' : 'back');
+					var awayMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
+					if(user.busy && awayMessageMatches) {
+						message += ': ' + awayMessageMatches[1];
+					}
+
 					// TODO let user supply some message
 					RoomService.messageRooms(_.pluck(memberships, 'room'), message);
 					User.publishUpdate(userId, {busy: user.busy});
