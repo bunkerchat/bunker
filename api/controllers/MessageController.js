@@ -144,6 +144,27 @@ exports.create = function (req, res) {
 			});
 		});
 	}
+	// Jordan's Magic 8 Ball, Bitches
+	else if (/^\/magic8ball/.test(text)){
+		var ballResponse = ["It is certain", "It is decidely so", "Yes definitely",
+		"You may rely on it", "As I see, yes",
+		"Most likely", "Outlook good", "Yes", "Signs point to yes", "Without a doubt",
+		"Ask again later", "Better not tell you now",
+		"Cannot predict now", "Concentrate and ask again", "Reply hazy, try again",
+		"Don't count on it", "My reply is no",
+		"My sources say no", "Outlook not so good", "Very doubtful"];
+		var magicNumber = Math.floor(Math.random() * ballResponse.length);
+		User.findOne(userId).exec(function (error, user) {
+			Message.create({
+				room: roomId,
+				author: null,
+				text: ballResponse[magicNumber]
+			}).exec(function (error, message) {
+				res.ok(); // send back the message to the original caller
+				broadcastMessage(message);
+			});
+		});
+	}
 	else if (/^\/me\s+/i.test(text)) {
 		User.findOne(userId).exec(function (error, user) {
 			Message.create({
