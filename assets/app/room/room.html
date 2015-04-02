@@ -14,7 +14,7 @@
 					on-scroll-top="loadPreviousMessages()">
 				<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in current.$messages"
 						id="{{::message.id}}">
-					<div class="message" ng-class="::{ local: message.author.id == userService.current.id }">
+					<div class="message" ng-class="::{ local: message.author.id == user.id }">
 
 						<!-- standard message -->
 						<div ng-switch-when="true"
@@ -83,8 +83,7 @@
 			</ul>
 
 			<div class="room-options">
-				<a ui-sref="roomHistory({roomId: roomId, date: now()})" ng-hide="$stateParams.date"
-					 class="btn btn-link">
+				<a class="btn btn-link" ui-sref="roomHistory({roomId: roomId, date: now()})" ng-hide="$stateParams.date">
 					History
 				</a>
 			</div>

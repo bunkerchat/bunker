@@ -71,8 +71,8 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 		{name: 'user', type: 'socket', handler: handleUserEvent},
 		// usersettings are only updated by the client and mirroring is off
 		{name: 'roomMember', type: 'socket', handler: handleMembershipEvent},
+		{name: 'connect', type: 'socket', handler: handleConnect},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
-		{name: '$sailsConnected', type: 'rootScope', handler: handleConnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},
 		{name: 'visibilityHide', type: 'rootScope', handler: handleVisibilityHide}
 	];
