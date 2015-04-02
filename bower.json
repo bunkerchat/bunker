@@ -30,9 +30,6 @@
     "sails.io.js": "https://github.com/JasonMore/sails.io.js.git#426d5ffb801af84630e853250c1eeeb284562265",
     "angular-highlightjs": "~0.4.1",
     "highlightjs": "~8.4.0",
-    "react": "~0.12.2",
-    "reflux": "~0.2.6",
-    "react-router": "~0.12.4",
     "angular-notification": "~1.0.1",
     "angular-audio": "~1.6.2"
   },
