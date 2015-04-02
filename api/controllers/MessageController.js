@@ -1,5 +1,3 @@
-/* global module, require, User, UserSettings, UserService, Message, Room, actionUtil */
-
 /**
  * MessageController
  *
@@ -7,194 +5,156 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-'use strict';
-
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 var ent = require('ent');
 var Promise = require('bluebird');
 
+var ForbiddenError = require('../errors/ForbiddenError');
+var InvalidInputError = require('../errors/InvalidInputError');
+
 // POST /message
 // Create a new message. We're overriding the blueprint route provided by sails in order to do
 // some custom things.
 exports.create = function (req, res) {
+
 	var userId = req.session.userId;
 	var roomId = req.param('room');
 
-	// TODO if author is not a member of the roomId, cancel
+	RoomMember.findOne({user: userId, room: roomId}).populate('user').then(function (roomMember) {
 
-	// block the trolls
-	var text = ent.encode(req.param('text'));
-	if (!text || !text.length) {
-		return res.badRequest();
-	}
-	else if (/^\/nick\s+/i.test(text)) { // Change the current user's nick
+		if (!roomMember) throw new ForbiddenError('Must be a member of this room');
 
-		var newNick = text.match(/\/nick\s+([\w\s\-\.]{1,20})/i);
-		if (newNick) {
-			User.findOne(userId).exec(function (error, user) { // find the user in the db (don't want to use session version)
-				var currentNick = user.nick;
-				user.nick = newNick[1];
-				user.save() // save the model with the updated nick
-					.then(function () {
-						User.publishUpdate(userId, {nick: user.nick});
-						return RoomMember.find({user: userId});
-					})
-					.then(function (roomMembers) {
-						var rooms = _.pluck(roomMembers, 'room');
-						RoomService.messageRooms(rooms, currentNick + ' changed their handle to ' + user.nick);
-					})
-					.catch(function (error) {
-						// TODO error handling
-					});
-			});
+		var user = roomMember.user;
+
+		// block the trolls
+		var text = ent.encode(req.param('text'));
+		if (!text || !text.length) {
+			throw new InvalidInputError();
 		}
-		res.ok();
-	}
-	// away, afk, busy
-	else if (/^\/(away|afk|busy)/i.test(text)) {
+		else if (/^\/nick\s+/i.test(text)) { // Change the current user's nick
 
-		return Promise.all([
-			User.findOne(userId),
-			RoomMember.find({user: userId})
-		])
-			.spread(function (user, memberships) {
-				return [User.update(userId, {busy: !user.busy}), memberships];
-			})
-			.spread(function (user, memberships) {
-				user = user[0];
-				var message = user.nick + ' is ' + (user.busy ? 'now away' : 'back');
-				// TODO let user supply some message
-				RoomService.messageRooms(_.pluck(memberships, 'room'), message);
-				User.publishUpdate(userId, {busy: user.busy});
-			})
-			.then(res.ok)
-			.catch(res.serverError);
-	}
-	else if (/^\/help/i.test(text)) {
+			var nickMatches = text.match(/^\/nick\s+(\w[\w\s\-\.]{0,19})/i);
+			if (!nickMatches) throw new InvalidInputError('Invalid nick');
 
-		return helpService.getHelp(text)
-			.then(function (text) {
-				RoomService.messageUserInRoom(userId, roomId, text);
-				res.ok();
-			});
-	}
-	else if (/^\/(up|down)\s+/i.test(text)) { // Karma system, unfinished
+			var newNick = nickMatches[1];
+			if(user.nick == newNick) throw new InvalidInputError('Nick is already set');
 
-		var nickMatches = text.match(/^\/(?:up|down)\s+@?(\w+)/i);
-		if (!nickMatches) return;
-		var nick = nickMatches[1];
-		var rating = text.match(/up/i) ? 1 : -1;
-
-		// TODO would need to limit how many times a user can vote
-
-		RoomMember.find().where({room: roomId}).populate('user').exec(function (error, roomMembers) {
-			var matchingMember = _.find(roomMembers, function (roomMember) {
-				return roomMember.user.nick == nick;
-			});
-
-			if (!matchingMember) return;
-
-			if (typeof matchingMember.rating === 'undefined') {
-				matchingMember.rating = 0;
-			}
-
-			matchingMember.rating += rating;
-			// Not actually going to save right now as this is not completed
-			//matchingMember.save();
-			res.ok();
-		});
-	}
-	else if (/^\/topic/i.test(text)) { // Change room topic
-
-		RoomMember.findOne({room: roomId, user: userId}).populate('user').exec(function (error, roomMember) {
-			if (error) return res.serverError(error);
-			if (!roomMember) return res.forbidden();
-
-			if (roomMember.role == 'administrator' || roomMember.role == 'moderator') {
-
-				var topicMatches = text.match(/\/topic\s+(.+)/i);
-				var topic = topicMatches ? topicMatches[1].substr(0, 200) : null;
-
-				Room.update(roomId, {topic: topic}).exec(function (error, room) {
-					if (error) return res.serverError(error);
-					if (!room) return res.notFound();
-
-					var room = room[0];
-					var message = roomMember.user.nick + (topic ? ' changed the topic to "' + topic + '"' : ' cleared the topic');
-
-					Room.publishUpdate(room.id, room);
-					RoomService.messageRoom(roomId, message);
-
-					res.ok();
+			return Promise.all([
+				User.update(user.id, {nick: newNick}),
+				RoomMember.find({user: userId})
+			])
+				.spread(function (updatedUser, memberships) {
+					updatedUser = updatedUser[0];
+					User.publishUpdate(userId, {nick: updatedUser.nick});
+					RoomService.messageRooms(_.pluck(memberships, 'room'), user.nick + ' changed their handle to ' + updatedUser.nick);
 				});
-			}
-			else {
-				res.forbidden();
-			}
-
-		});
-	}
-	else if (/^\/roll/i.test(text)) {
-		var matches = text.match(/\/roll\s+(.+)/i);
-		var roll = matches ? matches[1] : null;
-
-		// Determine outcome
-		var rollOutcome;
-
-		if (_.isNumber(+roll) && !_.isNaN(+roll)) {
-			var max = +roll;
-			rollOutcome = 'rolled ' + Math.ceil(Math.random() * max) + ' out of ' + max;
 		}
-		// d20 case for D&D nerds
-		//else if(/^d\d{1,4}/i.test(roll)) { // a dice roll
-		//	rollOutcome = 'rolled a ' + roll + ' for ' + 100;
-		//}
-		else { // Doesn't fit any of our cases
-			return;
-		}
+		// away, afk, busy
+		else if (/^\/(away|afk|busy)/i.test(text)) {
 
-		User.findOne(userId).exec(function (error, user) {
-			Message.create({
+			return Promise.all([
+				User.findOne(userId),
+				RoomMember.find({user: userId})
+			])
+				.spread(function (user, memberships) {
+					return [User.update(userId, {busy: !user.busy}), memberships];
+				})
+				.spread(function (user, memberships) {
+					user = user[0];
+					var message = user.nick + ' is ' + (user.busy ? 'now away' : 'back');
+					// TODO let user supply some message
+					RoomService.messageRooms(_.pluck(memberships, 'room'), message);
+					User.publishUpdate(userId, {busy: user.busy});
+				});
+		}
+		else if (/^\/help/i.test(text)) {
+
+			// TODO doesn't seem to work in prod?
+			return helpService.getHelp(text).then(function (text) {
+				RoomService.messageUserInRoom(userId, roomId, text);
+			});
+		}
+		else if (/^\/topic/i.test(text)) { // Change room topic
+
+			if (roomMember.role == 'member') {
+				throw new ForbiddenError('Must be an administrator to change topic');
+			}
+
+			var topicMatches = text.match(/\/topic\s+(.+)/i);
+			var topic = topicMatches ? topicMatches[1].substr(0, 200) : null;
+
+			return Room.update(roomId, {topic: topic}).then(function (room) {
+				room = room[0];
+				var message = user.nick + (topic ? ' changed the topic to "' + topic + '"' : ' cleared the topic');
+
+				Room.publishUpdate(room.id, room);
+				RoomService.messageRoom(roomId, message);
+			});
+		}
+		else if (/^\/roll/i.test(text)) {
+
+			var matches = text.match(/\/roll\s+(.+)/i);
+			var roll = matches ? matches[1] : null;
+
+			// Determine outcome
+			var rollOutcome;
+
+			if (_.isNumber(+roll) && !_.isNaN(+roll)) {
+				var max = +roll;
+				rollOutcome = 'rolled ' + Math.ceil(Math.random() * max) + ' out of ' + max;
+			}
+			// d20 case for D&D nerds
+			//else if(/^d\d{1,4}/i.test(roll)) { // a dice roll
+			//	rollOutcome = 'rolled a ' + roll + ' for ' + 100;
+			//}
+			else { // Doesn't fit any of our cases
+				return;
+			}
+
+			return Message.create({
 				room: roomId,
 				author: null,
 				text: user.nick + ' ' + rollOutcome
-			}).exec(function (error, message) {
-				res.ok(); // send back the message to the original caller
+			}).then(function (message) {
 				broadcastMessage(message);
+				return message;
 			});
-		});
-	}
-	else if (/^\/me\s+/i.test(text)) {
-		User.findOne(userId).exec(function (error, user) {
-			Message.create({
+		}
+		else if (/^\/me\s+/i.test(text)) {
+
+			return Message.create({
 				room: roomId,
 				author: null,
 				text: user.nick + text.substring(3)
-			}).exec(function (error, message) {
-				res.ok(message);
+			}).then(function (message) {
 				broadcastMessage(message);
-			})
-		});
-	}
-	else {
+				return message;
+			});
+		}
+		else {
 
-		// base case, a regular chat message
-		// Create a message model object in the db
+			// base case, a regular chat message
+			// Create a message model object in the db
 
-		var message = {
-			room: roomId,
-			author: userId,
-			text: text
-		};
-
-		Message.create(message)
-			.then(function (message) {
-				res.ok(message); // send back the message to the original caller
+			return Message.create({
+				room: roomId,
+				author: userId,
+				text: text
+			}).then(function (message) {
 				broadcastMessage(message);
-			})
-			.catch(res.serverError)
-	}
+				return message;
+			});
+		}
+	})
+		.then(res.ok)
+		.catch(ForbiddenError, function (err) {
+			res.forbidden(err);
+		})
+		.catch(InvalidInputError, function (err) {
+			res.badRequest(err);
+		})
+		.catch(res.serverError);
 };
 
 // PUT /message/:id
