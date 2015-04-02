@@ -1,6 +1,5 @@
 window.app = angular.module('bunker', [
 	'ngSanitize',
-	'sailsResource',
 	'ui.router',
 	'ui.gravatar',
 	'angularMoment',
@@ -12,10 +11,7 @@ window.app = angular.module('bunker', [
 	'notification',
 	'ngAudio'
 ])
-	.config(function (sailsResourceProvider, $stateProvider, $urlRouterProvider) {
-		sailsResourceProvider.configuration = {
-			verbose: false
-		};
+	.config(function ($stateProvider, $urlRouterProvider) {
 
 		$urlRouterProvider.otherwise('/');
 		$stateProvider

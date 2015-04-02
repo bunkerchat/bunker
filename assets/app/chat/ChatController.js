@@ -1,4 +1,4 @@
-app.controller('ChatController', function ($rootScope, $scope, $stateParams, $state, user, bunkerData) {
+app.controller('ChatController', function ($rootScope, bunkerData) {
 	var self = this;
 
 	this.rooms = bunkerData.rooms;
