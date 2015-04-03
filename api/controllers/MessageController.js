@@ -119,15 +119,22 @@ exports.create = function (req, res) {
 				"My sources say no", "Outlook not so good", "Very doubtful"
 			]);
 
+			setTimeout(function () {
+				return Message.create({
+					room: roomId,
+					author: null,
+					text: ':magic8ball: "' + ballResponse + '"'
+				}).then(broadcastMessage);
+			}, 3000);
+
 			return Message.create({
 				room: roomId,
 				author: null,
-				text: user.nick + ' shakes the magic 8 ball: "' + ballResponse + '".'
+				text: user.nick + ' shakes the magic 8 ball...'
 			}).then(function (message) {
 				broadcastMessage(message);
 				return message;
 			});
-
 		}
 		else if (/^\/roll/i.test(text)) {
 

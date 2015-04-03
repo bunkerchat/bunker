@@ -32,5 +32,8 @@
     "highlightjs": "~8.4.0",
     "angular-notification": "~1.0.1",
     "angular-audio": "~1.6.2"
+  },
+  "resolutions": {
+    "angular": "~1.3.15"
   }
 }
