@@ -44,7 +44,7 @@ app.filter('membersOrderBy', function () {
 			})
 			.sortBy(function (member) {
 				var user = member.user;
-				var away = user.busy || (user.present && moment().diff(moment(user.lastActivity), 'minutes') > 5);
+				var away = user.busy || (!user.present && moment().diff(moment(user.lastActivity), 'minutes') > 5);
 				return (away ? '1' : '0') + member.user.nick.toLowerCase();
 			})
 			.value();
