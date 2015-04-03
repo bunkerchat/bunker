@@ -59,8 +59,7 @@
 
 			<!-- member list -->
 			<ul class="list-group">
-				<li class="list-group-item" ng-repeat="member in memberLookup | membersOrderBy"
-						ng-if="member.user.connected">
+				<li class="list-group-item" ng-repeat="member in memberLookup | membersOrderBy">
 
 					<span ng-switch="member.user.busy" class="user-icon">
 						<span ng-switch-when="true">
