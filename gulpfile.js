@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var usemin = require('gulp-usemin');
+var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
 var minifyHtml = require('gulp-minify-html');
 var minifyCss = require('gulp-minify-css');
@@ -15,7 +16,7 @@ gulp.task('usemin', function () {
 			//html: [minifyHtml({empty: true})],
 			//js: [uglify(), rev()]
 			jsLib:[rev()],
-			jsApp:[rev()]
+			jsApp:[ngAnnotate(), uglify(), rev()]
 		}))
 		.pipe(gulp.dest('./'));
 });
