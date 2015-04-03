@@ -8,41 +8,6 @@
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 
-var ForbiddenError = require('../errors/ForbiddenError');
-var InvalidInputError = require('../errors/InvalidInputError');
-
-// POST /message
-// Create a new message. We're overriding the blueprint route provided by sails in order to do
-// some custom things.
-exports.create = function (req, res) {
-
-	var userId = req.session.userId;
-	var roomId = req.param('room');
-
-	RoomMember.findOne({user: userId, room: roomId}).populate('user').then(function (roomMember) {
-
-		if (!roomMember) throw new ForbiddenError('Must be a member of this room');
-
-		if (roomMember.user.busy) {
-			// User is flagged as busy, we can now remove this flag since they are interacting with the app
-			User.update(roomMember.user.id, {busy: false})
-				.then(function () {
-					User.publishUpdate(userId, {busy: false});
-				});
-		}
-
-		messageService.createMessage(roomMember, req.param('text'));
-	})
-		.then(res.ok)
-		.catch(ForbiddenError, function (err) {
-			res.forbidden(err);
-		})
-		.catch(InvalidInputError, function (err) {
-			res.badRequest(err);
-		})
-		.catch(res.serverError);
-};
-
 // PUT /message/:id
 // Update a message (the edit functionality)
 exports.update = function (req, res) {

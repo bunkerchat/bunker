@@ -1,5 +1,3 @@
-/* global User, Room, _, actionUtil, require */
-
 /**
  * RoomController
  *
@@ -7,25 +5,47 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-'use strict';
-
 var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 var ObjectId = require('mongodb').ObjectID;
 var Promise = require('bluebird');
 
-// GET /room/:id
-// Overridden from sails blueprint to disable subscribing
-module.exports.findOne = function (req, res) {
-	var pk = actionUtil.requirePk(req);
-	Room.findOne(pk).populateAll().exec(function found(err, matchingRecord) {
-		if (err) return res.serverError(err);
-		if (!matchingRecord) return res.notFound('No record found with the specified `id`.');
-		res.ok(matchingRecord);
-	});
+var ForbiddenError = require('../errors/ForbiddenError');
+var InvalidInputError = require('../errors/InvalidInputError');
+
+// POST /room/:id/message
+// Create a new message
+exports.message = function (req, res) {
+
+	var userId = req.session.userId;
+	var roomId = actionUtil.requirePk(req);
+
+	RoomMember.findOne({user: userId, room: roomId}).populate('user').then(function (roomMember) {
+
+		if (!roomMember) throw new ForbiddenError('Must be a member of this room');
+
+		if (roomMember.user.busy) {
+			// User is flagged as busy, we can now remove this flag since they are interacting with the app
+			User.update(roomMember.user.id, {busy: false})
+				.then(function () {
+					User.publishUpdate(userId, {busy: false});
+				});
+		}
+
+		messageService.createMessage(roomMember, req.param('text'));
+	})
+		.then(res.ok)
+		.catch(ForbiddenError, function (err) {
+			res.forbidden(err);
+		})
+		.catch(InvalidInputError, function (err) {
+			res.badRequest(err);
+		})
+		.catch(res.serverError);
 };
 
-module.exports.findOne2 = function (req, res) {
+// GET /room/:id
+module.exports.findOne = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	Promise.all([
 		Room.findOne(pk),
@@ -66,52 +86,6 @@ module.exports.create = function (req, res) {
 // GET /room/:id/join
 // Join a room
 module.exports.join = function (req, res) {
-	var pk = actionUtil.requirePk(req);
-	var userId = req.session.userId;
-
-	Room.findOne(pk).exec(function (err, room) {
-		if (err) return res.serverError(err);
-		if (!room) return res.notFound();
-
-		res.ok(room); // Can return the room info immediately; perform the subscriptions asynchronously below
-
-		// Subscribe the socket to message and updates of this room
-		// Socket will now receive messages when a new message is created
-		Room.subscribe(req, room, ['message', 'update']);
-		RoomMember.watch(req); // TODO probably an information leak but ARS can't update without it
-
-		RoomMember.find().where({room: pk})
-			.then(function (roomMembers) {
-				if (_.find(roomMembers, {user: userId})) { // Do we need to add as a member?
-					return roomMembers;
-				}
-
-				return RoomMember.create({room: pk, user: userId}).then(function (roomMember) {
-					RoomMember.publishCreate(roomMember);
-
-					// Create system message to inform other users of this user joining
-					User.findOne(userId).then(function (user) {
-						RoomService.messageRoom(pk, user.nick + ' has joined the room');
-					});
-					return roomMembers;
-				});
-			})
-			.then(function (roomMembers) {
-				// Subscribe the new user to every existing user
-				_.each(roomMembers, function (member) {
-					User.subscribe(req, member.user, ['message', 'update']);
-				});
-
-				// Subscribe all of the existing subscribers to this new user
-				_.each(Room.subscribers(pk, 'update'), function (subscriber) {
-					User.subscribe(subscriber, userId, ['message', 'update']);
-				});
-			})
-			.catch(res.serverError);
-	});
-};
-
-module.exports.join2 = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;
 
@@ -159,36 +133,6 @@ module.exports.join2 = function (req, res) {
 // PUT /room/:id/leave
 // Current user requesting to leave a room
 module.exports.leave = function (req, res) {
-	var pk = actionUtil.requirePk(req);
-	var userId = req.session.userId;
-
-	Room.findOne(pk).exec(function (error, room) {
-		if (error) return res.serverError();
-		if (!room) return res.notFound();
-
-		res.ok(room);
-
-		// Unsubscribe socket from this room
-		Room.unsubscribe(req, room, ['message', 'update']);
-		// TODO unsubscribe all members? probably not... need to figure out which ones
-
-		// Remove room membership
-		RoomMember.destroy({room: pk, user: userId}).exec(function (err, destroyedRecords) {
-			_.each(destroyedRecords, function (destroyed) {
-				RoomMember.publishDestroy(destroyed.id);
-				RoomMember.retire(destroyed);
-
-				// Create system message to inform other users of this user leaving
-				User.findOne(userId).exec(function (err, user) {
-					if (err) return res.serverError(err);
-					RoomService.messageRoom(pk, user.nick + ' has left the room');
-				});
-			});
-		});
-	});
-};
-
-module.exports.leave2 = function (req, res) {
 
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;

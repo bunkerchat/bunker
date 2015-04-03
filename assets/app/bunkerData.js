@@ -16,7 +16,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 			bunkerData.$resolved = false;
 			return $q(function (resolve) {
 
-				io.socket.get('/api2/init', function (initialData) {
+				io.socket.get('/init', function (initialData) {
 
 					// Clear rooms array
 					while (bunkerData.rooms.length > 0) {
@@ -54,7 +54,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 		},
 		createMessage: function (roomId, text) {
 			return $q(function (resolve) {
-				io.socket.post('/message', {room: roomId, text: text}, function (message) {
+				io.socket.post('/room/' + roomId + '/message', {text: text}, function (message) {
 					resolve(message);
 				});
 			});
@@ -106,7 +106,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 		},
 		joinRoom: function (roomId) {
 			return $q(function (resolve) {
-				io.socket.post('/api2/room/' + roomId + '/join', function (room) {
+				io.socket.post('/room/' + roomId + '/join', function (room) {
 					bunkerData.init().then(function () {
 						resolve(room);
 					});
@@ -115,7 +115,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 		},
 		leaveRoom: function (roomId) {
 			return $q(function (resolve) {
-				io.socket.put('/api2/room/' + roomId + '/leave', function () {
+				io.socket.put('/room/' + roomId + '/leave', function () {
 					bunkerData.init().then(function () {
 						resolve();
 					});
