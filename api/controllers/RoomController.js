@@ -32,7 +32,7 @@ exports.message = function (req, res) {
 				});
 		}
 
-		messageService.createMessage(roomMember, req.param('text'));
+		return messageService.createMessage(roomMember, req.param('text'));
 	})
 		.then(res.ok)
 		.catch(ForbiddenError, function (err) {

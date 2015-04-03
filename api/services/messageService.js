@@ -12,10 +12,10 @@ module.exports.createMessage = function(roomMember, text) {
 		throw new InvalidInputError(); // block the trolls
 	}
 	else if (/^\/nick\s+/i.test(text)) {
-		setUserNick(roomMember, text); // Change the current user's nick
+		return setUserNick(roomMember, text); // Change the current user's nick
 	}
 	else if (/^\/(away|afk|busy)/i.test(text)) {
-		setUserBusy(roomMember, text); // away, afk, busy (with optional message)
+		return setUserBusy(roomMember, text); // away, afk, busy (with optional message)
 	}
 	else if (/^\/help/i.test(text)) {
 		// TODO doesn't seem to work in prod?
@@ -24,19 +24,19 @@ module.exports.createMessage = function(roomMember, text) {
 		});
 	}
 	else if (/^\/topic/i.test(text)) { // Change room topic
-		setRoomTopic(roomMember, text);
+		return setRoomTopic(roomMember, text);
 	}
 	else if (/^\/magic8ball/i.test(text)) {
-		magic8ball(roomMember); // Jordan's Magic 8 Ball, Bitches
+		return magic8ball(roomMember); // Jordan's Magic 8 Ball, Bitches
 	}
 	else if (/^\/roll/i.test(text)) {
-		roll(roomMember, text);
+		return roll(roomMember, text);
 	}
 	else if (/^\/me\s+/i.test(text)) {
-		me(roomMember, text);
+		return me(roomMember, text);
 	}
 	else {
-		message(roomMember, text);
+		return message(roomMember, text);
 	}
 };
 
