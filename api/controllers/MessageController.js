@@ -149,18 +149,18 @@ exports.create = function (req, res) {
 		var ballResponse = ["It is certain", "It is decidely so", "Yes definitely",
 		"You may rely on it", "As I see, yes",
 		"Most likely", "Outlook good", "Yes", "Signs point to yes", "Without a doubt",
-		"Ask again later", "Better not tell you now",
+		"Ask again later", "Better not tell you now", "You're a bitch for even asking"
 		"Cannot predict now", "Concentrate and ask again", "Reply hazy, try again",
 		"Don't count on it", "My reply is no",
 		"My sources say no", "Outlook not so good", "Very doubtful"];
-		var magicNumber = Math.floor(Math.random() * ballResponse.length);
+		var magicNumber = _.sample(ballResponse);
 		User.findOne(userId).exec(function (error, user) {
 			Message.create({
 				room: roomId,
 				author: null,
-				text: ballResponse[magicNumber]
+				text: user.nick + ' shakes the magic 8 ball: "' + ballResponse[magicNumber] + '".'
 			}).exec(function (error, message) {
-				res.ok(); // send back the message to the original caller
+				res.ok(message); // send back the message to the original caller
 				broadcastMessage(message);
 			});
 		});
