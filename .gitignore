@@ -40,7 +40,6 @@
 ################################################
 
 config/local.js
-assets/bundled
 
 
 
@@ -69,7 +68,7 @@ assets/bundled
 node_modules
 bower_components
 assets/vendor
-assets/bundled
+
 
 
 ################################################
@@ -80,8 +79,8 @@ assets/bundled
 ################################################
 .tmp
 dump.rdb
-
-
+assets/bundled
+views/index-prod.ejs
 
 
 

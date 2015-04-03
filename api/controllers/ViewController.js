@@ -3,20 +3,11 @@ var fs = Promise.promisifyAll(require('fs'));
 var path = require('path');
 
 module.exports.index = function (req, res) {
+	var isProd = sails.config.environment === 'production';
 	getEmoticonNamesFromDisk().then(function (emoticons) {
-		res.view('index', {
+		res.view(isProd ? 'index-prod' : 'index', {
 			userId: req.session.userId,
-			isProduction: sails.config.environment === 'production',
-			emoticons: emoticons
-		});
-	})
-};
-
-module.exports.react = function (req, res) {
-	getEmoticonNamesFromDisk().then(function (emoticons) {
-		res.view('react', {
-			userId: req.session.userId,
-			isProduction: sails.config.environment === 'production',
+			isProduction: isProd,
 			emoticons: emoticons
 		});
 	})
