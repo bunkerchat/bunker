@@ -107,13 +107,13 @@ exports.create = function (req, res) {
 			});
 		}
 		// Jordan's Magic 8 Ball, Bitches
-		else if (/^\/magic8ball/.test(text)) {
+		else if (/^\/magic8ball/i.test(text)) {
 
 			var ballResponse = _.sample([
 				"It is certain", "It is decidedly so", "Yes definitely",
 				"You may rely on it", "As I see, yes",
 				"Most likely", "Outlook good", "Yes", "Signs point to yes", "Without a doubt",
-				"Ask again later", "Better not tell you now", "You're a bitch for even asking",
+				"Ask again later", "Better not to tell you now",
 				"Cannot predict now", "Concentrate and ask again", "Reply hazy, try again",
 				"Don't count on it", "My reply is no",
 				"My sources say no", "Outlook not so good", "Very doubtful"
