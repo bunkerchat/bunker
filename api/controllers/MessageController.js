@@ -73,7 +73,7 @@ exports.create = function (req, res) {
 
 					var message = user.nick + ' is ' + (user.busy ? 'now away' : 'back');
 					var awayMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
-					if(user.busy && awayMessageMatches) {
+					if (user.busy && awayMessageMatches) {
 						message += ': ' + awayMessageMatches[1];
 					}
 
@@ -105,6 +105,29 @@ exports.create = function (req, res) {
 				Room.publishUpdate(room.id, room);
 				RoomService.messageRoom(roomId, message);
 			});
+		}
+		// Jordan's Magic 8 Ball, Bitches
+		else if (/^\/magic8ball/.test(text)) {
+
+			var ballResponse = _.sample([
+				"It is certain", "It is decidedly so", "Yes definitely",
+				"You may rely on it", "As I see, yes",
+				"Most likely", "Outlook good", "Yes", "Signs point to yes", "Without a doubt",
+				"Ask again later", "Better not tell you now", "You're a bitch for even asking",
+				"Cannot predict now", "Concentrate and ask again", "Reply hazy, try again",
+				"Don't count on it", "My reply is no",
+				"My sources say no", "Outlook not so good", "Very doubtful"
+			]);
+
+			return Message.create({
+				room: roomId,
+				author: null,
+				text: user.nick + ' shakes the magic 8 ball: "' + ballResponse + '".'
+			}).then(function (message) {
+				broadcastMessage(message);
+				return message;
+			});
+
 		}
 		else if (/^\/roll/i.test(text)) {
 
