@@ -141,7 +141,7 @@ section {
 	position: fixed;
 	top: 40px;
 	right: 0;
-	width: 325px;
+	width: 295px;
 	height: 500px;
 	margin-left: -300px;
 	border: solid #ddd;
@@ -154,7 +154,7 @@ section {
 }
 
 [emoticon-menu] .emoticon {
-	width: 16px;
+	/*width: 16px;*/
 }
 
 [emoticon-menu] a {
@@ -167,6 +167,10 @@ section {
 
 [emoticon-menu] hr {
 	margin: 4px 0 4px 0;
+}
+
+.emoticonListItem {
+	margin-bottom: 4px;
 }
 
 .sortEmoticons a {
