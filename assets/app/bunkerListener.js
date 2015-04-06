@@ -60,9 +60,7 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 	}
 
 	function handleReconnect() {
-		bunkerData.init().then(function () {
-			$state.go($state.current, {}, {reload: true});
-		});
+		bunkerData.init();
 	}
 
 	// Handle events

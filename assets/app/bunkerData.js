@@ -18,14 +18,35 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 
 				io.socket.get('/init', function (initialData) {
 
-					// Clear rooms array
-					while (bunkerData.rooms.length > 0) {
-						bunkerData.rooms.pop();
-					}
+					// Set $resolved on all rooms (those not in the data set to false)
+					// TODO ideally we could remove the rooms from the array entirely
+					_.each(bunkerData.rooms, function (room) {
+						room.$resolved = _.any(initialData.rooms, {id: room.id});
+					});
 
+					// Go through data and sync messages
+					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
 					_.each(initialData.rooms, function (room) {
+						var existing = _.find(bunkerData.rooms, {id: room.id});
+
+						if (!existing) {
+							room.$resolved = true;
+							bunkerData.rooms.push(room);
+						}
+						else {
+							existing.$resolved = true;
+
+							_(room.$messages)
+								.select(function (message) {
+									return !_.any(existing.$messages, {id: message.id});
+								})
+								.each(function (newMessage) {
+									existing.$messages.push(newMessage);
+								})
+								.value();
+						}
+
 						decorateMessages(room);
-						bunkerData.rooms.push(room);
 					});
 
 					_.assign(bunkerData.user, initialData.user);
@@ -81,10 +102,10 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 			if (!id || !roomLookup[id] || roomLookup[id].$messages.length <= 40) return;
 			roomLookup[id].$messages.splice(0, roomLookup[id].$messages.length - 40);
 		},
-		getHistoryMessages: function(roomId, startDate, endDate) {
+		getHistoryMessages: function (roomId, startDate, endDate) {
 			var url = '/room/' + roomId + '/history?startDate=' + startDate + '&endDate=' + endDate;
-			return $q(function(resolve) {
-				io.socket.get(url, function(messages) {
+			return $q(function (resolve) {
+				io.socket.get(url, function (messages) {
 					resolve(messages);
 				});
 			});
