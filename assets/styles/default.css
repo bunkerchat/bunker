@@ -141,7 +141,7 @@ section {
 	position: fixed;
 	top: 40px;
 	right: 0;
-	width: 295px;
+	width: 460px;
 	height: 500px;
 	margin-left: -300px;
 	border: solid #ddd;
@@ -150,11 +150,30 @@ section {
 	background: #fff;
 	overflow-x: hidden;
 	overflow-y: scroll;
-	font-size: 15px;
+	font-size: 13px;
+}
+
+[emoticon-menu] .row {
+	border-bottom: solid #ddd 1px;
+	padding: 0 15px;
+	overflow: hidden;
+}
+
+[emoticon-menu] .row:last-of-type {
+	border-bottom: none;
+}
+
+[emoticon-menu] .col-xs-3 {
+	overflow: hidden;
+	text-align: center;
+}
+
+[emoticon-menu] .emoticon-container {
+	height: 23px;
 }
 
 [emoticon-menu] .emoticon {
-	/*width: 16px;*/
+	max-height: 23px;
 }
 
 [emoticon-menu] a {

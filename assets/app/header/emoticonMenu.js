@@ -17,7 +17,7 @@ app.directive('emoticonMenu', function ($rootScope, $filter, emoticons, bunkerDa
 				});
 			}
 
-			var emotesByAlpha = _.chunk(emoticons.list, Math.ceil(emoticons.list.length / 2));
+			var emotesByAlpha = _.chunk(emoticons.list, 4);
 
 			$scope.$watch('settings.sortEmoticonsByPopularity', function (sortEmoticonsByPopularity, oldVal) {
 				if (sortEmoticonsByPopularity == oldVal) return;
@@ -53,7 +53,7 @@ app.directive('emoticonMenu', function ($rootScope, $filter, emoticons, bunkerDa
 				});
 
 				var orderedList = _(emoticons.list).sortBy('$count').reverse().value();
-				$scope.emoticonMenuLists = _.chunk(orderedList, Math.ceil(orderedList.length / 2));
+				$scope.emoticonMenuLists = _.chunk(orderedList, 4);
 			});
 
 			$scope.appendEmoticonToChat = function (emoticonFileName) {
