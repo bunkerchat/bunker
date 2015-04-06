@@ -35,7 +35,6 @@ module.exports.routes = {
 	'/': 'ViewController.index',
 	'/login': 'ViewController.login',
 	'/logout': 'AuthController.logout',
-	'/react': 'ViewController.react',
 	'/init': 'UserController.init',
 	'/user/current/activity': 'UserController.activity',
 	'/user/current/connect': 'UserController.connect',
