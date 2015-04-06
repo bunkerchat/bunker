@@ -26,6 +26,12 @@ module.exports.createMessage = function(roomMember, text) {
 	else if (/^\/topic/i.test(text)) { // Change room topic
 		return setRoomTopic(roomMember, text);
 	}
+	else if(/^\/room\s+topic/i.test(text)) {
+		return setRoomTopic(roomMember, text)
+	}
+	else if(/^\/room\s+name\s+\w/i.test(text)) {
+		return setRoomName(roomMember, text)
+	}
 	else if (/^\/magic8ball/i.test(text)) {
 		return magic8ball(roomMember, text); // Jordan's Magic 8 Ball, Bitches
 	}
@@ -89,7 +95,7 @@ function setRoomTopic(roomMember, text) {
 
 	var user = roomMember.user;
 	var roomId = roomMember.room;
-	var topicMatches = text.match(/\/topic\s+(.+)/i);
+	var topicMatches = text.match(/topic\s+(.+)/i);
 	var topic = topicMatches ? topicMatches[1].substr(0, 200) : null;
 
 	return Room.update(roomId, {topic: topic}).then(function (room) {
@@ -97,6 +103,29 @@ function setRoomTopic(roomMember, text) {
 		var message = user.nick + (room.topic ? ' changed the topic to "' + room.topic + '"' : ' cleared the topic');
 
 		Room.publishUpdate(roomId, {topic: room.topic});
+		RoomService.messageRoom(roomId, message);
+	});
+}
+
+function setRoomName(roomMember, text) {
+
+	if (roomMember.role == 'member') {
+		throw new ForbiddenError('Must be an administrator to change room name');
+	}
+
+	var user = roomMember.user;
+	var roomId = roomMember.room;
+
+	var nameMatches = text.match(/\/room\s+name\s+([\w\s]+)/i);
+	if(!nameMatches) throw new InvalidInputError('Invalid room name');
+
+	var name = nameMatches[1].substr(0, 50);
+
+	return Room.update(roomId, {name: name}).then(function (room) {
+		room = room[0];
+		var message = user.nick + ' changed the room name to "' + room.name + '"';
+
+		Room.publishUpdate(roomId, {name: room.name});
 		RoomService.messageRoom(roomId, message);
 	});
 }
