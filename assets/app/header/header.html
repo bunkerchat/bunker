@@ -22,7 +22,13 @@
 					<li role="presentation">
 						<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('showImages')">
 							<i class="fa {{header.settings.showImages ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
-							Show Images
+							Show Media
+						</a>
+					</li>
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('showEmoticons')">
+							<i class="fa {{header.settings.showEmoticons ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+							Show Emoticons
 						</a>
 					</li>
 					<li role="presentation">
@@ -44,12 +50,6 @@
 							Show Notifications (@Nick)
 						</a>
 					</li>
-					<!--<li role="presentation">-->
-						<!--<a role="menuitem" tabindex="-1" >-->
-							<!--<i class="fa fa-check-square-o"></i>-->
-							<!--Show Notifications (Room)-->
-						<!--</a>-->
-					<!--</li>-->
 					<li role="presentation">
 						<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('playSoundOnMention')">
 							<i class="fa {{header.settings.playSoundOnMention ? 'fa-check-square-o' : 'fa-square-o'}}"></i>

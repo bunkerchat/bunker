@@ -19,6 +19,10 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: true
 		},
+		showEmoticons: {
+			type: 'boolean',
+			defaultsTo: true
+		},
 		minimalView: {
 			type: 'boolean',
 			defaultsTo: false

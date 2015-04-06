@@ -14,7 +14,7 @@ app.filter('trusted', ['$sce', function ($sce) {
 	};
 }]);
 
-app.directive('bunkerMessage', function ($compile, emoticons) {
+app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
 	'use strict';
 
 	function replaceAll(str, find, replace) {
@@ -43,7 +43,9 @@ app.directive('bunkerMessage', function ($compile, emoticons) {
 				}
 				else {
 					text = parseBoldAndItalics(text);
-					text = parseEmoticons(text);
+					if(bunkerData.userSettings.showEmoticons) {
+						text = parseEmoticons(text);
+					}
 					text = parseMedia(text);
 				}
 

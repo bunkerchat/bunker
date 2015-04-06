@@ -27,16 +27,16 @@ module.exports.http = {
 module.exports.bootstrap = function (cb) {
 
 	// Clear user socket data
-	User.update({}, {sockets: [], connected: false, typingIn: null}).exec(function (error) {
-	});
+	User.update({}, {sockets: [], connected: false, typingIn: null}).exec();
 
-	// show notifcations migration
-	UserSettings.find().where().exec(function (error, settings) {
+	// UserSettings migrations
+	UserSettings.find().exec(function (error, settings) {
 		var nullSettings = _.filter(settings, function (setting) {
-			return typeof setting.showNotifications == 'undefined';
-		})
+			return (typeof setting.showNotifications == 'undefined' || typeof setting.showEmoticons === 'undefined');
+		});
 		async.each(nullSettings, function (setting, cb) {
-			setting.showNotifications = true;
+			setting.showNotifications = setting.showNotifications || true;
+			setting.showEmoticons = setting.showEmoticons || true;
 			setting.save(cb);
 		});
 	});
