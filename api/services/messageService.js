@@ -27,7 +27,7 @@ module.exports.createMessage = function(roomMember, text) {
 		return setRoomTopic(roomMember, text);
 	}
 	else if (/^\/magic8ball/i.test(text)) {
-		return magic8ball(roomMember); // Jordan's Magic 8 Ball, Bitches
+		return magic8ball(roomMember, text); // Jordan's Magic 8 Ball, Bitches
 	}
 	else if (/^\/roll/i.test(text)) {
 		return roll(roomMember, text);
@@ -101,7 +101,7 @@ function setRoomTopic(roomMember, text) {
 	});
 }
 
-function magic8ball(roomMember) {
+function magic8ball(roomMember, text) {
 	var ballResponse = _.sample([
 		"It is certain", "It is decidedly so", "Yes definitely",
 		"You may rely on it", "As I see, yes",
@@ -120,7 +120,13 @@ function magic8ball(roomMember) {
 		}).then(broadcastMessage);
 	}, 3000);
 
-	return message(roomMember, roomMember.user.nick + ' shakes the magic 8 ball...', true);
+	var question = ' shakes the magic 8 ball...';
+	var questionMatch = text.match(/\/magic8ball\s+(.+)/i);
+	if(questionMatch){
+		question = ' shakes the magic 8 ball and asks "' + questionMatch[1] + '"';
+	}
+
+	return message(roomMember, roomMember.user.nick + question, true);
 }
 
 function roll(roomMember, text) {
