@@ -27,13 +27,20 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 	}
 
 	function handleUserEvent(evt) {
+		var userData = evt.data;
 		var users = _(bunkerData.rooms).pluck('$members').flatten().pluck('user').filter({id: evt.id}).value();
 
 		switch (evt.verb) {
 			case 'updated':
 				_.each(users, function (user) {
-					_.assign(user, evt.data);
+					_.assign(user, userData);
 				});
+				if(evt.id == bunkerData.user.id) {
+					_.assign(bunkerData.user, userData);
+					if(userData.typingIn == null) {
+						bunkerData.cancelBroadcastTyping();
+					}
+				}
 				break;
 		}
 	}

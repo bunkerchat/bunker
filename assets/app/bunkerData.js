@@ -153,10 +153,8 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 			if (bunkerData.user.typingIn != roomId) { // Only need to do anything if it's not already set
 				bunkerData.user.typingIn = roomId;
 				io.socket.put('/user/current/activity', {typingIn: roomId});
-			}
 
-			if (bunkerData.user.typingIn) { // Only need to reset in 2 seconds if room is set
-				if (typingTimeout) $timeout.cancel(typingTimeout); // Cancel current timeout (if any)
+				bunkerData.cancelBroadcastTyping();
 				typingTimeout = $timeout(function () {
 					bunkerData.user.typingIn = null;
 					io.socket.put('/user/current/activity', {typingIn: null});
@@ -171,6 +169,9 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 				typingIn: present ? bunkerData.user.typingIn : null,
 				present: present
 			});
+		},
+		cancelBroadcastTyping: function() {
+			if (typingTimeout) $timeout.cancel(typingTimeout);
 		},
 
 		// UserSettings
