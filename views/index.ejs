@@ -50,6 +50,7 @@
 	<script src="/assets/app/messages/notifications.js"></script>
 	<script src="/assets/app/directives/customStylesheet.js"></script>
 	<script src="/assets/app/directives/status.js"></script>
+	<script src="/assets/app/directives/splash.js"></script>
 	<script src="/assets/app/input/bunkerInput.js"></script>
 	<script src="/assets/app/input/inputBox.js"></script>
 	<script src="/assets/app/directives/unreadMessages.js"></script>
@@ -75,6 +76,11 @@
 	<!-- endbuild -->
 </head>
 <body>
+
+<div splash ng-show="loading">
+	<p>Initializing Bunker</p>
+	<p><img src="/assets/images/emoticons/frogcool.gif"/></p>
+</div>
 
 <div ng-include="'/assets/app/header/header.html'"></div>
 <div ui-view></div>
