@@ -1,15 +1,20 @@
-app.directive('splash', function (bunkerData) {
+app.directive('splash', function (bunkerData, $timeout) {
 	return function ($scope, $element) {
+
+		$scope.loading = true;
+
 		var listener = $scope.$watch(function () {
 			return bunkerData.$resolved;
 		}, function (resolved) {
 
-			$scope.loading = !resolved;
+			if (resolved) {
+				$timeout(function() {
+					angular.element($element).empty();
+					$scope.loading = false;
+				}, 500);
 
-			if (!$scope.loading) {
 				// We're done loading, remove watch and empty splash elements
 				listener();
-				angular.element($element).empty();
 			}
 		});
 	};
