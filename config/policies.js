@@ -61,9 +61,6 @@ module.exports.policies = {
 		'history': 'isLoggedIn',
 		'media': 'isLoggedIn'
 	},
-	RoomMemberController: {
-		'find': 'isLoggedIn'
-	},
 	MessageController: {
 		'update': 'isLoggedIn',
 		'emoticonCounts': true
