@@ -26,7 +26,8 @@ exports.message = function (req, res) {
 
 		if (roomMember.user.busy) {
 			// User is flagged as busy, we can now remove this flag since they are interacting with the app
-			User.update(roomMember.user.id, {busy: false}).exec();
+			User.update(roomMember.user.id, {busy: false}).exec(function (err, users) {
+			});
 		}
 
 		// Inform clients that use is not busy and typing has ceased

@@ -13,8 +13,9 @@
 				message-log-scroll="{{current.$messages[current.$messages.length - 1].id}}"
 				on-scroll-top="loadPreviousMessages()">
 
-				<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in current.$messages"
-					id="{{::message.id}}">
+				<li id="{{::message.id}}" class="message-container"
+					ng-switch="::!!message.author"
+					ng-repeat="message in current.$messages">
 
 					<div class="message" ng-class="::{ local: message.author.id == user.id }">
 
@@ -22,9 +23,9 @@
 						<div message-mention="{{::message.text}}" ng-switch-when="true">
 							<div class="message-author">
 								<span ng-if="::message.$firstInSeries">
-									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
+									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
-									<span status="memberLookup[message.author.id].user"></span>
+									<span class="status" ng-class="memberLookup[message.author.id].user.$present ? 'here' : 'away'"></span>
 								</span>
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
@@ -66,7 +67,7 @@
 
 			<!-- member list -->
 			<ul class="list-group">
-				<li class="list-group-item" ng-repeat="member in memberLookup | membersOrderBy">
+				<li class="list-group-item" ng-repeat="member in current.$members | membersOrderBy">
 
 					<span ng-switch="member.user.busy" class="user-icon">
 						<span ng-switch-when="true">
@@ -89,7 +90,8 @@
 							<i class="fa fa-gavel" ng-switch-when="administrator"></i>
 							<i class="fa fa-comments" ng-switch-when="moderator"></i>
 						</span>
-						<span status="member.user"></span>
+						<span class="status" ng-class="member.user.$present ? 'here' : 'away'">
+						</span>
 					</div>
 				</li>
 			</ul>

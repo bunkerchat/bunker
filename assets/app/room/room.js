@@ -14,13 +14,13 @@ app.directive('room', function ($rootScope, bunkerData) {
 
 				// Setup this watch once we have data
 				$scope.$watch(function () {
-					return JSON.stringify($scope.current.$members);
+					return $scope.current.$members.length;
 				}, function () {
 					if (!$scope.current.$members) return;
 					$scope.memberLookup = _.indexBy($scope.current.$members, function (roomMember) {
 						return roomMember.user.id;
 					});
-				}, true);
+				});
 			});
 
 			$scope.now = function () {
@@ -44,8 +44,7 @@ app.filter('membersOrderBy', function () {
 			})
 			.sortBy(function (member) {
 				var user = member.user;
-				var away = user.busy || (!user.present && moment().diff(moment(user.lastActivity), 'minutes') > 5);
-				return (away ? '1' : '0') + member.user.nick.toLowerCase();
+				return (user.$present ? '000' : '999') + user.nick.toLowerCase();
 			})
 			.value();
 	};

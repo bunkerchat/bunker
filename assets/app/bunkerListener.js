@@ -1,4 +1,4 @@
-app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifications) {
+app.factory('bunkerListener', function ($rootScope, $interval, bunkerData, $state, notifications) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt.id);
@@ -34,6 +34,7 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 			case 'updated':
 				_.each(users, function (user) {
 					_.assign(user, userData);
+					user.$present = isPresent(user);
 				});
 				if(evt.id == bunkerData.user.id) {
 					_.assign(bunkerData.user, userData);
@@ -74,6 +75,10 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 		bunkerData.init();
 	}
 
+	function isPresent(user) {
+		return user.connected && !user.busy && (user.present || moment().diff(moment(user.lastActivity), 'minutes') < 5);
+	}
+
 	// Handle events
 	var listeners = [
 		{name: 'room', type: 'socket', handler: handleRoomEvent},
@@ -105,6 +110,13 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 					});
 				}
 			});
+
+			// Every 30 seconds, set user statuses
+			$interval(function() {
+				_(bunkerData.rooms).pluck('$members').flatten().pluck('user').each(function(user) {
+					user.$present = isPresent(user);
+				}).value();
+			}, 1000);
 		}
 	};
 });
