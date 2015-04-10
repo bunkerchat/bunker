@@ -8,7 +8,8 @@ module.exports.index = function (req, res) {
 		res.view(isProd ? 'index-prod' : 'index', {
 			userId: req.session.userId,
 			isProduction: isProd,
-			emoticons: emoticons
+			emoticons: emoticons,
+			loadingEmote: getLoadScreenEmoticon()
 		});
 	})
 };
@@ -23,4 +24,36 @@ module.exports.login = function (req, res) {
 
 function getEmoticonNamesFromDisk() {
 	return fs.readdirAsync(path.join(__dirname, '..', '..','assets', 'images', 'emoticons'));
+}
+
+function getLoadScreenEmoticon(){
+	return _.sample([
+		'argh.gif',
+		'bang.gif',
+		'banjo.gif',
+		'canofworms.gif',
+		'clint.gif',
+		'cop.gif',
+		'cthulhu.gif',
+		'dance.gif',
+		'drinkup.gif',
+		'duckhunt.gif',
+		'f5.gif',
+		'frogcool.gif',
+		'golfclap.gif',
+		'ghost.gif',
+		'heythere.gif',
+		'lightsabers.gif',
+		'metal.gif',
+		'munch.gif',
+		'ninja.gif',
+		'nyan.gif',
+		'panic.gif',
+		'pbjtime.gif',
+		'rant.gif',
+		'rolldice.gif',
+		'science.gif',
+		'woop.gif',
+		'words.gif'
+	]);
 }

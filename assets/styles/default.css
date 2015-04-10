@@ -122,6 +122,7 @@ input:focus, .form-control:focus {
 	z-index: 9001;
 	padding-top: 90px;
 	text-align: center;
+	font-family: "Cabin", Arial, sans-serif;
 	font-size: 36px;
 	font-weight: bolder;
 	color: #fff;
@@ -565,3 +566,5 @@ img.emoticon {
 		bottom: 0;
 	}
 }
+
+
