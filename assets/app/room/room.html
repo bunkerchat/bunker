@@ -1,4 +1,4 @@
-<div class="container-fluid" ng-show="current && !$stateParams.date">
+<div class="container-fluid" ng-show="current">
 	<div class="row">
 
 		<div class="col-md-10 col-xs-12 no-gutter">
@@ -88,7 +88,7 @@
 			</ul>
 
 			<div class="room-options">
-				<a class="btn btn-link" ui-sref="roomHistory({roomId: roomId, date: now()})" ng-hide="$stateParams.date">
+				<a class="btn btn-link" ui-sref="roomHistory({roomId: roomId, date: now()})">
 					History
 				</a>
 			</div>

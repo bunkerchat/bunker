@@ -1,13 +1,12 @@
-app.directive('roomid', function ($rootScope, $stateParams, bunkerData) {
+app.directive('room', function ($rootScope, bunkerData) {
 	return {
 		scope: {
-			roomId: '@roomid'
+			roomId: '@room'
 		},
 		templateUrl: '/assets/app/room/room.html',
 		link: function ($scope) {
 
 			$scope.user = bunkerData.user;
-			$scope.$stateParams = $stateParams;
 
 			bunkerData.$promise.then(function () {
 				$scope.current = bunkerData.getRoom($scope.roomId);
