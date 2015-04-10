@@ -14,11 +14,11 @@
 					on-scroll-top="loadPreviousMessages()">
 				<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in current.$messages"
 						id="{{::message.id}}">
+
 					<div class="message" ng-class="::{ local: message.author.id == user.id }">
 
 						<!-- standard message -->
-						<div ng-switch-when="true"
-								 message-mention="{{::message.text}}">
+						<div message-mention="{{::message.text}}" ng-switch-when="true">
 							<div class="message-author">
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
@@ -38,17 +38,20 @@
 								</span>
 							</div>
 						</div>
-					</div>
 
-					<!-- system message -->
-					<div class="new-message-body" ng-switch-default>
-						<div class="alert alert-message text-muted">
-							<span bunker-message="message"></span>
+						<!-- system message -->
+						<div ng-switch-default>
+							<div class="new-message-body">
+								<div class="system-message">
+									<span bunker-message="message"></span>
+								</div>
+								<span class="message-info text-muted">
+									<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
+									</small>
+								</span>
+							</div>
 						</div>
-						<span class="message-info text-muted">
-							<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
-							</small>
-						</span>
+
 					</div>
 				</li>
 			</ol>

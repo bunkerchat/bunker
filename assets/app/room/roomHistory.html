@@ -34,18 +34,21 @@
 								</span>
 							</div>
 						</div>
-					</div>
 
-					<!-- system message -->
-					<div class="new-message-body" ng-switch-default>
-						<div class="alert alert-message text-muted">
-							<span bunker-message="message"></span>
+						<!-- system message -->
+						<div ng-switch-default>
+							<div class="new-message-body">
+								<div class="system-message">
+									<span bunker-message="message"></span>
+								</div>
+								<span class="message-info text-muted">
+									<small>
+										{{::message.createdAt | date:'h:mm:ss a'}}
+									</small>
+								</span>
+							</div>
 						</div>
-						<span class="message-info text-muted">
-							<small>
-								{{::message.createdAt | date:'h:mm:ss a'}}
-							</small>
-						</span>
+
 					</div>
 				</li>
 			</ol>
