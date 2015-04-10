@@ -14,8 +14,10 @@ app.filter('trusted', ['$sce', function ($sce) {
 	};
 }]);
 
-app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
+app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeout) {
 	'use strict';
+
+	var messageEditableMilliseconds = 60000;
 
 	function replaceAll(str, find, replace) {
 		return str.split(find).join(replace);
@@ -30,15 +32,15 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
 		link: function (scope, elem) {
 
 			// since we are passing in a bunker message OR room, run the watch on the room topic
-			scope.$watch('bunkerMessage.text', textWatch);
+			var textListener = scope.$watch('bunkerMessage.text', textWatch);
 			scope.$watch('bunkerMessage.topic', textWatch, true);
+			// TODO the topic watch applies to all messages yet almost all do not have a topic
 
 			function textWatch(text) {
 				if (!text) return;
 
 				// Parse quotes
 				if (text.match(/&#10;/g)) {
-
 					text = createQuotedBlock(text);
 				}
 				else {
@@ -50,6 +52,17 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
 				}
 
 				scope.formatted = text;
+
+				// After 60 seconds the message is not editable anymore so we can kill the watch on its text
+				var millisecondsSinceCreated = moment().diff(scope.bunkerMessage.createdAt);
+				if(millisecondsSinceCreated > messageEditableMilliseconds) {
+					// We can kill the watch on text, this message is now static
+					textListener();
+				}
+				else {
+					// kill this watch once the window passes
+					$timeout(textListener, messageEditableMilliseconds - millisecondsSinceCreated);
+				}
 			}
 
 			function createQuotedBlock(text) {
