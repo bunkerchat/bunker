@@ -23,6 +23,10 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: true
 		},
+		showDebugging: {
+			type: 'boolean',
+			defaultsTo: false
+		},
 		minimalView: {
 			type: 'boolean',
 			defaultsTo: false

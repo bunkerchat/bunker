@@ -9,7 +9,8 @@ window.app = angular.module('bunker', [
 	'hljs',
 	'plangular', /* soundcloud embed */
 	'notification',
-	'ngAudio'
+	'ngAudio',
+	'angularStats'
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 

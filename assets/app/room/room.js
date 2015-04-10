@@ -7,6 +7,7 @@ app.directive('room', function ($rootScope, bunkerData) {
 		link: function ($scope) {
 
 			$scope.user = bunkerData.user;
+			$scope.settings = bunkerData.userSettings;
 
 			bunkerData.$promise.then(function () {
 				$scope.current = bunkerData.getRoom($scope.roomId);

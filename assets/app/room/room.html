@@ -9,11 +9,12 @@
 			<!-- message log -->
 
 			<ol class="list-unstyled message-list"
-					fill
-					message-log-scroll="{{current.$messages[current.$messages.length - 1].id}}"
-					on-scroll-top="loadPreviousMessages()">
+				fill
+				message-log-scroll="{{current.$messages[current.$messages.length - 1].id}}"
+				on-scroll-top="loadPreviousMessages()">
+
 				<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in current.$messages"
-						id="{{::message.id}}">
+					id="{{::message.id}}">
 
 					<div class="message" ng-class="::{ local: message.author.id == user.id }">
 
@@ -28,12 +29,14 @@
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body"
-									 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
+								 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
 								<span bunker-message="message"></span>
 								<span class="message-info text-muted">
 									<i class="fa fa-pencil" ng-if="message.edited"></i>
 									<span ng-if="::message.$firstInSeries" class="text-muted">
-											<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}"></small>
+										<small am-time-ago="message.createdAt"
+											   title="{{::message.createdAt | date:'medium'}}">
+										</small>
 									</span>
 								</span>
 							</div>
@@ -46,7 +49,8 @@
 									<span bunker-message="message"></span>
 								</div>
 								<span class="message-info text-muted">
-									<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
+									<small am-time-ago="message.createdAt"
+										   title="{{::message.createdAt | date:'medium'}}">
 									</small>
 								</span>
 							</div>
@@ -91,6 +95,20 @@
 			</ul>
 
 			<div class="room-options">
+
+				<div class="debugging" ng-if="settings.showDebugging">
+					<dl class="dl-horizontal" angular-stats watch-count=".watch-count" digest-length=".digest-length"
+						 on-watch-count-update="onWatchCountUpdate(watchCount)"
+						 on-digest-length-update="onDigestLengthUpdate(digestLength)">
+
+						<dt>Watches</dt>
+						<dd class="watch-count"></dd>
+						<dt>Digest length</dt>
+						<dd class="digest-length"></dd>
+
+					</dl>
+				</div>
+
 				<a class="btn btn-link" ui-sref="roomHistory({roomId: roomId, date: now()})">
 					History
 				</a>

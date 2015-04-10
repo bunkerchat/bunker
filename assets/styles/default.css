@@ -512,6 +512,17 @@ img.emoticon {
 .room-options {
 	position: fixed;
 	bottom: 0;
+	width: 100%;
+}
+
+.debugging {
+	padding: 8px 0;
+	background-color: #F5D9DD;
+	color: #666;
+}
+
+.debugging dl {
+	margin-bottom: 5px;
 }
 
 /*date picker*/
