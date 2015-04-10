@@ -51,6 +51,10 @@ app.factory('bunkerListener', function ($rootScope, bunkerData, $state, notifica
 			case 'updated':
 				_.assign(membership, evt.data);
 				break;
+			case 'messaged':
+				var room = bunkerData.getRoom(evt.data.room);
+				bunkerData.addMessage(room, evt.data);
+				break;
 		}
 	}
 

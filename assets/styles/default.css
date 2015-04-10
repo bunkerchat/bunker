@@ -362,7 +362,7 @@ section {
 }
 
 .system-message {
-	height: 30px;
+	min-height: 30px;
 	padding-left: 10px;
 	padding-right: 7px;
 	background-color: #fff;

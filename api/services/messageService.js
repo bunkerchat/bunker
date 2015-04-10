@@ -4,7 +4,7 @@ var Promise = require('bluebird');
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
 
-module.exports.createMessage = function(roomMember, text) {
+module.exports.createMessage = function (roomMember, text) {
 
 	text = ent.encode(text);
 
@@ -18,18 +18,15 @@ module.exports.createMessage = function(roomMember, text) {
 		return setUserBusy(roomMember, text); // away, afk, busy (with optional message)
 	}
 	else if (/^\/help/i.test(text)) {
-		// TODO doesn't seem to work in prod?
-		return helpService.getHelp(text).then(function (text) {
-			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, text);
-		});
+		return getHelp(roomMember, text);
 	}
 	else if (/^\/topic/i.test(text)) { // Change room topic
 		return setRoomTopic(roomMember, text);
 	}
-	else if(/^\/room\s+topic/i.test(text)) {
+	else if (/^\/room\s+topic/i.test(text)) {
 		return setRoomTopic(roomMember, text)
 	}
-	else if(/^\/room\s+name\s+\w/i.test(text)) {
+	else if (/^\/room\s+name\s+\w/i.test(text)) {
 		return setRoomName(roomMember, text)
 	}
 	else if (/^\/magic8ball/i.test(text)) {
@@ -47,6 +44,12 @@ module.exports.createMessage = function(roomMember, text) {
 };
 
 module.exports.broadcastMessage = broadcastMessage;
+
+function getHelp(roomMember, text) {
+	return helpService.getHelp(text).then(function (result) {
+		RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, result);
+	});
+}
 
 function setUserNick(roomMember, text) {
 	var nickMatches = text.match(/^\/nick\s+(\w[\w\s\-\.]{0,19})/i);
@@ -117,7 +120,7 @@ function setRoomName(roomMember, text) {
 	var roomId = roomMember.room;
 
 	var nameMatches = text.match(/\/room\s+name\s+([\w\s]+)/i);
-	if(!nameMatches) throw new InvalidInputError('Invalid room name');
+	if (!nameMatches) throw new InvalidInputError('Invalid room name');
 
 	var name = nameMatches[1].substr(0, 50);
 
@@ -151,7 +154,7 @@ function magic8ball(roomMember, text) {
 
 	var question = ' shakes the magic 8 ball...';
 	var questionMatch = text.match(/\/magic8ball\s+(.+)/i);
-	if(questionMatch){
+	if (questionMatch) {
 		question = ' shakes the magic 8 ball and asks "' + questionMatch[1] + '"';
 	}
 
