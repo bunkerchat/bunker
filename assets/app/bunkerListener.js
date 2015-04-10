@@ -111,12 +111,12 @@ app.factory('bunkerListener', function ($rootScope, $interval, bunkerData, $stat
 				}
 			});
 
-			// Every 30 seconds, set user statuses
+			// Every 10 seconds, set user statuses
 			$interval(function() {
 				_(bunkerData.rooms).pluck('$members').flatten().pluck('user').each(function(user) {
 					user.$present = isPresent(user);
 				}).value();
-			}, 1000);
+			}, 10000);
 		}
 	};
 });
