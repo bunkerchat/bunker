@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q, $timeout) {
+app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 
 	var roomLookup = []; // For fast room lookup
 	var typingTimeout;
@@ -170,8 +170,13 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 				present: present
 			});
 		},
-		cancelBroadcastTyping: function() {
+		cancelBroadcastTyping: function () {
 			if (typingTimeout) $timeout.cancel(typingTimeout);
+		},
+		mentionsUser: function (text) {
+			if(!bunkerData.$resolved) return false;
+			var regex = new RegExp(bunkerData.user.nick + '\\b|@[Aa]ll', 'i');
+			return regex.test(text);
 		},
 
 		// UserSettings
@@ -179,9 +184,19 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout) {
 		saveUserSettings: function () {
 			io.socket.put('/usersettings/' + bunkerData.userSettings.id, bunkerData.userSettings);
 		},
-		toggleUserSetting: function (name) {
+		toggleUserSetting: function (name, checkForNotifications) {
 			bunkerData.userSettings[name] = !bunkerData.userSettings[name];
 			bunkerData.saveUserSettings();
+
+			if (checkForNotifications) {
+				var hasRoomNotifications = _.any(bunkerData.memberships, function (membership) {
+					return membership.showMessageDesktopNotification;
+				});
+
+				if (hasRoomNotifications || bunkerData.userSettings.desktopMentionNotifications) {
+					$notification.requestPermission();
+				}
+			}
 		},
 
 		// Emoticons

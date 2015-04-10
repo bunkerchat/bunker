@@ -1,9 +1,9 @@
-app.directive('messageMention', function (user) {
+app.directive('messageMention', function (bunkerData) {
 	return {
 		link: function (scope, elem, attrs) {
-			if (user.checkForNickRegex().test(attrs.messageMention)) {
+			if (bunkerData.mentionsUser(attrs.messageMention)) {
 				elem.addClass('message-mention');
 			}
 		}
-	}
+	};
 });

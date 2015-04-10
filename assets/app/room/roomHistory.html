@@ -7,7 +7,7 @@
 			<ol class="list-unstyled message-list" fill>
 				<li class="message-container" id="{{::message.id}}" ng-switch="::!!message.author"
 						ng-repeat="message in room.messages">
-					<div class="message" ng-class="::{ local: message.author.id == room.userService.current.id }">
+					<div class="message" ng-class="::{ local: message.author.id == room.user.id }">
 
 						<!-- standard message -->
 						<div ng-switch-when="true"

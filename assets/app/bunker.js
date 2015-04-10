@@ -65,7 +65,7 @@ window.app = angular.module('bunker', [
 			]
 		});
 	})
-	.run(function ($rootScope, $document, user, $window, bunkerListener) {
+	.run(function ($rootScope, $document, $window, bunkerListener) {
 
 		// html5 visibility api instead of win.focus or win.blur
 		$document.on('visibilitychange', function () {

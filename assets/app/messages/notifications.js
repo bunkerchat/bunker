@@ -1,4 +1,4 @@
-app.factory('notifications', function ($rootScope, bunkerData, user, $notification, $timeout, $log, $state, ngAudio) {
+app.factory('notifications', function ($rootScope, bunkerData, $notification, $timeout, $log, $state, ngAudio) {
 	var loaded = false;
 	var bunkerIsVisible = true;
 	var mentionSound = ngAudio.load('/assets/sounds/mention.mp3');
@@ -20,7 +20,7 @@ app.factory('notifications', function ($rootScope, bunkerData, user, $notificati
 		}
 
 		if (bunkerData.userSettings.playSoundOnMention) {
-			if (bunkerIsVisible || !user.checkForNickRegex().test(message.text)) return;
+			if (bunkerIsVisible || !bunkerData.mentionsUser(message.text)) return;
 			mentionSound.play();
 		}
 
@@ -28,7 +28,7 @@ app.factory('notifications', function ($rootScope, bunkerData, user, $notificati
 		// needs to be tracked separately depending on the set user settings
 
 		function desktopMentionNotify() {
-			if (!user.checkForNickRegex().test(message.text)) return;
+			if (!bunkerData.mentionsUser(message.text)) return;
 
 			// if bunker is open and user is in room, don't show notification
 			if (bunkerIsVisible && $rootScope.roomId == room.id) return;

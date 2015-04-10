@@ -1,7 +1,7 @@
-app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, user, bunkerData) {
+app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, bunkerData) {
 	var self = this;
 
-	bunkerData.$promise.then(function() {
+	bunkerData.$promise.then(function () {
 		self.rooms = bunkerData.rooms;
 		self.settings = bunkerData.userSettings;
 	});
@@ -10,7 +10,9 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		return !$state.is('lobby');
 	};
 
-	this.changeSetting = user.toggleSetting;
+	this.changeSetting = function (settingName) {
+		bunkerData.toggleUserSetting(settingName, settingName == 'desktopMentionNotifications');
+	};
 
 	this.leaveRoom = function () {
 		bunkerData.leaveRoom($rootScope.roomId)
