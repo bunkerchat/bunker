@@ -32,7 +32,8 @@ exports.update = function (req, res) {
 
 			if (message.author.busy) {
 				// User is flagged as busy, we can now remove this flag since they are interacting with the app
-				User.update(userId, {busy: false}).exec();
+				User.update(userId, {busy: false}).exec(function (err, users) {
+				});
 			}
 
 			User.publishUpdate(userId, {busy: false, typingIn: null});

@@ -16,7 +16,6 @@
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
-									<span status="room.memberLookup[message.author.id].user"></span>
 								</span>
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
