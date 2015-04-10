@@ -17,17 +17,18 @@ app.directive('emoticonMenu', function ($rootScope, $filter, emoticons, bunkerDa
 				});
 			}
 
-			var emotesByAlpha = _.chunk(emoticons.list, 4);
+			function prepareList() {
+				var list = bunkerData.userSettings.sortEmoticonsByPopularity ? _(emoticons.list).sortBy('$count').reverse().value() : emoticons.list;
+				var filteredList = $filter('fuzzyBy')(list, 'name', $scope.search);
+				$scope.emoticonMenuLists = _.chunk(filteredList, 4);
+			}
 
 			$scope.$watch('settings.sortEmoticonsByPopularity', function (sortEmoticonsByPopularity, oldVal) {
 				if (sortEmoticonsByPopularity == oldVal) return;
-
-				if (!sortEmoticonsByPopularity) {
-					$scope.emoticonMenuLists = emotesByAlpha;
-					return;
+				if (sortEmoticonsByPopularity) {
+					refreshCounts();
 				}
-
-				refreshCounts();
+				prepareList();
 			});
 
 			$scope.$watch('visible', function (visible, oldVal) {
@@ -36,24 +37,22 @@ app.directive('emoticonMenu', function ($rootScope, $filter, emoticons, bunkerDa
 				if (!visible) {
 					$scope.search = '';
 				}
-				else if ($scope.settings.sortEmoticonsByPopularity) {
+				else if (bunkerData.userSettings.sortEmoticonsByPopularity) {
 					refreshCounts();
 				}
+			});
+
+			$scope.$watch('search', function () {
+				prepareList();
 			});
 
 			$scope.$watchCollection('emoticonCounts', function (emoteCounts, oldVal) {
 				if (emoteCounts == oldVal) return;
 
 				var emoteCountsHash = _.indexBy(emoteCounts, 'name');
-
 				_.each(emoticons.list, function (emoticon) {
-					if (emoteCountsHash[emoticon.name]) {
-						emoticon.$count = emoteCountsHash[emoticon.name].count;
-					}
+					emoticon.$count = emoteCountsHash[emoticon.name] ? emoteCountsHash[emoticon.name].count : 0;
 				});
-
-				var orderedList = _(emoticons.list).sortBy('$count').reverse().value();
-				$scope.emoticonMenuLists = _.chunk(orderedList, 4);
 			});
 
 			$scope.appendEmoticonToChat = function (emoticonFileName) {
@@ -69,12 +68,5 @@ app.directive('emoticonMenu', function ($rootScope, $filter, emoticons, bunkerDa
 
 			refreshCounts();
 		}
-	};
-});
-
-app.filter('toArray', function () {
-	return function (object) {
-		if (_.isArray(object)) return object;
-		return _.values(object);
 	};
 });
