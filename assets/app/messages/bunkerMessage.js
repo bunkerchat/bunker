@@ -33,8 +33,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 
 			// since we are passing in a bunker message OR room, run the watch on the room topic
 			var textListener = scope.$watch('bunkerMessage.text', textWatch);
-			scope.$watch('bunkerMessage.topic', textWatch, true);
-			// TODO the topic watch applies to all messages yet almost all do not have a topic
+			var topicListener = scope.$watch('bunkerMessage.topic', textWatch);
 
 			function textWatch(text) {
 				if (!text) return;
@@ -45,7 +44,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 				}
 				else {
 					text = parseBoldAndItalics(text);
-					if(bunkerData.userSettings.showEmoticons) {
+					if (bunkerData.userSettings.showEmoticons) {
 						text = parseEmoticons(text);
 					}
 					text = parseMedia(text);
@@ -55,13 +54,18 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 
 				// After 60 seconds the message is not editable anymore so we can kill the watch on its text
 				var millisecondsSinceCreated = moment().diff(scope.bunkerMessage.createdAt);
-				if(millisecondsSinceCreated > messageEditableMilliseconds) {
+				if (millisecondsSinceCreated > messageEditableMilliseconds) {
 					// We can kill the watch on text, this message is now static
 					textListener();
 				}
 				else {
 					// kill this watch once the window passes
 					$timeout(textListener, messageEditableMilliseconds - millisecondsSinceCreated);
+				}
+
+				// Most messages are not a topic - at this point we can test this and kill the watch on that if necessary
+				if(!scope.bunkerMessage.topic) {
+					topicListener();
 				}
 			}
 
@@ -135,7 +139,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 							var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
 							var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
 							attachedMedia = angular.element('' +
-							'<div message="bunkerMessage" bunker-media="' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm +'"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
+							'<div message="bunkerMessage" bunker-media="' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
 							'</div>');
 						}
 						else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
