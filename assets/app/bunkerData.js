@@ -47,6 +47,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 						}
 
 						decorateMessages(room);
+						decorateMembers(room);
 					});
 
 					_.assign(bunkerData.user, initialData.user);
@@ -215,6 +216,12 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 		_.each(room.$messages, function (message, index) {
 			var lastMessage = index > 0 && index < room.$messages.length ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(lastMessage, message);
+		});
+	}
+
+	function decorateMembers(room) {
+		_.each(room.$members, function(member) {
+			member.user.$present = true; // assumed true for now
 		});
 	}
 
