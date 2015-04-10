@@ -53,8 +53,9 @@ app.factory('bunkerListener', function ($rootScope, $interval, bunkerData, $stat
 				_.assign(membership, evt.data);
 				break;
 			case 'messaged':
-				var room = bunkerData.getRoom(evt.data.room);
+				var room = bunkerData.getRoom(evt.data.room.id);
 				bunkerData.addMessage(room, evt.data);
+				$rootScope.$broadcast('bunkerMessaged', evt.data);
 				break;
 		}
 	}

@@ -49,10 +49,7 @@ module.exports.messageRoomsWithUser = function (spec) {
 };
 
 module.exports.messageUserInRoom = function(userId, roomId, message){
-	RoomMember.find().where({room: roomId, user: userId}).exec(function(error, roomMembers){
-		// should only be one
-		if (roomMembers.length === 0) return;
-		var roomMember = roomMembers[0];
+	RoomMember.findOne({room: roomId, user: userId}).populateAll().exec(function(error, roomMember){
 		RoomMember.message(roomMember.id, {
 			id: uuid.v4(),
 			text: message,

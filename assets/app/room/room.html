@@ -10,7 +10,7 @@
 
 			<ol class="list-unstyled message-list"
 				fill
-				message-log-scroll="{{current.$messages[current.$messages.length - 1].id}}"
+				message-log-scroll
 				on-scroll-top="loadPreviousMessages()">
 
 				<li id="{{::message.id}}" class="message-container"
@@ -29,8 +29,7 @@
 								</span>
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
-							<div class="message-body"
-								 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
+							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
 								<span bunker-message="message"></span>
 								<span class="message-info text-muted">
 									<i class="fa fa-pencil" ng-if="message.edited"></i>

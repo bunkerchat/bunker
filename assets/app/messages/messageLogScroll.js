@@ -1,43 +1,43 @@
 app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 	return {
 		scope: {
-			messageId: '@messageLogScroll',
 			onScrollTop: '&'
 		},
-		link: function (scope, elem) {
+		link: function ($scope, elem) {
 			var el = elem[0];
 			var tolerance = 31;
 			var clearMessageCounter = 0;
 
-			// Scroll on message adds
-			scope.$watch('messageId', function (messageId) {
-				if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) { // We're at the bottom
-					// Check for images
-					var image = angular.element('#' + messageId).find('img');
-					if (image.length) { // If we have an image, wait for it to load before scrolling
-						image.load(function () {
-							scroll(250);
-						});
-					} else { // Otherwise scroll immediately
-						scroll();
-					}
+			$rootScope.$on('bunkerMessaged', function(evt, message) {
+				if(message.room.id == $rootScope.roomId) {
+					if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) { // We're at the bottom
+						// Check for images
+						var image = angular.element('#' + message.id).find('img');
+						if (image.length) { // If we have an image, wait for it to load before scrolling
+							image.load(function () {
+								scroll(250);
+							});
+						} else { // Otherwise scroll immediately
+							scroll();
+						}
 
-					// if the user is only watching new messages, trim the message log
-					clearMessageCounter++;
-					if (clearMessageCounter > 5) {
-						bunkerData.clearOldMessages($rootScope.roomId);
+						// if the user is only watching new messages, trim the message log
+						clearMessageCounter++;
+						if (clearMessageCounter > 5) {
+							bunkerData.clearOldMessages($rootScope.roomId);
+							clearMessageCounter = 0;
+						}
+					} else {
 						clearMessageCounter = 0;
 					}
-				} else {
-					clearMessageCounter = 0;
 				}
 			});
 
 			// Watch scrolling to top, execute given function
 			angular.element(el).bind('scroll', function () {
-				if (el.scrollTop == 0 && angular.isFunction(scope.onScrollTop)) { // We're at the top
+				if (el.scrollTop == 0 && angular.isFunction($scope.onScrollTop)) { // We're at the top
 					var originalHeight = el.scrollHeight;
-					scope.onScrollTop().then(function () {
+					$scope.onScrollTop().then(function () {
 						$timeout(function () {
 							el.scrollTop = el.scrollHeight - originalHeight;
 						});
@@ -46,11 +46,11 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 			});
 
 			// Scroll after state changes
-			scope.$on('roomIdChanged', function () {
+			$scope.$on('roomIdChanged', function () {
 				scroll();
 			});
 
-			$rootScope.$on('youtube.player.ready', function ($event, player) {
+			$rootScope.$on('youtube.player.ready', function () {
 				scroll();
 			});
 
