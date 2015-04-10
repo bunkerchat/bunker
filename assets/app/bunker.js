@@ -40,7 +40,7 @@ window.app = angular.module('bunker', [
 	})
 	.config(function ($compileProvider, gravatarServiceProvider, hljsServiceProvider) {
 		// disable debug info
-		$compileProvider.debugInfoEnabled(!window.isProduction);
+		$compileProvider.debugInfoEnabled(window.debugging || !window.isProduction);
 
 		// to reenable in prod, use
 		// angular.reloadWithDebugInfo()

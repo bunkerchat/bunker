@@ -12,6 +12,9 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 
 	this.changeSetting = function (settingName) {
 		bunkerData.toggleUserSetting(settingName, settingName == 'desktopMentionNotifications');
+		if(settingName == 'showDebugging' && bunkerData.userSettings.showDebugging) {
+			angular.reloadWithDebugInfo();
+		}
 	};
 
 	this.leaveRoom = function () {

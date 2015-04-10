@@ -4,14 +4,20 @@ var path = require('path');
 
 module.exports.index = function (req, res) {
 	var isProd = sails.config.environment === 'production';
-	getEmoticonNamesFromDisk().then(function (emoticons) {
-		res.view(isProd ? 'index-prod' : 'index', {
-			userId: req.session.userId,
-			isProduction: isProd,
-			emoticons: emoticons,
-			loadingEmote: getLoadScreenEmoticon()
+
+	Promise.all([
+		getEmoticonNamesFromDisk(),
+		UserSettings.findOne({user: req.session.userId})
+	])
+		.spread(function (emoticons, settings) {
+			res.view(isProd ? 'index-prod' : 'index', {
+				userId: req.session.userId,
+				isProduction: isProd,
+				emoticons: emoticons,
+				loadingEmote: getLoadScreenEmoticon(),
+				debugging: settings.showDebugging
+			});
 		});
-	})
 };
 
 module.exports.login = function (req, res) {
@@ -23,10 +29,10 @@ module.exports.login = function (req, res) {
 };
 
 function getEmoticonNamesFromDisk() {
-	return fs.readdirAsync(path.join(__dirname, '..', '..','assets', 'images', 'emoticons'));
+	return fs.readdirAsync(path.join(__dirname, '..', '..', 'assets', 'images', 'emoticons'));
 }
 
-function getLoadScreenEmoticon(){
+function getLoadScreenEmoticon() {
 	return _.sample([
 		'argh.gif',
 		'bang.gif',
