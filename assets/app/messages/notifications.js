@@ -32,18 +32,13 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 
 			// if bunker is open and user is in room, don't show notification
 			if (bunkerIsVisible && $rootScope.roomId == room.id) return;
-			//if($rootScope.roomId == room.id) return;
 
 			var decodedText = $('<div/>').html(message.text).text();
 			//TODO: Check if creating event listeners like this causes memory leaks
 			var mention = $notification(room.name + " - bunker", {
-				body: decodedText,
-				//dir: 'auto',
-				//lang: 'en',
+				body: message.author.nick + ': ' + decodedText,
 				tag: message.id,
 				icon: '/assets/images/bunkerIcon.png'
-				//delay: 30000 // in ms
-				//focusWindowOnClick: true // focus the window on click
 			});
 
 			mention.$on('click', function () {
