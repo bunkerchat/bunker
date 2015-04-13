@@ -6,9 +6,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		self.settings = bunkerData.userSettings;
 	});
 
-	this.showOptions = function () {
-		return !$state.is('lobby');
-	};
+	this.showOptions = !$state.is('lobby');
 
 	this.changeSetting = function (settingName) {
 		bunkerData.toggleUserSetting(settingName, settingName == 'desktopMentionNotifications');
@@ -47,5 +45,9 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		if ($rootScope.roomId) {
 			bunkerData.getRoom($rootScope.roomId).$unreadMessages = 0;
 		}
+	});
+
+	$rootScope.$on('$stateChangeSuccess', function(evt, toState) {
+		self.showOptions = toState.name != 'lobby';
 	});
 });
