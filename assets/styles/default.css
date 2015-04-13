@@ -161,6 +161,16 @@ section {
 	margin: 20px 0;
 }
 
+del {
+	display: inline-block;
+	color: black;
+	background-color: black;
+}
+
+del:hover {
+	color: white;
+}
+
 /* emoticon */
 
 [emoticon-menu] {
