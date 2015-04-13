@@ -15,7 +15,6 @@ app.filter('trusted', ['$sce', function ($sce) {
 }]);
 
 app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeout) {
-	'use strict';
 
 	var messageEditableMilliseconds = 60000;
 
@@ -117,11 +116,11 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 				];
 
 				_.each(types, function (type) {
-					var lookup = new RegExp('(?:[^A-Za-z0-9]|^)(\\' + type.marker + '[^\\' + type.marker + ']+\\' + type.marker + ')(?:[^A-Za-z0-9]|$)', 'g');
+					var lookup = new RegExp('(?:[^A-z0-9]|^)(\\' + type.marker + '[^\\' + type.marker + ']+\\' + type.marker + ')(?:[^A-z0-9]|$)', 'g');
 
 					var match;
 					while ((match = lookup.exec(text)) !== null) {
-						text = replaceAll(text, match[0], '<' + type.tag + '>' + replaceAll(match[0], type.marker, '') + '</' + type.tag + '>');
+						text = replaceAll(text, match[0].trim(), '<' + type.tag + '>' + replaceAll(match[0], type.marker, '') + '</' + type.tag + '>');
 					}
 				});
 
