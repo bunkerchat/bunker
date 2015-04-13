@@ -42,6 +42,7 @@ app.factory('bunkerListener', function ($rootScope, $interval, bunkerData, $stat
 						bunkerData.cancelBroadcastTyping();
 					}
 				}
+				$rootScope.$broadcast('userUpdated', userData);
 				break;
 		}
 	}
