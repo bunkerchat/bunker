@@ -33,8 +33,8 @@
 							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
 								<span bunker-message="message"></span>
 								<span class="message-info text-muted">
-									<span edit-icon="message"></span>
-									<span ng-if="::message.$firstInSeries" class="text-muted">
+									<span edit-icon="message" ng-if="::message.$editable"></span>
+									<span class="text-muted" ng-if="::message.$firstInSeries">
 										<small am-time-ago="message.createdAt"
 											   title="{{::message.createdAt | date:'medium'}}">
 										</small>
