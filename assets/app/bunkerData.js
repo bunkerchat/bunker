@@ -185,6 +185,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 
 		saveUserSettings: function () {
 			io.socket.put('/usersettings/' + bunkerData.userSettings.id, bunkerData.userSettings);
+			$rootScope.$broadcast('userSettingsUpdated', bunkerData.userSettings);
 		},
 		toggleUserSetting: function (name, checkForNotifications) {
 			bunkerData.userSettings[name] = !bunkerData.userSettings[name];

@@ -1,22 +1,16 @@
-app.directive('customStylesheet', function (bunkerData, $window, $timeout) {
+app.directive('customStylesheet', function ($rootScope, bunkerData, $window, $timeout) {
 	return {
 		link: function ($scope) {
 
 			$scope.loadMinimal = false;
 
-			bunkerData.$promise.then(function () {
+			$rootScope.$on('userSettingsUpdated', function() {
+				$scope.loadMinimal = bunkerData.userSettings.minimalView;
 
-				$scope.$watch(function () {
-					return bunkerData.userSettings;
-				}, function () {
-
-					$scope.loadMinimal = bunkerData.userSettings.minimalView;
-
-					// if we change stylesheets, trigger a resize
-					$timeout(function () {
-						angular.element($window).resize();
-					}, 500);
-				}, true);
+				// if we change stylesheets, trigger a resize
+				$timeout(function () {
+					angular.element($window).resize();
+				}, 500);
 			});
 		}
 	};
