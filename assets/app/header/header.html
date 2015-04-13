@@ -4,10 +4,15 @@
 		<div class="navbar-header">
 			<a class="navbar-brand" ui-sref="lobby">Bunker</a>
 		</div>
-		<ul class="nav navbar-nav hidden-xs">
-			<li ui-sref-active="active" ng-repeat="room in header.rooms" ng-if="room.$resolved">
-				<a ui-sref="chat.room({roomId: room.id})" title="{{room.topic}}">{{room.name}}</a>
-				<span class="badge" ng-show="room.$unreadMessages > 0">{{room.$unreadMessages}}</span>
+		<!--<ul class="nav navbar-nav hidden-xs">-->
+			<!--<li ui-sref-active="active" ng-repeat="room in header.rooms" ng-if="room.$resolved">-->
+				<!--<a ui-sref="chat.room({roomId: room.id})" title="{{room.topic}}">{{room.name}}</a>-->
+				<!--<span class="badge" ng-show="room.$unreadMessages > 0">{{room.$unreadMessages}}</span>-->
+			<!--</li>-->
+		<!--</ul>-->
+		<ul data-as-sortable="header.dragRoomListeners" data-ng-model="header.rooms">
+			<li data-ng-repeat="room in header.rooms" data-as-sortable-item>
+				<div data-as-sortable-item-handle>{{room.name}}</div>
 			</li>
 		</ul>
 

@@ -32,6 +32,13 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		});
 	};
 
+	this.dragRoomListeners = {
+		//accept: function (sourceItemHandleScope, destSortableScope) {return boolean}//override to determine drag is allowed or not. default is true.
+		itemMoved: function (event) {console.log('itemMoved', event)},//Do what you want},
+			orderChanged: function(event) {console.log('orderChanged', event)}//Do what you want},
+				//containment: '#board'//optional param.
+	};
+
 	$rootScope.$on('bunkerMessaged', function (evt, message) {
 		if (!bunkerData.$resolved || message.room.id == $rootScope.roomId || !message.author || message.author.id == bunkerData.user.id) {
 			return;
