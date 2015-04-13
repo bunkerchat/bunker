@@ -51,7 +51,7 @@ window.app = angular.module('bunker', [
 
 		hljsServiceProvider.setOptions({
 			// cs and scala are weird
-			languages:[
+			languages: [
 				'css',
 				'javascript',
 				'bash',
@@ -66,22 +66,16 @@ window.app = angular.module('bunker', [
 			]
 		});
 	})
-	.run(function ($rootScope, $document, $window, bunkerListener) {
+	.run(function ($rootScope, $document, bunkerListener) {
 
 		// html5 visibility api instead of win.focus or win.blur
 		$document.on('visibilitychange', function () {
 			$rootScope.$broadcast(document.hidden ? 'visibilityHide' : 'visibilityShow');
 		});
 
-		// watch room ids change
-		$rootScope.$watch(function () {
-			return $window.location.hash;
-		}, function (newVal, oldVal) {
-			var newMatch = /^#\/rooms\/([A-z0-9]*)(?:.*)?$/g.exec(newVal) || [];
-			var oldMatch = /^#\/rooms\/([A-z0-9]*)(?:.*)?$/g.exec(oldVal) || [];
-
-			$rootScope.roomId = newMatch[1];
-			$rootScope.$broadcast('roomIdChanged', newMatch[1], oldMatch[1]);
+		$rootScope.$on('$stateChangeSuccess', function (event, toState, toParams) {
+			$rootScope.roomId = toParams.roomId || null;
+			$rootScope.$broadcast('roomIdChanged', $rootScope.roomId);
 		});
 
 		bunkerListener.init();
