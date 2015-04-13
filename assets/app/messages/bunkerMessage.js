@@ -112,8 +112,8 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 				var types = [
 					{marker: '*', tag: 'strong'},
 					{marker: '_', tag: 'em'},
-					{marker: '~', tag: 'strike'},
-					{marker: '|', tag: 'del'}
+					{marker: '~', tag: 'del'},
+					{marker: '|', tag: 'mark'}
 				];
 
 				_.each(types, function (type) {

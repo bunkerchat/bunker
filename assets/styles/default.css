@@ -161,13 +161,13 @@ section {
 	margin: 20px 0;
 }
 
-del {
+mark {
 	display: inline-block;
 	color: black;
 	background-color: black;
 }
 
-del:hover {
+mark:hover {
 	color: white;
 }
 
