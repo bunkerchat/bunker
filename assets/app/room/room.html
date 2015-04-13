@@ -25,14 +25,15 @@
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
-									<span class="status" ng-class="memberLookup[message.author.id].user.$present ? 'here' : 'away'"></span>
+									<span class="status" ng-class="memberLookup[message.author.id].user.$present ? 'here' : 'away'">
+									</span>
 								</span>
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
 								<span bunker-message="message"></span>
 								<span class="message-info text-muted">
-									<i class="fa fa-pencil" ng-if="message.edited"></i>
+									<span edit-icon="message"></span>
 									<span ng-if="::message.$firstInSeries" class="text-muted">
 										<small am-time-ago="message.createdAt"
 											   title="{{::message.createdAt | date:'medium'}}">
