@@ -18,6 +18,10 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 
 				io.socket.get('/init', function (initialData) {
 
+					bunkerData.$resolved = true;
+					_.assign(bunkerData.user, initialData.user);
+					_.assign(bunkerData.userSettings, initialData.userSettings);
+
 					// Set $resolved on all rooms (those not in the data set to false)
 					// TODO ideally we could remove the rooms from the array entirely
 					_.each(bunkerData.rooms, function (room) {
@@ -50,11 +54,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 						decorateMembers(room);
 					});
 
-					_.assign(bunkerData.user, initialData.user);
-					_.assign(bunkerData.userSettings, initialData.userSettings);
-
 					roomLookup = _.indexBy(bunkerData.rooms, 'id');
-					bunkerData.$resolved = true;
 
 					resolve(bunkerData);
 					$rootScope.$digest();
@@ -73,6 +73,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$editable = isEditable(message);
+			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 			room.$messages.push(message);
 		},
 		createMessage: function (roomId, text) {
@@ -219,6 +220,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 			var lastMessage = index > 0 && index < room.$messages.length ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(lastMessage, message);
 			message.$editable = isEditable(message);
+			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 		});
 	}
 

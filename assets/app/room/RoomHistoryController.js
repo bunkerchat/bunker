@@ -58,6 +58,7 @@ app.controller('RoomHistoryController', function ($scope, bunkerData, $statePara
 	function addMessage(message) {
 		var lastMessage = _.last(self.messages);
 		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+		message.$mentionsUser = bunkerData.mentionsUser(message.text);
 		self.messages.push(message);
 	}
 

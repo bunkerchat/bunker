@@ -17,10 +17,10 @@
 					ng-switch="::!!message.author"
 					ng-repeat="message in current.$messages">
 
-					<div class="message" ng-class="::{ local: message.author.id == user.id }">
+					<div class="message" ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
 
 						<!-- standard message -->
-						<div message-mention="{{::message.text}}" ng-switch-when="true">
+						<div ng-switch-when="true">
 							<div class="message-author">
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
