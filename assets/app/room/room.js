@@ -1,4 +1,4 @@
-app.directive('room', function ($rootScope, bunkerData) {
+app.directive('room', function ($rootScope, bunkerData, $state) {
 	return {
 		scope: {
 			roomId: '@room'
@@ -12,19 +12,20 @@ app.directive('room', function ($rootScope, bunkerData) {
 			bunkerData.$promise.then(function () {
 				$scope.current = bunkerData.getRoom($scope.roomId);
 
-				// Setup this watch once we have data
-				$scope.$watch(function () {
-					return $scope.current.$members.length;
-				}, function () {
-					if (!$scope.current.$members) return;
-					$scope.memberLookup = _.indexBy($scope.current.$members, function (roomMember) {
+				// Setup watches once we have data
+
+				$scope.$watchCollection('current.$members', function (members) {
+					if (!members) return;
+					$scope.memberLookup = _.indexBy(members, function (roomMember) {
 						return roomMember.user.id;
 					});
 				});
+
+				updateMemberList();
 			});
 
-			$scope.now = function () {
-				return moment().format('YYYY-MM-DD');
+			$scope.openHistory = function () {
+				$state.go('roomHistory', {roomId: $scope.roomId, date: moment().format('YYYY-MM-DD')});
 			};
 			$scope.mentionUser = function (userNick) {
 				$rootScope.$broadcast('inputText', '@' + userNick);
@@ -32,20 +33,19 @@ app.directive('room', function ($rootScope, bunkerData) {
 			$scope.loadPreviousMessages = function () {
 				return bunkerData.loadMessages($scope.current, $scope.current.$messages.length);
 			};
+			$rootScope.$on('userUpdated', updateMemberList);
+
+			function updateMemberList() {
+				$scope.memberList =  _($scope.current.$members)
+					.select(function (member) {
+						return member.user.connected;
+					})
+					.sortBy(function (member) {
+						var user = member.user;
+						return (user.$present ? '000' : '999') + user.nick.toLowerCase();
+					})
+					.value();
+			}
 		}
 	}
-});
-
-app.filter('membersOrderBy', function () {
-	return function (members) {
-		return _(members)
-			.select(function (member) {
-				return member.user.connected;
-			})
-			.sortBy(function (member) {
-				var user = member.user;
-				return (user.$present ? '000' : '999') + user.nick.toLowerCase();
-			})
-			.value();
-	};
 });

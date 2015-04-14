@@ -7,11 +7,10 @@
 			<ol class="list-unstyled message-list" fill>
 				<li class="message-container" id="{{::message.id}}" ng-switch="::!!message.author"
 						ng-repeat="message in room.messages">
-					<div class="message" ng-class="::{ local: message.author.id == room.user.id }">
+					<div class="message" ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
 
 						<!-- standard message -->
-						<div ng-switch-when="true"
-								 message-mention="{{::message.text}}">
+						<div ng-switch-when="true">
 							<div class="message-author">
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>

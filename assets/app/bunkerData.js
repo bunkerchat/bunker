@@ -18,6 +18,10 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 
 				io.socket.get('/init', function (initialData) {
 
+					bunkerData.$resolved = true;
+					_.assign(bunkerData.user, initialData.user);
+					_.assign(bunkerData.userSettings, initialData.userSettings);
+
 					// Set $resolved on all rooms (those not in the data set to false)
 					// TODO ideally we could remove the rooms from the array entirely
 					_.each(bunkerData.rooms, function (room) {
@@ -50,11 +54,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 						decorateMembers(room);
 					});
 
-					_.assign(bunkerData.user, initialData.user);
-					_.assign(bunkerData.userSettings, initialData.userSettings);
-
 					roomLookup = _.indexBy(bunkerData.rooms, 'id');
-					bunkerData.$resolved = true;
 
 					resolve(bunkerData);
 					$rootScope.$digest();
@@ -72,6 +72,8 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 			if (!bunkerData.userSettings.showNotifications && !message.author) return; // User does not want to see notifications
 
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
+			message.$editable = isEditable(message);
+			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 			room.$messages.push(message);
 		},
 		createMessage: function (roomId, text) {
@@ -184,6 +186,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 
 		saveUserSettings: function () {
 			io.socket.put('/usersettings/' + bunkerData.userSettings.id, bunkerData.userSettings);
+			$rootScope.$broadcast('userSettingsUpdated', bunkerData.userSettings);
 		},
 		toggleUserSetting: function (name, checkForNotifications) {
 			bunkerData.userSettings[name] = !bunkerData.userSettings[name];
@@ -216,6 +219,8 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 		_.each(room.$messages, function (message, index) {
 			var lastMessage = index > 0 && index < room.$messages.length ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(lastMessage, message);
+			message.$editable = isEditable(message);
+			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 		});
 	}
 
@@ -227,6 +232,10 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 
 	function isFirstInSeries(lastMessage, message) {
 		return !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+	}
+
+	function isEditable(message) {
+		return moment().diff(message.createdAt) < 60000;
 	}
 
 	bunkerData.$promise = bunkerData.init();

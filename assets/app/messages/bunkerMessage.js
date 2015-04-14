@@ -15,7 +15,6 @@ app.filter('trusted', ['$sce', function ($sce) {
 }]);
 
 app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeout) {
-	'use strict';
 
 	var messageEditableMilliseconds = 60000;
 
@@ -43,7 +42,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 					text = createQuotedBlock(text);
 				}
 				else {
-					text = parseBoldAndItalics(text);
+					text = parseFormatting(text);
 					if (bunkerData.userSettings.showEmoticons) {
 						text = parseEmoticons(text);
 					}
@@ -64,7 +63,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 				}
 
 				// Most messages are not a topic - at this point we can test this and kill the watch on that if necessary
-				if(!scope.bunkerMessage.topic) {
+				if (!scope.bunkerMessage.topic) {
 					topicListener();
 				}
 			}
@@ -107,15 +106,22 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 				return text;
 			}
 
-			function parseBoldAndItalics(text) {
-				// Parse bold
-				_.each(text.match(/(?:[^A-Za-z0-9]|^)(\*[^\*]+\*)(?:[^A-Za-z0-9]|$)/g), function (bold) {
-					text = replaceAll(text, bold, '<strong>' + bold.replace(/\*/g, '') + '</strong>');
-				});
+			function parseFormatting(text) {
 
-				// Parse italics
-				_.each(text.match(/(?:[^A-Za-z0-9]|^)(_[^_]+_)(?:[^A-Za-z0-9]|$)/g), function (italics) {
-					text = replaceAll(text, italics, '<em>' + italics.replace(/_/g, '') + '</em>');
+				var types = [
+					{marker: '*', tag: 'strong'},
+					{marker: '_', tag: 'em'},
+					{marker: '~', tag: 'del'},
+					{marker: '|', tag: 'mark'}
+				];
+
+				_.each(types, function (type) {
+					var lookup = new RegExp('(?:[^A-z0-9]|^)(\\' + type.marker + '[^\\' + type.marker + ']+\\' + type.marker + ')(?:[^A-z0-9]|$)', 'g');
+
+					var match;
+					while ((match = lookup.exec(text)) !== null) {
+						text = replaceAll(text, match[0].trim(), '<' + type.tag + '>' + replaceAll(match[0], type.marker, '') + '</' + type.tag + '>');
+					}
 				});
 
 				return text;

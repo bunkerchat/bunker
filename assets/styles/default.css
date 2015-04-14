@@ -161,6 +161,16 @@ section {
 	margin: 20px 0;
 }
 
+mark {
+	display: inline-block;
+	color: black;
+	background-color: black;
+}
+
+mark:hover {
+	color: white;
+}
+
 /* emoticon */
 
 [emoticon-menu] {
@@ -325,11 +335,11 @@ section {
 	padding-right: 5px;
 }
 
-.message-mention > .message-body {
+.message-mention .message-body {
 	background-color: #faf2cc;
 }
 
-.message-mention > .message-caret {
+.message-mention .message-caret {
 	border-right-color: #faf2cc;
 }
 

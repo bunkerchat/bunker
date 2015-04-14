@@ -17,23 +17,24 @@
 					ng-switch="::!!message.author"
 					ng-repeat="message in current.$messages">
 
-					<div class="message" ng-class="::{ local: message.author.id == user.id }">
+					<div class="message" ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
 
 						<!-- standard message -->
-						<div message-mention="{{::message.text}}" ng-switch-when="true">
+						<div ng-switch-when="true">
 							<div class="message-author">
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
-									<span class="status" ng-class="memberLookup[message.author.id].user.$present ? 'here' : 'away'"></span>
+									<span class="status" ng-class="memberLookup[message.author.id].user.$present ? 'here' : 'away'">
+									</span>
 								</span>
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
 								<span bunker-message="message"></span>
 								<span class="message-info text-muted">
-									<i class="fa fa-pencil" ng-if="message.edited"></i>
-									<span ng-if="::message.$firstInSeries" class="text-muted">
+									<span edit-icon="message" ng-if="::message.$editable"></span>
+									<span class="text-muted" ng-if="::message.$firstInSeries">
 										<small am-time-ago="message.createdAt"
 											   title="{{::message.createdAt | date:'medium'}}">
 										</small>
@@ -66,7 +67,7 @@
 
 			<!-- member list -->
 			<ul class="list-group">
-				<li class="list-group-item" ng-repeat="member in current.$members | membersOrderBy">
+				<li class="list-group-item" ng-repeat="member in memberList">
 
 					<span ng-switch="member.user.busy" class="user-icon">
 						<span ng-switch-when="true">
@@ -110,7 +111,7 @@
 					</dl>
 				</div>
 
-				<a class="btn btn-link" ui-sref="roomHistory({roomId: roomId, date: now()})">
+				<a class="btn btn-link" ng-click="openHistory()">
 					History
 				</a>
 			</div>

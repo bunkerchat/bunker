@@ -42,14 +42,17 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 				var chosenMessage = scope.selectedMessageIndex > -1 ? scope.submittedMessages[scope.selectedMessageIndex] : {createdAt: null};
 				var historicMessage = {text: scope.messageText, createdAt: Date.now(), history: ''};
 
-				if (!scope.editMode
+				if(scope.messageText.replace(/\s/g, '').length == 0) {
+					// Nothing to do! (but still reset things)
+				}
+				else if (!scope.editMode
 					|| previousText == scope.messageText
 					|| chosenMessage.edited
 					|| !datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
 
 					bunkerData.createMessage(newMessage.room, newMessage.text)
-						.then(function(result) {
-							if(result && result.author) {
+						.then(function (result) {
+							if (result && result.author) {
 								historicMessage.id = result.id;
 								scope.submittedMessages.unshift(historicMessage); // Save message for up/down keys to retrieve
 							}
@@ -62,6 +65,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					chosenMessage.edited = true;
 					bunkerData.editMessage(newMessage);
 				}
+
 				// Reset all the things
 				scope.selectedMessageIndex = -1;
 				scope.messageText = '';
@@ -144,12 +148,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					previousText = chosenMessage.text;
 
 					scope.messageText = chosenMessage.text;
-
-					if (datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
-						scope.editMode = true;
-					} else {
-						scope.editMode = false;
-					}
+					scope.editMode = datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds);
 
 					scope.$digest();
 				} else if (evt.keyCode == 27) { // 'escape'
