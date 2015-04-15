@@ -1,0 +1,12 @@
+NAME
+	/magic8ball - shake the magic 8 ball
+
+SYNOPSIS
+	/magic8ball [string]
+
+EXAMPLES
+	/magic8ball
+	/magic8ball will I eat a hot dog today?
+
+REMARKS
+	Shake the magic 8 ball, because you believe in magic.

@@ -23,6 +23,10 @@ module.exports = {
 				return this.readHelpFile('images.txt');
 			} else if (command === "gravatar") {
 				return this.readHelpFile('gravatar.txt');
+			} else if (command === "magic8ball") {
+				return this.readHelpFile('magic8ball.txt');
+			} else if (command === "formatting") {
+				return this.readHelpFile('formatting.txt');
 			}
 		}
 		return this.readHelpFile('basic.txt');
