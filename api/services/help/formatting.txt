@@ -1,0 +1,18 @@
+TEXT FORMATTING
+
+You can format the text of room messages by wrapping text in special characters:
+
+italics       - enclose text with "_" to make the text italic
+bold          - enclose text with "*" to make the text bold
+spoilers      - enclose text with "|" to hide it from others
+strikethrough - enclose text with "~" to make the text strikethrough
+
+Example:
+
+&#95;Every day&#95; my &#42;cat&#42; eats &#126;tomahawks&#126; fish.
+&#124;The cat eats the tomahawks anyway&#124;
+
+This will be displayed as:
+
+_Every day_ my *cat* eats ~tomahawks~ fish.
+|The cat eats the tomahawks anyway|
