@@ -15,7 +15,7 @@ var InvalidInputError = require('../errors/InvalidInputError');
 
 // POST /room/:id/message
 // Create a new message
-exports.message = function (req, res) {
+module.exports.message = function (req, res) {
 
 	var userId = req.session.userId;
 	var roomId = actionUtil.requirePk(req);
