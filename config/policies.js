@@ -62,8 +62,7 @@ module.exports.policies = {
 		'media': 'isLoggedIn'
 	},
 	RoomMemberController: {
-		//'update': ['isLoggedIn', 'isCurrentUser']
-		'*': true
+		'updateSettings': 'isLoggedIn'
 	},
 	MessageController: {
 		'update': 'isLoggedIn',

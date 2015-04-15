@@ -13,6 +13,11 @@ a, [ng-click], .pointer {
 	text-decoration: none;
 }
 
+/* ng-sortable overrides */
+.as-sortable-item-handle {
+	cursor: pointer;
+}
+
 /* navbar */
 nav,
 .navbar {
@@ -40,7 +45,8 @@ nav,
 	border-width: 0 1px 0 0;
 }
 
-.navbar-default .navbar-nav > li:last-child > a {
+.navbar-default .navbar-nav > li:last-child > a,
+.navbar-nav > li > a{
 	border-right: 0;
 }
 
