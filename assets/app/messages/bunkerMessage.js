@@ -14,9 +14,7 @@ app.filter('trusted', ['$sce', function ($sce) {
 	};
 }]);
 
-app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeout) {
-
-	var messageEditableMilliseconds = 60000;
+app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunkerConstants, $timeout) {
 
 	function replaceAll(str, find, replace) {
 		return str.split(find).join(replace);
@@ -53,13 +51,13 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, $timeo
 
 				// After 60 seconds the message is not editable anymore so we can kill the watch on its text
 				var millisecondsSinceCreated = moment().diff(scope.bunkerMessage.createdAt);
-				if (millisecondsSinceCreated > messageEditableMilliseconds) {
+				if (millisecondsSinceCreated > bunkerConstants.editWindowMilliseconds) {
 					// We can kill the watch on text, this message is now static
 					textListener();
 				}
 				else {
 					// kill this watch once the window passes
-					$timeout(textListener, messageEditableMilliseconds - millisecondsSinceCreated);
+					$timeout(textListener, bunkerConstants.editWindowMilliseconds - millisecondsSinceCreated);
 				}
 
 				// Most messages are not a topic - at this point we can test this and kill the watch on that if necessary

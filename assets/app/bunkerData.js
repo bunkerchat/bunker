@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
+app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bunkerConstants) {
 
 	var roomLookup = []; // For fast room lookup
 	var typingTimeout;
@@ -235,7 +235,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification) {
 	}
 
 	function isEditable(message) {
-		return moment().diff(message.createdAt) < 60000;
+		return moment().diff(message.createdAt) < bunkerConstants.editWindowMilliseconds;
 	}
 
 	bunkerData.$promise = bunkerData.init();

@@ -1,7 +1,4 @@
-app.directive('editIcon', function ($timeout) {
-
-	var editWindowMilliseconds = 60000;
-
+app.directive('editIcon', function ($timeout, bunkerConstants) {
 	return {
 		scope: {
 			message: '=editIcon'
@@ -14,7 +11,7 @@ app.directive('editIcon', function ($timeout) {
 				}
 			});
 
-			$timeout(listener, editWindowMilliseconds - moment().diff($scope.message.createdAt));
+			$timeout(listener, bunkerConstants.editWindowMilliseconds - moment().diff($scope.message.createdAt));
 		}
 	};
 });
