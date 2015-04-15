@@ -70,16 +70,16 @@
 				<li class="list-group-item" ng-repeat="member in memberList">
 
 					<span ng-switch="member.user.busy" class="user-icon">
-						<span ng-switch-when="true">
-							<i class="fa fa-clock-o"></i>
-						</span>
-						<span ng-switch-default ng-switch="member.user.typingIn == roomId">
-							<span ng-switch-when="true">
-								<i class="fa fa-ellipsis-h"></i>
-							</span>
-							<span ng-switch-default>
+						<span ng-switch="member.user.typingIn == roomId" ng-switch-when="false">
+							<span ng-switch-when="false">
 								<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
 							</span>
+							<span ng-switch-default>
+								<i class="fa fa-ellipsis-h"></i>
+							</span>
+						</span>
+						<span ng-switch-default>
+							<i class="fa fa-clock-o"></i>
 						</span>
 					</span>
 
