@@ -3,6 +3,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 
 	bunkerData.$promise.then(function () {
 		self.rooms = bunkerData.rooms;
+		self.memberships = bunkerData.memberships;
 		self.settings = bunkerData.userSettings;
 	});
 
@@ -10,7 +11,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 
 	this.changeSetting = function (settingName) {
 		bunkerData.toggleUserSetting(settingName, settingName == 'desktopMentionNotifications');
-		if(settingName == 'showDebugging' && bunkerData.userSettings.showDebugging) {
+		if (settingName == 'showDebugging' && bunkerData.userSettings.showDebugging) {
 			angular.reloadWithDebugInfo();
 		}
 	};
@@ -31,10 +32,17 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	};
 
 	this.dragRoomListeners = {
-		//accept: function (sourceItemHandleScope, destSortableScope) {return boolean}//override to determine drag is allowed or not. default is true.
-		itemMoved: function (event) {console.log('itemMoved', event)},//Do what you want},
-			orderChanged: function(event) {console.log('orderChanged', event)}//Do what you want},
-				//containment: '#board'//optional param.
+		orderChanged: function roomOrderChanged(evt) {
+			for (var i = 0; i < self.rooms.length; i++) {
+				var room = self.rooms[i];
+
+				// check each membership
+				var membership = _.findWhere(self.memberships, {room: room.id});
+
+				membership.roomOrder = i;
+			}
+			bunkerData.saveRoomMemberSettings(self.memberships);
+		}
 	};
 
 	$rootScope.$on('bunkerMessaged', function (evt, message) {
@@ -54,7 +62,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		}
 	});
 
-	$rootScope.$on('$stateChangeSuccess', function(evt, toState) {
+	$rootScope.$on('$stateChangeSuccess', function (evt, toState) {
 		self.showOptions = toState.name != 'lobby';
 	});
 });

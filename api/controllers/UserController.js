@@ -27,6 +27,11 @@ module.exports.init = function (req, res) {
 			localMemberships = memberships;
 			var rooms = _(memberships).pluck('room').compact().value();
 
+			// don't send back rooms twice
+			_.each(localMemberships, function (membership) {
+				membership.room = membership.room.id;
+			});
+
 			// Setup subscriptions
 			User.subscribe(req, user, ['update', 'message']);
 			UserSettings.subscribe(req, userSettings, 'update');
