@@ -7,7 +7,6 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 		user: {},
 		userSettings: {},
 		rooms: [],
-		memberships: [],
 		$resolved: false,
 		$promise: null,
 
@@ -22,7 +21,6 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 					bunkerData.$resolved = true;
 					_.assign(bunkerData.user, initialData.user);
 					_.assign(bunkerData.userSettings, initialData.userSettings);
-					_.assign(bunkerData.memberships, initialData.memberships);
 
 					// Set $resolved on all rooms (those not in the data set to false)
 					// TODO ideally we could remove the rooms from the array entirely
@@ -36,10 +34,8 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 						var existing = _.find(bunkerData.rooms, {id: room.id});
 
 						if (!existing) {
-							// set the room tab order
-							var membership = _.findWhere(bunkerData.memberships, {room: room.id});
-							bunkerData.rooms[membership.roomOrder] = room;
 							room.$resolved = true;
+							bunkerData.rooms.push(room);
 						}
 						else {
 							existing.$resolved = true;
@@ -54,13 +50,10 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 								.value();
 						}
 
-
-
 						decorateMessages(room);
 						decorateMembers(room);
 					});
 
-					// creates a hashmap of rooms by its id
 					roomLookup = _.indexBy(bunkerData.rooms, 'id');
 
 					resolve(bunkerData);
@@ -208,12 +201,6 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 					$notification.requestPermission();
 				}
 			}
-		},
-
-		// RoomMember
-		saveRoomMemberSettings: function (roomMembers) {
-			var data = {roomMembers: roomMembers};
-			io.socket.put('/roommember/updateSettings' , data);
 		},
 
 		// Emoticons

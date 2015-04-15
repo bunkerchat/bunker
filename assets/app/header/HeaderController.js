@@ -3,7 +3,6 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 
 	bunkerData.$promise.then(function () {
 		self.rooms = bunkerData.rooms;
-		self.memberships = bunkerData.memberships;
 		self.settings = bunkerData.userSettings;
 	});
 
@@ -29,20 +28,6 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 			controller: 'HelpController',
 			size: 'lg'
 		});
-	};
-
-	this.dragRoomListeners = {
-		orderChanged: function roomOrderChanged(evt) {
-			for (var i = 0; i < self.rooms.length; i++) {
-				var room = self.rooms[i];
-
-				// check each membership
-				var membership = _.findWhere(self.memberships, {room: room.id});
-
-				membership.roomOrder = i;
-			}
-			bunkerData.saveRoomMemberSettings(self.memberships);
-		}
 	};
 
 	$rootScope.$on('bunkerMessaged', function (evt, message) {
