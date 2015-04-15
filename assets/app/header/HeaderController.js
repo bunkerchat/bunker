@@ -32,6 +32,9 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	};
 
 	this.dragRoomListeners = {
+		//accept:function(sourceItemHandleScope, destSortableScope){
+		//	debugger;
+		//},
 		orderChanged: function roomOrderChanged(evt) {
 			for (var i = 0; i < self.rooms.length; i++) {
 				var room = self.rooms[i];

@@ -33,7 +33,8 @@ nav,
 	font-weight: bold;
 }
 
-.navbar-default .navbar-nav > li > a {
+.navbar-default .navbar-nav > li > a,
+.navbar-nav > li > a {
 	padding: 6px 12px;
 	border: solid #8e98a2;
 	border-width: 0 1px 0 0;
@@ -49,7 +50,8 @@ nav,
 	background-color: #414B57;
 }
 
-.navbar .nav > li > a {
+.navbar .nav > li > a,
+.navbar-nav > li > a{
 	padding: 0 20px;
 	text-transform: none;
 	font-size: 16px;
