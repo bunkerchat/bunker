@@ -8,12 +8,14 @@ Type a slash and then the command name, like this:
 
 COMMANDS:
 	help		shows this message
+	magic8ball	shake the magic 8-ball
+	me		make your avatar do something
 	nick		change your nickname
 	roll		roll a die
-	me		make your avatar do something
 	topic		change the topic of the room
 
 TOPICS:
+	formatting	how to format message text (italic, bold, etc)
 	gravatar	how to change your gravatar
 	images		how to upload an image to the room
 
