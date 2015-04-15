@@ -31,9 +31,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 
 					// Go through data and sync messages
 					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
-					// classic for loop for when no roomOrder has been set, sorry jpro :-(
-					for (var i = 0; i < initialData.rooms.length; i++) {
-						var room = initialData.rooms[i];
+					_.each(initialData.rooms, function(room, i){
 						var existing = _.find(bunkerData.rooms, {id: room.id});
 
 						if (!existing) {
@@ -60,7 +58,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 
 						decorateMessages(room);
 						decorateMembers(room);
-					}
+					});
 
 					// creates a hashmap of rooms by its id
 					roomLookup = _.indexBy(bunkerData.rooms, 'id');
