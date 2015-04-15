@@ -4,6 +4,6 @@ var warmup = {
 
 setTimeout(function () {
 	warmup.done = true;
-}, 180000); // 3 minutes of warmup time
+}, 10 /*180000*/); // 3 minutes of warmup time
 
 module.exports = warmup;

@@ -7,6 +7,11 @@ module.exports = {
 		author: {
 			model: 'User'
 		},
+		type: {
+			type: 'string',
+			enum: ['standard', 'emote', 'room', 'global', 'help', 'roll', '8ball'],
+			defaultsTo: 'standard'
+		},
 		text: {
 			type: 'string',
 			required: true,

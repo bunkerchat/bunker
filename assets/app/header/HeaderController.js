@@ -56,9 +56,10 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		}
 	});
 
-	$rootScope.$on('roomIdChanged', function () {
-		if ($rootScope.roomId) {
-			bunkerData.getRoom($rootScope.roomId).$unreadMessages = 0;
+	$rootScope.$on('roomIdChanged', function (roomId) {
+		var room = bunkerData.getRoom(roomId);
+		if (room) {
+			room.$unreadMessages = 0;
 		}
 	});
 

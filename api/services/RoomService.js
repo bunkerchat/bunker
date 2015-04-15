@@ -7,6 +7,7 @@ module.exports.messageRoom = function (room, message) {
 	var roomId = room.id ? room.id : room;
 	Room.message(roomId, {
 		id: uuid.v4(),
+		type: 'room',
 		text: message,
 		room: roomId,
 		createdAt: new Date().toISOString()
@@ -37,6 +38,7 @@ module.exports.messageRoomsWithUser = function (spec) {
 			if (spec.systemMessage && serverWarmup.done) {
 				Room.message(room.id, {
 					id: uuid.v4(),
+					type: 'room',
 					text: spec.systemMessage,
 					room: room.id,
 					createdAt: new Date().toISOString()
@@ -48,11 +50,12 @@ module.exports.messageRoomsWithUser = function (spec) {
 	});
 };
 
-module.exports.messageUserInRoom = function(userId, roomId, message){
+module.exports.messageUserInRoom = function(userId, roomId, message, type){
 	RoomMember.findOne({room: roomId, user: userId}).populateAll().exec(function(error, roomMember){
 		RoomMember.message(roomMember.id, {
 			id: uuid.v4(),
 			text: message,
+			type: type,
 			room: roomMember.room,
 			user: roomMember.user,
 			createdAt: new Date().toISOString()
