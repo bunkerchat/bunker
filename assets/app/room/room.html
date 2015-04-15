@@ -69,8 +69,8 @@
 			<ul class="list-group">
 				<li class="list-group-item" ng-repeat="member in memberList">
 
-					<span ng-switch="member.user.busy" class="user-icon">
-						<span ng-switch="member.user.typingIn == roomId" ng-switch-when="false">
+					<span ng-switch="member.user.busy === true" class="user-icon">
+						<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
 							<span ng-switch-when="false">
 								<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
 							</span>
