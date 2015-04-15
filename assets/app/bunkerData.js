@@ -156,14 +156,14 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 			if (bunkerData.user.typingIn != roomId) { // Only need to do anything if it's not already set
 				bunkerData.user.typingIn = roomId;
 				io.socket.put('/user/current/activity', {typingIn: roomId});
-
-				bunkerData.cancelBroadcastTyping();
-				typingTimeout = $timeout(function () {
-					bunkerData.user.typingIn = null;
-					io.socket.put('/user/current/activity', {typingIn: null});
-					typingTimeout = null;
-				}, 2000);
 			}
+
+			bunkerData.cancelBroadcastTyping();
+			typingTimeout = $timeout(function () {
+				bunkerData.user.typingIn = null;
+				io.socket.put('/user/current/activity', {typingIn: null});
+				typingTimeout = null;
+			}, 3000);
 		},
 		broadcastPresent: function (present) {
 			bunkerData.user.present = present;
