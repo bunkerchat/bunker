@@ -17,7 +17,8 @@
 					ng-switch="::!!message.author"
 					ng-repeat="message in current.$messages">
 
-					<div class="message" ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
+					<div class="message message-type-{{::message.type || 'none'}}"
+						 ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
 
 						<!-- standard message -->
 						<div ng-switch-when="true">

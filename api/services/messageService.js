@@ -39,15 +39,15 @@ module.exports.createMessage = function (roomMember, text) {
 		return me(roomMember, text);
 	}
 	else {
-		return message(roomMember, text);
+		return message(roomMember, text, 'standard');
 	}
 };
 
 module.exports.broadcastMessage = broadcastMessage;
 
 function getHelp(roomMember, text) {
-	return helpService.getHelp(text).then(function (result) {
-		RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, result);
+	return helpService.getHelp(text).then(function (helpMessage) {
+		RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, helpMessage, 'help');
 	});
 }
 
@@ -148,7 +148,8 @@ function magic8ball(roomMember, text) {
 		return Message.create({
 			room: roomMember.room,
 			author: null,
-			text: ':magic8ball: "' + ballResponse + '"'
+			type: '8ball',
+			text: ':magic8ball: ' + ballResponse
 		}).then(broadcastMessage);
 	}, 3000);
 
@@ -158,7 +159,7 @@ function magic8ball(roomMember, text) {
 		question = ' shakes the magic 8 ball and asks "' + questionMatch[1] + '"';
 	}
 
-	return message(roomMember, roomMember.user.nick + question, true);
+	return message(roomMember, roomMember.user.nick + question, 'room');
 }
 
 function roll(roomMember, text) {
@@ -180,17 +181,21 @@ function roll(roomMember, text) {
 		return;
 	}
 
-	return message(roomMember, roomMember.user.nick + ' ' + rollOutcome, true);
+	return message(roomMember, roomMember.user.nick + ' ' + rollOutcome, 'roll');
 }
 
 function me(roomMember, text) {
-	return message(roomMember, roomMember.user.nick + text.substring(3), true);
+	return message(roomMember, roomMember.user.nick + text.substring(3), 'emote');
 }
 
-function message(roomMember, text, systemMessage) {
+function message(roomMember, text, type) {
+
+	type = type || 'standard';
+
 	return Message.create({
 		room: roomMember.room,
-		author: !systemMessage ? roomMember.user : null,
+		type: type,
+		author: type == 'standard' ? roomMember.user : null,
 		text: text
 	}).then(function (message) {
 		broadcastMessage(message);

@@ -266,6 +266,15 @@ mark:hover {
 	background-color: #596470;
 }
 
+/* message type specific styles */
+
+.message.message-type-8ball [bunker-message] {
+	-webkit-animation: fadein 2.5s; /* Safari, Chrome and Opera > 12.1 */
+	-moz-animation: fadein 2.5s; /* Firefox < 16 */
+	-o-animation: fadein 2.5s; /* Opera < 12.1 */
+	animation: fadein 2.5s;
+}
+
 .message-author {
 	float: left;
 	width: 180px;
@@ -588,4 +597,24 @@ img.emoticon {
 	}
 }
 
+/* animations */
 
+@keyframes fadein {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@-moz-keyframes fadein {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@-webkit-keyframes fadein {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@-o-keyframes fadein {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
