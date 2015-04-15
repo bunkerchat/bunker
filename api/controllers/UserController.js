@@ -51,7 +51,7 @@ module.exports.init = function (req, res) {
 		})
 		.then(function (rooms) {
 			return {
-				user: localUser,
+				user: localUser.toJSON(),
 				userSettings: localUserSettings,
 				memberships: localMemberships,
 				rooms: rooms
@@ -106,7 +106,8 @@ module.exports.connect = function (req, res) {
 			if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > userService.connectionUpdateWaitSeconds) {
 				RoomService.messageRoomsWithUser({
 					userId: user.id,
-					systemMessage: user.nick + ' is now online'});
+					systemMessage: user.nick + ' is now online'
+				});
 			}
 
 			// Clear any disconnect messages that haven't gone out yet

@@ -199,13 +199,27 @@ function message(roomMember, text, type) {
 		text: text
 	}).then(function (message) {
 		broadcastMessage(message);
+		saveInMentionedInboxes(message);
 		return message;
 	});
 }
 
 function broadcastMessage(message) {
 	// now that message has been created, get the populated version
-	Message.findOne(message.id).populateAll().exec(function (error, message) {
+	return Message.findOne(message.id).populateAll().exec(function (error, message) {
 		Room.message(message.room, message); // message all subscribers of the room that with the new message as data
+	});
+}
+
+function saveInMentionedInboxes(message) {
+	// Check if this message mentions anyone
+	// Completely async process that shouldn't disrupt the normal message flow
+	return RoomMember.find({room: message.room}).populate('user').then(function (roomMembers) {
+		return Promise.each(roomMembers, function (roomMember) {
+			var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
+			if (regex.test(message.text)) {
+				return InboxMessage.create({user: roomMember.user.id, message: message.id});
+			}
+		})
 	});
 }
