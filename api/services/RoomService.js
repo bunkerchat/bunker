@@ -34,6 +34,7 @@ module.exports.messageRoomsWithUser = function (spec) {
 		if (!roomMembers) return true;
 
 		_(roomMembers).pluck('room').each(function (room) {
+			if(!room) return;
 			// If we were provided a message, send it down to affected rooms
 			if (spec.systemMessage && serverWarmup.done) {
 				Room.message(room.id, {
