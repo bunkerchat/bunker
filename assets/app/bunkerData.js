@@ -34,13 +34,13 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 
 					// Go through data and sync messages
 					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
-					_.each(initialData.rooms, function (room, i) {
+					_.each(initialData.rooms, function (room, index) {
 						var existing = _.find(bunkerData.rooms, {id: room.id});
 
 						if (!existing) {
 							// set the room tab order
 							var membership = _.findWhere(bunkerData.memberships, {room: room.id});
-							var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : i;
+							var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : index;
 
 							room.$resolved = true;
 							bunkerData.rooms[roomIndex] = room;
@@ -239,7 +239,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 	};
 
 	function decorateMessages(room) {
-		room.$messages = _.sortBy(room.$messages, 'createdAt'); // Resort messages
+		room.$messages = _.sortBy(room.$messages, function(message) { return moment(message.createdAt).unix(); }); // Resort messages
 		_.each(room.$messages, function (message, index) {
 			var lastMessage = index > 0 && index < room.$messages.length ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(lastMessage, message);
