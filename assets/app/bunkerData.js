@@ -7,6 +7,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 		user: {},
 		userSettings: {},
 		rooms: [],
+		inbox: [],
 		$resolved: false,
 		$promise: null,
 
@@ -21,6 +22,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 					bunkerData.$resolved = true;
 					_.assign(bunkerData.user, initialData.user);
 					_.assign(bunkerData.userSettings, initialData.userSettings);
+					_.assign(bunkerData.inbox, initialData.inbox);
 
 					// Set $resolved on all rooms (those not in the data set to false)
 					// TODO ideally we could remove the rooms from the array entirely

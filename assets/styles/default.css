@@ -171,9 +171,9 @@ mark:hover {
 	color: white;
 }
 
-/* emoticon */
+/* header dropdowns */
 
-[emoticon-menu] {
+.header-dropdown {
 	position: fixed;
 	top: 40px;
 	right: 0;
@@ -188,6 +188,8 @@ mark:hover {
 	overflow-y: scroll;
 	font-size: 13px;
 }
+
+/* emoticon */
 
 [emoticon-menu] .row {
 	border-bottom: solid #ddd 1px;

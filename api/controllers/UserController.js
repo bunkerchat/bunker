@@ -13,18 +13,20 @@ var Promise = require('bluebird');
 // return all rooms and user data necessary to run the application.
 module.exports.init = function (req, res) {
 
-	var localUser, localUserSettings, localMemberships;
+	var localUser, localUserSettings, localMemberships, localInboxMessages;
 
 	Promise.join(
 		User.findOne(req.session.userId),
 		UserSettings.findOne({user: req.session.userId}),
-		RoomMember.find({user: req.session.userId}).populate('room')
+		RoomMember.find({user: req.session.userId}).populate('room'),
+		InboxMessage.find({user: req.session.userId}).limit(20).populate('message')
 	)
-		.spread(function (user, userSettings, memberships) {
+		.spread(function (user, userSettings, memberships, inboxMessages) {
 
 			localUser = user;
 			localUserSettings = userSettings;
 			localMemberships = memberships;
+			localInboxMessages = inboxMessages;
 			var rooms = _(memberships).pluck('room').compact().value();
 
 			// Setup subscriptions
@@ -32,6 +34,7 @@ module.exports.init = function (req, res) {
 			UserSettings.subscribe(req, userSettings, 'update');
 			RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
+			InboxMessage.subscribe(req, user.id, 'message');
 
 			// Get some initial messages
 			return Promise.map(rooms, function (room) {
@@ -54,6 +57,7 @@ module.exports.init = function (req, res) {
 				user: localUser.toJSON(),
 				userSettings: localUserSettings,
 				memberships: localMemberships,
+				inbox: localInboxMessages,
 				rooms: rooms
 			};
 		})

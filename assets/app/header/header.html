@@ -19,6 +19,11 @@
 						<img src="/assets/images/emoticons/allthethings.png"/>
 					</a>
 				</li>
+				<li ng-class="{active: header.showInbox}">
+					<a ng-click="header.showInbox = !header.showInbox">
+						<i class="fa fa-inbox fa-lg"></i>
+					</a>
+				</li>
 				<li class="dropdown">
 					<a href data-toggle="dropdown" class="small-width"><i class="fa fa-cog fa-lg"></i></a>
 					<ul class="dropdown-menu" role="menu">
@@ -92,7 +97,18 @@
 				</li>
 			</ul>
 
-			<div ng-show="header.emoticonMenu" emoticon-menu>
+			<div class="header-dropdown" ng-if="header.showInbox">
+				<ol class="list-unstyled">
+					<li ng-repeat="inboxMessage in header.inbox">
+						<div>
+							<img gravatar-src-once="inboxMessage.message.author.email | lowercase" gravatar-size="20"/>
+						</div>
+						{{inboxMessage.message.text}}
+					</li>
+				</ol>
+			</div>
+
+			<div class="header-dropdown" emoticon-menu ng-if="header.emoticonMenu">
 			</div>
 
 		</div>

@@ -4,6 +4,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	bunkerData.$promise.then(function () {
 		self.rooms = bunkerData.rooms;
 		self.settings = bunkerData.userSettings;
+		self.inbox = bunkerData.inbox;
 	});
 
 	this.showOptions = !$state.is('lobby');
