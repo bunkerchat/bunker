@@ -27,7 +27,7 @@ module.exports.init = function (req, res) {
 			localMemberships = memberships;
 			var rooms = _(memberships).pluck('room').compact().value();
 
-			// don't send back rooms twice
+			// de-associate a room from a membership since we set rooms above
 			_.each(localMemberships, function (membership) {
 				if (!membership.room) return;
 				membership.room = membership.room.id;
