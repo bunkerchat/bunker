@@ -1,4 +1,4 @@
-app.factory('bunkerListener', function ($rootScope, $interval, bunkerData, $state, notifications) {
+app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerData, $state, notifications) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt.id);
@@ -36,9 +36,9 @@ app.factory('bunkerListener', function ($rootScope, $interval, bunkerData, $stat
 					_.assign(user, userData);
 					user.$present = isPresent(user);
 				});
-				if(evt.id == bunkerData.user.id) {
+				if (evt.id == bunkerData.user.id) {
 					_.assign(bunkerData.user, userData);
-					if(userData.typingIn == null) {
+					if (userData.typingIn == null) {
 						bunkerData.cancelBroadcastTyping();
 					}
 				}
@@ -77,6 +77,10 @@ app.factory('bunkerListener', function ($rootScope, $interval, bunkerData, $stat
 		bunkerData.init();
 	}
 
+	function handleClose() {
+		io.socket.disconnect();
+	}
+
 	function isPresent(user) {
 		return user.connected && !user.busy && (user.present || moment().diff(moment(user.lastActivity), 'minutes') < 5);
 	}
@@ -90,7 +94,8 @@ app.factory('bunkerListener', function ($rootScope, $interval, bunkerData, $stat
 		{name: 'connect', type: 'socket', handler: handleConnect},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},
-		{name: 'visibilityHide', type: 'rootScope', handler: handleVisibilityHide}
+		{name: 'visibilityHide', type: 'rootScope', handler: handleVisibilityHide},
+		{name: 'onbeforeunload', type: 'window', handler: handleClose}
 	];
 
 	return {
@@ -111,11 +116,14 @@ app.factory('bunkerListener', function ($rootScope, $interval, bunkerData, $stat
 						});
 					});
 				}
+				else if (listener.type == 'window') {
+					$window[listener.name] = listener.handler;
+				}
 			});
 
 			// Every 10 seconds, set user statuses
-			$interval(function() {
-				_(bunkerData.rooms).pluck('$members').flatten().pluck('user').each(function(user) {
+			$interval(function () {
+				_(bunkerData.rooms).pluck('$members').flatten().pluck('user').each(function (user) {
 					user.$present = isPresent(user);
 				}).value();
 			}, 10000);

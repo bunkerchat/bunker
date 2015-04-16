@@ -29,6 +29,12 @@ module.exports.init = function (req, res) {
 			localInboxMessages = inboxMessages;
 			var rooms = _(memberships).pluck('room').compact().value();
 
+			// de-associate a room from a membership since we set rooms above
+			_.each(localMemberships, function (membership) {
+				if (!membership.room) return;
+				membership.room = membership.room.id;
+			});
+
 			// Setup subscriptions
 			User.subscribe(req, user, ['update', 'message']);
 			UserSettings.subscribe(req, userSettings, 'update');

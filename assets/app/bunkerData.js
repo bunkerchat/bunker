@@ -8,6 +8,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 		userSettings: {},
 		rooms: [],
 		inbox: [],
+		memberships: [],
 		$resolved: false,
 		$promise: null,
 
@@ -23,6 +24,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 					_.assign(bunkerData.user, initialData.user);
 					_.assign(bunkerData.userSettings, initialData.userSettings);
 					_.assign(bunkerData.inbox, initialData.inbox);
+					_.assign(bunkerData.memberships, initialData.memberships);
 
 					// Set $resolved on all rooms (those not in the data set to false)
 					// TODO ideally we could remove the rooms from the array entirely
@@ -32,12 +34,16 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 
 					// Go through data and sync messages
 					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
-					_.each(initialData.rooms, function (room) {
+					_.each(initialData.rooms, function(room, i){
 						var existing = _.find(bunkerData.rooms, {id: room.id});
 
 						if (!existing) {
+							// set the room tab order
+							var membership = _.findWhere(bunkerData.memberships, {room: room.id});
+							var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : i;
+
 							room.$resolved = true;
-							bunkerData.rooms.push(room);
+							bunkerData.rooms[roomIndex] = room;
 						}
 						else {
 							existing.$resolved = true;
@@ -56,6 +62,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 						decorateMembers(room);
 					});
 
+					// creates a hashmap of rooms by its id
 					roomLookup = _.indexBy(bunkerData.rooms, 'id');
 
 					resolve(bunkerData);
@@ -179,7 +186,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 			if (typingTimeout) $timeout.cancel(typingTimeout);
 		},
 		mentionsUser: function (text) {
-			if(!bunkerData.$resolved) return false;
+			if (!bunkerData.$resolved) return false;
 			var regex = new RegExp(bunkerData.user.nick + '\\b|@[Aa]ll', 'i');
 			return regex.test(text);
 		},
@@ -205,6 +212,12 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 			}
 		},
 
+		// RoomMember
+		saveRoomMemberSettings: function (roomMembers) {
+			var data = {roomMembers: roomMembers};
+			io.socket.put('/roommember/updateSettings', data);
+		},
+
 		// Emoticons
 
 		getEmoticonCounts: function () {
@@ -227,7 +240,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 	}
 
 	function decorateMembers(room) {
-		_.each(room.$members, function(member) {
+		_.each(room.$members, function (member) {
 			member.user.$present = true; // assumed true for now
 		});
 	}

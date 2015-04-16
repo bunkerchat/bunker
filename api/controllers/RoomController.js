@@ -15,7 +15,7 @@ var InvalidInputError = require('../errors/InvalidInputError');
 
 // POST /room/:id/message
 // Create a new message
-exports.message = function (req, res) {
+module.exports.message = function (req, res) {
 
 	var userId = req.session.userId;
 	var roomId = actionUtil.requirePk(req);
@@ -90,8 +90,15 @@ module.exports.join = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;
 
-	RoomMember.count({room: pk, user: userId})
-		.then(function (existingRoomMember) {
+	Promise.all([
+		Room.findOne(pk),
+		RoomMember.count({room: pk, user: userId})
+	])
+		.spread(function (room, existingRoomMember) {
+
+			if (!room) {
+				return new InvalidInputError('Requested room does not exist');
+			}
 
 			if (existingRoomMember > 0) {
 				// Already exists!
@@ -128,6 +135,9 @@ module.exports.join = function (req, res) {
 				});
 		})
 		.then(res.ok)
+		.catch(InvalidInputError, function (err) {
+			res.badRequest(err);
+		})
 		.catch(res.serverError);
 };
 
@@ -142,7 +152,7 @@ module.exports.leave = function (req, res) {
 		.then(function (existingRoomMember) {
 
 			if (existingRoomMember == 0) {
-				return null;
+				return 'ok';
 			}
 
 			return RoomMember.destroy({room: pk, user: userId})

@@ -10,7 +10,8 @@ window.app = angular.module('bunker', [
 	'plangular', /* soundcloud embed */
 	'notification',
 	'ngAudio',
-	'angularStats'
+	'angularStats',
+	'ui.sortable'
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 
@@ -45,7 +46,7 @@ window.app = angular.module('bunker', [
 	})
 	.config(function ($compileProvider, gravatarServiceProvider, hljsServiceProvider) {
 		// disable debug info
-		$compileProvider.debugInfoEnabled(window.debugging || !window.isProduction);
+		//$compileProvider.debugInfoEnabled(window.debugging || !window.isProduction);
 
 		// to reenable in prod, use
 		// angular.reloadWithDebugInfo()

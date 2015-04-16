@@ -25,7 +25,8 @@ module.exports = {
 			type: 'string',
 			enum: ['member', 'moderator', 'administrator'],
 			defaultsTo: 'member'
-		}
+		},
+		roomOrder: 'integer'
 	}
 };
 

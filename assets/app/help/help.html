@@ -110,6 +110,49 @@
 		</tr>
 		</tbody>
 	</table>
+
+	<h3>Text Formatting</h3>
+	<table class="table table-condensed">
+		<thead>
+		<tr>
+			<th>Format</th>
+			<th>Character</th>
+			<th>Description</th>
+			<th>Example</th>
+			<th>Result</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td>Bold</td>
+			<td>*</td>
+			<td>Create text with bold emphasis.</td>
+			<td><code>my *cat* eats fish</code></td>
+			<td>my <strong>cat</strong> eats fish</td>
+		</tr>
+		<tr>
+			<td>Italics</td>
+			<td>_</td>
+			<td>Create text with italic emphasis.</td>
+			<td><code>my _cat_ eats fish</code></td>
+			<td>my <em>cat</em> eats fish</td>
+		</tr>
+		<tr>
+			<td>Spoilers</td>
+			<td>|</td>
+			<td>Hide text, as to not reveal too much.</td>
+			<td><code>|my cat eats fish|</code></td>
+			<td><mark>my cat eats fish</mark></td>
+		</tr>
+		<tr>
+			<td>Strikethrough</td>
+			<td>~</td>
+			<td>Create text with strikethrough styling.</td>
+			<td><code>my ~cat~ eats fish</code></td>
+			<td>my <span style="text-decoration: line-through">cat</span> eats fish</td>
+		</tr>
+		</tbody>
+	</table>
 </div>
 <div class="modal-footer">
 	<button class="btn btn-primary" ng-click="ok()">OK</button>
