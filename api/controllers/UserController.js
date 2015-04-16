@@ -29,6 +29,7 @@ module.exports.init = function (req, res) {
 
 			// don't send back rooms twice
 			_.each(localMemberships, function (membership) {
+				if (!membership.room) return;
 				membership.room = membership.room.id;
 			});
 
@@ -111,7 +112,8 @@ module.exports.connect = function (req, res) {
 			if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > userService.connectionUpdateWaitSeconds) {
 				RoomService.messageRoomsWithUser({
 					userId: user.id,
-					systemMessage: user.nick + ' is now online'});
+					systemMessage: user.nick + ' is now online'
+				});
 			}
 
 			// Clear any disconnect messages that haven't gone out yet
