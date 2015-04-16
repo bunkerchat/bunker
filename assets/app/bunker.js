@@ -1,4 +1,5 @@
 window.app = angular.module('bunker', [
+	'ngTouch',
 	'ngSanitize',
 	'ui.router',
 	'ui.gravatar',
