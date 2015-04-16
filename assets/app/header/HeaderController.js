@@ -75,6 +75,9 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		var otherRoom = bunkerData.getRoom(message.room.id);
 		if (otherRoom) {
 			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
+			if (bunkerData.mentionsUser(message.text)) {
+				otherRoom.$unreadMention = true;
+			}
 		}
 	});
 
@@ -86,6 +89,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		var room = bunkerData.getRoom(roomId);
 		if (room) {
 			room.$unreadMessages = 0;
+			room.$unreadMention = false;
 		}
 	});
 
