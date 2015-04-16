@@ -25,8 +25,15 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 			});
 	};
 
+	this.toggleEmoticonMenu = function () {
+		this.emoticonMenu = !this.emoticonMenu;
+		this.inboxOpened = false;
+	};
+
 	this.toggleInbox = function () {
+		this.emoticonMenu = false;
 		this.inboxOpened = !this.inboxOpened;
+
 		if (this.inboxOpened) {
 			bunkerData.markInboxRead()
 				.then(function () {
