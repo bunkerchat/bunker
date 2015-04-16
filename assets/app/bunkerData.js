@@ -34,7 +34,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 
 					// Go through data and sync messages
 					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
-					_.each(initialData.rooms, function(room, i){
+					_.each(initialData.rooms, function (room, i) {
 						var existing = _.find(bunkerData.rooms, {id: room.id});
 
 						if (!existing) {
@@ -226,7 +226,16 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 					resolve(counts);
 				});
 			});
+		},
+
+		// Inbox
+
+		markInboxRead: function () {
+			return $q(function (resolve) {
+				io.socket.put('/user/current/markInboxRead', resolve);
+			});
 		}
+
 	};
 
 	function decorateMessages(room) {

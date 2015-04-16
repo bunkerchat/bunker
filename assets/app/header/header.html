@@ -19,10 +19,11 @@
 						<img src="/assets/images/emoticons/allthethings.png"/>
 					</a>
 				</li>
-				<li ng-class="{active: header.showInbox}">
-					<a ng-click="header.showInbox = !header.showInbox">
+				<li ng-class="{active: header.inboxOpened}">
+					<a ng-click="header.toggleInbox()">
 						<i class="fa fa-inbox fa-lg"></i>
 					</a>
+					<span class="badge" ng-show="header.unreadInboxMessages > 0">{{header.unreadInboxMessages}}</span>
 				</li>
 				<li class="dropdown">
 					<a href data-toggle="dropdown" class="small-width"><i class="fa fa-cog fa-lg"></i></a>
@@ -97,7 +98,10 @@
 				</li>
 			</ul>
 
-			<div class="header-dropdown inbox" ng-if="header.showInbox">
+			<div class="header-dropdown inbox" ng-if="header.inboxOpened">
+				<div class="lead text-center" ng-if="header.inbox.length == 0">
+					No inbox messages <img src="/assets/images/emoticons/qq.gif"/>
+				</div>
 				<ol class="list-unstyled">
 					<li ng-repeat="inboxMessage in header.inbox">
 						<div class="inbox-author">

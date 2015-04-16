@@ -67,7 +67,7 @@ module.exports.init = function (req, res) {
 						return Promise.map(localInboxMessages, function (inboxMessage) {
 
 							var authorData = _.find(inboxUsers, {id: inboxMessage.message.author});
-							if(authorData) {
+							if (authorData) {
 								inboxMessage.message.author = authorData.toJSON();
 							}
 
@@ -147,6 +147,12 @@ module.exports.connect = function (req, res) {
 			// ARS wasn't seeing a data object, so return an empty one?
 			return {};
 		})
+		.then(res.ok)
+		.catch(res.serverError);
+};
+
+module.exports.markInboxRead = function (req, res) {
+	InboxMessage.update({user: req.session.userId}, {read: true})
 		.then(res.ok)
 		.catch(res.serverError);
 };

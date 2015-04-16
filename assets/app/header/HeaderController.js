@@ -6,6 +6,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		self.memberships = bunkerData.memberships;
 		self.settings = bunkerData.userSettings;
 		self.inbox = bunkerData.inbox;
+		self.unreadInboxMessages = _.select(self.inbox, {read: false}).length;
 	});
 
 	this.showOptions = !$state.is('lobby');
@@ -22,6 +23,19 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 			.then(function () {
 				$state.go('lobby');
 			});
+	};
+
+	this.toggleInbox = function () {
+		this.inboxOpened = !this.inboxOpened;
+		if (this.inboxOpened) {
+			bunkerData.markInboxRead()
+				.then(function () {
+					_.each(self.inbox, function (inboxMessage) {
+						inboxMessage.read = true;
+					});
+					self.unreadInboxMessages = _.select(self.inbox, {read: false}).length;
+				});
+		}
 	};
 
 	this.showHelp = function () {
@@ -55,6 +69,10 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		if (otherRoom) {
 			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
 		}
+	});
+
+	$rootScope.$on('inboxMessaged', function () {
+		self.unreadInboxMessages = _.select(self.inbox, {read: false}).length;
 	});
 
 	$rootScope.$on('roomIdChanged', function (evt, roomId) {

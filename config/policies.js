@@ -43,6 +43,7 @@ module.exports.policies = {
 		'findOne': 'isLoggedIn',
 		'activity': 'isLoggedIn',
 		'connect': 'isLoggedIn',
+		'markInboxRead': 'isLoggedIn',
 		'update': ['isLoggedIn', 'isCurrentUser']
 	},
 	UserSettingsController: {

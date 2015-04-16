@@ -38,6 +38,7 @@ module.exports.routes = {
 	'/init': 'UserController.init',
 	'/user/current/activity': 'UserController.activity',
 	'/user/current/connect': 'UserController.connect',
+	'/user/current/markInboxRead': 'UserController.markInboxRead',
 	'/room/:id/join': 'RoomController.join',
 	'/room/:id/leave': 'RoomController.leave',
 	'/room/:id/message': 'RoomController.message',
