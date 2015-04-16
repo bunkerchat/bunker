@@ -28,6 +28,7 @@ module.exports.init = function (req, res) {
 			localMemberships = memberships;
 			localInboxMessages = inboxMessages;
 			var rooms = _(memberships).pluck('room').compact().value();
+			var inboxUserIds = _(inboxMessages).pluck('message').pluck('author').unique().value();
 
 			// de-associate a room from a membership since we set rooms above
 			_.each(localMemberships, function (membership) {
@@ -42,28 +43,45 @@ module.exports.init = function (req, res) {
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 			InboxMessage.subscribe(req, user.id, 'message');
 
-			// Get some initial messages
-			return Promise.map(rooms, function (room) {
-				return Promise.join(
-					Message.find({room: room.id}).sort('createdAt DESC').limit(40).populate('author'),
-					RoomMember.find({room: room.id}).populate('user')
-				)
-					.spread(function (messages, members) {
-						RoomMember.subscribe(req, members, ['update', 'destroy']);
-						User.subscribe(req, _.pluck(members, 'user'), 'update');
+			return Promise.all([
 
-						room.$messages = messages;
-						room.$members = members;
-						return room;
-					});
-			});
+				// Get all room members and 40 initial messages for each room
+				Promise.map(rooms, function (room) {
+					return Promise.join(
+						Message.find({room: room.id}).sort('createdAt DESC').limit(40).populate('author'),
+						RoomMember.find({room: room.id}).populate('user')
+					)
+						.spread(function (messages, members) {
+							RoomMember.subscribe(req, members, ['update', 'destroy']);
+							User.subscribe(req, _.pluck(members, 'user'), 'update');
+
+							room.$messages = messages;
+							room.$members = members;
+							return room;
+						});
+				}),
+
+				// Populate authors for inbox messages
+				User.find(inboxUserIds)
+					.then(function (inboxUsers) {
+						return Promise.map(localInboxMessages, function (inboxMessage) {
+
+							var authorData = _.find(inboxUsers, {id: inboxMessage.message.author});
+							if(authorData) {
+								inboxMessage.message.author = authorData.toJSON();
+							}
+
+							return inboxMessage;
+						});
+					})
+			]);
 		})
-		.then(function (rooms) {
+		.spread(function (rooms, inboxMessages) {
 			return {
 				user: localUser.toJSON(),
 				userSettings: localUserSettings,
 				memberships: localMemberships,
-				inbox: localInboxMessages,
+				inbox: inboxMessages,
 				rooms: rooms
 			};
 		})

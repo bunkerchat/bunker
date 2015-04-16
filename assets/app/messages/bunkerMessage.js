@@ -24,11 +24,13 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 		template: '<span ng-bind-html="formatted"></span>',
 		scope: {
 			bunkerMessage: '=',
-			media: '@'
+			media: '@',
+			watch: '@'
 		},
 		link: function (scope, elem) {
 
 			// since we are passing in a bunker message OR room, run the watch on the room topic
+			var shouldWatch = typeof scope.watch !== 'undefined' ? scope.$eval(scope.watch) : true;
 			var textListener = scope.$watch('bunkerMessage.text', textWatch);
 			var topicListener = scope.$watch('bunkerMessage.topic', textWatch);
 
@@ -51,7 +53,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 
 				// After 60 seconds the message is not editable anymore so we can kill the watch on its text
 				var millisecondsSinceCreated = moment().diff(scope.bunkerMessage.createdAt);
-				if (millisecondsSinceCreated > bunkerConstants.editWindowMilliseconds) {
+				if (!shouldWatch || millisecondsSinceCreated > bunkerConstants.editWindowMilliseconds) {
 					// We can kill the watch on text, this message is now static
 					textListener();
 				}
@@ -61,7 +63,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				}
 
 				// Most messages are not a topic - at this point we can test this and kill the watch on that if necessary
-				if (!scope.bunkerMessage.topic) {
+				if (!shouldWatch || !scope.bunkerMessage.topic) {
 					topicListener();
 				}
 			}

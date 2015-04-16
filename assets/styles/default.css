@@ -197,6 +197,28 @@ mark:hover {
 	font-size: 13px;
 }
 
+/* inbox */
+
+.inbox {
+	font-size: 14px;
+}
+.inbox-author {
+	display: inline-block;
+	width: 100px;
+	background-color: #414B57;
+	color: #fff;
+}
+
+.inbox-message {
+	display: inline-block;
+	width: 225px;
+	padding-right: 10px;
+}
+
+.inbox-time {
+	display: inline-block;
+}
+
 /* emoticon */
 
 [emoticon-menu] .row {

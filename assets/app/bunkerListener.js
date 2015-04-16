@@ -61,6 +61,14 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 		}
 	}
 
+	function handleInboxEvent(evt) {
+		switch(evt.verb) {
+			case 'messaged':
+				bunkerData.inbox.push(evt.data);
+				break;
+		}
+	}
+
 	function handleVisibilityShow() {
 		bunkerData.broadcastPresent(true);
 	}
@@ -91,6 +99,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 		{name: 'user', type: 'socket', handler: handleUserEvent},
 		// usersettings are only updated by the client and mirroring is off
 		{name: 'roomMember', type: 'socket', handler: handleMembershipEvent},
+		{name: 'inboxMessage', type: 'socket', handler: handleInboxEvent},
 		{name: 'connect', type: 'socket', handler: handleConnect},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},

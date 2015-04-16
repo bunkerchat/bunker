@@ -214,12 +214,23 @@ function broadcastMessage(message) {
 function saveInMentionedInboxes(message) {
 	// Check if this message mentions anyone
 	// Completely async process that shouldn't disrupt the normal message flow
-	return RoomMember.find({room: message.room}).populate('user').then(function (roomMembers) {
-		return Promise.each(roomMembers, function (roomMember) {
-			var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
-			if (regex.test(message.text)) {
-				return InboxMessage.create({user: roomMember.user.id, message: message.id});
-			}
-		})
-	});
+	return Promise.all([
+		User.findOne(message.author),
+		RoomMember.find({room: message.room}).populate('user')
+	])
+		.spread(function (author, roomMembers) {
+			return Promise.each(roomMembers, function (roomMember) {
+				var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
+				if (regex.test(message.text)) {
+					return InboxMessage.create({user: roomMember.user.id, message: message.id})
+						.then(function (inboxMessage) {
+							return InboxMessage.findOne(inboxMessage.id).populateAll();
+						})
+						.then(function (inboxMessage) {
+							inboxMessage.message.author = author; // Attach populated author data
+							InboxMessage.message(roomMember.user.id, inboxMessage);
+						});
+				}
+			})
+		});
 }
