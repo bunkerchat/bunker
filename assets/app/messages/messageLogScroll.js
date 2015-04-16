@@ -9,7 +9,8 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 			var clearMessageCounter = 0;
 
 			$rootScope.$on('bunkerMessaged', function(evt, message) {
-				if(message.room.id == $rootScope.roomId) {
+				var roomId = message.room.id || message.room;
+				if(roomId == $rootScope.roomId) {
 					if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) { // We're at the bottom
 						// Check for images
 						var image = angular.element('#' + message.id).find('img');
