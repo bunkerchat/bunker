@@ -64,7 +64,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	function handleInboxEvent(evt) {
 		switch(evt.verb) {
 			case 'messaged':
-				bunkerData.inbox.push(evt.data);
+				bunkerData.inbox.unshift(evt.data);
 				break;
 		}
 	}

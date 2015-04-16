@@ -19,7 +19,7 @@ module.exports.init = function (req, res) {
 		User.findOne(req.session.userId),
 		UserSettings.findOne({user: req.session.userId}),
 		RoomMember.find({user: req.session.userId}).populate('room'),
-		InboxMessage.find({user: req.session.userId}).limit(20).populate('message')
+		InboxMessage.find({user: req.session.userId}).sort('createdAt DESC').limit(20).populate('message')
 	)
 		.spread(function (user, userSettings, memberships, inboxMessages) {
 

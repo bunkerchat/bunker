@@ -202,22 +202,36 @@ mark:hover {
 .inbox {
 	font-size: 14px;
 }
-.inbox-author {
-	display: inline-block;
-	width: 100px;
+.inbox li {
 	background-color: #414B57;
+	overflow: hidden;
+}
+.inbox-author {
+	float: left;
+	width: 100px;
+	padding-left: 5px;
 	color: #fff;
 }
 
 .inbox-message {
+	display: block;
+	min-height: 25px;
+	margin-left: 100px;
+	padding: 0 10px 5px 10px;
+	background-color: #fff;
+}
+
+.inbox-message [bunker-message] {
 	display: inline-block;
-	width: 225px;
+	width: 230px;
 	padding-right: 10px;
 }
 
 .inbox-time {
-	display: inline-block;
+	float: right;
+	font-size: 12px;
 }
+
 
 /* emoticon */
 
