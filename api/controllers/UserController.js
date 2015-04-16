@@ -55,8 +55,16 @@ module.exports.init = function (req, res) {
 							RoomMember.subscribe(req, members, ['update', 'destroy']);
 							User.subscribe(req, _.pluck(members, 'user'), 'update');
 
-							room.$messages = messages;
-							room.$members = members;
+							room.$messages = [];
+							_.each(messages, function(message) {
+								room.$messages.push(message.toJSON());
+							});
+
+							room.$members = [];
+							_.each(members, function(member) {
+								room.$members.push(member.toJSON());
+							});
+
 							return room;
 						});
 				}),
