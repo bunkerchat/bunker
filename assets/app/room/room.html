@@ -1,4 +1,4 @@
-<div class="container-fluid" ng-show="current">
+<div class="container-fluid">
 	<div class="row">
 
 		<div class="col-md-10 col-xs-12 no-gutter">
@@ -65,10 +65,10 @@
 		</div>
 
 		<!-- right pane -->
-		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
+		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list" ng-if="current.$selected">
 
 			<!-- member list -->
-			<ul class="list-group">
+			<ul class="list-group" ng-if="current.$selected">
 				<li class="list-group-item" ng-repeat="member in memberList">
 
 					<span ng-switch="member.user.busy === true" class="user-icon">
