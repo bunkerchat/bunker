@@ -11,6 +11,7 @@
 			<ol class="list-unstyled message-list"
 				fill
 				message-log-scroll
+				room-id="{{::current.id}}"
 				on-scroll-top="loadPreviousMessages()">
 
 				<li id="{{::message.id}}" class="message-container"

@@ -1,6 +1,7 @@
 app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 	return {
 		scope: {
+			roomId: '@',
 			onScrollTop: '&'
 		},
 		link: function ($scope, elem) {
@@ -8,29 +9,29 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 			var tolerance = 31;
 			var clearMessageCounter = 0;
 
-			$rootScope.$on('bunkerMessaged', function(evt, message) {
-				var roomId = message.room.id || message.room;
-				if(roomId == $rootScope.roomId) {
-					if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) { // We're at the bottom
-						// Check for images
-						var image = angular.element('#' + message.id).find('img');
-						if (image.length) { // If we have an image, wait for it to load before scrolling
-							image.load(function () {
-								scroll(250);
-							});
-						} else { // Otherwise scroll immediately
-							scroll();
-						}
+			$rootScope.$on('bunkerMessaged', function (evt, message) {
 
-						// if the user is only watching new messages, trim the message log
-						clearMessageCounter++;
-						if (clearMessageCounter > 5) {
-							bunkerData.clearOldMessages($rootScope.roomId);
-							clearMessageCounter = 0;
-						}
+				if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) { // We're at the bottom
+					// Check for images
+					var image = angular.element('#' + message.id).find('img');
+					if (image.length) {
+						// If we have an image, wait for it to load before scrolling
+						image.load(function () {
+							scroll(250);
+						});
 					} else {
+						// Otherwise scroll immediately
+						scroll();
+					}
+
+					// if the user is only watching new messages, trim the message log
+					clearMessageCounter++;
+					if (clearMessageCounter > 5) {
+						bunkerData.clearOldMessages($scope.roomId);
 						clearMessageCounter = 0;
 					}
+				} else {
+					clearMessageCounter = 0;
 				}
 			});
 
