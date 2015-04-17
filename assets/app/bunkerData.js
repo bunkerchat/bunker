@@ -48,15 +48,12 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 						else {
 							existing.$resolved = true;
 
-							_(room.$messages)
-								.select(function (message) {
-									// If none of the existing messages have this id, it's a new message
-									return !_.any(existing.$messages, {id: message.id});
-								})
-								.each(function (newMessage) {
-									existing.$messages.push(newMessage);
-								})
-								.value();
+							var existingMessagesLookup = _.indexBy(existing.$messages, 'id');
+							_.each(room.$messages, function (message) {
+								if (!existingMessagesLookup[message.id]) {
+									existing.$messages.push(message);
+								}
+							});
 						}
 
 						decorateMessages(room);
@@ -242,7 +239,9 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 	function decorateMessages(room) {
 
 		// Resort messages
-		room.$messages = _.sortBy(room.$messages, function(message) { return moment(message.createdAt).unix(); });
+		room.$messages = _.sortBy(room.$messages, function (message) {
+			return moment(message.createdAt).unix();
+		});
 
 		_.each(room.$messages, function (message, index) {
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
