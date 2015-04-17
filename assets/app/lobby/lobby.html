@@ -29,7 +29,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr ng-repeat="room in lobby.rooms | orderBy:'name'" ng-if="room.$resolved">
+		<tr ng-repeat="room in lobby.rooms | orderBy:'name' track by room.id" ng-if="room.$resolved">
 			<td>
 				<a ui-sref="chat.room({roomId: room.id})">{{room.name}}</a>
 			</td>

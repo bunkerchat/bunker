@@ -6,7 +6,7 @@
 
 			<ol class="list-unstyled message-list" fill>
 				<li class="message-container" id="{{::message.id}}" ng-switch="::!!message.author"
-						ng-repeat="message in room.messages">
+						ng-repeat="message in room.messages track by message.id">
 					<div class="message" ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
 
 						<!-- standard message -->
@@ -55,7 +55,7 @@
 		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
 			<ul class="list-group">
 				<li class="list-group-item"
-						ng-repeat="user in room.members | orderBy:'nick'">
+						ng-repeat="user in room.members | orderBy:'nick' track by user.id">
 					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
 					{{::user.nick}}
 				</li>

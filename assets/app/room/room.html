@@ -16,7 +16,7 @@
 
 				<li id="{{::message.id}}" class="message-container"
 					ng-switch="::!!message.author"
-					ng-repeat="message in current.$messages">
+					ng-repeat="message in current.$messages track by message.id">
 
 					<div class="message message-type-{{::message.type || 'none'}}"
 						 ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
@@ -69,7 +69,7 @@
 
 			<!-- member list -->
 			<ul class="list-group" ng-if="current.$selected">
-				<li class="list-group-item" ng-repeat="member in memberList">
+				<li class="list-group-item" ng-repeat="member in memberList track by member.id">
 
 					<span ng-switch="member.user.busy === true" class="user-icon">
 						<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
