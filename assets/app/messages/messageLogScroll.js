@@ -46,14 +46,9 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 				}
 			});
 
-			// Scroll after state changes
-			$scope.$on('roomIdChanged', function () {
-				scroll();
-			});
-
-			$rootScope.$on('youtube.player.ready', function () {
-				scroll();
-			});
+			// Scroll after state changes and when youtubes have loaded
+			$scope.$on('roomIdChanged', scroll);
+			$rootScope.$on('youtube.player.ready', scroll);
 
 			function scroll(waitTime) {
 				$timeout(function () {

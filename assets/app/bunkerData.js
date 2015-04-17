@@ -50,6 +50,7 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 
 							_(room.$messages)
 								.select(function (message) {
+									// If none of the existing messages have this id, it's a new message
 									return !_.any(existing.$messages, {id: message.id});
 								})
 								.each(function (newMessage) {
@@ -239,10 +240,13 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 	};
 
 	function decorateMessages(room) {
-		room.$messages = _.sortBy(room.$messages, function(message) { return moment(message.createdAt).unix(); }); // Resort messages
+
+		// Resort messages
+		room.$messages = _.sortBy(room.$messages, function(message) { return moment(message.createdAt).unix(); });
+
 		_.each(room.$messages, function (message, index) {
-			var lastMessage = index > 0 && index < room.$messages.length ? room.$messages[index - 1] : null;
-			message.$firstInSeries = isFirstInSeries(lastMessage, message);
+			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
+			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$editable = isEditable(message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 		});
