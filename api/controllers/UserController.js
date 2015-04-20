@@ -139,12 +139,12 @@ module.exports.connect = function (req, res) {
 			User.publishUpdate(user.id, user);
 
 			// Send connecting message, if not previously connected or reconnecting
-			if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > userService.connectionUpdateWaitSeconds) {
-				RoomService.messageRoomsWithUser({
-					userId: user.id,
-					systemMessage: user.nick + ' is now online'
-				});
-			}
+			//if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > userService.connectionUpdateWaitSeconds) {
+			//	RoomService.messageRoomsWithUser({
+			//		userId: user.id,
+			//		systemMessage: user.nick + ' is now online'
+			//	});
+			//}
 
 			// Clear any disconnect messages that haven't gone out yet
 			if (userService.pendingTasks[user.id]) {
