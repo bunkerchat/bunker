@@ -1,5 +1,6 @@
-app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bunkerConstants) {
+app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants) {
 
+	var io = $window.io;
 	var roomLookup = []; // For fast room lookup
 	var typingTimeout;
 
@@ -34,28 +35,31 @@ app.factory('bunkerData', function ($rootScope, $q, $timeout, $notification, bun
 
 					// Go through data and sync messages
 					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
-					_.each(initialData.rooms, function (room, index) {
-						var existing = _.find(bunkerData.rooms, {id: room.id});
+					_.each(initialData.rooms, function (roomData, index) {
+						var room = _.find(bunkerData.rooms, {id: roomData.id});
 
-						if (!existing) {
-							// set the room tab order
+						if (!room) {
+							room = roomData;
+
+							// Set the room tab order TODO only applies to first time?
 							var membership = _.findWhere(bunkerData.memberships, {room: room.id});
 							var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : index;
-
-							room.$resolved = true;
+							// Add to known rooms
 							bunkerData.rooms[roomIndex] = room;
 						}
 						else {
-							existing.$resolved = true;
 
-							var existingMessagesLookup = _.indexBy(existing.$messages, 'id');
-							_.each(room.$messages, function (message) {
+							var existingMessagesLookup = _.indexBy(room.$messages, 'id');
+
+							// Add on messages that were previously not in the list
+							_.each(roomData.$messages, function (message) {
 								if (!existingMessagesLookup[message.id]) {
-									existing.$messages.push(message);
+									room.$messages.push(message);
 								}
 							});
 						}
 
+						room.$resolved = true;
 						decorateMessages(room);
 						decorateMembers(room);
 					});
