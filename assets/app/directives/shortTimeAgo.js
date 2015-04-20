@@ -8,7 +8,7 @@ app.directive('shortTimeAgo', function ($interval) {
 			function shortTime() {
 				angular.element(element).html(moment($scope.date).fromNow(true)
 					.replace(/\b([smhdwmy])[a-z]+\b/, '$1')
-					.replace('a', '1')
+					.replace(/an?/, '1')
 					.replace('few', '')
 					.replace(/\s/g, ''));
 			}
