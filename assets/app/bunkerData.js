@@ -236,6 +236,13 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			return $q(function (resolve) {
 				io.socket.put('/user/current/markInboxRead', resolve);
 			});
+		},
+
+		clearInbox: function () {
+			return $q(function (resolve) {
+				bunkerData.inbox.length = 0;
+				io.socket.put('/user/current/clearInbox', resolve);
+			});
 		}
 
 	};

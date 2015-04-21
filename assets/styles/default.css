@@ -200,26 +200,36 @@ mark:hover {
 	border-bottom-left-radius: 4px;
 	background: #fff;
 	overflow-x: hidden;
-	overflow-y: scroll;
 	font-size: 13px;
 }
 
 /* inbox */
 
+.inbox-header {
+	color: #fff;
+	background-color: #555;
+	padding: 5px 0px 3px 5px;
+}
+
 .inbox {
 	font-size: 14px;
+}
+
+.inbox ol {
+	overflow-y: scroll;
+	height: 459px;
 }
 
 .inbox li {
 	background-color: #414B57;
 	border-bottom: solid #80868E 2px;
-	overflow: hidden;
 }
 
 .inbox-author {
 	float: left;
 	width: 100px;
 	padding-left: 5px;
+	padding-top: 2px;
 	color: #fff;
 }
 
@@ -227,7 +237,8 @@ mark:hover {
 	display: block;
 	min-height: 25px;
 	margin-left: 100px;
-	padding: 0 10px 5px 10px;
+	margin-top: 0px;
+	padding: 0px 10px 5px 10px;
 	background-color: #fff;
 }
 

@@ -164,3 +164,9 @@ module.exports.markInboxRead = function (req, res) {
 		.then(res.ok)
 		.catch(res.serverError);
 };
+
+module.exports.clearInbox = function (req, res) {
+	InboxMessage.destroy({user: req.session.userId})
+		.then(res.ok)
+		.catch(res.serverError);
+};
