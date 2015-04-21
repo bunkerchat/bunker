@@ -71,34 +71,51 @@
 
 			<!-- member list -->
 			<ul class="list-group" ng-if="current.$selected">
-				<li class="list-group-item" ng-class="{'offline': !member.user.connected}" ng-repeat="member in memberList track by member.id">
+				<li class="list-group-item"
+					ng-switch="member.user.connected"
+					ng-repeat="member in memberList track by member.id">
 
-					<span ng-switch="member.user.busy === true" class="user-icon">
-						<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
-							<span ng-switch-when="false">
-								<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
-							</span>
-							<span ng-switch-default>
-								<i class="fa fa-ellipsis-h"></i>
-							</span>
+					<span class="offline" ng-switch-when="false">
+						<!-- offline member, much less watches -->
+						<span class="user-icon">
+							<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
 						</span>
-						<span ng-switch-default>
-							<i class="fa fa-clock-o"></i>
-						</span>
+						<a ng-click="mentionUser(member.user.nick)">{{::member.user.nick}}</a>
+						<div class="pull-right">
+							<span ng-show="::member.role != 'member'" ng-switch="::member.role" title="{{::member.role}}">
+								<i class="fa fa-gavel" ng-switch-when="administrator"></i>
+								<i class="fa fa-comments" ng-switch-when="moderator"></i>
+							</span>
+						</div>
 					</span>
 
-					<a ng-click="mentionUser(member.user.nick)">{{member.user.nick}}</a>
+					<span ng-switch-default>
+						<!-- default, online member -->
+						<span ng-switch="member.user.busy === true" class="user-icon">
+							<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
+								<span ng-switch-when="false">
+									<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
+								</span>
+								<span ng-switch-default>
+									<i class="fa fa-ellipsis-h"></i>
+								</span>
+							</span>
+							<span ng-switch-default>
+								<i class="fa fa-clock-o"></i>
+							</span>
+						</span>
 
-					<div class="pull-right">
-						<span ng-show="member.role != 'member'" ng-switch="member.role" title="{{member.role}}">
-							<i class="fa fa-gavel" ng-switch-when="administrator"></i>
-							<i class="fa fa-comments" ng-switch-when="moderator"></i>
-						</span>
-						<span class="status"
-							  ng-class="member.user.$present ? 'here' : 'away'"
-							  ng-if="member.user.connected">
-						</span>
-					</div>
+						<a ng-click="mentionUser(member.user.nick)">{{member.user.nick}}</a>
+
+						<div class="pull-right">
+							<span ng-show="member.role != 'member'" ng-switch="member.role" title="{{member.role}}">
+								<i class="fa fa-gavel" ng-switch-when="administrator"></i>
+								<i class="fa fa-comments" ng-switch-when="moderator"></i>
+							</span>
+							<span class="status" ng-class="member.user.$present ? 'here' : 'away'">
+							</span>
+						</div>
+					</span>
 				</li>
 			</ul>
 
