@@ -44,6 +44,7 @@ module.exports.policies = {
 		'activity': 'isLoggedIn',
 		'connect': 'isLoggedIn',
 		'markInboxRead': 'isLoggedIn',
+		'clearInbox': 'isLoggedIn',
 		'update': ['isLoggedIn', 'isCurrentUser']
 	},
 	UserSettingsController: {

@@ -39,6 +39,7 @@ module.exports.routes = {
 	'/user/current/activity': 'UserController.activity',
 	'/user/current/connect': 'UserController.connect',
 	'/user/current/markInboxRead': 'UserController.markInboxRead',
+	'/user/current/clearInbox': 'UserController.clearInbox',
 	'/room/:id/join': 'RoomController.join',
 	'/room/:id/leave': 'RoomController.leave',
 	'/room/:id/message': 'RoomController.message',

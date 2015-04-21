@@ -109,9 +109,9 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					}
 					else if (searchState === searchStates.NICK) {
 						var currentRoom = bunkerData.getRoom($rootScope.roomId);
-						var members = _.pluck(currentRoom.$members, 'user');
-						var matchingNames = _.filter(currentRoom && members, function (item) {
-							return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
+						var users = _.pluck(currentRoom.$members, 'user');
+						var matchingNames = _.filter(users, function (item) {
+							return item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
 						});
 
 						if (matchingNames.length == 0) return;
