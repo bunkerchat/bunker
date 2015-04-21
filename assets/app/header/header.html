@@ -107,7 +107,7 @@
 				<div class="lead text-center" ng-if="header.inbox.length == 0">
 					No inbox messages <img src="/assets/images/emoticons/qq.gif"/>
 				</div>
-				<ol class="list-unstyled ">
+				<ol class="list-unstyled " ng-if="header.inbox.length > 0">
 					<li ng-repeat="inboxMessage in header.inbox track by inboxMessage.id">
 						<div class="inbox-author">
 							<img gravatar-src-once="inboxMessage.message.author.email | lowercase" gravatar-size="20"/>
