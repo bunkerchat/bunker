@@ -37,12 +37,9 @@ app.directive('room', function ($rootScope, bunkerData, $state) {
 
 			function updateMemberList() {
 				$scope.memberList =  _($scope.current.$members)
-					.select(function (member) {
-						return member.user.connected;
-					})
 					.sortBy(function (member) {
 						var user = member.user;
-						return (user.$present ? '000' : '999') + user.nick.toLowerCase();
+						return (user.connected ? (user.$present ? '000' : '111') : '999') + user.nick.toLowerCase();
 					})
 					.value();
 			}

@@ -472,6 +472,10 @@ img.emoticon {
 	color: #3e3f3a;
 }
 
+.member-list li.offline {
+	opacity: 0.3;
+}
+
 .member-list .user-icon {
 	display: inline-block;
 	width: 20px;

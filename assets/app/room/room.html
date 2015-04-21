@@ -27,7 +27,9 @@
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
-									<span class="status" ng-class="memberLookup[message.author.id].user.$present ? 'here' : 'away'">
+									<span class="status"
+										  ng-class="memberLookup[message.author.id].user.$present ? 'here' : 'away'"
+										  ng-if="memberLookup[message.author.id].user.connected">
 									</span>
 								</span>
 							</div>
@@ -69,7 +71,7 @@
 
 			<!-- member list -->
 			<ul class="list-group" ng-if="current.$selected">
-				<li class="list-group-item" ng-repeat="member in memberList track by member.id">
+				<li class="list-group-item" ng-class="{'offline': !member.user.connected}" ng-repeat="member in memberList track by member.id">
 
 					<span ng-switch="member.user.busy === true" class="user-icon">
 						<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
@@ -92,7 +94,9 @@
 							<i class="fa fa-gavel" ng-switch-when="administrator"></i>
 							<i class="fa fa-comments" ng-switch-when="moderator"></i>
 						</span>
-						<span class="status" ng-class="member.user.$present ? 'here' : 'away'">
+						<span class="status"
+							  ng-class="member.user.$present ? 'here' : 'away'"
+							  ng-if="member.user.connected">
 						</span>
 					</div>
 				</li>
