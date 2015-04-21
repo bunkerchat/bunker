@@ -457,6 +457,13 @@ img.emoticon {
 
 /* member list */
 
+.member-list {
+	position: absolute;
+	right: 0;
+	height: calc(100% - 150px);
+	overflow-y: scroll;
+}
+
 .member-list li.list-group-item {
 	border-radius: 0;
 	border-left: 0;
