@@ -10,7 +10,7 @@ module.exports.index = function (req, res) {
 		UserSettings.findOne({user: req.session.userId})
 	])
 		.spread(function (emoticons, settings) {
-			res.view(isProd ? 'index-prod' : 'index', {
+			res.view(isProd ? 'index' : 'index', {
 				userId: req.session.userId,
 				isProduction: isProd,
 				emoticons: emoticons,
