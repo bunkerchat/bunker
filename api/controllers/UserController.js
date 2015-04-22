@@ -18,7 +18,7 @@ module.exports.init = function (req, res) {
 	Promise.join(
 		User.findOne(req.session.userId),
 		UserSettings.findOne({user: req.session.userId}),
-		RoomMember.find({user: req.session.userId}).populate('room'),
+		RoomMember.find({user: req.session.userId}).sort('roomOrder').populate('room'),
 		InboxMessage.find({user: req.session.userId}).sort('createdAt DESC').limit(20).populate('message')
 	)
 		.spread(function (user, userSettings, memberships, inboxMessages) {
@@ -31,9 +31,11 @@ module.exports.init = function (req, res) {
 			var inboxUserIds = _(inboxMessages).pluck('message').pluck('author').unique().value();
 
 			// de-associate a room from a membership since we set rooms above
-			_.each(localMemberships, function (membership) {
+			// and fix bad room order data
+			_.each(localMemberships, function (membership, index) {
 				if (!membership.room) return;
 				membership.room = membership.room.id;
+				membership.roomOrder = index;
 			});
 
 			// Setup subscriptions
