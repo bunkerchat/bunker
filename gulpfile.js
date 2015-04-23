@@ -7,6 +7,7 @@ var minifyCss = require('gulp-minify-css');
 var rev = require('gulp-rev');
 var fs = require('fs');
 var path = require('path');
+var sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('usemin', function () {
 	return gulp.src('./views/index.ejs')
@@ -16,7 +17,16 @@ gulp.task('usemin', function () {
 			//html: [minifyHtml({empty: true})],
 			jsLib:[rev()],
 			jsLibMin: [uglify(), rev()],
-			jsApp:[ngAnnotate(), uglify(), rev()]
+			jsApp:[
+				sourcemaps.init({
+					loadMaps: true
+				}),
+				ngAnnotate(),
+				'concat',
+				uglify(),
+				rev(),
+				sourcemaps.write('./')
+			]
 		}))
 		.pipe(gulp.dest('./'));
 });
