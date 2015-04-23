@@ -648,7 +648,8 @@ img.emoticon {
 
 @media (max-width: 480px) {
 
-	.right-pane {
+	.message-list {
+		height: initial;
 		overflow-y: scroll;
 		position: fixed;
 		top: 40px;
@@ -656,6 +657,10 @@ img.emoticon {
 		left: 0;
 		right: 0;
 		-webkit-overflow-scrolling: touch;
+	}
+
+	.message-list.has-topic {
+		height: initial;
 	}
 
 	.message-author {
