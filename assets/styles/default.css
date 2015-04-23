@@ -320,8 +320,13 @@ mark:hover {
 }
 
 .message-list {
+	height: calc(100vh - 86px);
 	overflow-y: auto;
 	border-right: solid 1px #eee;
+	margin: 0;
+}
+.message-list.has-topic {
+	height: calc(100vh - 126px);
 }
 
 .message-container {
@@ -469,10 +474,11 @@ img.emoticon {
 
 /* member list */
 
+.right-pane {
+	height: calc(100vh - 86px);
+}
+
 .member-list {
-	position: absolute;
-	right: 0;
-	height: calc(100% - 150px);
 	overflow-y: auto;
 }
 
@@ -611,8 +617,9 @@ img.emoticon {
 }
 
 .room-options {
-	position: fixed;
-	bottom: 0;
+	position: absolute;
+	width: 100%;
+	bottom: -46px;
 }
 
 .debugging {

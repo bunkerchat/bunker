@@ -8,8 +8,7 @@
 
 			<!-- message log -->
 
-			<ol class="list-unstyled message-list"
-				fill
+			<ol class="list-unstyled message-list" ng-class="{'has-topic': current.topic}"
 				message-log-scroll
 				room-id="{{::current.id}}"
 				on-scroll-top="loadPreviousMessages()">
@@ -67,10 +66,10 @@
 		</div>
 
 		<!-- right pane -->
-		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list" ng-if="current.$selected">
+		<div class="col-md-2 hidden-sm hidden-xs no-gutter right-pane" ng-if="current.$selected">
 
 			<!-- member list -->
-			<ul class="list-group" ng-if="current.$selected">
+			<ul class="list-group member-list" ng-if="current.$selected">
 				<li class="list-group-item"
 					ng-switch="member.user.connected"
 					ng-repeat="member in memberList track by member.id">
