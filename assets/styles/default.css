@@ -479,6 +479,7 @@ img.emoticon {
 }
 
 .member-list {
+	height: calc(100% - 61px);
 	overflow-y: auto;
 }
 

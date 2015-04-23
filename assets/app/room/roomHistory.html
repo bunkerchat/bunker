@@ -4,7 +4,7 @@
 			<h2 ng-if="!room.ready">Loading...</h2>
 			<h2 ng-if="room.ready && room.rawMessages.length == 0">No messages</h2>
 
-			<ol class="list-unstyled message-list" fill>
+			<ol class="list-unstyled message-list">
 				<li class="message-container" id="{{::message.id}}" ng-switch="::!!message.author"
 						ng-repeat="message in room.messages track by message.id">
 					<div class="message" ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
