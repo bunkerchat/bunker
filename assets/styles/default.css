@@ -385,6 +385,7 @@ mark:hover {
 	padding-left: 10px;
 	padding-right: 150px;
 	background: #fff;
+	word-break: break-all;
 }
 
 .new-message-body {
@@ -459,9 +460,10 @@ mark:hover {
 .system-message {
 	min-height: 30px;
 	padding-left: 10px;
-	padding-right: 7px;
+	padding-right: 150px;
 	background-color: #fff;
 	color: #999;
+	word-break: break-all;
 }
 
 img.emoticon {
