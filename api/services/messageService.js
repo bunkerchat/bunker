@@ -73,20 +73,26 @@ function setUserNick(roomMember, text) {
 function setUserBusy(roomMember, text) {
 	return RoomMember.find({user: roomMember.user.id})
 		.then(function (memberships) {
+
 			var user = roomMember.user;
-			return [User.update(user.id, {busy: !user.busy}), memberships];
+			var busy = !user.busy; // Flip busy status
+			var busyMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
+			var busyMessage = busy && busyMessageMatches ? busyMessageMatches[1] : null;
+
+			return [User.update(user.id, {busy: busy, busyMessage: busyMessage}), memberships];
 		})
 		.spread(function (user, memberships) {
 			user = user[0];
 
-			var message = user.nick + ' is ' + (user.busy ? 'now away' : 'back');
-			var awayMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
-			if (user.busy && awayMessageMatches) {
-				message += ': ' + awayMessageMatches[1];
+			var message = [];
+			message.push(user.nick);
+			message.push(user.busy ? 'is now away' : 'is back');
+			if (user.busy && user.busyMessage) {
+				message.push(': ' + user.busyMessage);
 			}
 
-			RoomService.messageRooms(_.pluck(memberships, 'room'), message);
-			User.publishUpdate(user.id, {busy: user.busy});
+			RoomService.messageRooms(_.pluck(memberships, 'room'), message.join(' '));
+			User.publishUpdate(user.id, {busy: user.busy, busyMessage: user.busyMessage});
 		});
 }
 
