@@ -41,11 +41,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 						if (!room) {
 							room = roomData;
 
-							// Set the room tab order TODO only applies to first time?
+							// Set the room tab order
 							var membership = _.findWhere(bunkerData.memberships, {room: room.id});
 							var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : index;
-							// Add to known rooms
-							bunkerData.rooms[roomIndex] = room;
+							setRoomOrder(roomIndex, room);
 						}
 						else {
 
@@ -274,6 +273,19 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 	function isEditable(message) {
 		return moment().diff(message.createdAt) < bunkerConstants.editWindowMilliseconds;
+	}
+
+	function setRoomOrder(roomIndex, room) {
+		// perhaps overkill, but check the room index has not already been set
+		// trying to solve an edge case where joining a room might
+		// clash with an already set room order
+		if(bunkerData.rooms[roomIndex]){
+			var roomIndexUp = roomIndex + 1;
+			return setRoomOrder(roomIndexUp, room);
+		}
+
+		// Add to known rooms
+		bunkerData.rooms[roomIndex] = room;
 	}
 
 	bunkerData.$promise = bunkerData.init();

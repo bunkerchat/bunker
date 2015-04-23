@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!--<html ng-app="bunker" <%if (isProduction) {%> ng-strict-di <%}%>>-->
-<html ng-app="bunker">
+<html ng-app="bunker" <%if (isProduction) {%> ng-strict-di <%}%>>
+<!--<html ng-app="bunker">-->
 <head>
 	<title unread-messages>Bunker</title>
 
@@ -33,13 +33,11 @@
 	window.debugging = <%= debugging %>;
 </script>
 
-<script src="http://www.youtube.com/iframe_api"></script>
-
 <!-- build:jsLib /assets/bundled/vendor.js -->
+<script src="/assets/vendor/youtube-iframe-api/youtube.iframe-api.js"></script>
 <script src="/assets/vendor/lodash/lodash.min.js"></script>
 <script src="/assets/vendor/moment/min/moment.min.js"></script>
 <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
-<script src="/assets/vendor/jquery.dragbetter/jquery.dragbetter.js"></script>
 <script src="/assets/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="/assets/vendor/angular/angular.min.js"></script>
 <script src="/assets/vendor/angular-touch/angular-touch.min.js"></script>
@@ -48,18 +46,22 @@
 <script src="/assets/vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
 <script src="/assets/vendor/angular-gravatar/build/angular-gravatar.min.js"></script>
 <script src="/assets/vendor/angular-moment/angular-moment.min.js"></script>
-<script src="/assets/vendor/socket.io-client/socket.io.js"></script>
 <script src="/assets/vendor/plangular/dist/plangular.min.js"></script>
-<script src="/assets/vendor/sails.io.js/sails.io.js"></script>
 <script src="/assets/vendor/angular-youtube-mb/src/angular-youtube-embed.js"></script>
 <script src="/assets/vendor/angular-filter/dist/angular-filter.min.js"></script>
 <script src="/assets/vendor/highlightjs/highlight.pack.js"></script>
 <script src="/assets/vendor/angular-highlightjs/angular-highlightjs.min.js"></script>
 <script src="/assets/vendor/angular-notification/angular-notification.min.js"></script>
-<script src="/assets/vendor/angular-audio/app/angular.audio.js"></script>
-<script src="/assets/vendor/ng-stats/dist/ng-stats.js"></script>
+<script src="/assets/vendor/ng-stats/dist/ng-stats.min.js"></script>
 <script src="/assets/vendor/ng-sortable/dist/ng-sortable.min.js"></script>
 <!-- endbuild -->
+
+<!-- build:jsLibMin /assets/bundled/vendor.min.js -->
+<script src="/assets/vendor/jquery.dragbetter/jquery.dragbetter.js"></script>
+<script src="/assets/vendor/socket.io-client/socket.io.js"></script>
+<script src="/assets/vendor/sails.io.js/sails.io.js"></script>
+<script src="/assets/vendor/angular-audio/app/angular.audio.js"></script>
+<!-- endBuild -->
 
 <!-- build:jsApp /assets/bundled/bundle.js -->
 <script src="/assets/app/bunker.js"></script>
