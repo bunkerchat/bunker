@@ -52,8 +52,8 @@
 			</ol>
 		</div>
 
-		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
-			<ul class="list-group">
+		<div class="col-md-2 hidden-sm hidden-xs no-gutter right-pane">
+			<ul class="list-group member-list">
 				<li class="list-group-item"
 						ng-repeat="user in room.members | orderBy:'nick' track by user.id">
 					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>

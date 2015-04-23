@@ -32,11 +32,15 @@ module.exports.init = function (req, res) {
 
 			// de-associate a room from a membership since we set rooms above
 			// and fix bad room order data
-			_.each(localMemberships, function (membership, index) {
-				if (!membership.room) return;
-				membership.room = membership.room.id;
-				membership.roomOrder = index;
-			});
+			_(localMemberships)
+				.reject(function (membership) {
+					return !membership.room;
+				})
+				.each(function (membership, index) {
+					membership.room = membership.room.id;
+					membership.roomOrder = index;
+				})
+				.value();
 
 			// Setup subscriptions
 			User.subscribe(req, user, ['update', 'message']);
@@ -58,12 +62,12 @@ module.exports.init = function (req, res) {
 							User.subscribe(req, _.pluck(members, 'user'), 'update');
 
 							room.$messages = [];
-							_.each(messages, function(message) {
+							_.each(messages, function (message) {
 								room.$messages.push(message.toJSON());
 							});
 
 							room.$members = [];
-							_.each(members, function(member) {
+							_.each(members, function (member) {
 								room.$members.push(member.toJSON());
 							});
 
