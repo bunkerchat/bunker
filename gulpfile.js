@@ -14,8 +14,8 @@ gulp.task('usemin', function () {
 			assetsDir: './',
 			css: ['concat'],
 			//html: [minifyHtml({empty: true})],
-			//js: [uglify(), rev()]
 			jsLib:[rev()],
+			jsLibMin: [uglify(), rev()],
 			jsApp:[ngAnnotate(), uglify(), rev()]
 		}))
 		.pipe(gulp.dest('./'));
