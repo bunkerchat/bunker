@@ -648,7 +648,7 @@ img.emoticon {
 
 @media (max-width: 480px) {
 
-	.message-list {
+	.right-pane {
 		overflow-y: scroll;
 		position: fixed;
 		top: 40px;
