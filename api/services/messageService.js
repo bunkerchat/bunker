@@ -184,12 +184,15 @@ function roll(roomMember, text) {
 		var diceCount = parseInt(textParse[1]) || 1;
 		var dieSides = parseInt(textParse[2]);
 
+		if(diceCount > 1000) diceCount = 1000;
+		if(dieSides > 1000) dieSides = 1000;
+
 		var total = 0;
 		for (var i = 0; i < diceCount; i++) {
 			total += Math.ceil(Math.random() * dieSides);
 		}
 
-		rollOutcome = 'rolled ' + roll + ' for ' + total;
+		rollOutcome = 'rolled ' + diceCount + 'd' + dieSides + ' for ' + total;
 	}
 	else { // Doesn't fit any of our cases
 		return;
