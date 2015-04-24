@@ -171,23 +171,31 @@ function magic8ball(roomMember, text) {
 function roll(roomMember, text) {
 	var matches = text.match(/\/roll\s+(.+)/i);
 	var roll = matches ? matches[1] : null;
-
-	// Determine outcome
 	var rollOutcome;
 
-	if (_.isNumber(+roll) && !_.isNaN(+roll)) {
-		var max = +roll;
+	// Generic number roll
+	if (/^\d+$/.test(roll)) {
+		var max = Math.round(+roll);
 		rollOutcome = 'rolled ' + Math.ceil(Math.random() * max) + ' out of ' + max;
 	}
 	// d20 case for D&D nerds
-	//else if(/^d\d{1,4}/i.test(roll)) { // a dice roll
-	//	rollOutcome = 'rolled a ' + roll + ' for ' + 100;
-	//}
+	else if (/^\d*d\d+$/i.test(roll)) { // a dice roll
+		var textParse = /(\d*)d(\d+)/.exec(roll);
+		var diceCount = parseInt(textParse[1]) || 1;
+		var dieSides = parseInt(textParse[2]);
+
+		var total = 0;
+		for (var i = 0; i < diceCount; i++) {
+			total += Math.ceil(Math.random() * dieSides);
+		}
+
+		rollOutcome = 'rolled ' + roll + ' for ' + total;
+	}
 	else { // Doesn't fit any of our cases
 		return;
 	}
 
-	return message(roomMember, roomMember.user.nick + ' ' + rollOutcome, 'roll');
+	return message(roomMember, ':rolldice: ' + roomMember.user.nick + ' ' + rollOutcome, 'roll');
 }
 
 function me(roomMember, text) {
@@ -218,7 +226,7 @@ function broadcastMessage(message) {
 }
 
 function saveInMentionedInboxes(message) {
-	if(!message.author) return;
+	if (!message.author) return;
 
 	// Check if this message mentions anyone
 	// Completely async process that shouldn't disrupt the normal message flow
