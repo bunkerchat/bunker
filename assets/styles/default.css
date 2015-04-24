@@ -385,7 +385,7 @@ mark:hover {
 	padding-left: 10px;
 	padding-right: 150px;
 	background: #fff;
-	word-break: break-all;
+	word-break: break-word;
 }
 
 .new-message-body {
@@ -451,7 +451,9 @@ mark:hover {
 	width: 0;
 	height: 0;
 	border-bottom: 8px solid #fff;
+	border-bottom: 8px solid rgba(255, 255, 255, 0); /* needs to be here for carets to work */
 	border-top: 8px solid #fff;
+	border-top: 8px solid rgba(255, 255, 255, 0); /* needs to be here for carets to work */
 	border-right: 8px solid #fff;
 }
 
@@ -461,7 +463,7 @@ mark:hover {
 	padding-right: 150px;
 	background-color: #fff;
 	color: #999;
-	word-break: break-all;
+	word-break: break-word;
 }
 
 img.emoticon {
