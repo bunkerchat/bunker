@@ -7,8 +7,6 @@ Install [mongodb](http://www.mongodb.org/downloads)
 
 ```npm install```
 
-```npm install sails -g```
-
 ```node app.js```
 
 
