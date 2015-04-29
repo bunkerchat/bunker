@@ -1,4 +1,4 @@
-app.directive('emoticonMenu', function ($rootScope, emoticons, bunkerData, emoticons, fuzzyByFilter) {
+app.directive('emoticonMenu', function ($rootScope, bunkerData, emoticons, fuzzyByFilter) {
 	return {
 		templateUrl: '/assets/app/header/emoticonMenu.html',
 		scope: {
@@ -9,7 +9,7 @@ app.directive('emoticonMenu', function ($rootScope, emoticons, bunkerData, emoti
 		controller: function ($scope) {
 			var self = this;
 			this.search = '';
-			this.settings = bunkerData.userSettings;
+			this.userSettings = bunkerData.userSettings;
 			this.emoticonMenuLists = [];
 			this.prepareList = prepareList;
 
