@@ -49,7 +49,7 @@ module.exports.init = function (req, res) {
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 			InboxMessage.subscribe(req, user.id, 'message');
 
-			return Promise.all([
+			return Promise.join(
 
 				// Get all room members and 40 initial messages for each room
 				Promise.map(rooms, function (room) {
@@ -87,16 +87,20 @@ module.exports.init = function (req, res) {
 
 							return inboxMessage;
 						});
-					})
-			]);
+					}),
+
+				// fetch all emoticon counts for emoticon list
+				emoticonService.emoticonCounts()
+			);
 		})
-		.spread(function (rooms, inboxMessages) {
+		.spread(function (rooms, inboxMessages, emoticonCounts) {
 			return {
 				user: localUser.toJSON(),
 				userSettings: localUserSettings,
 				memberships: localMemberships,
 				inbox: inboxMessages,
-				rooms: rooms
+				rooms: rooms,
+				emoticonCounts: emoticonCounts
 			};
 		})
 		.then(res.ok)

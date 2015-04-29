@@ -28,12 +28,13 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 		// needs to be tracked separately depending on the set user settings
 
 		function desktopMentionNotify() {
-			if (!bunkerData.mentionsUser(message.text)) return;
+			if (!bunkerData.mentionsUser(message.text) || !message.author) return;
 
 			// if bunker is open and user is in room, don't show notification
 			if (bunkerIsVisible && $rootScope.roomId == room.id) return;
 
 			var decodedText = $('<div/>').html(message.text).text();
+
 			//TODO: Check if creating event listeners like this causes memory leaks
 			var mention = $notification(room.name + " - bunker", {
 				body: message.author.nick + ': ' + decodedText,

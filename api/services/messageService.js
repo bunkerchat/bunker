@@ -59,10 +59,10 @@ function setUserNick(roomMember, text) {
 	var newNick = nickMatches[1];
 	if (user.nick == newNick) throw new InvalidInputError('Nick is already set');
 
-	return Promise.all([
+	return Promise.join(
 		User.update(user.id, {nick: newNick}),
 		RoomMember.find({user: user.id})
-	])
+	)
 		.spread(function (updatedUser, memberships) {
 			updatedUser = updatedUser[0];
 			User.publishUpdate(user.id, {nick: updatedUser.nick});
@@ -184,8 +184,8 @@ function roll(roomMember, text) {
 		var diceCount = parseInt(textParse[1]) || 1;
 		var dieSides = parseInt(textParse[2]);
 
-		if(diceCount > 1000) diceCount = 1000;
-		if(dieSides > 1000) dieSides = 1000;
+		if (diceCount > 1000) diceCount = 1000;
+		if (dieSides > 1000) dieSides = 1000;
 
 		var total = 0;
 		for (var i = 0; i < diceCount; i++) {
@@ -233,10 +233,10 @@ function saveInMentionedInboxes(message) {
 
 	// Check if this message mentions anyone
 	// Completely async process that shouldn't disrupt the normal message flow
-	return Promise.all([
+	return Promise.join(
 		User.findOne(message.author),
 		RoomMember.find({room: message.room}).populate('user')
-	])
+	)
 		.spread(function (author, roomMembers) {
 			return Promise.each(roomMembers, function (roomMember) {
 				var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');

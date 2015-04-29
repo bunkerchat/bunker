@@ -59,38 +59,7 @@ exports.update = function (req, res) {
 
 // GET /message/emoticons
 exports.emoticonCounts = function (req, res) {
-	// setting the request url as as the cache key
-	cacheService.short.wrap('Message/emoticonCounts', lookup, done);
-
-	function lookup(cacheLoadedCb) {
-		var emoticonRegex = /:\w+:/g;
-		var countMap = {};
-
-		// .native gives you a callback function with a hook to the model's collection
-		Message.native(function (err, messageCollection) {
-			if (err) return cacheLoadedCb(err);
-
-			messageCollection.find({text: {$regex: emoticonRegex}}).toArray(function (err, messages) {
-				_.each(messages, function (message) {
-
-					var matches = message.text.match(emoticonRegex);
-					if (matches) {
-						_.each(matches, function (match) {
-							countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
-						});
-					}
-				});
-
-				var emoticonCounts = _(countMap).map(function (value, key) {
-					return {count: value, emoticon: key, name: key.replace(/:/g, '')};
-				}).sortBy('count').reverse().value();
-
-				cacheLoadedCb(err, emoticonCounts);
-			});
-		});
-	}
-
-	function done(err, messages) {
-		res.ok(messages)
-	}
+	emoticonService.emoticonCounts()
+		.then(res.ok)
+		.catch(res.serverError);
 };

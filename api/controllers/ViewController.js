@@ -3,10 +3,10 @@ var Promise = require('bluebird');
 module.exports.index = function (req, res) {
 	var isProd = sails.config.environment === 'production';
 
-	Promise.all([
+	Promise.join(
 		emoticonService.getEmoticonNamesFromDisk(),
 		UserSettings.findOne({user: req.session.userId})
-	])
+	)
 		.spread(function (emoticons, settings) {
 			res.view(isProd ? 'index-prod' : 'index', {
 				userId: req.session.userId,

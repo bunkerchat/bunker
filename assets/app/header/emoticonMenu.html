@@ -14,8 +14,8 @@
 <hr>
 <ol class="row list-unstyled" ng-repeat="list in menu.emoticonMenuLists">
 	<li class="col-xs-3 emoticonListItem" ng-repeat="emoticon in list">
-		<a ng-click="menu.appendEmoticonToChat(emoticon.file)"
-			 title="{{menu.settings.sortEmoticonsByPopularity ? 'Times Used: ' + emoticon.$count : ''}}">
+		<a ng-click="menu.appendEmoticonToChat(emoticon.emoticon)"
+			 title="Times Used: {{emoticon.$count}}">
 			<div class="emoticon-container">
 				<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon.file}}"/>
 			</div>

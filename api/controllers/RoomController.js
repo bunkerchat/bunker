@@ -48,11 +48,11 @@ module.exports.message = function (req, res) {
 // GET /room/:id
 module.exports.findOne = function (req, res) {
 	var pk = actionUtil.requirePk(req);
-	Promise.all([
+	Promise.join(
 		Room.findOne(pk),
 		Message.find({room: pk}).limit(40).populate('author'),
 		RoomMember.find({room: pk}).populate('user')
-	])
+	)
 		.spread(function (room, messages, members) {
 			room.$messages = messages;
 			room.$members = members;
@@ -90,10 +90,10 @@ module.exports.join = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;
 
-	Promise.all([
+	Promise.join(
 		Room.findOne(pk),
 		RoomMember.count({room: pk, user: userId})
-	])
+	)
 		.spread(function (room, existingRoomMember) {
 
 			if (!room) {

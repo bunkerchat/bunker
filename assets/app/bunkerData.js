@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants) {
+app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons) {
 
 	var io = $window.io;
 	var roomLookup = []; // For fast room lookup
@@ -22,6 +22,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				io.socket.get('/init', function (initialData) {
 
 					bunkerData.$resolved = true;
+					decorateEmoticonCounts(initialData.emoticonCounts);
 					_.assign(bunkerData.user, initialData.user);
 					_.assign(bunkerData.userSettings, initialData.userSettings);
 					_.assign(bunkerData.inbox, initialData.inbox);
@@ -221,9 +222,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// Emoticons
 
-		getEmoticonCounts: function () {
+		refreshEmoticonCounts: function () {
 			return $q(function (resolve) {
 				io.socket.get('/message/emoticoncounts', function (counts) {
+					decorateEmoticonCounts(counts);
 					resolve(counts);
 				});
 			});
@@ -286,6 +288,13 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// Add to known rooms
 		bunkerData.rooms[roomIndex] = room;
+	}
+
+	function decorateEmoticonCounts(emoticonCounts){
+		var emoteCountsHash = _.indexBy(emoticonCounts, 'name');
+		_.each(emoticons.list, function (emoticon) {
+			emoticon.$count = emoteCountsHash[emoticon.name] ? emoteCountsHash[emoticon.name].count : 0;
+		});
 	}
 
 	bunkerData.$promise = bunkerData.init();

@@ -1,4 +1,4 @@
-app.directive('emoticonMenu', function ($rootScope, emoticons, bunkerData, fuzzyByFilter) {
+app.directive('emoticonMenu', function ($rootScope, emoticons, bunkerData, emoticons, fuzzyByFilter) {
 	return {
 		templateUrl: '/assets/app/header/emoticonMenu.html',
 		scope: {
@@ -13,33 +13,24 @@ app.directive('emoticonMenu', function ($rootScope, emoticons, bunkerData, fuzzy
 			this.saveSettings = bunkerData.saveUserSettings;
 			this.emoticonMenuLists = [];
 
-			refreshCounts();
-
-			function refreshCounts() {
-				bunkerData.getEmoticonCounts().then(function (emoticonCounts) {
-					self.emoticonCounts = emoticonCounts;
-
-					var emoteCountsHash = _.indexBy(emoticonCounts, 'name');
-					_.each(emoticons.list, function (emoticon) {
-						emoticon.$count = emoteCountsHash[emoticon.name] ? emoteCountsHash[emoticon.name].count : 0;
-					});
-
-					prepareList();
-				});
-			}
+			prepareList();
 
 			function prepareList() {
 				var list = bunkerData.userSettings.sortEmoticonsByPopularity ? _(emoticons.list).sortBy('$count').reverse().value() : emoticons.list;
-				var filteredList = fuzzyByFilter(list, 'name', self.search);
-				self.emoticonMenuLists = _.chunk(filteredList, 4);
+
+				if(self.search){
+					list = fuzzyByFilter(list, 'name', self.search);
+				}
+
+				self.emoticonMenuLists = _.chunk(list, 4);
 			}
 
 			$scope.$watch('menu.settings.sortEmoticonsByPopularity', function (sortEmoticonsByPopularity, oldVal) {
 				if (sortEmoticonsByPopularity == oldVal) return;
-				if (sortEmoticonsByPopularity) {
-					refreshCounts();
-				}
 				prepareList();
+				if (sortEmoticonsByPopularity) {
+					bunkerData.refreshEmoticonCounts().then(prepareList);
+				}
 			});
 
 			$scope.$watch('menu.visible', function (visible, oldVal) {
@@ -58,9 +49,9 @@ app.directive('emoticonMenu', function ($rootScope, emoticons, bunkerData, fuzzy
 				prepareList();
 			});
 
-			this.appendEmoticonToChat = function (emoticonFileName) {
+			this.appendEmoticonToChat = function (emoticonName) {
 				self.search = '';
-				var emoticonName = ':' + $filter('emoticonName')(emoticonFileName) + ':';
+				//var emoticonName = ':' + emoticonNameFilter(emoticonFileName) + ':';
 				$rootScope.$broadcast('inputText', emoticonName);
 
 				// Close window
