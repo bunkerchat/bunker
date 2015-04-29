@@ -1,11 +1,11 @@
 <div class="sortEmoticons">
 	<form class="form-inline" role="form">
 		<div class="form-group">
-			<input ng-model="menu.search" class="form-control input-sm" type="text" placeholder="Search"/>
+			<input ng-model="menu.search" ng-change="menu.prepareList()" class="form-control input-sm" type="text" placeholder="Search"/>
 		</div>
 		<div class="checkbox">
 			<label>
-				<input ng-model="menu.settings.sortEmoticonsByPopularity" ng-change="menu.saveSettings()" type="checkbox"/>
+				<input ng-model="menu.settings.sortEmoticonsByPopularity" ng-change="menu.sortPopularChanged()" type="checkbox"/>
 				Popular sort
 			</label>
 		</div>
@@ -15,7 +15,7 @@
 <ol class="row list-unstyled" ng-repeat="list in menu.emoticonMenuLists">
 	<li class="col-xs-3 emoticonListItem" ng-repeat="emoticon in list">
 		<a ng-click="menu.appendEmoticonToChat(emoticon.emoticon)"
-			 title="Times Used: {{emoticon.$count}}">
+			 title="Times Used: {{::emoticon.$count}}">
 			<div class="emoticon-container">
 				<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon.file}}"/>
 			</div>
