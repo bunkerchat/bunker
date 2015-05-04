@@ -326,7 +326,7 @@ mark:hover {
 	margin: 0;
 }
 .message-list.has-topic {
-	height: calc(100vh - 126px);
+	height: calc(100vh - 127px);
 }
 
 .message-container {
