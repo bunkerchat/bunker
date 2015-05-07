@@ -14,6 +14,8 @@ app.filter('trusted', ['$sce', function ($sce) {
 	};
 }]);
 
+var youtubeRegexp = /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
+
 app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunkerConstants, $timeout) {
 
 	function replaceAll(str, find, replace) {
@@ -154,7 +156,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 							'<video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video>' +
 							'</div>');
 						}
-						else if (/(www\.)?(youtube\.com|youtu\.?be)\/watch/i.test(link) && !attachedMedia) {
+						else if (youtubeRegexp.test(link) && !attachedMedia) {
 							attachedMedia = angular.element('' +
 							'<div class="default-video-height" message="bunkerMessage" bunker-media="' + link + '">' +
 							'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
