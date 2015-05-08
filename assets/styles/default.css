@@ -637,7 +637,7 @@ img.emoticon {
 
 /* animations */
 
-[animation-box] {
+.animation-box {
 	position: fixed;
 	bottom: 0;
 	right: 50%;
@@ -647,11 +647,11 @@ img.emoticon {
 	transition: linear 1.5s;
 }
 
-[animation-box] img {
+.animation-box img {
 	height: 100%;
 }
 
-[animation-box].closed {
+.animation-box.closed {
 	bottom: -75px;
 }
 
@@ -691,7 +691,7 @@ img.emoticon {
 		background-color: #414B57;
 	}
 
-	.message-caret, [animation-box] {
+	.message-caret, .animation-box {
 		display: none;
 	}
 
