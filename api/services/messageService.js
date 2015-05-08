@@ -35,6 +35,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/roll/i.test(text)) {
 		return roll(roomMember, text);
 	}
+	else if (/^\/show\s+:\w+:/i.test(text)) {
+		return animation(roomMember, text);
+	}
 	else if (/^\/me\s+/i.test(text)) {
 		return me(roomMember, text);
 	}
@@ -203,6 +206,18 @@ function roll(roomMember, text) {
 
 function me(roomMember, text) {
 	return message(roomMember, roomMember.user.nick + text.substring(3), 'emote');
+}
+
+function animation(roomMember, text) {
+
+	var emoticon = (/:\w+:/.exec(text))[0];
+
+	return Message.create({
+		room: roomMember.room,
+		author: null,
+		type: 'animation',
+		text:  roomMember.user.nick + ' shows the room ' + emoticon
+	}).then(broadcastMessage);
 }
 
 function message(roomMember, text, type) {

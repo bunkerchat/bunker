@@ -635,6 +635,26 @@ img.emoticon {
 	margin-bottom: 5px;
 }
 
+/* animations */
+
+[animation-box] {
+	position: fixed;
+	bottom: 0;
+	right: 50%;
+	height: 75px;
+	width: 75px;
+	z-index: 100;
+	transition: linear 1.5s;
+}
+
+[animation-box] img {
+	height: 100%;
+}
+
+[animation-box].closed {
+	bottom: -75px;
+}
+
 /*date picker*/
 
 .date-picker-above .dropdown-menu {
@@ -671,7 +691,7 @@ img.emoticon {
 		background-color: #414B57;
 	}
 
-	.message-caret {
+	.message-caret, [animation-box] {
 		display: none;
 	}
 
