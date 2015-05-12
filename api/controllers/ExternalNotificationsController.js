@@ -4,7 +4,7 @@ module.exports.jenkinsBestBuy = function (req, res) {
 	var build = notification.build;
 
 	if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
-	if (build.phase != 'COMPLETED' || build.status == 'FAILURE') return res.ok('thanks');
+	if (build.phase != 'COMPLETED' || build.status != 'FAILURE') return res.ok('thanks');
 
 	var roomId;
 	var chicken = build.status == 'FAILURE' ? ' :buildchicken:' : '';
