@@ -1,15 +1,24 @@
+var lastStatus;
+
 module.exports.jenkinsBestBuy = function (req, res) {
 
 	var notification = req.body;
 	var build = notification.build;
 
 	if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
-	if (build.phase != 'COMPLETED' || build.status != 'FAILURE') return res.ok('thanks');
+
+	// only show completed builds
+	if (build.phase != 'COMPLETED') return res.ok('thanks');
+
+	// don't show successful builds if the last build was a success
+	if(lastStatus == 'SUCCESS' && build.status == 'SUCCESS') return res.ok('thanks2');
+
+	lastStatus = build.status;
 
 	var roomId;
-	var chicken = build.status == 'FAILURE' ? ' :buildchicken:' : '';
+	var emote = build.status == 'FAILURE' ? ' :buildchicken:' : ':unsmith:';
 	var url = build.full_url + "console";
-	var text = chicken + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '", link: ' + url + ' };';
+	var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '", link: ' + url + ' };';
 
 	Room.findOne({name: 'BestBuy'})
 		.then(function (room) {
