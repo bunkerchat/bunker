@@ -25,7 +25,8 @@ module.exports.jenkinsBestBuy = function (req, res) {
 			roomId = room.id;
 			return Message.create({
 				room: room.id,
-				text: text
+				text: text,
+				type: 'buildNotification'
 			})
 		})
 		.then(function (message) {

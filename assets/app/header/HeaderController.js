@@ -70,7 +70,11 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	this.clearInbox = bunkerData.clearInbox;
 
 	$rootScope.$on('bunkerMessaged', function (evt, message) {
-		if (!bunkerData.$resolved || message.room.id == $rootScope.roomId || !message.author || message.author.id == bunkerData.user.id) {
+		if (!bunkerData.$resolved || message.room.id == $rootScope.roomId || (message.type == 'standard' && message.author.id == bunkerData.user.id)) {
+			return;
+		}
+
+		if(message.type != 'standard' && message.type != 'buildNotification'){
 			return;
 		}
 
