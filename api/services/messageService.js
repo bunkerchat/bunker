@@ -182,10 +182,10 @@ function roll(roomMember, text) {
 		rollOutcome = 'rolled ' + Math.ceil(Math.random() * max) + ' out of ' + max;
 	}
 	// d20 case for D&D nerds
-	else if (/^\d*d\d+$/i.test(roll)) { // a dice roll
-		var textParse = /(\d*)d(\d+)/.exec(roll);
-		var diceCount = parseInt(textParse[1]) || 1;
-		var dieSides = parseInt(textParse[2]);
+	else if (/^\d*d\d*$/i.test(roll)) { // a dice roll
+		var textParse = /(\d*)d(\d*)/.exec(roll);
+		var diceCount = parseInt(textParse[1]) || 1; // Default at least one die (converts /roll d10 to /roll 1d10)
+		var dieSides = parseInt(textParse[2]) || 6; // Default at six sided die (converts /roll 10d to /roll 10d6)
 
 		if (diceCount > 25) diceCount = 25;
 		if (dieSides > 50) dieSides = 50;
