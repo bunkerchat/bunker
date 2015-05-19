@@ -20,7 +20,7 @@ module.exports.jenkinsBestBuy = function (req, res) {
 	var url = build.full_url + "console";
 	var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '", link: ' + url + ' };';
 
-	Room.findOne({name: 'BestBuy'})
+	Room.findOne({name: 'minos'})
 		.then(function (room) {
 			roomId = room.id;
 			return Message.create({
