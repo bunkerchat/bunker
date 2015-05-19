@@ -187,18 +187,21 @@ function roll(roomMember, text) {
 		var diceCount = parseInt(textParse[1]) || 1;
 		var dieSides = parseInt(textParse[2]);
 
-		if (diceCount > 1000) diceCount = 1000;
-		if (dieSides > 1000) dieSides = 1000;
+		if (diceCount > 25) diceCount = 25;
+		if (dieSides > 50) dieSides = 50;
 
 		var total = 0;
+		var dieString = [];
 		for (var i = 0; i < diceCount; i++) {
-			total += Math.ceil(Math.random() * dieSides);
+			var die = Math.ceil(Math.random() * dieSides);
+			total += die;
+			dieString.push('[' + die + ']');
 		}
 
-		rollOutcome = 'rolled ' + diceCount + 'd' + dieSides + ' for ' + total;
+		rollOutcome = 'rolled ' + diceCount + 'd' + dieSides + ' for ' + total + ': ' + dieString.join(' ');
 	}
 	else { // Doesn't fit any of our cases
-		return;
+		rollOutcome = 'rolled ' + Math.ceil(Math.random() * 100) + ' out of ' + 100;
 	}
 
 	return message(roomMember, ':rolldice: ' + roomMember.user.nick + ' ' + rollOutcome, 'roll');
