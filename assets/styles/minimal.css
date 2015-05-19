@@ -34,6 +34,10 @@ nav,
 .panel-heading {
 	line-height: 7px;
 }
+/* fix the container height for minimal */
+.message-list {
+	height: calc(100vh - 72px);
+}
 
 .message-body pre {
 	margin-top: 10px;
