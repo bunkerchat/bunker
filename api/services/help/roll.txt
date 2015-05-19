@@ -6,6 +6,7 @@ SYNOPSIS
 
 EXAMPLE
 	/roll 100
+	/roll 2d10 - rolls 2 dice with a 10 upper limit
 
 REMARKS
 	Roll a die, like you're playing D&amp;D, you nerd.
