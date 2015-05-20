@@ -39,6 +39,10 @@ nav,
 	height: calc(100vh - 72px);
 }
 
+.message-list.has-topic{
+	height: calc(100vh - 113px);
+}
+
 .message-body pre {
 	margin-top: 10px;
 	border: dotted #ccc 2px;
