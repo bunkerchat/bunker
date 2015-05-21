@@ -48,7 +48,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 				else if (!scope.editMode
 					|| previousText == scope.messageText
 					|| chosenMessage.edited
-					|| !datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
+					|| !canEdit(chosenMessage)) {
 
 					bunkerData.createMessage(newMessage.room, newMessage.text)
 						.then(function (result) {
@@ -58,7 +58,8 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 							}
 						});
 
-				} else {
+				}
+				else {
 					scope.submittedMessages[scope.selectedMessageIndex].text = scope.messageText;
 					newMessage.id = scope.submittedMessages[scope.selectedMessageIndex].id;
 					newMessage.edited = true;
@@ -148,10 +149,11 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					previousText = chosenMessage.text;
 
 					scope.messageText = chosenMessage.text;
-					scope.editMode = datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds);
+					scope.editMode = canEdit(chosenMessage);
 
 					scope.$digest();
-				} else if (evt.keyCode == 27) { // 'escape'
+				}
+				else if (evt.keyCode == 27) { // 'escape'
 					// Reset all the things
 					scope.selectedMessageIndex = -1;
 					scope.messageText = '';
@@ -160,7 +162,8 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					emoticonSearch = '';
 					emoticonSearchIndex = -1;
 					scope.$digest();
-				} else if (evt.keyCode != 9 && evt.keyCode != 16) {
+				}
+				else if (evt.keyCode != 9 && evt.keyCode != 16) {
 					if (/:\w+$/.test(scope.messageText)) {
 						searchState = searchStates.EMOTE;
 						// if an emoticon is at the end of the message, start the search
@@ -178,12 +181,14 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 				}
 			}
 
-			function datesWithinSeconds(date1, date2, seconds) {
-				if (!date1 || !date2) return false;
-				var elapsed = Math.abs(date1 - date2) / 1000;
-				return elapsed < seconds;
+			function canEdit(message){
+				return !message.edited && datesWithinSeconds(message.createdAt, messageEditWindowSeconds);
 			}
 
+			function datesWithinSeconds(date1, seconds) {
+				var elapsed = Math.abs(date1 - Date.now()) / 1000;
+				return elapsed < seconds;
+			}
 		}
 	};
 });
