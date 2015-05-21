@@ -1,0 +1,7 @@
+NAME
+	/hangman - play a game of hangman
+
+COMMANDS
+	/hangman start &lt;integer&gt;            ...Start a new game with optional minimum scrabble word score for the random word.
+	/hangman quit                       ...Kills the current hangman game for the room at the server level.
+	/hangman guess &lt;string&gt;             ...Guess 1 letter at a time or feel hangman's wrath.

@@ -29,6 +29,8 @@ module.exports = {
 				return this.readHelpFile('formatting.txt');
 			} else if (command === 'away') {
 				return this.readHelpFile('away.txt');
+			} else if (command === 'hangman') {
+				return this.readHelpFile('hangman.txt');
 			}
 		}
 		return this.readHelpFile('basic.txt');

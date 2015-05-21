@@ -44,7 +44,10 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = createQuotedBlock(text);
 				}
 				else {
-					text = parseFormatting(text);
+
+					if(scope.bunkerMessage.type != 'hangman') {
+						text = parseFormatting(text);
+					}
 					if (bunkerData.userSettings.showEmoticons) {
 						text = parseEmoticons(text);
 					}
