@@ -20,6 +20,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/help/i.test(text)) {
 		return getHelp(roomMember, text);
 	}
+	else if (/^\/stats/i.test(text)) {
+		return stats(roomMember, text);
+	}
 	else if (/^\/topic/i.test(text)) { // Change room topic
 		return setRoomTopic(roomMember, text);
 	}
@@ -50,8 +53,18 @@ module.exports.broadcastMessage = broadcastMessage;
 
 function getHelp(roomMember, text) {
 	return helpService.getHelp(text).then(function (helpMessage) {
-		RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, helpMessage, 'help');
+		return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, helpMessage, 'help');
 	});
+}
+
+function stats(roomMember, text){
+	return Promise.join(
+		Message.count({author:roomMember.user.id})
+	)
+		.spread(function (messageCount) {
+			var message = "Count is: " + messageCount;
+			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
+		})
 }
 
 function setUserNick(roomMember, text) {
