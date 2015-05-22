@@ -276,10 +276,7 @@ function saveInMentionedInboxes(message) {
 }
 
 function hangman(roomMember, text) {
-	hangmanService.play(roomMember.room, text).then(function(hangmanResponse) {
+	return hangmanService.play(roomMember.room, text).then(function(hangmanResponse) {
 		return message(roomMember, hangmanResponse, 'hangman');
-	}).catch(function(error) {
-		console.log(error);
 	});
-
 }
