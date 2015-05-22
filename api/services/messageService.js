@@ -41,8 +41,8 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/me\s+/i.test(text)) {
 		return me(roomMember, text);
 	}
-	else if (/^\/hangman/i.test(text)) {
-		return hangman(roomMember, text); // hangman operations
+	else if (/^\/h(?:angman)?(?:\s(\w)?|$)/i.test(text)) {
+		return hangman(roomMember, text);
 	}
 	else {
 		return message(roomMember, text, 'standard');
@@ -278,6 +278,9 @@ function saveInMentionedInboxes(message) {
 function hangman(roomMember, text) {
 	return hangmanService.play(roomMember, text)
 		.then(function (hangmanResponse) {
-			return message(roomMember, hangmanResponse, 'hangman');
+			if(hangmanResponse.error) {
+				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'help');
+			}
+			return message(roomMember, hangmanResponse.message, 'hangman');
 		});
 }

@@ -2,40 +2,22 @@ var Promise = require('bluebird');
 var request = Promise.promisifyAll(require('request'));
 
 module.exports.play = function (roomMember, command) {
-
 	return HangmanGame.findOne({room: roomMember.room}).then(function (currentGame) {
+		var match = /^\/h(?:angman)?(?:\s(\w)?|$)/ig.exec(command);
+		var guess = match[1];
 
-		// parse the command and figure out what we are doing in the context of hangman
-		var commandParts = command.split(' ');
-
-		if (commandParts.length > 1) {
-			var commandName = commandParts[1].toLowerCase();
-			switch (commandName) {
-				case 'start':
-					return start(roomMember, commandParts.length == 3 ? commandParts[2] : null);
-				case 'quit':
-					return quit(roomMember);
-				case 'guess':
-					if (currentGame && commandParts.length == 3) {
-						return guess(roomMember, currentGame, commandParts[2]);
-					}
-					else {
-						return 'Cannot guess, there is not an active hangman game going';
-					}
-			}
+		if (currentGame && guess) {
+			return makeGuess(roomMember, currentGame, guess);
 		}
-
-		return 'Bad hangman command, use /help hangman for help with this feature';
+		else if (!currentGame) {
+			return start(roomMember);
+		}
+		// tried to start a game but was already in progress
+		return Promise.resolve({error: 'Hangman game already in progress. See /help hangman'});
 	});
 };
 
-function quit(roomMember) {
-	return HangmanGame.destroy({room: roomMember.room}).then(function () {
-		return 'This room\'s hangman instance has been removed';
-	});
-}
-
-function guess(roomMember, game, guessString) {
+function makeGuess(roomMember, game, guessString) {
 
 	if (guessString.length == 1) {
 		guessString = guessString.toUpperCase();
@@ -73,25 +55,21 @@ function guess(roomMember, game, guessString) {
 		})
 	}
 
-	return 'You are only allowed to guess a single letter at a time';
+	return Promise.resolve({error: 'You are only allowed to guess a single letter at a time'})
 }
 
-function start(roomMember, wordLength) {
-	wordLength = wordLength || _.sample([4,5,6,7,8,9]);
+function start(roomMember) {
+	var wordLength = _.sample([4, 5, 6, 7, 8, 9]);
 
-	// ugh so gross. Changing soon
 	return getWord(wordLength)
 		.then(function (word) {
-			return quit(roomMember.room)
-				.then(function () {
-					return HangmanGame.create({
-						room: roomMember.room,
-						word: word
-					})
-						.then(function (game) {
-							return buildResponse(roomMember, game);
-						});
-				});
+			return HangmanGame.create({
+				room: roomMember.room,
+				word: word
+			})
+		})
+		.then(function (game) {
+			return buildResponse(roomMember, game);
 		});
 }
 
@@ -127,7 +105,7 @@ function buildResponse(roomMember, game) {
 	var maskedWord = buildWordMask(game.hits, game.word);
 
 	if (!_.contains(maskedWord, '﹏')) {
-		quit(roomMember);
+		HangmanGame.destroy(game.id).then();
 		responseString.push(roomMember.user.nick + ' guessed the final letter!  The word was ' + game.word);
 	}
 	else {
@@ -141,7 +119,7 @@ function buildResponse(roomMember, game) {
 
 		if (misses.length >= 6) {
 			responseString.push('You lose! The word was ' + game.word);
-			quit(roomMember);
+			HangmanGame.destroy(game.id).then();
 		}
 		else {
 			responseString.push('Word: ' + maskedWord);
@@ -157,7 +135,7 @@ function buildResponse(roomMember, game) {
 		}
 	}
 
-	return responseString.join('');
+	return {message: responseString.join('')}
 }
 
 function buildWordMask(hits, word) {
