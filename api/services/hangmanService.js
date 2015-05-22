@@ -4,46 +4,35 @@ module.exports = {
 	play: function (roomId, command) {
 		// parse the command and figure out what we are doing in the
 		// context of hangman
-		return getGame(roomId).then(function (currentGame) {
-			var commandParts = command.split(" ");
+		return HangmanGame.findOne({room: roomId}).then(function (currentGame) {
+
+			var commandParts = command.split(' ');
 			if (commandParts.length > 1) {
 				var commandName = commandParts[1].toLowerCase();
 				switch (commandName) {
-					case "start":
-						if (commandParts.length == 3) {
-							return start(roomId, commandParts[2]);
-						}
-						else {
-							return start(roomId);
-						}
-						break;
-					case "quit":
+					case 'start':
+						return start(roomId, commandParts.length == 3 ? commandParts[2]: null);
+					case 'quit':
 						return quit(roomId);
-						break;
-					case "guess":
+					case 'guess':
 						if (currentGame) {
 							if (commandParts.length == 3) {
 								return guess(currentGame, commandParts[2], roomId);
 							}
 						} else {
-							return "Cannot guess, there is not an active hangman game going.";
+							return 'Cannot guess, there is not an active hangman game going';
 						}
-						break;
 				}
 			}
 
-			return "Bad hangman command, use /help hangman for help with this feature.";
+			return 'Bad hangman command, use /help hangman for help with this feature';
 		});
 	}
 };
 
-function getGame(roomId) {
-	return HangmanGame.findOne({room: roomId});
-}
-
 function quit(roomId) {
 	return HangmanGame.destroy({room: roomId}).then(function () {
-		return "This room's hangman instance has been removed.";
+		return 'This room\'s hangman instance has been removed';
 	});
 }
 
@@ -55,7 +44,7 @@ function guess(currentGame, guessString, roomId) {
 		if (currentGame.word.indexOf(guessString) > -1) {
 			if (currentGame.hits) {
 				if (currentGame.hits.indexOf(guessString) == -1) {
-					currentGame.hits += "," + guessString;
+					currentGame.hits += ',' + guessString;
 				}
 			}
 			else {
@@ -65,7 +54,7 @@ function guess(currentGame, guessString, roomId) {
 		else {
 			if (currentGame.misses) {
 				if (currentGame.misses.indexOf(guessString) == -1) {
-					currentGame.misses += ", " + guessString;
+					currentGame.misses += ', ' + guessString;
 				}
 			}
 			else {
@@ -73,33 +62,28 @@ function guess(currentGame, guessString, roomId) {
 			}
 		}
 
-		return HangmanGame.update({room: roomId}, {hits: currentGame.hits, misses: currentGame.misses}).then(function () {
+		return HangmanGame.update({room: roomId}, {
+			hits: currentGame.hits,
+			misses: currentGame.misses
+		}).then(function () {
 			return buildResponse(currentGame);
 		})
 	}
 
-	return "You are only allowed to guess a single letter at a time.";
+	return 'You are only allowed to guess a single letter at a time';
 }
 
 function start(roomId, minScrabbleScore) {
+
+	minScrabbleScore = minScrabbleScore || 0;
+	var word = _(sevenLetterWords)
+		.filter(function (word) {
+			return word.scrabble >= minScrabbleScore;
+		})
+		.sample()
+		.value();
+
 	return quit(roomId).then(function () {
-		var word;
-
-		if (minScrabbleScore) {
-			var filteredWords = _.filter(sevenLetterWords, function (word) {
-				return word.scrabble >= minScrabbleScore;
-			});
-
-			if (filteredWords.length > 0) {
-				word = _.sample(filteredWords).word;
-			}
-		}
-		else {
-			// we get here by default case of not specifying a min scrabble word score
-			// or specifying a scrabble word score that didn't get any data.
-			word = _.sample(sevenLetterWords).word;
-		}
-
 		return HangmanGame.create({
 			room: roomId,
 			word: word
@@ -110,64 +94,43 @@ function start(roomId, minScrabbleScore) {
 }
 
 function buildResponse(currentGame) {
-	var responseString = "";
-
+	var responseString = [];
 	var maskedWord = buildWordMask(currentGame.hits, currentGame.word);
-	if (maskedWord.indexOf("﹏") == -1) {
+
+	if (!_.contains(maskedWord, '﹏')) {
 		quit(currentGame.room);
-		responseString = "You win!  The word was " + currentGame.word + ".";
+		responseString.push('You win!  The word was ' + currentGame.word);
 	}
 	else {
+		responseString.push(':hangman');
+		responseString.push(currentGame.misses ? currentGame.misses.split(',').length : 0);
+		responseString.push(': ');
+		responseString.push('Word: ' + maskedWord);
 		if (currentGame.misses) {
-			var missesArray = currentGame.misses.split(",");
-
-			switch (missesArray.length) {
-				case 1:
-					responseString = ":hangman1:  Word: " + maskedWord + ",  Misses: " + currentGame.misses;
-					break;
-				case 2:
-					responseString = ":hangman2:  Word: " + maskedWord + ",  Misses: " + currentGame.misses;
-					break;
-				case 3:
-					responseString = ":hangman3:  Word: " + maskedWord + ",  Misses: " + currentGame.misses;
-					break;
-				case 4:
-					responseString = ":hangman4:  Word: " + maskedWord + ",  Misses: " + currentGame.misses;
-					break;
-				case 5:
-					responseString = ":hangman5:  Word: " + maskedWord + ",  Misses: " + currentGame.misses;
-					break;
-				case 6:
-					responseString = ":hangman6:  You lose.  The word was " + currentGame.word;
-					quit(currentGame.room);
-					break;
-			}
-		}
-		else {
-			responseString = ":hangman0:  Word: " + buildWordMask(currentGame.hits, currentGame.word);
+			responseString.push(',  Misses: ' + currentGame.misses);
 		}
 	}
 
-	return responseString;
+	return responseString.join('');
 }
 
 function buildWordMask(hits, word) {
 	if (hits) {
-		var mask = "";
-		for (index = 0; index < word.length; index++) {
-			var letter = word.substring(index, index + 1);
+		var mask = '';
+		for (var i = 0; i < word.length; i++) {
+			var letter = word.substring(i, i + 1);
 			if (hits.indexOf(letter) == -1) {
-				mask += "﹏ ";
+				mask += '﹏ ';
 			}
 			else {
-				mask += letter + " ";
+				mask += letter + ' ';
 			}
 		}
 
 		return mask.trim();
 	}
 	else {
-		return "﹏  ﹏  ﹏  ﹏  ﹏  ﹏  ﹏";
+		return '﹏  ﹏  ﹏  ﹏  ﹏  ﹏  ﹏';
 	}
 }
 
