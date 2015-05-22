@@ -271,7 +271,7 @@ function saveInMentionedInboxes(message) {
 							InboxMessage.message(roomMember.user.id, inboxMessage);
 						});
 				}
-			})
+			});
 		});
 }
 

@@ -1,4 +1,4 @@
-module.exports = [
+[
 	{"word": "JIMJAMS", "scrabble": 25},
 	{"word": "JUKEBOX", "scrabble": 27},
 	{"word": "CHAZZAN", "scrabble": 30},
@@ -23926,4 +23926,5 @@ module.exports = [
 	{"word": "TASSIES", "scrabble": 7},
 	{"word": "RITTERS", "scrabble": 7},
 	{"word": "TASSETS", "scrabble": 7},
-	{"word": "SEATERS", "scrabble": 7}];
+	{"word": "SEATERS", "scrabble": 7}
+]

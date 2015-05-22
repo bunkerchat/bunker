@@ -1,4 +1,11 @@
-var sevenLetterWords = require('./hangmanWords');
+var fs = require('fs');
+var path = require('path');
+var sevenLetterWords;
+
+fs.readFile(path.join(__dirname, 'hangmanWords.txt'), function (err, data) {
+	if (err) return console.error(err);
+	sevenLetterWords = JSON.parse(data);
+});
 
 module.exports.play = function (roomMember, command) {
 
