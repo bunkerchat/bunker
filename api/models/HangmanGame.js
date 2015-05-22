@@ -5,9 +5,7 @@ module.exports = {
 		},
 		word: {
 			type: 'string',
-			required: true,
-			minLength: 7,
-			maxLength: 7
+			required: true
 		},
 		misses: {
 			type: 'string'

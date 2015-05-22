@@ -1,11 +1,5 @@
-var fs = require('fs');
-var path = require('path');
-var sevenLetterWords;
-
-fs.readFile(path.join(__dirname, 'hangmanWords.txt'), function (err, data) {
-	if (err) return console.error(err);
-	sevenLetterWords = JSON.parse(data);
-});
+var Promise = require('bluebird');
+var request = Promise.promisifyAll(require('request'));
 
 module.exports.play = function (roomMember, command) {
 
@@ -82,24 +76,50 @@ function guess(roomMember, game, guessString) {
 	return 'You are only allowed to guess a single letter at a time';
 }
 
-function start(roomMember, minScrabbleScore) {
+function start(roomMember, wordLength) {
+	wordLength = wordLength || _.sample([4,5,6,7,8,9]);
 
-	minScrabbleScore = minScrabbleScore || 0;
-	var word = _(sevenLetterWords)
-		.filter(function (word) {
-			return word.scrabble >= minScrabbleScore;
-		})
-		.sample()
-		.word;
-
-	return quit(roomMember.room).then(function () {
-		return HangmanGame.create({
-			room: roomMember.room,
-			word: word
-		}).then(function (game) {
-			return buildResponse(roomMember, game);
+	// ugh so gross. Changing soon
+	return getWord(wordLength)
+		.then(function (word) {
+			return quit(roomMember.room)
+				.then(function () {
+					return HangmanGame.create({
+						room: roomMember.room,
+						word: word
+					})
+						.then(function (game) {
+							return buildResponse(roomMember, game);
+						});
+				});
 		});
-	});
+}
+
+function getWord(lengthOfWord) {
+	return request.getAsync({
+		json: true,
+		// http://developer.wordnik.com/docs.html#!/words/getRandomWord_get_4
+		url: 'http://api.wordnik.com/v4/words.json/randomWord',
+
+		// query string
+		qs: {
+			api_key: '4817cab836f606e6b000b092ab803694d318c37622fd6f4c9',
+			minLength: lengthOfWord,
+			maxLength: lengthOfWord,
+
+			hasDictionaryDef: true,
+			includePartOfSpeech: 'noun, adjective, verb, adverb',
+
+			// only use words people actually know http://www.wordfrequency.info/
+			minCorpusCount: 10000,
+
+			// don't use obscure words
+			minDictionaryCount: 10
+		}
+	})
+		.spread(function (response, body) {
+			return body.word.toUpperCase();
+		})
 }
 
 function buildResponse(roomMember, game) {
