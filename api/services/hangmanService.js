@@ -13,7 +13,7 @@ module.exports.play = function (roomMember, command) {
 			return start(roomMember);
 		}
 		// tried to start a game but was already in progress
-		return Promise.resolve({error: 'Hangman game already in progress. See /help hangman'});
+		return Promise.resolve({error: buildResponse(roomMember, currentGame).message + " (game in progress)"});
 	});
 };
 

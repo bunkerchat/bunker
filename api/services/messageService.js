@@ -279,7 +279,7 @@ function hangman(roomMember, text) {
 	return hangmanService.play(roomMember, text)
 		.then(function (hangmanResponse) {
 			if(hangmanResponse.error) {
-				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'help');
+				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'hangman');
 			}
 			return message(roomMember, hangmanResponse.message, 'hangman');
 		});
