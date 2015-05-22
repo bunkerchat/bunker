@@ -1,5 +1,7 @@
 var ent = require('ent');
 var Promise = require('bluebird');
+var fs = Promise.promisifyAll(require('fs'));
+var path = require('path');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -59,10 +61,22 @@ function getHelp(roomMember, text) {
 
 function stats(roomMember, text){
 	return Promise.join(
+		fs.readFileAsync(path.join(__dirname, 'statsTemplate.ejs')),
 		Message.count({author:roomMember.user.id})
 	)
-		.spread(function (messageCount) {
-			var message = _.template("Count is ${messageCount}")({messageCount: messageCount});
+		.spread(function (template, messageCount) {
+			var data = {
+				user: 'TEST',
+				messageCount: messageCount,
+				editCount: 'TEST',
+				startDate: 'TEST',
+				totalDays: 'TEST',
+				activeDays: 'TEST',
+				firstMessage: 'TEST',
+				emotes: 'TEST',
+				randomMessage: 'randomMessage'
+			};
+			var message = _.template(template)(data);
 			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
 		})
 }
