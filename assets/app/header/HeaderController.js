@@ -78,7 +78,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 			return;
 		}
 
-		if(message.type != 'standard' && message.type != 'buildNotification'){
+		if(message.type != 'standard' && message.type != 'buildNotification' && message.type != 'hangman'){
 			return;
 		}
 
