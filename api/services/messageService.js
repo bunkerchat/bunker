@@ -222,7 +222,7 @@ function animation(roomMember, text) {
 		room: roomMember.room,
 		author: null,
 		type: 'animation',
-		text:  roomMember.user.nick + ' shows the room ' + emoticon
+		text: roomMember.user.nick + ' shows the room ' + emoticon
 	}).then(broadcastMessage);
 }
 
@@ -276,7 +276,8 @@ function saveInMentionedInboxes(message) {
 }
 
 function hangman(roomMember, text) {
-	return hangmanService.play(roomMember.room, text).then(function(hangmanResponse) {
-		return message(roomMember, hangmanResponse, 'hangman');
-	});
+	return hangmanService.play(roomMember, text)
+		.then(function (hangmanResponse) {
+			return message(roomMember, hangmanResponse, 'hangman');
+		});
 }

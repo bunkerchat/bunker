@@ -14,6 +14,7 @@ module.exports = {
 		},
 		hits: {
 			type: 'string'
-		}
+		},
+		lastGuessSuccess: 'boolean'
 	}
 };
