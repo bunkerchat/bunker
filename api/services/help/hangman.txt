@@ -1,7 +1,7 @@
 NAME
 	/hangman - play a game of hangman
+	/h - alias
 
 COMMANDS
-	/hangman start &lt;integer&gt;            ...Start a new game with optional minimum scrabble word score for the random word.
-	/hangman quit                       ...Kills the current hangman game for the room at the server level.
-	/hangman guess &lt;string&gt;             ...Guess 1 letter at a time or feel hangman's wrath.
+	/hangman | /h ...Start a new game
+	/hangman [letter] | /h [letter] ...Guess 1 letter at a time or feel hangman's wrath.
