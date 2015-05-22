@@ -62,7 +62,7 @@ function stats(roomMember, text){
 		Message.count({author:roomMember.user.id})
 	)
 		.spread(function (messageCount) {
-			var message = "Count is: " + messageCount;
+			var message = _.template("Count is ${messageCount}")({messageCount: messageCount});
 			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
 		})
 }
