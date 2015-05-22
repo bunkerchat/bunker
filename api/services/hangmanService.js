@@ -1,4 +1,4 @@
-var sevenLetterWords = require('./hangmanWords')
+var sevenLetterWords = require('./hangmanWords');
 
 module.exports = {
 	play: function (roomId, command) {
