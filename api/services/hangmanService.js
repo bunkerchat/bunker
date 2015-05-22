@@ -1,40 +1,45 @@
-var sevenLetterWords = require('./hangmanWords');
+var fs = require('fs');
+var path = require('path');
+var sevenLetterWords;
 
-module.exports = {
-	play: function (roomId, command) {
-		// parse the command and figure out what we are doing in the
-		// context of hangman
-		return getGame(roomId).then(function (currentGame) {
-			var commandParts = command.split(" ");
-			if (commandParts.length > 1) {
-				var commandName = commandParts[1].toLowerCase();
-				switch (commandName) {
-					case "start":
+fs.readFile(path.join(__dirname, 'hangmanWords.txt'), function (err, data) {
+	if (err) return console.error(err);
+	sevenLetterWords = JSON.parse(data);
+});
+
+module.exports.play = function (roomId, command) {
+	// parse the command and figure out what we are doing in the
+	// contehelpserxt of hangman
+	return getGame(roomId).then(function (currentGame) {
+		var commandParts = command.split(" ");
+		if (commandParts.length > 1) {
+			var commandName = commandParts[1].toLowerCase();
+			switch (commandName) {
+				case "start":
+					if (commandParts.length == 3) {
+						return start(roomId, commandParts[2]);
+					}
+					else {
+						return start(roomId);
+					}
+					break;
+				case "quit":
+					return quit(roomId);
+					break;
+				case "guess":
+					if (currentGame) {
 						if (commandParts.length == 3) {
-							return start(roomId, commandParts[2]);
+							return guess(currentGame, commandParts[2], roomId);
 						}
-						else {
-							return start(roomId);
-						}
-						break;
-					case "quit":
-						return quit(roomId);
-						break;
-					case "guess":
-						if (currentGame) {
-							if (commandParts.length == 3) {
-								return guess(currentGame, commandParts[2], roomId);
-							}
-						} else {
-							return "Cannot guess, there is not an active hangman game going.";
-						}
-						break;
-				}
+					} else {
+						return "Cannot guess, there is not an active hangman game going.";
+					}
+					break;
 			}
+		}
 
-			return "Bad hangman command, use /help hangman for help with this feature.";
-		});
-	}
+		return "Bad hangman command, use /help hangman for help with this feature.";
+	});
 };
 
 function getGame(roomId) {
