@@ -351,6 +351,10 @@ mark:hover {
 	animation: fadein 2.5s;
 }
 
+.message.message-type-hangman [bunker-message] {
+	font-family: monospace;
+}
+
 .message-author {
 	float: left;
 	width: 180px;

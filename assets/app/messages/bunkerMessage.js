@@ -95,7 +95,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			}
 
 			function parseHangman(text){
-				return text.replace(/:hangman(\d)/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
+				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
 			}
 
 			function parseEmoticons(text) {
