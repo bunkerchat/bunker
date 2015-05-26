@@ -9,7 +9,7 @@ module.exports = {
 		},
 		type: {
 			type: 'string',
-			enum: ['standard', 'emote', 'room', 'global', 'help', 'roll', '8ball', 'animation', 'buildNotification'],
+			enum: ['standard', 'emote', 'room', 'global', 'help', 'roll', '8ball', 'animation', 'buildNotification', 'hangman'],
 			defaultsTo: 'standard'
 		},
 		text: {
@@ -19,7 +19,6 @@ module.exports = {
 		},
 		edited: {
 			type: 'boolean',
-			required: false,
 			defaultsTo: false
 		}
 	}

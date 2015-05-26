@@ -43,6 +43,9 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				if (text.match(/&#10;/g)) {
 					text = createQuotedBlock(text);
 				}
+				else if (scope.bunkerMessage.type == 'hangman'){
+					text = parseHangman(text);
+				}
 				else {
 					text = parseFormatting(text);
 					if (bunkerData.userSettings.showEmoticons) {
@@ -89,6 +92,10 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				$compile(attachedMedia)(scope.$new());
 
 				return '';
+			}
+
+			function parseHangman(text){
+				return text.replace(/:hangman(\d)/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
 			}
 
 			function parseEmoticons(text) {

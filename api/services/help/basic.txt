@@ -14,6 +14,7 @@ COMMANDS:
 	nick		change your nickname
 	roll		roll a die
 	topic		change the topic of the room
+	hangman     play a game of hangman
 
 TOPICS:
 	formatting	how to format message text (italic, bold, etc)
@@ -24,3 +25,4 @@ To get help on a specific command or topic type '/help [command|topic]'.  Exampl
 
 	/help nick
 	/help images
+	/help hangman

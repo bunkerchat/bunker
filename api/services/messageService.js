@@ -46,6 +46,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/me\s+/i.test(text)) {
 		return me(roomMember, text);
 	}
+	else if (/^\/h(?:angman)?(?:\s(\w)?|$)/i.test(text)) {
+		return hangman(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -246,7 +249,7 @@ function animation(roomMember, text) {
 		room: roomMember.room,
 		author: null,
 		type: 'animation',
-		text:  roomMember.user.nick + ' shows the room ' + emoticon
+		text: roomMember.user.nick + ' shows the room ' + emoticon
 	}).then(broadcastMessage);
 }
 
@@ -295,6 +298,16 @@ function saveInMentionedInboxes(message) {
 							InboxMessage.message(roomMember.user.id, inboxMessage);
 						});
 				}
-			})
+			});
+		});
+}
+
+function hangman(roomMember, text) {
+	return hangmanService.play(roomMember, text)
+		.then(function (hangmanResponse) {
+			if(hangmanResponse.error) {
+				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'hangman');
+			}
+			return message(roomMember, hangmanResponse.message, 'hangman');
 		});
 }
