@@ -18,44 +18,24 @@ module.exports.play = function (roomMember, command) {
 };
 
 function makeGuess(roomMember, game, guessString) {
-
-	if (guessString.length == 1) {
-		guessString = guessString.toUpperCase();
-		var guessSuccess;
-
-		if (game.word.indexOf(guessString) > -1) {
-			guessSuccess = true;
-			if (game.hits) {
-				if (game.hits.indexOf(guessString) == -1) {
-					game.hits += ',' + guessString;
-				}
-			}
-			else {
-				game.hits = guessString;
-			}
-		}
-		else {
-			guessSuccess = false;
-			if (game.misses) {
-				if (game.misses.indexOf(guessString) == -1) {
-					game.misses += ', ' + guessString;
-				}
-			}
-			else {
-				game.misses = guessString;
-			}
-		}
-
-		return HangmanGame.update({room: roomMember.room}, {
-			hits: game.hits,
-			misses: game.misses,
-			lastGuessSuccess: guessSuccess
-		}).then(function (updatedGame) {
-			return buildResponse(roomMember, updatedGame[0]);
-		})
+	guessString = guessString.toUpperCase();
+	var guessSuccess;
+	if (_.includes(game.word, guessString)) {
+		guessSuccess = true;
+		game.hits.push(guessString);
+	}
+	else {
+		guessSuccess = false;
+		game.misses.push(guessString);
 	}
 
-	return Promise.resolve({error: 'You are only allowed to guess a single letter at a time'})
+	return HangmanGame.update({room: roomMember.room}, {
+		hits: game.hits,
+		misses: game.misses,
+		lastGuessSuccess: guessSuccess
+	}).then(function (updatedGame) {
+		return buildResponse(roomMember, updatedGame[0]);
+	});
 }
 
 function start(roomMember) {
@@ -102,35 +82,35 @@ function getWord(lengthOfWord) {
 
 function buildResponse(roomMember, game) {
 	var responseString = [];
-	var maskedWord = buildWordMask(game.hits, game.word);
+	//var maskedWord = buildWordMask(game.hits, game.word);
+
+	var maskedWord = _.map(game.word, function (letter) {
+		return _.includes(game.hits, letter) ? letter: '﹏ ';
+	});
 
 	if (!_.contains(maskedWord, '﹏')) {
 		HangmanGame.destroy(game.id).then();
 		responseString.push(roomMember.user.nick + ' guessed the final letter!  The word was ' + game.word);
 	}
 	else {
-
-		var hits = game.hits ? game.hits.split(',') : [];
-		var misses = game.misses ? game.misses.split(',') : [];
-
 		responseString.push(':hangman');
-		responseString.push(misses.length);
+		responseString.push(game.misses.length);
 		responseString.push(': ');
 
-		if (misses.length >= 6) {
+		if (game.misses.length >= 6) {
 			responseString.push('You lose! The word was ' + game.word);
 			HangmanGame.destroy(game.id).then();
 		}
 		else {
 			responseString.push('Word: ' + maskedWord);
-			if (misses.length > 0) {
-				responseString.push(',  Misses: ' + misses.join(', '));
+			if (game.misses.length > 0) {
+				responseString.push(',  Misses: ' + game.misses.join(', '));
 			}
 		}
 
-		if (hits.length || misses.length) {
+		if (game.hits.length || game.misses.length) {
 			// The last guess is the last hit if the guess was successful or the last miss if not
-			var lastGuess = _.last(game.lastGuessSuccess ? hits : misses);
+			var lastGuess = _.last(game.lastGuessSuccess ? game.hits : game.misses);
 			responseString.push(' (' + roomMember.user.nick + ' guessed ' + lastGuess + ')');
 		}
 	}
@@ -139,22 +119,26 @@ function buildResponse(roomMember, game) {
 }
 
 function buildWordMask(hits, word) {
-	if (hits) {
-		var mask = '';
-		for (var i = 0; i < word.length; i++) {
-			var letter = word.substring(i, i + 1);
-			if (hits.indexOf(letter) == -1) {
-				mask += '﹏ ';
-			}
-			else {
-				mask += letter + ' ';
-			}
-		}
-
-		return mask.trim();
-	}
-	else {
-		return '﹏  ﹏  ﹏  ﹏  ﹏  ﹏  ﹏';
-	}
+	return _.map(word, function (letter) {
+		return _.includes(hits, letter) ? letter: '﹏ ';
+	});
+	//
+	//if (hits) {
+	//	var mask = '';
+	//	for (var i = 0; i < word.length; i++) {
+	//		var letter = word.substring(i, i + 1);
+	//		if (hits.indexOf(letter) == -1) {
+	//			mask += '﹏ ';
+	//		}
+	//		else {
+	//			mask += letter + ' ';
+	//		}
+	//	}
+	//
+	//	return mask.trim();
+	//}
+	//else {
+	//	return '﹏  ﹏  ﹏  ﹏  ﹏  ﹏  ﹏';
+	//}
 }
 

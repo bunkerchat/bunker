@@ -8,10 +8,12 @@ module.exports = {
 			required: true
 		},
 		misses: {
-			type: 'string'
+			type:'array',
+			defaultsTo:[]
 		},
 		hits: {
-			type: 'string'
+			type:'array',
+			defaultsTo:[]
 		},
 		lastGuessSuccess: 'boolean'
 	}

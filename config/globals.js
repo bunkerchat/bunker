@@ -8,6 +8,10 @@
  * For more information on configuration, check out:
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.globals.html
  */
+
+// use current lodash, not old sails.js lodash
+global['_'] = require('lodash');
+
 module.exports.globals = {
 
 	/****************************************************************************
@@ -18,7 +22,7 @@ module.exports.globals = {
 	 *                                                                           *
 	 ****************************************************************************/
 
-	// _: true,
+	 _: false,
 
 	/****************************************************************************
 	 *                                                                           *
