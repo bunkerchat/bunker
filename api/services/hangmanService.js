@@ -39,9 +39,7 @@ function makeGuess(roomMember, game, guessString) {
 }
 
 function start(roomMember) {
-	var wordLength = _.sample([4, 5, 6, 7, 8, 9]);
-
-	return getWord(wordLength)
+	return getWord()
 		.then(function (word) {
 			return HangmanGame.create({
 				room: roomMember.room,
@@ -53,7 +51,7 @@ function start(roomMember) {
 		});
 }
 
-function getWord(lengthOfWord) {
+function getWord() {
 	return request.getAsync({
 		json: true,
 		// http://developer.wordnik.com/docs.html#!/words/getRandomWord_get_4
@@ -62,17 +60,17 @@ function getWord(lengthOfWord) {
 		// query string
 		qs: {
 			api_key: '4817cab836f606e6b000b092ab803694d318c37622fd6f4c9',
-			minLength: lengthOfWord,
-			maxLength: lengthOfWord,
+			minLength: 4,
+			maxLength: 10,
 
 			hasDictionaryDef: true,
 			includePartOfSpeech: 'noun, adjective, verb, adverb',
 
 			// only use words people actually know http://www.wordfrequency.info/
-			minCorpusCount: 10000,
+			minCorpusCount: 100,
 
 			// don't use obscure words
-			minDictionaryCount: 10
+			minDictionaryCount: 20
 		}
 	})
 		.spread(function (response, body) {
@@ -82,11 +80,10 @@ function getWord(lengthOfWord) {
 
 function buildResponse(roomMember, game) {
 	var responseString = [];
-	//var maskedWord = buildWordMask(game.hits, game.word);
 
 	var maskedWord = _.map(game.word, function (letter) {
 		return _.includes(game.hits, letter) ? letter: '﹏ ';
-	});
+	}).join('');
 
 	if (!_.contains(maskedWord, '﹏')) {
 		HangmanGame.destroy(game.id).then();
@@ -116,29 +113,5 @@ function buildResponse(roomMember, game) {
 	}
 
 	return {message: responseString.join('')}
-}
-
-function buildWordMask(hits, word) {
-	return _.map(word, function (letter) {
-		return _.includes(hits, letter) ? letter: '﹏ ';
-	});
-	//
-	//if (hits) {
-	//	var mask = '';
-	//	for (var i = 0; i < word.length; i++) {
-	//		var letter = word.substring(i, i + 1);
-	//		if (hits.indexOf(letter) == -1) {
-	//			mask += '﹏ ';
-	//		}
-	//		else {
-	//			mask += letter + ' ';
-	//		}
-	//	}
-	//
-	//	return mask.trim();
-	//}
-	//else {
-	//	return '﹏  ﹏  ﹏  ﹏  ﹏  ﹏  ﹏';
-	//}
 }
 
