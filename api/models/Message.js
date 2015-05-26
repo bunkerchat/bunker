@@ -19,7 +19,6 @@ module.exports = {
 		},
 		edited: {
 			type: 'boolean',
-			required: false,
 			defaultsTo: false
 		}
 	}
