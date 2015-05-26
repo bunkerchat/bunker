@@ -234,8 +234,7 @@ function message(roomMember, text, type) {
 		room: roomMember.room,
 		type: type,
 		author: type == 'standard' ? roomMember.user : null,
-		text: text,
-		edited: false
+		text: text
 	}).then(function (message) {
 		broadcastMessage(message);
 		saveInMentionedInboxes(message);
