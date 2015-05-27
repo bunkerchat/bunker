@@ -40,11 +40,14 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				if (!text) return;
 
 				// Parse quotes
-				if (text.match(/&#10;/g)) {
-					text = createQuotedBlock(text);
+				if (scope.bunkerMessage.type == 'code') {
+					text = parseCode(text);
 				}
 				else if (scope.bunkerMessage.type == 'hangman') {
 					text = parseHangman(text);
+				}
+				else if (text.match(/&#10;/g)) {
+					text = createQuotedBlock(text);
 				}
 				else {
 					text = parseFormatting(text);
@@ -87,19 +90,18 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = spacingRemoved.join('&#10;');
 				}
 
-				var attachedMedia;
-
-				// if code block, insert highlight.js directive
-				if(scope.bunkerMessage.type == 'code'){
-					attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>');
-				}
-				else {
-					attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
-				}
+				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
 
 				angular.element(elem).append(attachedMedia);
 				$compile(attachedMedia)(scope.$new());
 
+				return '';
+			}
+
+			function parseCode(text) {
+				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>');
+				angular.element(elem).append(attachedMedia);
+				$compile(attachedMedia)(scope.$new());
 				return '';
 			}
 

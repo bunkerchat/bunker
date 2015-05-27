@@ -313,7 +313,7 @@ function code(roomMember, text) {
 		type: 'code',
 		author: roomMember.user,
 		text: text
-	})
+	}).then(broadcastMessage)
 }
 
 function hangman(roomMember, text) {
