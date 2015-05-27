@@ -80,10 +80,10 @@ function stats(roomMember, text) {
 				editCount: editCount,
 				startDate: roomMember.user.createdAt,
 				totalDays: moment().diff(roomMember.user.createdAt, 'days'),
-				activeDays: 'TEST',
+				activeDays: 'WORK IN PROGRESS',
 				firstMessage: '"' + firstMessage[0].text +'"',
-				emotes: 'TEST',
-				randomMessage: 'randomMessage'
+				emotes: 'WORK IN PROGRESS',
+				randomMessage: 'WORK IN PROGRESS'
 			};
 			var message = _.template(template)(data);
 			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
