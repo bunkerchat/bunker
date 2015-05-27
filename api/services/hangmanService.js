@@ -75,17 +75,17 @@ function getWord() {
 	})
 		.spread(function (response, body) {
 			return body.word.toUpperCase();
-		})
+		});
 }
 
 function buildResponse(roomMember, game) {
 	var responseString = [];
 
 	var maskedWord = _.map(game.word, function (letter) {
-		return _.includes(game.hits, letter) ? letter: '﹏ ';
+		return (_.includes(game.hits, letter) ? letter: '﹏') + ' ';
 	}).join('');
 
-	if (!_.contains(maskedWord, '﹏')) {
+	if (game.hits.length == game.word.length) {
 		HangmanGame.destroy(game.id).then();
 		responseString.push(roomMember.user.nick + ' guessed the final letter!  The word was ' + game.word);
 	}
@@ -99,9 +99,10 @@ function buildResponse(roomMember, game) {
 			HangmanGame.destroy(game.id).then();
 		}
 		else {
-			responseString.push('Word: ' + maskedWord);
+			responseString.push(maskedWord);
+			responseString.push('&nbsp;&nbsp;&nbsp;');
 			if (game.misses.length > 0) {
-				responseString.push(',  Misses: ' + game.misses.join(', '));
+				responseString.push('[Misses: ' + game.misses.join(', ') + ']');
 			}
 		}
 

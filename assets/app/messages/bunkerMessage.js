@@ -98,17 +98,17 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				return '';
 			}
 
+			function parseHangman(text){
+				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
+			}
+			
 			function parseCode(text) {
 				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>');
 				angular.element(elem).append(attachedMedia);
 				$compile(attachedMedia)(scope.$new());
 				return '';
 			}
-
-			function parseHangman(text) {
-				return text.replace(/:hangman(\d)/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
-			}
-
+				
 			function parseEmoticons(text) {
 				var replacedEmotes = {};
 
