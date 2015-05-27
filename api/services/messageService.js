@@ -88,7 +88,7 @@ function stats(roomMember, text) {
 						activeDays: 'WORK IN PROGRESS',
 						firstMessage: '"' + firstMessage[0].text +'" (' + moment(firstMessage.createdAt).format() + ')',
 						emotes: 'WORK IN PROGRESS',
-						randomMessage: '"' + randomMessage[0].text + '"'
+						randomMessage: '"' + ent.decode(randomMessage[0].text) +'" (' +  moment(randomMessage.createdAt).format() + ')'
 					};
 					var message = ent.encode(_.template(template)(data));
 					return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
