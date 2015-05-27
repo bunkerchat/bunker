@@ -2,6 +2,7 @@ var Promise = require('bluebird');
 var moment = require('moment');
 var fs = Promise.promisifyAll(require('fs'));
 var path = require('path');
+var ent = require('ent');
 var ObjectId = require('mongodb').ObjectID;
 
 module.exports.getStats = function (roomMember) {
@@ -24,11 +25,11 @@ module.exports.getStats = function (roomMember) {
 						startDate: roomMember.user.createdAt,
 						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 						activeDays: 'WORK IN PROGRESS',
-						firstMessage: '"' + firstMessage[0].text + '"',
-						emotes: _.pluck(emoticonCounts, 'emoticon').join(' '),
-						randomMessage: '"' + randomMessage[0].text + '"'
+						firstMessage: '"' + ent.decode(firstMessage[0].text) + '" (' + moment(firstMessage.createdAt).format() + ')',
+						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
+						randomMessage: '"' + ent.decode(randomMessage[0].text) +'" (' +  moment(randomMessage.createdAt).format() + ')'
 					};
-					return _.template(template)(data);
+					return ent.encode(_.template(template)(data));
 				});
 		});
 };
