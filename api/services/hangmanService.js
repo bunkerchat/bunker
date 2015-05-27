@@ -85,7 +85,7 @@ function buildResponse(roomMember, game) {
 		return (_.includes(game.hits, letter) ? letter: '﹏') + ' ';
 	}).join('');
 
-	if (game.hits.length == game.word.length) {
+	if (!_.contains(maskedWord, '﹏')) {
 		HangmanGame.destroy(game.id).then();
 		responseString.push(roomMember.user.nick + ' guessed the final letter!  The word was ' + game.word);
 	}
