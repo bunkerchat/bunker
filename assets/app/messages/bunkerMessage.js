@@ -39,14 +39,13 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			function textWatch(text) {
 				if (!text) return;
 
-				// Parse quotes
 				if (scope.bunkerMessage.type == 'code') {
 					text = parseCode(text);
 				}
 				else if (scope.bunkerMessage.type == 'hangman') {
 					text = parseHangman(text);
 				}
-				else if (text.match(/&#10;/g)) {
+				else if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
 					text = createQuotedBlock(text);
 				}
 				else {
@@ -98,17 +97,17 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				return '';
 			}
 
-			function parseHangman(text){
+			function parseHangman(text) {
 				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
 			}
-			
+
 			function parseCode(text) {
 				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>');
 				angular.element(elem).append(attachedMedia);
 				$compile(attachedMedia)(scope.$new());
 				return '';
 			}
-				
+
 			function parseEmoticons(text) {
 				var replacedEmotes = {};
 
