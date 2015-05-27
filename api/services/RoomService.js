@@ -34,7 +34,7 @@ module.exports.messageRoomsWithUser = function (spec) {
 		if (!roomMembers) return true;
 
 		_(roomMembers).pluck('room').each(function (room) {
-			if(!room) return;
+			if (!room) return;
 			// If we were provided a message, send it down to affected rooms
 			if (spec.systemMessage && serverWarmup.done) {
 				Room.message(room.id, {
@@ -51,9 +51,9 @@ module.exports.messageRoomsWithUser = function (spec) {
 	});
 };
 
-module.exports.messageUserInRoom = function(userId, roomId, message, type){
-	RoomMember.findOne({room: roomId, user: userId}).populateAll().exec(function(error, roomMember){
-		RoomMember.message(roomMember.id, {
+module.exports.messageUserInRoom = function (userId, roomId, message, type) {
+	return RoomMember.findOne({room: roomId, user: userId}).populateAll().then(function (roomMember) {
+		return RoomMember.message(roomMember.id, {
 			id: uuid.v4(),
 			text: message,
 			type: type,

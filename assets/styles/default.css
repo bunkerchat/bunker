@@ -18,6 +18,10 @@ a, [ng-click], .pointer {
 	cursor: pointer;
 }
 
+pre{
+	color: #3e3f3a;
+}
+
 /* navbar */
 nav,
 .navbar {

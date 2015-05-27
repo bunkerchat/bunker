@@ -1,8 +1,5 @@
-var fs = require('fs');
 var Promise = require('bluebird');
-
-Promise.promisifyAll(fs);
-
+var fs = Promise.promisifyAll(require('fs'));
 var helpDir = './api/services/help/';
 
 module.exports = {

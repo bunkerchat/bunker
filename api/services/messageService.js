@@ -1,5 +1,7 @@
 var ent = require('ent');
 var Promise = require('bluebird');
+var fs = Promise.promisifyAll(require('fs'));
+var path = require('path');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -19,6 +21,9 @@ module.exports.createMessage = function (roomMember, text) {
 	}
 	else if (/^\/help/i.test(text)) {
 		return getHelp(roomMember, text);
+	}
+	else if (/^\/stats/i.test(text)) {
+		return stats(roomMember, text);
 	}
 	else if (/^\/topic/i.test(text)) { // Change room topic
 		return setRoomTopic(roomMember, text);
@@ -44,6 +49,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/h(?:angman)?(?:\s(\w)?|$)/i.test(text)) {
 		return hangman(roomMember, text);
 	}
+	else if (/^\/code /i.test(text)) {
+		return code(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -53,8 +61,30 @@ module.exports.broadcastMessage = broadcastMessage;
 
 function getHelp(roomMember, text) {
 	return helpService.getHelp(text).then(function (helpMessage) {
-		RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, helpMessage, 'help');
+		return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, helpMessage, 'help');
 	});
+}
+
+function stats(roomMember, text) {
+	return Promise.join(
+		fs.readFileAsync(path.join(__dirname, 'statsTemplate.ejs')),
+		Message.count({author: roomMember.user.id})
+	)
+		.spread(function (template, messageCount) {
+			var data = {
+				user: 'TEST',
+				messageCount: messageCount,
+				editCount: 'TEST',
+				startDate: 'TEST',
+				totalDays: 'TEST',
+				activeDays: 'TEST',
+				firstMessage: 'TEST',
+				emotes: 'TEST',
+				randomMessage: 'randomMessage'
+			};
+			var message = ent.encode(_.template(template)(data));
+			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
+		})
 }
 
 function setUserNick(roomMember, text) {
@@ -275,10 +305,21 @@ function saveInMentionedInboxes(message) {
 		});
 }
 
+function code(roomMember, text) {
+	// strip out /code
+	text = text.substr(6);
+	return Message.create({
+		room: roomMember.room,
+		type: 'code',
+		author: roomMember.user,
+		text: text
+	}).then(broadcastMessage)
+}
+
 function hangman(roomMember, text) {
 	return hangmanService.play(roomMember, text)
 		.then(function (hangmanResponse) {
-			if(hangmanResponse.error) {
+			if (hangmanResponse.error) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'hangman');
 			}
 			return message(roomMember, hangmanResponse.message, 'hangman');

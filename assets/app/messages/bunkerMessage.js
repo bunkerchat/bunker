@@ -40,11 +40,14 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				if (!text) return;
 
 				// Parse quotes
-				if (text.match(/&#10;/g)) {
-					text = createQuotedBlock(text);
+				if (scope.bunkerMessage.type == 'code') {
+					text = parseCode(text);
 				}
-				else if (scope.bunkerMessage.type == 'hangman'){
+				else if (scope.bunkerMessage.type == 'hangman') {
 					text = parseHangman(text);
+				}
+				else if (text.match(/&#10;/g)) {
+					text = createQuotedBlock(text);
 				}
 				else {
 					text = parseFormatting(text);
@@ -87,7 +90,8 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = spacingRemoved.join('&#10;');
 				}
 
-				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>');
+				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
+
 				angular.element(elem).append(attachedMedia);
 				$compile(attachedMedia)(scope.$new());
 
@@ -97,7 +101,14 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			function parseHangman(text){
 				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
 			}
-
+			
+			function parseCode(text) {
+				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>');
+				angular.element(elem).append(attachedMedia);
+				$compile(attachedMedia)(scope.$new());
+				return '';
+			}
+				
 			function parseEmoticons(text) {
 				var replacedEmotes = {};
 
@@ -154,37 +165,37 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 							var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
 							var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
 							attachedMedia = angular.element('' +
-							'<div message="bunkerMessage" bunker-media="' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
-							'</div>');
+								'<div message="bunkerMessage" bunker-media="' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
+								'</div>');
 						}
 						else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
 							attachedMedia = angular.element('' +
-							'<div message="bunkerMessage" bunker-media="' + link + '">' +
-							'<video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video>' +
-							'</div>');
+								'<div message="bunkerMessage" bunker-media="' + link + '">' +
+								'<video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video>' +
+								'</div>');
 						}
 						else if (youtubeRegexp.test(link) && !attachedMedia) {
 							attachedMedia = angular.element('' +
-							'<div class="default-video-height" message="bunkerMessage" bunker-media="' + link + '">' +
-							'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
-							'</div>');
+								'<div class="default-video-height" message="bunkerMessage" bunker-media="' + link + '">' +
+								'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
+								'</div>');
 						}
 						else if (/(www\.)?(twitter\.com\/)/i.test(link) && !attachedMedia) {
 							var id = link.substr(link.lastIndexOf('/') + 1);
 							if (id) { /* don't embed tweet if we can't get the id from the link */
 								attachedMedia = angular.element('' +
-								'<div message="bunkerMessage" bunker-media="' + link + '">' +
-								'<div class="tweet_' + id + '">' +
-								'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp">' +
-								'</script></div></div>');
+									'<div message="bunkerMessage" bunker-media="' + link + '">' +
+									'<div class="tweet_' + id + '">' +
+									'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp">' +
+									'</script></div></div>');
 							}
 						}
 						else if (/vimeo\.com(?:.*)?\/([A-z0-9]*)$/i.test(link) && !attachedMedia) {
 							var match = /vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.exec(link);
 							attachedMedia = angular.element('' +
-							'<div message="bunkerMessage" bunker-media="' + link + '">' +
-							'<iframe src="https://player.vimeo.com/video/' + match[1] + '?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
-							'</div>');
+								'<div message="bunkerMessage" bunker-media="' + link + '">' +
+								'<iframe src="https://player.vimeo.com/video/' + match[1] + '?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
+								'</div>');
 						}
 					}
 

@@ -45,7 +45,7 @@ window.app = angular.module('bunker', [
 				controller: 'RoomHistoryController as room'
 			});
 	})
-	.config(function ($compileProvider, gravatarServiceProvider, hljsServiceProvider) {
+	.config(function ($compileProvider, gravatarServiceProvider) {
 		// disable debug info
 		//$compileProvider.debugInfoEnabled(window.debugging || !window.isProduction);
 
@@ -54,24 +54,7 @@ window.app = angular.module('bunker', [
 
 		gravatarServiceProvider.defaults = {
 			'default': 'identicon'
-		};
-
-		hljsServiceProvider.setOptions({
-			// cs and scala are weird
-			languages: [
-				'css',
-				'javascript',
-				'bash',
-				//'cs', // c# ?
-				'json',
-				'xml',
-				'java',
-				'objectivec',
-				//'scala',
-				'markdown',
-				'lisp'
-			]
-		});
+		}
 	})
 	.run(function ($rootScope, $document, bunkerListener) {
 
