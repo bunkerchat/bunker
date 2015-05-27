@@ -81,11 +81,11 @@ function stats(roomMember, text) {
 				startDate: roomMember.user.createdAt,
 				totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 				activeDays: 'TEST',
-				firstMessage: '"' + ent.decode(firstMessage[0].text) +'"',
+				firstMessage: '"' + firstMessage[0].text +'"',
 				emotes: 'TEST',
 				randomMessage: 'randomMessage'
 			};
-			var message = ent.encode(_.template(template)(data));
+			var message = _.template(template)(data);
 			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
 		})
 		.catch(console.error)
