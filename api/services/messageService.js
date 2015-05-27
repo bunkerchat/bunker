@@ -1,4 +1,5 @@
 var ent = require('ent');
+var moment = require('moment');
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 var path = require('path');
@@ -68,23 +69,26 @@ function getHelp(roomMember, text) {
 function stats(roomMember, text) {
 	return Promise.join(
 		fs.readFileAsync(path.join(__dirname, 'statsTemplate.ejs')),
-		Message.count({author: roomMember.user.id})
+		Message.count({author: roomMember.user.id}),
+		Message.count({author: roomMember.user.id, edited: true}),
+		Message.find({author: roomMember.user.id}).sort('createdAt ASC').limit(1)
 	)
-		.spread(function (template, messageCount) {
+		.spread(function (template, messageCount, editCount, firstMessage) {
 			var data = {
-				user: 'TEST',
+				user: roomMember.user.nick,
 				messageCount: messageCount,
-				editCount: 'TEST',
-				startDate: 'TEST',
-				totalDays: 'TEST',
+				editCount: editCount,
+				startDate: roomMember.user.createdAt,
+				totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 				activeDays: 'TEST',
-				firstMessage: 'TEST',
+				firstMessage: '"' + ent.decode(firstMessage[0].text) +'"',
 				emotes: 'TEST',
 				randomMessage: 'randomMessage'
 			};
 			var message = ent.encode(_.template(template)(data));
 			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
 		})
+		.catch(console.error)
 }
 
 function setUserNick(roomMember, text) {
