@@ -9,7 +9,19 @@ module.exports = {
 		},
 		type: {
 			type: 'string',
-			enum: ['standard', 'emote', 'room', 'global', 'help', 'roll', '8ball', 'animation', 'buildNotification', 'hangman'],
+			enum: [
+				'standard',
+				'emote',
+				'room',
+				'global',
+				'help',
+				'roll',
+				'8ball',
+				'animation',
+				'buildNotification',
+				'hangman',
+				'code'
+			],
 			defaultsTo: 'standard'
 		},
 		text: {

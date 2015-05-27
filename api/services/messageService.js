@@ -49,6 +49,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/h(?:angman)?(?:\s(\w)?|$)/i.test(text)) {
 		return hangman(roomMember, text);
 	}
+	else if (/^\/code /i.test(text)) {
+		return code(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -62,10 +65,10 @@ function getHelp(roomMember, text) {
 	});
 }
 
-function stats(roomMember, text){
+function stats(roomMember, text) {
 	return Promise.join(
 		fs.readFileAsync(path.join(__dirname, 'statsTemplate.ejs')),
-		Message.count({author:roomMember.user.id})
+		Message.count({author: roomMember.user.id})
 	)
 		.spread(function (template, messageCount) {
 			var data = {
@@ -79,7 +82,7 @@ function stats(roomMember, text){
 				emotes: 'TEST',
 				randomMessage: 'randomMessage'
 			};
-			var message = _.template(template)(data);
+			var message = ent.encode(_.template(template)(data));
 			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
 		})
 }
@@ -302,10 +305,21 @@ function saveInMentionedInboxes(message) {
 		});
 }
 
+function code(roomMember, text) {
+	// strip out /code
+	text = text.substr(6);
+	return Message.create({
+		room: roomMember.room,
+		type: 'code',
+		author: roomMember.user,
+		text: text
+	})
+}
+
 function hangman(roomMember, text) {
 	return hangmanService.play(roomMember, text)
 		.then(function (hangmanResponse) {
-			if(hangmanResponse.error) {
+			if (hangmanResponse.error) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'hangman');
 			}
 			return message(roomMember, hangmanResponse.message, 'hangman');
