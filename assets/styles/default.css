@@ -18,8 +18,12 @@ a, [ng-click], .pointer {
 	cursor: pointer;
 }
 
-pre{
+pre {
 	color: #3e3f3a;
+}
+
+.panel-body pre {
+	padding: 0px;
 }
 
 /* navbar */
@@ -329,6 +333,7 @@ mark:hover {
 	border-right: solid 1px #eee;
 	margin: 0;
 }
+
 .message-list.has-topic {
 	height: calc(100vh - 127px);
 }
