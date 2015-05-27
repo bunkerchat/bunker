@@ -67,26 +67,32 @@ function getHelp(roomMember, text) {
 }
 
 function stats(roomMember, text) {
-	return Promise.join(
-		fs.readFileAsync(path.join(__dirname, 'statsTemplate.ejs')),
-		Message.count({author: roomMember.user.id}),
-		Message.count({author: roomMember.user.id, edited: true}),
-		Message.find({author: roomMember.user.id}).sort('createdAt ASC').limit(1)
-	)
-		.spread(function (template, messageCount, editCount, firstMessage) {
-			var data = {
-				user: roomMember.user.nick,
-				messageCount: messageCount,
-				editCount: editCount,
-				startDate: roomMember.user.createdAt,
-				totalDays: moment().diff(roomMember.user.createdAt, 'days'),
-				activeDays: 'WORK IN PROGRESS',
-				firstMessage: '"' + firstMessage[0].text +'"',
-				emotes: 'WORK IN PROGRESS',
-				randomMessage: 'WORK IN PROGRESS'
-			};
-			var message = _.template(template)(data);
-			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
+
+	return Message.count({author: roomMember.user.id})
+		.then(function (messageCount) {
+			return Promise.join(
+				fs.readFileAsync(path.join(__dirname, 'statsTemplate.ejs')),
+				messageCount,
+				Message.count({author: roomMember.user.id, edited: true}),
+				Message.find({author: roomMember.user.id}).sort('createdAt ASC').limit(1),
+				Message.find({author: roomMember.user.id}).skip(_.random(0, messageCount)).limit(1)
+			)
+				.spread(function (template, messageCount, editCount, firstMessage, randomMessage) {
+
+					var data = {
+						user: roomMember.user.nick,
+						messageCount: messageCount,
+						editCount: editCount,
+						startDate: roomMember.user.createdAt,
+						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
+						activeDays: 'WORK IN PROGRESS',
+						firstMessage: '"' + firstMessage[0].text + '"',
+						emotes: 'WORK IN PROGRESS',
+						randomMessage: '"' + randomMessage[0].text + '"'
+					};
+					var message = _.template(template)(data);
+					return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
+				});
 		})
 		.catch(console.error)
 }
