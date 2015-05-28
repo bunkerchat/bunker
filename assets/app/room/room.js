@@ -46,14 +46,14 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					var top = _.random(100, $window.innerHeight - 100, false);
 					var start = _.random(0, 3000, false);
 					var end = _.random(3000, 6000, false);
-					var wow = angular.element('<h1 class="doge dogeFadeIn" ' +
+					var wow = angular.element('<h1 class="doge doge-fade-in" ' +
 						'style="left: ' + left + 'px; top: ' + top + 'px; ' +
 						'color: ' + _.sample(colors) + ';">' + word + '</h1>');
 
 					setTimeout(function () {
 						body.append(wow)
 						setTimeout(function () {
-							wow.addClass('dogeFadeOut');
+							wow.addClass('doge-fade-out');
 							setTimeout(function () {
 								wow.remove();
 							}, 1000);

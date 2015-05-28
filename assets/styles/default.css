@@ -676,18 +676,18 @@ img.emoticon {
 }
 
 /* doge */
-.doge{
+.doge {
 	position: absolute;
 	font-family: "Comic Sans MS", sans-serif;
 }
-.dogeFadeIn {
+.doge-fade-in {
 	animation: fadein 1s;
 	-moz-keyframes: fadein 1s;
 	-webkit-keyframes: fadein 1s;
 	-o-keyframes: fadein 1s;
 }
 
-.dogeFadeOut{
+.doge-fade-out{
 	animation: fadeout 1s;
 	-moz-keyframes: fadeout 1s;
 	-webkit-keyframes: fadeout 1s;
