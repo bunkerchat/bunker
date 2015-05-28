@@ -18,6 +18,9 @@ module.exports.getStats = function (roomMember) {
 				getEmoticonCounts(roomMember)
 			)
 				.spread(function (template, messageCount, editCount, firstMessage, randomMessage, emoticonCounts) {
+					firstMessage = firstMessage[0];
+					randomMessage = randomMessage[0];
+
 					var data = {
 						user: roomMember.user.nick,
 						messageCount: messageCount,
@@ -25,9 +28,9 @@ module.exports.getStats = function (roomMember) {
 						startDate: formatDateTime(roomMember.user.createdAt),
 						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 						activeDays: 'WORK IN PROGRESS',
-						firstMessage: '"' + ent.decode(firstMessage[0].text) + '" (' + formatDateTime(firstMessage.createdAt) + ')',
+						firstMessage: '"' + ent.decode(firstMessage.text) + '" (' + formatDateTime(firstMessage.createdAt) + ')',
 						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
-						randomMessage: '"' + ent.decode(randomMessage[0].text) +'" (' +  formatDateTime(randomMessage.createdAt) + ')'
+						randomMessage: '"' + ent.decode(randomMessage.text) +'" (' +  formatDateTime(randomMessage.createdAt) + ')'
 					};
 					return ent.encode(_.template(template)(data));
 				});
@@ -35,7 +38,7 @@ module.exports.getStats = function (roomMember) {
 };
 
 function formatDateTime(dateTime){
-	return moment(dateTime).format('dddd, MMMM Do YYYY, h:mm:ss a')
+	return new moment(dateTime).format('dddd, MMMM Do YYYY, h:mm:ss a')
 }
 
 function getEmoticonCounts(roomMember) {
