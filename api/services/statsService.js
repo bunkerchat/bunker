@@ -26,7 +26,7 @@ module.exports.getStatsForUser = function (username, roomId) {
 		});
 };
 
-function generateStats(roomMember, template){
+function generateStats(roomMember, template) {
 	return Message.count({author: roomMember.user.id})
 		.then(function (messageCount) {
 			return Promise.join(
@@ -47,11 +47,16 @@ function generateStats(roomMember, template){
 					var mostActiveDayOfYear = mostActiveDayObject._id.dayOfYear;
 					var mostActiveDay = moment().year(mostActiveYear).dayOfYear(mostActiveDayOfYear);
 
-					var activeDaysSorted = _.sortBy(activeDays, function(day){
-						return day._id.dayOfYear;
-					});
+					var activeDaysSorted = _.sortByAll(activeDays, [
+						function (day) {
+							return day._id.year;
+						},
+						function (day) {
+							return day._id.dayOfYear;
+						}
+					]);
 
-					console.log('activeDaysSorted', activeDaysSorted);
+					//console.log('activeDaysSorted', activeDaysSorted);
 
 					var lastActiveDayObject = _.last(activeDaysSorted);
 					var lastActiveYear = lastActiveDayObject._id.year;
@@ -82,7 +87,7 @@ function generateStats(roomMember, template){
 function getActiveDays(roomMember) {
 	return new Promise(function (resolve, reject) {
 		Message.native(function (err, messageCollection) {
-			if(err) return reject(err);
+			if (err) return reject(err);
 			messageCollection.aggregate([
 				{
 					$match: {
@@ -102,7 +107,7 @@ function getActiveDays(roomMember) {
 					$sort: {count: -1}
 				}
 			], function (err, daysWithMessages) {
-				if(err) return reject(err);
+				if (err) return reject(err);
 				resolve(daysWithMessages);
 			});
 		});
@@ -115,11 +120,11 @@ function getEmoticonCounts(roomMember) {
 
 	return new Promise(function (resolve, reject) {
 		Message.native(function (err, messageCollection) {
-			if(err) return reject(err);
+			if (err) return reject(err);
 
 			messageCollection.find({author: new ObjectId(roomMember.user.id), text: {$regex: emoticonRegex}})
 				.toArray(function (err, messages) {
-					if(err) return reject(err);
+					if (err) return reject(err);
 					_.each(messages, function (message) {
 
 						var matches = _.unique(message.text.match(emoticonRegex));
