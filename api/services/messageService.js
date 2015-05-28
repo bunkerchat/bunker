@@ -72,16 +72,27 @@ function getHelp(roomMember, text) {
 
 function stats(roomMember) {
 	return statsService.getStats(roomMember)
-		.then(function(message) {
+		.then(function (message) {
 			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
 		})
 }
 
 function doge(roomMember, text) {
 	var words, matches = text.match(/\/doge\s+(.+)/i);
-	if (matches && matches.length > 1){
-		words = _.words(matches[1], /[^, ]+/g);
+	if (matches && matches.length > 1) {
+		words = _.words(matches[1], /[^,]+/g);
+	} else {
+		words = ['bunker', 'chat', 'wow', 'messages', 'communicatoins',
+			'http', 'sockets', 'emoticons', 'real time', 'trollign'];
 	}
+
+	words = _.map(words, function (item) {
+		var random = _.random(0, 100, false);
+		if (random > 85) return 'such ' + item;
+		if (random < 15) return 'very ' + item;
+		return item;
+	});
+
 	RoomService.dogeRoom(roomMember, words);
 }
 

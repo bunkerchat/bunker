@@ -35,16 +35,12 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			};
 
 			$rootScope.$on('bunkerMessaged.doge', function (evt, message) {
-
-				console.log('got a doge', message);
 				if (message.room !== $scope.current.id) return;
 
 				var body = angular.element(document).find('body').eq(0);
 				var colors = ['red', 'green', 'blue', 'purple', 'yellow', 'orange'];
-				var words = message.words || ['wow', 'such bunker', 'very chat', 'messages', 'communicatoins',
-					'chats', 'http', 'such sockets', 'emoticons', 'wow', 'very real time', 'trollign'];
 
-				function dogeElement() {
+				function dogeElement(word) {
 
 					var left = _.random(100, $window.innerWidth - 200, false);
 					var top = _.random(100, $window.innerHeight - 100, false);
@@ -52,7 +48,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					var end = _.random(3000, 6000, false);
 					var wow = angular.element('<h1 class="doge dogeFadeIn" ' +
 						'style="left: ' + left + 'px; top: ' + top + 'px; ' +
-						'color: ' + _.sample(colors) + ';">' + _.sample(words) + '</h1>');
+						'color: ' + _.sample(colors) + ';">' + word + '</h1>');
 
 					setTimeout(function () {
 						body.append(wow)
@@ -65,8 +61,8 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					}, start);
 				}
 
-				for (var i = 0; i < 10; i++) {
-					dogeElement();
+				for (var i = 0; i < message.words.length; i++) {
+					dogeElement(message.words[i]);
 				}
 
 				var el = angular.element($element);
