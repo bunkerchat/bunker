@@ -46,6 +46,18 @@ function generateStats(roomMember, template){
 					var mostActiveYear = mostActiveDayObject._id.year;
 					var mostActiveDayOfYear = mostActiveDayObject._id.dayOfYear;
 					var mostActiveDay = moment().year(mostActiveYear).dayOfYear(mostActiveDayOfYear);
+
+					var activeDaysSorted = _.sortBy(activeDays, function(day){
+						return day._id.dayOfYear;
+					});
+
+					console.log('activeDaysSorted', activeDaysSorted);
+
+					var lastActiveDayObject = _.last(activeDaysSorted);
+					var lastActiveYear = lastActiveDayObject._id.year;
+					var lastActiveDayOfYear = lastActiveDayObject._id.dayOfYear;
+					var lastActiveDay = moment().year(lastActiveYear).dayOfYear(lastActiveDayOfYear);
+
 					var dateFormat = 'dddd MMMM Do, YYYY';
 					var dateTimeFormat = 'dddd MMMM Do, YYYY @ h:mm:ssa';
 
@@ -55,6 +67,7 @@ function generateStats(roomMember, template){
 						editCount: editCount,
 						startDate: moment(roomMember.user.createdAt).format(dateFormat),
 						activeDate: mostActiveDay.format(dateFormat) + ' (' + mostActiveDayObject.count + ' messages)',
+						lastActiveDate: lastActiveDay.format(dateFormat) + ' (' + lastActiveDayObject.count + ' messages)',
 						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 						activeDays: activeDays.length,
 						firstMessage: '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')',
