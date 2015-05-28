@@ -54,6 +54,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/code /i.test(text)) {
 		return code(roomMember, text);
 	}
+	else if (/^\/doge/i.test(text)) {
+		return doge(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -72,6 +75,14 @@ function stats(roomMember) {
 		.then(function(message) {
 			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
 		})
+}
+
+function doge(roomMember, text) {
+	var words, matches = text.match(/\/doge\s+(.+)/i);
+	if (matches && matches.length > 1){
+		words = _.words(matches[1], /[^, ]+/g);
+	}
+	RoomService.dogeRoom(roomMember, words);
 }
 
 //function showStats(roomMember, text) {

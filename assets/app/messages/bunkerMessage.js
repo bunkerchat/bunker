@@ -75,6 +75,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				}
 			}
 
+
 			function createQuotedBlock(text) {
 				// Scan for overtabs
 				var lines = text.split('&#10;');

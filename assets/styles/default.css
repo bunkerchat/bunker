@@ -675,6 +675,25 @@ img.emoticon {
 	bottom: 50px;
 }
 
+/* doge */
+.doge{
+	position: absolute;
+	font-family: "Comic Sans MS", sans-serif;
+}
+.dogeFadeIn {
+	animation: fadein 1s;
+	-moz-keyframes: fadein 1s;
+	-webkit-keyframes: fadein 1s;
+	-o-keyframes: fadein 1s;
+}
+
+.dogeFadeOut{
+	animation: fadeout 1s;
+	-moz-keyframes: fadeout 1s;
+	-webkit-keyframes: fadeout 1s;
+	-o-keyframes: fadeout 1s;
+}
+
 /* mobile modifications */
 
 @media (max-width: 480px) {
@@ -757,6 +776,42 @@ img.emoticon {
 	}
 	to {
 		opacity: 1;
+	}
+}
+
+@keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@-moz-keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@-webkit-keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@-o-keyframes fadeout {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
 	}
 }
 

@@ -11,6 +11,21 @@ module.exports.messageRoom = function (room, message) {
 	});
 };
 
+module.exports.dogeRoom = function (roomMember, words) {
+	var room = roomMember.room;
+	var user = roomMember.user;
+	var roomId = room.id ? room.id : room;
+	Room.message(roomId, {
+		id: uuid.v4(),
+		type: 'doge',
+		room: roomId,
+		user: user,
+		words: words,
+		text: user.nick + ' shows the room :doge:',
+		createdAt: new Date().toISOString()
+	});
+};
+
 module.exports.messageRooms = function (rooms, message) {
 	_.each(rooms, function (room) {
 		module.exports.messageRoom(room, message);
