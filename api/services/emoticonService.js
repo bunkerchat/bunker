@@ -21,22 +21,57 @@ module.exports.emoticonCounts = function () {
 						var matches = message.text.match(emoticonRegex);
 						if (matches) {
 							_.each(matches, function (match) {
-								countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
+								// Create total count for this emoticon
+								if (!countMap[match]) {
+									countMap[match] = {count: 0};
+								}
+								countMap[match].count++;
+
+								// Create object of usedBy counts for this emoticon
+								if (message.author) {
+									if (!countMap[match][message.author]) {
+										countMap[match][message.author] = 0;
+									}
+									countMap[match][message.author]++;
+								}
 							});
 						}
 					});
 
-					var emoticonCounts = _(countMap).map(function (value, key) {
-						return {count: value, emoticon: key, name: key.replace(/:/g, '')};
-					}).sortBy('count').reverse().value();
+					// Map into a nice sorted object
+					var emoticonCounts = _(countMap)
+						.map(function (value, key) {
+							return {
+								count: value.count,
+								emoticon: key,
+								name: key.replace(/:/g, ''),
+								usedBy: _.omit(value, 'count')
+							};
+						})
+						.sortBy('count')
+						.reverse()
+						.value();
 
-					cacheLoadedCb(err, emoticonCounts);
+					// Replace the id's in the userBy section with nick + id
+					User.find().then(function (users) {
+
+						_.each(emoticonCounts, function (count) {
+							_.each(count.usedBy, function (usedByCount, id) {
+								var user = _.find(users, {id: id});
+								count.usedBy[user.nick + ' (' + id + ')'] = usedByCount;
+								delete count.usedBy[id];
+							});
+						});
+
+						cacheLoadedCb(err, emoticonCounts);
+					})
+						.catch(reject);
 				});
 			});
 		}
 
 		function done(err, emoticonCounts) {
-			if(err) return reject(err);
+			if (err) return reject(err);
 			resolve(emoticonCounts);
 		}
 	});
@@ -73,4 +108,4 @@ module.exports.getLoadScreenEmoticon = function () {
 		'woop.gif',
 		'words.gif'
 	]);
-}
+};
