@@ -24,9 +24,6 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/stats/i.test(text)) {
 		return stats(roomMember, text);
 	}
-	else if (/^\/userstats\s+/i.test(text)) {
-		return showStats(roomMember, text);
-	}
 	else if (/^\/topic/i.test(text)) { // Change room topic
 		return setRoomTopic(roomMember, text);
 	}
@@ -70,22 +67,26 @@ function getHelp(roomMember, text) {
 	});
 }
 
-function stats(roomMember) {
+function stats(roomMember, text) {
+	var match = /^\/stats\s+([\d\w\s\-\.]+)$/ig.exec(text);
+
+	if (match) {
+		var userNick = match[1];
+		return statsService.getStatsForUser(userNick, roomMember.room)
+			.then(function (stats) {
+				return Message.create({
+					room: roomMember.room,
+					type: 'stats',
+					author: roomMember.user,
+					text: stats
+				})
+					.then(broadcastMessage);
+			})
+	}
+
 	return statsService.getStats(roomMember)
-		.then(function(message) {
+		.then(function (message) {
 			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'stats');
-		})
-}
-
-function showStats(roomMember, text) {
-	var match = /^\/userstats\s+(.*)$/ig.exec(text);
-	if(!match) return;
-
-	var user = match[1];
-
-	return statsService.getStatsForUser(user, roomMember.room)
-		.then(function(stats) {
-			return message(roomMember, stats, 'stats');
 		})
 }
 
@@ -98,7 +99,7 @@ function doge(roomMember, text) {
 			'http', 'sockets', 'emoticons', 'real time', 'trollign', 'features',
 			'open source', 'message history', 'typing', 'jpro', 'javascritp',
 			':successkid:', '/show :doge:'];
-		if (roomMember.user && roomMember.user.nick){
+		if (roomMember.user && roomMember.user.nick) {
 			words.push(roomMember.user.nick);
 		}
 		words = _.sample(words, 10);
