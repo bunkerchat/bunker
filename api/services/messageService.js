@@ -96,6 +96,7 @@ function doge(roomMember, text) {
 		var random = _.random(0, 100, false);
 		if (random > 92) return 'such ' + item;
 		if (random > 82 && random < 90) return 'much ' + item;
+		if (random > 72 && random < 80) return 'so ' + item;
 		if (random < 7) return 'very ' + item;
 		if (random > 55 && random < 60) return item + ' lol';
 		return item;
