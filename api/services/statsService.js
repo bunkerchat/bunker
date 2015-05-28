@@ -35,7 +35,7 @@ module.exports.getStats = function (roomMember) {
 };
 
 function getEmoticonCounts(roomMember) {
-	var emoticonRegex = /:\w+:/g;
+	var emoticonRegex = /:\w+:/;
 	var countMap = {};
 
 	return new Promise(function (resolve) {
@@ -58,7 +58,7 @@ function getEmoticonCounts(roomMember) {
 						})
 						.sortBy('count')
 						.reverse()
-						.take(5)
+						.take(10)
 						.value();
 
 					resolve(counts);
