@@ -6,11 +6,31 @@ var ent = require('ent');
 var ObjectId = require('mongodb').ObjectID;
 
 module.exports.getStats = function (roomMember) {
+	return generateStats(roomMember, 'statsForSelfTemplate.ejs');
+};
 
+module.exports.getStatsForUser = function (username, roomId) {
+	// find all users with that nick
+	return User.find({nick: username})
+		.then(function (users) {
+			var userIds = users.map(function (user) {
+				return user.id;
+			});
+
+			// get roommember with that nick and roomId
+			return RoomMember.findOne({user: userIds, room: roomId}).populateAll();
+		})
+		.then(function (roomMember) {
+			if (!roomMember) throw new Error('User not found');
+			return generateStats(roomMember, 'statsForUserTemplate.ejs');
+		});
+};
+
+function generateStats(roomMember, template){
 	return Message.count({author: roomMember.user.id})
 		.then(function (messageCount) {
 			return Promise.join(
-				fs.readFileAsync(path.join(__dirname, 'statsForSelfTemplate.ejs')),
+				fs.readFileAsync(path.join(__dirname, template)),
 				messageCount,
 				Message.count({author: roomMember.user.id, edited: true}),
 				getActiveDays(roomMember),
@@ -44,59 +64,7 @@ module.exports.getStats = function (roomMember) {
 					return ent.encode(_.template(template)(data));
 				});
 		});
-};
-
-module.exports.getStatsForUser = function (username, roomId) {
-	// find all users with that nick
-	return User.find({nick: username})
-		.then(function (users) {
-			var userIds = users.map(function (user) {
-				return user.id;
-			});
-
-			// get roommember with that nick and roomId
-			return RoomMember.findOne({user: userIds, room: roomId});
-		})
-		.then(function (roomMember) {
-			if (!roomMember) throw new Error('User not found');
-
-			return Message.count({author: roomMember.user.id})
-				.then(function (messageCount) {
-					return Promise.join(
-						fs.readFileAsync(path.join(__dirname, 'statsForSelfTemplate.ejs')),
-						messageCount,
-						Message.count({author: roomMember.user.id, edited: true}),
-						getActiveDays(roomMember),
-						Message.find({author: roomMember.user.id}).sort('createdAt ASC').limit(1),
-						Message.find({author: roomMember.user.id}).skip(_.random(0, messageCount)).limit(1),
-						getEmoticonCounts(roomMember)
-					)
-						.spread(function (template, messageCount, editCount, activeDays, firstMessage, randomMessage, emoticonCounts) {
-
-							var mostActiveDayObject = _.first(activeDays);
-							var mostActiveYear = mostActiveDayObject._id.year;
-							var mostActiveDayOfYear = mostActiveDayObject._id.dayOfYear;
-							var mostActiveDay = moment().year(mostActiveYear).dayOfYear(mostActiveDayOfYear);
-							var dateFormat = 'dddd MMMM Do, YYYY';
-							var dateTimeFormat = 'dddd MMMM Do, YYYY @ h:mm:ssa';
-
-							var data = {
-								user: roomMember.user.nick,
-								messageCount: messageCount,
-								editCount: editCount,
-								startDate: moment(roomMember.user.createdAt).format(dateFormat),
-								activeDate: mostActiveDay.format(dateFormat) + ' (' + mostActiveDayObject.count + ' messages)',
-								totalDays: moment().diff(roomMember.user.createdAt, 'days'),
-								activeDays: activeDays.length,
-								firstMessage: '"' + ent.decode(firstMessage[0].text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')',
-								emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
-								randomMessage: '"' + ent.decode(randomMessage[0].text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')'
-							};
-							return ent.encode(_.template(template)(data));
-						});
-				});
-		});
-};
+}
 
 function getActiveDays(roomMember) {
 	return new Promise(function (resolve, reject) {

@@ -77,6 +77,18 @@ function stats(roomMember) {
 		})
 }
 
+function showStats(roomMember, text) {
+	var match = /^\/userstats\s+(.*)$/ig.exec(text);
+	if(!match) return;
+
+	var user = match[1];
+
+	return statsService.getStatsForUser(user, roomMember.room)
+		.then(function(stats) {
+			return message(roomMember, stats, 'stats');
+		})
+}
+
 function doge(roomMember, text) {
 	var words, matches = text.match(/\/doge\s+(.+)/i);
 	if (matches && matches.length > 1) {
@@ -103,18 +115,6 @@ function doge(roomMember, text) {
 	});
 
 	RoomService.dogeRoom(roomMember, words);
-}
-
-function showStats(roomMember, text) {
-	var match = /^\/userstats\s+(.*)$/ig.exec(text);
-	if(!match) return;
-
-	var user = match[1];
-
-	return statsService.getStatsForUser(user, roomMember.room)
-		.then(function(stats) {
-			return message(roomMember, stats, 'stats');
-		})
 }
 
 function setUserNick(roomMember, text) {
