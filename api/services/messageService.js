@@ -83,7 +83,13 @@ function doge(roomMember, text) {
 		words = _.words(matches[1], /[^,]+/g);
 	} else {
 		words = ['bunker', 'chat', 'wow', 'messages', 'communicatoins',
-			'http', 'sockets', 'emoticons', 'real time', 'trollign'];
+			'http', 'sockets', 'emoticons', 'real time', 'trollign', 'features',
+			'open source', 'message history', 'typing', 'jpro', 'javascritp',
+			':successkid:', '/show :doge:'];
+		if (roomMember.user && roomMember.user.nick){
+			words.push(roomMember.user.nick);
+		}
+		words = _.sample(words, 10);
 	}
 
 	words = _.map(words, function (item) {

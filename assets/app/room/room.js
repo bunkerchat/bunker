@@ -34,40 +34,40 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 				return bunkerData.loadMessages($scope.current, $scope.current.$messages.length);
 			};
 
-			$rootScope.$on('bunkerMessaged.doge', function (evt, message) {
-				if (message.room !== $scope.current.id) return;
-
-				var body = angular.element(document).find('body').eq(0);
-				var colors = ['red', 'green', 'blue', 'purple', 'yellow', 'orange'];
-
-				function dogeElement(word) {
-
-					var left = _.random(100, $window.innerWidth - 200, false);
-					var top = _.random(100, $window.innerHeight - 100, false);
-					var start = _.random(0, 3000, false);
-					var end = _.random(3000, 6000, false);
-					var wow = angular.element('<h1 class="doge dogeFadeIn" ' +
-						'style="left: ' + left + 'px; top: ' + top + 'px; ' +
-						'color: ' + _.sample(colors) + ';">' + word + '</h1>');
-
-					setTimeout(function () {
-						body.append(wow)
-						setTimeout(function () {
-							wow.addClass('dogeFadeOut');
-							setTimeout(function () {
-								wow.remove();
-							}, 1000);
-						}, end);
-					}, start);
-				}
-
-				for (var i = 0; i < message.words.length; i++) {
-					dogeElement(message.words[i]);
-				}
-
-				var el = angular.element($element);
-				showEmoticonAnimation(el, 'doge');
-			});
+			//$rootScope.$on('bunkerMessaged.doge', function (evt, message) {
+			//	if (message.room !== $scope.current.id) return;
+			//
+			//	var body = angular.element(document).find('body').eq(0);
+			//	var colors = ['red', 'green', 'blue', 'purple', 'yellow', 'orange'];
+			//
+			//	function dogeElement(word) {
+			//
+			//		var left = _.random(20, $window.innerWidth - 200, false);
+			//		var top = _.random(100, $window.innerHeight - 100, false);
+			//		var start = _.random(0, 4000, false);
+			//		var end = _.random(3000, 6000, false);
+			//		var wow = angular.element('<h1 class="doge dogeFadeIn" ' +
+			//			'style="left: ' + left + 'px; top: ' + top + 'px; ' +
+			//			'color: ' + _.sample(colors) + ';">' + word + '</h1>');
+			//
+			//		setTimeout(function () {
+			//			body.append(wow)
+			//			setTimeout(function () {
+			//				wow.addClass('dogeFadeOut');
+			//				setTimeout(function () {
+			//					wow.remove();
+			//				}, 1000);
+			//			}, end);
+			//		}, start);
+			//	}
+			//
+			//	for (var i = 0; i < message.words.length; i++) {
+			//		dogeElement(message.words[i]);
+			//	}
+			//
+			//	var el = angular.element($element);
+			//	showEmoticonAnimation(el, 'doge');
+			//});
 
 			$rootScope.$on('bunkerMessaged.animation', function (evt, message) {
 				if (message.room.id == $scope.current.id) {

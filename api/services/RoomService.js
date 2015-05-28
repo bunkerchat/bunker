@@ -12,6 +12,7 @@ module.exports.messageRoom = function (room, message) {
 };
 
 module.exports.dogeRoom = function (roomMember, words) {
+	console.log(roomMember);
 	var room = roomMember.room;
 	var user = roomMember.user;
 	var roomId = room.id ? room.id : room;
