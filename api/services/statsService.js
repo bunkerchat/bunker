@@ -24,8 +24,8 @@ module.exports.getStats = function (roomMember) {
 					var mostActiveYear = mostActiveDayObject._id.year;
 					var mostActiveDayOfYear = mostActiveDayObject._id.dayOfYear;
 					var mostActiveDay = moment().year(mostActiveYear).dayOfYear(mostActiveDayOfYear);
-					var dateFormat = 'MMMM D, YYYY';
-					var dateTimeFormat = 'MMMM D, YYYY h:mma';
+					var dateFormat = 'dddd MMMM Do, YYYY';
+					var dateTimeFormat = 'dddd MMMM Do, YYYY @ h:mm:ssa';
 
 					var data = {
 						user: roomMember.user.nick,
