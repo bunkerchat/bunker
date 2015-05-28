@@ -47,6 +47,7 @@ module.exports.getStats = function (roomMember) {
 function getActiveDays(roomMember) {
 	return new Promise(function (resolve, reject) {
 		Message.native(function (err, messageCollection) {
+			if(err) return reject(err);
 			messageCollection.aggregate([
 				{
 					$match: {
@@ -83,6 +84,7 @@ function getEmoticonCounts(roomMember) {
 
 			messageCollection.find({author: new ObjectId(roomMember.user.id), text: {$regex: emoticonRegex}})
 				.toArray(function (err, messages) {
+					if(err) return reject(err);
 					_.each(messages, function (message) {
 
 						var matches = _.unique(message.text.match(emoticonRegex));
