@@ -19,6 +19,8 @@ module.exports.getStats = function (roomMember) {
 				getEmoticonCounts(roomMember)
 			)
 				.spread(function (template, messageCount, editCount, activeDays, firstMessage, randomMessage, emoticonCounts) {
+					firstMessage = firstMessage[0];
+					randomMessage = randomMessage[0];
 
 					var mostActiveDayObject = _.first(activeDays);
 					var mostActiveYear = mostActiveDayObject._id.year;
@@ -35,9 +37,9 @@ module.exports.getStats = function (roomMember) {
 						activeDate: mostActiveDay.format(dateFormat) + ' (' + mostActiveDayObject.count + ' messages)',
 						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 						activeDays: activeDays.length,
-						firstMessage: '"' + ent.decode(firstMessage[0].text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')',
+						firstMessage: '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')',
 						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
-						randomMessage: '"' + ent.decode(randomMessage[0].text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')'
+						randomMessage: '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')'
 					};
 					return ent.encode(_.template(template)(data));
 				});
