@@ -89,7 +89,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = spacingRemoved.join('&#10;');
 				}
 
-				if (scope.bunkerMessage.type == 'help') {
+				if (scope.bunkerMessage.type == 'stats') {
 					text = parseEmoticons(text);
 				}
 

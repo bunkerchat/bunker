@@ -6,11 +6,31 @@ var ent = require('ent');
 var ObjectId = require('mongodb').ObjectID;
 
 module.exports.getStats = function (roomMember) {
+	return generateStats(roomMember, 'statsForSelfTemplate.ejs');
+};
 
+module.exports.getStatsForUser = function (username, roomId) {
+	// find all users with that nick
+	return User.find({nick: username})
+		.then(function (users) {
+			var userIds = users.map(function (user) {
+				return user.id;
+			});
+
+			// get roommember with that nick and roomId
+			return RoomMember.findOne({user: userIds, room: roomId}).populateAll();
+		})
+		.then(function (roomMember) {
+			if (!roomMember) throw new Error('User not found');
+			return generateStats(roomMember, 'statsForUserTemplate.ejs');
+		});
+};
+
+function generateStats(roomMember, template){
 	return Message.count({author: roomMember.user.id})
 		.then(function (messageCount) {
 			return Promise.join(
-				fs.readFileAsync(path.join(__dirname, 'statsTemplate.ejs')),
+				fs.readFileAsync(path.join(__dirname, template)),
 				messageCount,
 				Message.count({author: roomMember.user.id, edited: true}),
 				getActiveDays(roomMember),
@@ -44,7 +64,7 @@ module.exports.getStats = function (roomMember) {
 					return ent.encode(_.template(template)(data));
 				});
 		});
-};
+}
 
 function getActiveDays(roomMember) {
 	return new Promise(function (resolve, reject) {
