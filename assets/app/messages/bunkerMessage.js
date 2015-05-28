@@ -102,6 +102,8 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			}
 
 			function parseHangman(text) {
+				text = parseEmoticons(text);
+				text = text.replace(/\|(.*)\|$/i, '<a href="https://www.wordnik.com/words/$1" target="_blank">$1</a>');
 				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
 			}
 

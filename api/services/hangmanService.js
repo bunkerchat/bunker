@@ -13,7 +13,7 @@ module.exports.play = function (roomMember, command) {
 			return start(roomMember);
 		}
 		// tried to start a game but was already in progress
-		return Promise.resolve({error: buildResponse(roomMember, currentGame).message + " (game in progress)"});
+		return Promise.resolve({error: buildResponse(currentGame).message + " (Game in Progress)"});
 	});
 };
 
@@ -34,7 +34,12 @@ function makeGuess(roomMember, game, guessString) {
 		misses: game.misses,
 		lastGuessSuccess: guessSuccess
 	}).then(function (updatedGame) {
-		return buildResponse(roomMember, updatedGame[0]);
+		updatedGame = updatedGame[0];
+
+		if (updatedGame.misses.length >= 6 || updatedGame.hits.length >= _.unique(updatedGame.word).length) {
+			HangmanGame.destroy(game.id).then(); // still seems gross :-/
+		}
+		return buildResponse(updatedGame, roomMember);
 	});
 }
 
@@ -47,7 +52,7 @@ function start(roomMember) {
 			})
 		})
 		.then(function (game) {
-			return buildResponse(roomMember, game);
+			return buildResponse(game, roomMember);
 		});
 }
 
@@ -78,39 +83,45 @@ function getWord() {
 		});
 }
 
-function buildResponse(roomMember, game) {
+function buildResponse(game, roomMember) {
+	var nick;
+	if (roomMember) {
+		nick = roomMember.user.nick;
+	}
+
 	var responseString = [];
 
 	var maskedWord = _.map(game.word, function (letter) {
-		return (_.includes(game.hits, letter) ? letter: '﹏') + ' ';
+		return (_.includes(game.hits, letter) ? letter : '﹏') + ' ';
 	}).join('');
 
-	if (!_.contains(maskedWord, '﹏')) {
-		HangmanGame.destroy(game.id).then();
-		responseString.push(roomMember.user.nick + ' guessed the final letter!  The word was ' + game.word);
+	responseString.push(':hangman');
+	responseString.push(game.misses.length);
+	responseString.push(': ');
+
+	responseString.push(maskedWord);
+	responseString.push('&nbsp;&nbsp;&nbsp;');
+
+	if(!game.hits.length && !game.misses.length){
+		responseString.push(' (' + nick + ' started a game of Hangman!)');
 	}
-	else {
-		responseString.push(':hangman');
-		responseString.push(game.misses.length);
-		responseString.push(': ');
 
-		if (game.misses.length >= 6) {
-			responseString.push('You lose! The word was ' + game.word);
-			HangmanGame.destroy(game.id).then();
-		}
-		else {
-			responseString.push(maskedWord);
-			responseString.push('&nbsp;&nbsp;&nbsp;');
-			if (game.misses.length > 0) {
-				responseString.push('[Misses: ' + game.misses.join(', ') + ']');
-			}
-		}
+	if (game.misses.length > 0) {
+		responseString.push('[Misses: ' + game.misses.join(', ') + ']');
+	}
 
-		if (game.hits.length || game.misses.length) {
-			// The last guess is the last hit if the guess was successful or the last miss if not
-			var lastGuess = _.last(game.lastGuessSuccess ? game.hits : game.misses);
-			responseString.push(' (' + roomMember.user.nick + ' guessed ' + lastGuess + ')');
-		}
+	if (nick && (game.hits.length || game.misses.length)) {
+		// The last guess is the last hit if the guess was successful or the last miss if not
+		var lastGuess = _.last(game.lastGuessSuccess ? game.hits : game.misses);
+		responseString.push(' (' + nick + ' guessed ' + lastGuess + ')');
+	}
+
+	if (game.hits.length >= _.unique(game.word).length) {
+		responseString.push(' You Won! :successkid: Definition: |' + game.word.toLowerCase() + '|');
+	}
+
+	if (game.misses.length >= 6) {
+		responseString.push(' You Lose! :smaug: The word was |' + game.word.toLowerCase() + '|');
 	}
 
 	return {message: responseString.join('')}
