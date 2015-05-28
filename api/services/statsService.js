@@ -48,7 +48,7 @@ function getEmoticonCounts(roomMember) {
 				.toArray(function (err, messages) {
 					_.each(messages, function (message) {
 
-						var matches = message.text.match(emoticonRegex);
+						var matches = _.unique(message.text.match(emoticonRegex));
 						if (matches) {
 							_.each(matches, function (match) {
 								countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
@@ -62,7 +62,7 @@ function getEmoticonCounts(roomMember) {
 						})
 						.sortBy('count')
 						.reverse()
-						.take(5)
+						.take(10)
 						.value();
 
 					resolve(counts);
