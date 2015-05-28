@@ -29,6 +29,9 @@ function makeGuess(roomMember, game, guessString) {
 		game.misses.push(guessString);
 	}
 
+	game.hits = _.unique(game.hits);
+	game.misses = _.unique(game.misses);
+
 	return HangmanGame.update({room: roomMember.room}, {
 		hits: game.hits,
 		misses: game.misses,
