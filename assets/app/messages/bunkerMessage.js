@@ -89,6 +89,10 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = spacingRemoved.join('&#10;');
 				}
 
+				if (scope.bunkerMessage.type == 'help') {
+					text = parseEmoticons(text);
+				}
+
 				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
 
 				angular.element(elem).append(attachedMedia);
