@@ -22,17 +22,21 @@ module.exports.getStats = function (roomMember) {
 						user: roomMember.user.nick,
 						messageCount: messageCount,
 						editCount: editCount,
-						startDate: roomMember.user.createdAt,
+						startDate: formatDateTime(roomMember.user.createdAt),
 						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 						activeDays: 'WORK IN PROGRESS',
-						firstMessage: '"' + ent.decode(firstMessage[0].text) + '" (' + moment(firstMessage.createdAt).format() + ')',
+						firstMessage: '"' + ent.decode(firstMessage[0].text) + '" (' + formatDateTime(firstMessage.createdAt) + ')',
 						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
-						randomMessage: '"' + ent.decode(randomMessage[0].text) +'" (' +  moment(randomMessage.createdAt).format() + ')'
+						randomMessage: '"' + ent.decode(randomMessage[0].text) +'" (' +  formatDateTime(randomMessage.createdAt) + ')'
 					};
 					return ent.encode(_.template(template)(data));
 				});
 		});
 };
+
+function formatDateTime(dateTime){
+	return moment(dateTime).format('dddd, MMMM Do YYYY, h:mm:ss a')
+}
 
 function getEmoticonCounts(roomMember) {
 	var emoticonRegex = /:\w+:/g;
