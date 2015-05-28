@@ -92,7 +92,7 @@ function buildResponse(game, roomMember) {
 	var responseString = [];
 
 	var maskedWord = _.map(game.word, function (letter) {
-		return (_.includes(game.hits, letter) ? letter : '﹏') + ' ';
+		return (_.includes(game.hits, letter) ? letter : '_') + ' ';
 	}).join('');
 
 	responseString.push(':hangman');
