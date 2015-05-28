@@ -1,4 +1,4 @@
-app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, bunkerData) {
+app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, bunkerData, $location, $anchorScroll) {
 	var self = this;
 
 	bunkerData.$promise.then(function () {
@@ -70,7 +70,12 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	this.clearInbox = bunkerData.clearInbox;
 
 	this.goToRoom = function (inboxMessage) {
-		$state.go('chat.room', {roomId: inboxMessage.message.room});
+		$state.go('chat.room', {roomId: inboxMessage.message.room})
+			.then(function () {
+				// scroll to message
+				$location.hash(inboxMessage.message.id);
+				$anchorScroll();
+			});
 	};
 
 	$rootScope.$on('bunkerMessaged', function (evt, message) {
@@ -78,7 +83,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 			return;
 		}
 
-		if(message.type != 'standard' && message.type != 'buildNotification' && message.type != 'hangman'){
+		if (message.type != 'standard' && message.type != 'buildNotification' && message.type != 'hangman') {
 			return;
 		}
 
