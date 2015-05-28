@@ -18,7 +18,7 @@ a, [ng-click], .pointer {
 	cursor: pointer;
 }
 
-pre{
+pre {
 	color: #3e3f3a;
 }
 
@@ -329,6 +329,7 @@ mark:hover {
 	border-right: solid 1px #eee;
 	margin: 0;
 }
+
 .message-list.has-topic {
 	height: calc(100vh - 127px);
 }
@@ -409,7 +410,7 @@ mark:hover {
 	margin: 0;
 }
 
-.message-body .panel-body {
+.message .panel-body {
 	padding: 0;
 }
 

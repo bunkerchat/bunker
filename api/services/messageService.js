@@ -1,7 +1,6 @@
 var ent = require('ent');
+var moment = require('moment');
 var Promise = require('bluebird');
-var fs = Promise.promisifyAll(require('fs'));
-var path = require('path');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -25,6 +24,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/stats/i.test(text)) {
 		return stats(roomMember, text);
 	}
+	//else if (/^\/showstats\s+/i.test(text)) {
+	//	return showStats(roomMember, text);
+	//}
 	else if (/^\/topic/i.test(text)) { // Change room topic
 		return setRoomTopic(roomMember, text);
 	}
@@ -65,27 +67,20 @@ function getHelp(roomMember, text) {
 	});
 }
 
-function stats(roomMember, text) {
-	return Promise.join(
-		fs.readFileAsync(path.join(__dirname, 'statsTemplate.ejs')),
-		Message.count({author: roomMember.user.id})
-	)
-		.spread(function (template, messageCount) {
-			var data = {
-				user: 'TEST',
-				messageCount: messageCount,
-				editCount: 'TEST',
-				startDate: 'TEST',
-				totalDays: 'TEST',
-				activeDays: 'TEST',
-				firstMessage: 'TEST',
-				emotes: 'TEST',
-				randomMessage: 'randomMessage'
-			};
-			var message = ent.encode(_.template(template)(data));
-			return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
+function stats(roomMember) {
+	return statsService.getStats(roomMember)
+		.then(function(message) {
+			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
 		})
 }
+
+//function showStats(roomMember, text) {
+//	var user = /^\/h(?:angman)?(?:\s(\w)?|$)/ig.exec(text);
+//	return statsService.getStatsForUser(roomMember)
+//		.then(function(message) {
+//			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
+//		})
+//}
 
 function setUserNick(roomMember, text) {
 	var nickMatches = text.match(/^\/nick\s+(\w[\w\s\-\.]{0,19})/i);

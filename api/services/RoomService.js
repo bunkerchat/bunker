@@ -1,9 +1,6 @@
 var uuid = require('node-uuid');
-var serverWarmup = require('./serverWarmup');
 
 module.exports.messageRoom = function (room, message) {
-	if (!serverWarmup.done) return;
-
 	var roomId = room.id ? room.id : room;
 	Room.message(roomId, {
 		id: uuid.v4(),
@@ -15,8 +12,6 @@ module.exports.messageRoom = function (room, message) {
 };
 
 module.exports.messageRooms = function (rooms, message) {
-	if (!serverWarmup.done) return;
-
 	_.each(rooms, function (room) {
 		module.exports.messageRoom(room, message);
 	});
@@ -36,7 +31,7 @@ module.exports.messageRoomsWithUser = function (spec) {
 		_(roomMembers).pluck('room').each(function (room) {
 			if (!room) return;
 			// If we were provided a message, send it down to affected rooms
-			if (spec.systemMessage && serverWarmup.done) {
+			if (spec.systemMessage) {
 				Room.message(room.id, {
 					id: uuid.v4(),
 					type: 'room',
