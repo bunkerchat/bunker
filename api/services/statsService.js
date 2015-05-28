@@ -35,7 +35,7 @@ module.exports.getStats = function (roomMember) {
 };
 
 function getEmoticonCounts(roomMember) {
-	var emoticonRegex = /:\w+:/;
+	var emoticonRegex = /:\w+:/g;
 	var countMap = {};
 
 	return new Promise(function (resolve) {
@@ -44,7 +44,7 @@ function getEmoticonCounts(roomMember) {
 				.toArray(function (err, messages) {
 					_.each(messages, function (message) {
 
-						var matches = message.text.match(emoticonRegex);
+						var matches = _.unique(message.text.match(emoticonRegex));
 						if (matches) {
 							_.each(matches, function (match) {
 								countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
