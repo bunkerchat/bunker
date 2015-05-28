@@ -54,9 +54,6 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/code /i.test(text)) {
 		return code(roomMember, text);
 	}
-	else if (/^\/doge/i.test(text)) {
-		return doge(roomMember, text);
-	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -77,32 +74,37 @@ function stats(roomMember) {
 		})
 }
 
-function doge(roomMember, text) {
-	var words, matches = text.match(/\/doge\s+(.+)/i);
-	if (matches && matches.length > 1) {
-		words = _.words(matches[1], /[^,]+/g);
-	} else {
-		words = ['bunker', 'chat', 'wow', 'messages', 'communicatoins',
-			'http', 'sockets', 'emoticons', 'real time', 'trollign', 'features',
-			'open source', 'message history', 'typing', 'jpro', 'javascritp',
-			':successkid:', '/show :doge:'];
-		if (roomMember.user && roomMember.user.nick){
-			words.push(roomMember.user.nick);
-		}
-		words = _.sample(words, 10);
+function animation(roomMember, text) {
+
+	var emoticon = (/:\w+:/.exec(text))[0];
+
+	var words = [];
+	switch (emoticon) {
+		case ':doge:':
+			words.push('bunker', 'chat', 'wow', 'messages', 'communicatoins',
+				'http', 'sockets', 'emoticons', 'real time', 'trollign', 'features',
+				'open source', 'message history', 'typing', 'jpro', 'javascritp',
+				':successkid:', '/show :doge:', roomMember.user.nick);
+			words = _(words)
+				.sample(10)
+				.map(function (item) {
+					var random = _.random(0, 100, false);
+					if (random > 92) return 'such ' + item;
+					if (random > 82 && random < 90) return 'much ' + item;
+					if (random > 72 && random < 80) return 'so ' + item;
+					if (random < 7) return 'very ' + item;
+					if (random > 55 && random < 60) return item + ' lol';
+					return item;
+				})
+				.value();
+			break;
+		case ':slap:':
+			words.push('five fingers', 'SLAP', 'darknesssss', 'to the face', 'CHARLIE MURPHY', 'I\'m rick james',
+				'darkness everybody', 'upside his head', 'cold blooded', 'bang bang');
+			break;
 	}
 
-	words = _.map(words, function (item) {
-		var random = _.random(0, 100, false);
-		if (random > 92) return 'such ' + item;
-		if (random > 82 && random < 90) return 'much ' + item;
-		if (random > 72 && random < 80) return 'so ' + item;
-		if (random < 7) return 'very ' + item;
-		if (random > 55 && random < 60) return item + ' lol';
-		return item;
-	});
-
-	RoomService.dogeRoom(roomMember, words);
+	RoomService.animateInRoom(roomMember, emoticon, words);
 }
 
 //function showStats(roomMember, text) {
@@ -268,18 +270,6 @@ function roll(roomMember, text) {
 
 function me(roomMember, text) {
 	return message(roomMember, roomMember.user.nick + text.substring(3), 'emote');
-}
-
-function animation(roomMember, text) {
-
-	var emoticon = (/:\w+:/.exec(text))[0];
-
-	return Message.create({
-		room: roomMember.room,
-		author: null,
-		type: 'animation',
-		text: roomMember.user.nick + ' shows the room ' + emoticon
-	}).then(broadcastMessage);
 }
 
 function message(roomMember, text, type) {

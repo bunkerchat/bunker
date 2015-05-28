@@ -11,17 +11,18 @@ module.exports.messageRoom = function (room, message) {
 	});
 };
 
-module.exports.dogeRoom = function (roomMember, words) {
+module.exports.animateInRoom = function (roomMember, emoticon, words) {
 	var room = roomMember.room;
 	var user = roomMember.user;
 	var roomId = room.id ? room.id : room;
 	Room.message(roomId, {
 		id: uuid.v4(),
-		type: 'doge',
+		type: 'animation',
 		room: roomId,
 		user: user,
 		words: words,
-		text: user.nick + ' shows the room :doge:',
+		emoticon: emoticon,
+		text: user.nick + ' shows the room ' + emoticon,
 		createdAt: new Date().toISOString()
 	});
 };
