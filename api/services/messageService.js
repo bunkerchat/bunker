@@ -24,9 +24,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/stats/i.test(text)) {
 		return stats(roomMember, text);
 	}
-	//else if (/^\/showstats\s+/i.test(text)) {
-	//	return showStats(roomMember, text);
-	//}
+	else if (/^\/userstats\s+/i.test(text)) {
+		return showStats(roomMember, text);
+	}
 	else if (/^\/topic/i.test(text)) { // Change room topic
 		return setRoomTopic(roomMember, text);
 	}
@@ -72,8 +72,8 @@ function getHelp(roomMember, text) {
 
 function stats(roomMember) {
 	return statsService.getStats(roomMember)
-		.then(function (message) {
-			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
+		.then(function(message) {
+			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'stats');
 		})
 }
 
@@ -105,13 +105,17 @@ function doge(roomMember, text) {
 	RoomService.dogeRoom(roomMember, words);
 }
 
-//function showStats(roomMember, text) {
-//	var user = /^\/h(?:angman)?(?:\s(\w)?|$)/ig.exec(text);
-//	return statsService.getStatsForUser(roomMember)
-//		.then(function(message) {
-//			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'help');
-//		})
-//}
+function showStats(roomMember, text) {
+	var match = /^\/userstats\s+(.*)$/ig.exec(text);
+	if(!match) return;
+
+	var user = match[1];
+
+	return statsService.getStatsForUser(user, roomMember.room)
+		.then(function(stats) {
+			return message(roomMember, stats, 'stats');
+		})
+}
 
 function setUserNick(roomMember, text) {
 	var nickMatches = text.match(/^\/nick\s+(\w[\w\s\-\.]{0,19})/i);

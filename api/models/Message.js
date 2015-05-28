@@ -20,7 +20,8 @@ module.exports = {
 				'animation',
 				'buildNotification',
 				'hangman',
-				'code'
+				'code',
+				'stats'
 			],
 			defaultsTo: 'standard'
 		},
