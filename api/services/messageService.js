@@ -98,26 +98,37 @@ function animation(roomMember, text) {
 				'http', 'sockets', 'emoticons', 'real time', 'trollign', 'features',
 				'open source', 'message history', 'typing', 'jpro', 'javascritp',
 				':successkid:', '/show :doge:', roomMember.user.nick);
-			words = _(words)
-				.sample(10)
-				.map(function (item) {
-					var random = _.random(0, 100, false);
-					if (random > 92) return 'such ' + item;
-					if (random > 82 && random < 90) return 'much ' + item;
-					if (random > 72 && random < 80) return 'so ' + item;
-					if (random < 7) return 'very ' + item;
-					if (random > 55 && random < 60) return item + ' lol';
-					return item;
-				})
-				.value();
+			words = _.map(words, function (word) {
+				var random = _.random(0, 100, false);
+				if (random > 92) return 'such ' + word;
+				if (random > 82 && random < 90) return 'much ' + word;
+				if (random > 72 && random < 80) return 'so ' + word;
+				if (random < 7) return 'very ' + word;
+				if (random > 55 && random < 60) return word + ' lol';
+				return word;
+			});
 			break;
 		case ':slap:':
 			words.push('five fingers', 'SLAP', 'darknesssss', 'to the face', 'CHARLIE MURPHY', 'I\'m rick james',
 				'darkness everybody', 'upside his head', 'cold blooded', 'bang bang');
 			break;
+		case ':ricers:':
+			words.push('omg', 'spoiler', 'RPM', 'zoom zoom', 'VROOOOOOMM', 'beep beep', 'slow drivers', 'fast lane',
+				'WRX', 'too fast too furious', 'torque', 'horsepower');
+			break;
+		case ':trollface:':
+			words.push('trollololol', 'T-R-rolled');
+			break;
+		case ':itsatrap:':
+			words.push('it\'s a trap!', 'attack formation', 'all craft prepare to retreat',
+				'firepower', 'evasive action', 'engage those star destroyers');
+			break;
+		case ':smaug:':
+			words.push('SCMAAAUGGG');
+			break;
 	}
 
-	RoomService.animateInRoom(roomMember, emoticon, words);
+	RoomService.animateInRoom(roomMember, emoticon, _.sample(words, 10));
 }
 
 function setUserNick(roomMember, text) {
