@@ -69,13 +69,25 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 
 	this.clearInbox = bunkerData.clearInbox;
 
-	this.goToRoom = function (inboxMessage) {
-		$state.go('chat.room', {roomId: inboxMessage.message.room})
-			.then(function () {
-				// scroll to message
-				$location.hash(inboxMessage.message.id);
-				$anchorScroll();
-			});
+	this.goToRoom = function (message) {
+		self.inboxOpened = false;
+
+		//check if room still has message loaded
+		var room = _.find(bunkerData.rooms, {id: message.room});
+
+		// go to loaded room's message
+		if(_.any(room.$messages, {id: message.id})){
+			return $state.go('chat.room', {roomId: message.room})
+				.then(function () {
+					// scroll to message
+					$location.hash(message.id);
+					$anchorScroll();
+				});
+		}
+
+		// otherwise load room history view
+		var date = moment(message.createdAt).format('YYYY-MM-DD');
+		$state.go('roomHistory', {roomId: message.room, date: date, message: message.id});
 	};
 
 	$rootScope.$on('bunkerMessaged', function (evt, message) {
