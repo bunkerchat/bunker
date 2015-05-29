@@ -131,6 +131,11 @@ function animation(roomMember, text) {
 				'sorry about the mess', 'don\'t get cocky', 'let\'s blow this thing and go home', 'smuggling',
 				'money', 'bounty', 'debt', 'carbonite', 'scoundrel');
 			break;
+		case ':chrome:':
+			words.push('i live i die i live again', 'valhalla',
+				'V8', 'chrome grill', 'cars', 'mah steering wheel',
+				'chapped lips', 'trucks', 'engines', 'fast', 'desert', 'wasteland', 'war');
+			break;
 	}
 
 	RoomService.animateInRoom(roomMember, emoticon, _.sample(words, 10));
