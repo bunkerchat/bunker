@@ -136,6 +136,10 @@ function animation(roomMember, text) {
 				'V8', 'chrome grill', 'cars', 'mah steering wheel',
 				'chapped lips', 'trucks', 'engines', 'fast', 'desert', 'wasteland', 'war');
 			break;
+		case ':canada:':
+			words.push('maple syrup', 'hosers', 'hockey', 'ice', 'snow', 'arctic circle', 'eskimos',
+			'nunavut', 'canucks', 'mounties', 'eh', 'sorry', 'bacon', 'aboot');
+			break;
 	}
 
 	RoomService.animateInRoom(roomMember, emoticon, _.sample(words, 10));
