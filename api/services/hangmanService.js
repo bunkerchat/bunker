@@ -29,7 +29,7 @@ function makeGuess(roomMember, game, guess) {
 		game.hits.push(guess);
 	}
 	// letter guess
-	else if (_.includes(game.word, guess)) {
+	else if (guess.length == 1 && _.includes(game.word, guess)) {
 		game.hits.push(guess);
 	}
 	else {
@@ -117,7 +117,10 @@ function buildResponse(game, roomMember, guess) {
 	}
 	else {
 		maskedWord = _.map(game.word, function (letter) {
-			return _.includes(game.hits, letter) ? letter : '_';
+			if(letter.length == 1 &&  _.includes(game.hits, letter)) {
+				return letter;
+			}
+			return '_';
 		}).join(' ');
 	}
 
