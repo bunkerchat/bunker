@@ -42,27 +42,6 @@ function generateStats(roomMember, template) {
 					firstMessage = firstMessage[0];
 					randomMessage = randomMessage[0];
 
-					var mostActiveDayObject = _.first(activeDays);
-					var mostActiveYear = mostActiveDayObject._id.year;
-					var mostActiveDayOfYear = mostActiveDayObject._id.dayOfYear;
-					var mostActiveDay = moment().year(mostActiveYear).dayOfYear(mostActiveDayOfYear);
-
-					var activeDaysSorted = _.sortByAll(activeDays, [
-						function (day) {
-							return day._id.year;
-						},
-						function (day) {
-							return day._id.dayOfYear;
-						}
-					]);
-
-					//console.log('activeDaysSorted', activeDaysSorted);
-
-					var lastActiveDayObject = _.last(activeDaysSorted);
-					var lastActiveYear = lastActiveDayObject._id.year;
-					var lastActiveDayOfYear = lastActiveDayObject._id.dayOfYear;
-					var lastActiveDay = moment().year(lastActiveYear).dayOfYear(lastActiveDayOfYear);
-
 					var dateFormat = 'dddd MMMM Do, YYYY';
 					var dateTimeFormat = 'dddd MMMM Do, YYYY @ h:mm:ssa';
 
@@ -71,17 +50,50 @@ function generateStats(roomMember, template) {
 						messageCount: messageCount,
 						editCount: editCount,
 						startDate: moment(roomMember.user.createdAt).format(dateFormat),
-						activeDate: mostActiveDay.format(dateFormat) + ' (' + mostActiveDayObject.count + ' messages)',
-						lastActiveDate: lastActiveDay.format(dateFormat) + ' (' + lastActiveDayObject.count + ' messages)',
 						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 						activeDays: activeDays.length,
 						firstMessage: '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')',
 						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
 						randomMessage: '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')'
 					};
+
+					if(activeDays){
+						var mostActive = makeActiveModel(activeDays);
+
+						var activeDaysSorted = _.sortByAll(activeDays, [
+							function (day) {
+								return day._id.year;
+							},
+							function (day) {
+								return day._id.dayOfYear;
+							}
+						]);
+
+						var lastActive = makeActiveModel(activeDaysSorted);
+
+						data.activeDate = mostActive.day.format(dateFormat) + ' (' + mostActive.object.count + ' messages)';
+						data.lastActiveDate = lastActive.day.format(dateFormat) + ' (' + lastActive.object.count + ' messages)';
+					}
+
 					return ent.encode(_.template(template)(data));
 				});
 		});
+}
+
+function makeActiveModel(activeDays){
+	if(!activeDays) return;
+
+	var mostActiveDayObject = _.first(activeDays);
+	var mostActiveYear = mostActiveDayObject._id.year;
+	var mostActiveDayOfYear = mostActiveDayObject._id.dayOfYear;
+	var mostActiveDay = moment().year(mostActiveYear).dayOfYear(mostActiveDayOfYear);
+
+	return {
+		object: mostActiveDayObject,
+		year: mostActiveYear,
+		dayOfYear: mostActiveDayOfYear,
+		day: mostActiveDay
+	}
 }
 
 function getActiveDays(roomMember) {

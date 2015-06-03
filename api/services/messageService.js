@@ -138,7 +138,15 @@ function animation(roomMember, text) {
 			break;
 		case ':canada:':
 			words.push('maple syrup', 'hosers', 'hockey', 'ice', 'snow', 'arctic circle', 'eskimos',
-			'nunavut', 'canucks', 'mounties', 'eh', 'sorry', 'bacon', 'aboot');
+				'nunavut', 'canucks', 'mounties', 'eh', 'sorry', 'bacon', 'aboot');
+			break;
+		case ':burrito:':
+			words.push('beans', 'carnitas', 'tortilla', 'noms', 'steak', 'farm fresh', 'double-wrapped',
+				'rice', 'free guac lol', 'bowl > tortilla', 'foil wrapped for warmth', 'pancheros > chipotle');
+			break;
+		case ':magic8ball:':
+			words.push('all-knowing', 'omniscient', 'round', 'number 8', 'bawlz', 'predictions', 'shaking',
+				'future', 'revealing', 'how does it know?', 'not good 4 billiardz lol');
 			break;
 	}
 
