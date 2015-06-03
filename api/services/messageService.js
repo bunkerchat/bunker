@@ -124,7 +124,7 @@ function animation(roomMember, text) {
 				'firepower', 'evasive action', 'engage those star destroyers');
 			break;
 		case ':smaug:':
-			words.push('SCMAAAUGGG');
+			words.push('SHMAAAUGGG');
 			break;
 		case ':hansolo:':
 			words.push('i shot first', 'laugh it up fuzzball',
