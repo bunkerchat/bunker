@@ -103,7 +103,11 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 
 			function parseHangman(text) {
 				text = parseEmoticons(text);
-				text = text.replace(/\|(.*)\|$/i, '<a href="https://www.wordnik.com/words/$1" target="_blank">$1</a>');
+				var makeDictionaryLink = /\|(.*)\|/i.exec(text);
+				if (makeDictionaryLink) {
+					var word = makeDictionaryLink[1].split(' ').join('').toLowerCase();
+					text = text.replace(/\|(.*)\|/i, '<a href="https://www.wordnik.com/words/' + word + '" target="_blank">$1</a>');
+				}
 				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
 			}
 

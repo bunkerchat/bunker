@@ -12,7 +12,7 @@ module.exports.play = function (roomMember, command) {
 		else if (!currentGame && !guess) {
 			return start(roomMember);
 		}
-		else if (!currentGame && guess){
+		else if (!currentGame && guess) {
 			// tried to guess but no game in progress. Prevents new games from being started during wild guessing
 			return Promise.resolve({error: "Type /hangman to start a new game"});
 		}
@@ -25,7 +25,7 @@ function makeGuess(roomMember, game, guess) {
 	guess = guess.toUpperCase();
 
 	// guessing the word
-	if(guess.length > 1 && guess == game.word){
+	if (guess.length > 1 && guess == game.word) {
 		game.hits.push(guess);
 	}
 	// letter guess
@@ -108,30 +108,35 @@ function buildResponse(game, roomMember, guess) {
 		nick = roomMember.user.nick;
 	}
 
-	var wordGuessed = game.word == guess;
 	var responseString = [];
-	var maskedWord;
-
-	if(wordGuessed){
-		maskedWord = _.map(guess).join(' ');
-	}
-	else {
-		maskedWord = _.map(game.word, function (letter) {
-			if(letter.length == 1 &&  _.includes(game.hits, letter)) {
-				return letter;
-			}
-			return '_';
-		}).join(' ');
-	}
 
 	responseString.push(':hangman');
 	responseString.push(game.misses.length);
 	responseString.push(': ');
 
-	responseString.push(maskedWord);
+	var maxCountReached = game.misses.length >= 6;
+	var allLettersMatched = game.hits.length >= _.unique(game.word).length;
+	var wordGuessed = game.word == guess;
+	if (maxCountReached || allLettersMatched || wordGuessed) {
+		// if end of game, put pipes around word for client side regex to generate link
+		responseString.push('|');
+		responseString.push(_.map(game.word).join(' '));
+		responseString.push('|');
+	}
+	else {
+		// otherwise create word mask
+		var maskedWord = _.map(game.word, function (letter) {
+			if (letter.length == 1 && _.includes(game.hits, letter)) {
+				return letter;
+			}
+			return '_';
+		}).join(' ');
+		responseString.push(maskedWord);
+	}
+
 	responseString.push('&nbsp;&nbsp;&nbsp;');
 
-	if(nick && !game.hits.length && !game.misses.length){
+	if (nick && !game.hits.length && !game.misses.length) {
 		responseString.push(' (' + nick + ' started a game of Hangman!)');
 	}
 
@@ -143,15 +148,69 @@ function buildResponse(game, roomMember, guess) {
 		responseString.push(' (' + nick + ' guessed ' + guess + ')');
 	}
 
-	var allLettersMatched = game.hits.length >= _.unique(game.word).length;
 	if (allLettersMatched || wordGuessed) {
-		responseString.push(' You Won! :successkid: Definition: |' + game.word.toLowerCase() + '|');
+		responseString.push(' You Won! :' + getWinEmote() + ':');
 	}
 
 	if (game.misses.length >= 6) {
-		responseString.push(' You Lose! :smaug: The word was |' + game.word.toLowerCase() + '|');
+		responseString.push(' You Lose! :' + getLoseEmote() + ':');
 	}
 
 	return {message: responseString.join('')}
 }
 
+function getWinEmote() {
+	return _.sample([
+		'bravo',
+		'excellent',
+		'successkid',
+		'allthethings',
+		'golfclap',
+		'smug',
+		'woop',
+		'notbad',
+		'damn',
+		'yaycloud',
+		'excellent',
+		'indeed',
+		'hellyeah',
+		'likeasir',
+		'likeaboss',
+		'hansolo',
+		'nyan',
+		'pipedog',
+		'quagmire',
+		'thumbsup',
+		'twss'
+	]);
+}
+
+function getLoseEmote() {
+	return _.sample([
+		'argh',
+		'bang',
+		'confused',
+		'crushed',
+		'devil',
+		'disapproval',
+		'duckhunt',
+		'facepalm',
+		'fuuu',
+		'fwp',
+		'grumpycat',
+		'mediocre',
+		'mystery',
+		'notsureif',
+		'omgwhy',
+		'okay',
+		'psyduck',
+		'qq',
+		'rant',
+		'sadpanda',
+		'sigh',
+		'smaug',
+		'stare2',
+		'thumbsdown',
+		'wat'
+	]);
+}
