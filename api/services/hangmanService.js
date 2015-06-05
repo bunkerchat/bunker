@@ -39,10 +39,6 @@ function makeGuess(roomMember, game, guess) {
 	game.hits = _.unique(game.hits);
 	game.misses = _.unique(game.misses);
 
-	var maxCountReached = game.misses.length >= 6;
-	var allLettersMatched = game.hits.length >= _.unique(game.word).length;
-	var wordGuessed = game.word == guess;
-
 	var update = HangmanGame.update({room: roomMember.room}, {
 		hits: game.hits,
 		misses: game.misses
@@ -51,7 +47,7 @@ function makeGuess(roomMember, game, guess) {
 	var remove = HangmanGame.destroy(game.id);
 
 	// if the game is over, remove it from the database. Otherwise update it
-	var action = (maxCountReached || allLettersMatched || wordGuessed) ? remove : update;
+	var action = checkForEndGame(game, guess) ? remove : update;
 
 	return Promise.join(
 		buildResponse(game, roomMember, guess),
@@ -60,6 +56,19 @@ function makeGuess(roomMember, game, guess) {
 		.spread(function (response, dbGame) {
 			return response;
 		});
+}
+
+function checkForEndGame(game, guess){
+	var maxCountReached = game.misses.length >= 6;
+	return (maxCountReached || allLettersMatched(game) || wordGuessed(game, guess));
+}
+
+function allLettersMatched(game){
+	return game.hits.length >= _.unique(game.word).length
+}
+
+function wordGuessed(game, guess){
+	return game.word == guess;
 }
 
 function start(roomMember) {
@@ -114,10 +123,7 @@ function buildResponse(game, roomMember, guess) {
 	responseString.push(game.misses.length);
 	responseString.push(': ');
 
-	var maxCountReached = game.misses.length >= 6;
-	var allLettersMatched = game.hits.length >= _.unique(game.word).length;
-	var wordGuessed = game.word == guess;
-	if (maxCountReached || allLettersMatched || wordGuessed) {
+	if (checkForEndGame(game, guess)) {
 		// if end of game, put pipes around word for client side regex to generate link
 		responseString.push('|');
 		responseString.push(_.map(game.word).join(' '));
@@ -148,7 +154,7 @@ function buildResponse(game, roomMember, guess) {
 		responseString.push(' (' + nick + ' guessed ' + guess + ')');
 	}
 
-	if (allLettersMatched || wordGuessed) {
+	if (allLettersMatched(game) || wordGuessed(game, guess)) {
 		responseString.push(' You Won! :' + getWinEmote() + ':');
 	}
 
