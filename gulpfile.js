@@ -5,11 +5,18 @@ var uglify = require('gulp-uglify');
 var minifyHtml = require('gulp-minify-html');
 var minifyCss = require('gulp-minify-css');
 var rev = require('gulp-rev');
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var sourcemaps = require('gulp-sourcemaps');
+var ngHtml2Js = require("gulp-ng-html2js");
+var concat = require("gulp-concat");
 
-gulp.task('usemin', function () {
+
+gulp.task('clear-build-folder', function (cb) {
+	fs.remove(path.join(__dirname, 'assets', 'bundled'), cb)
+});
+
+gulp.task('usemin', ['clear-build-folder'], function () {
 	return gulp.src('./views/index.ejs')
 		.pipe(usemin({
 			assetsDir: './',
@@ -38,6 +45,23 @@ gulp.task('move-index-prod', ['usemin'], function (done) {
 		done);
 });
 
-gulp.task('production', ['move-index-prod']);
+gulp.task('template-cache-html', ['clear-build-folder'], function () {
+	return gulp.src("./assets/app/**/*.html")
+		.pipe(minifyHtml({
+			empty: true,
+			spare: true,
+			quotes: true
+		}))
+		.pipe(ngHtml2Js({
+			moduleName: "bunker",
+			prefix: "/assets/app/"
+		}))
+		.pipe(concat("templates.min.js"))
+		.pipe(uglify())
+		.pipe(rev())
+		.pipe(gulp.dest("./assets/bundled"));
+});
+
+gulp.task('production', ['template-cache-html', 'move-index-prod']);
 
 gulp.task('default', ['production']);
