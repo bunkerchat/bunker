@@ -9,9 +9,13 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 			var tolerance = 31;
 			var clearMessageCounter = 0;
 
+			function atBottomOfPage() {
+				return el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight;
+			}
+
 			$rootScope.$on('bunkerMessaged', function (evt, message) {
 
-				if (el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight) { // We're at the bottom
+				if (atBottomOfPage()) {
 					// Check for images
 					var image = angular.element('#' + message.id).find('img');
 					if (image.length) {
@@ -47,9 +51,13 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 				}
 			});
 
-			// Scroll after state changes and when youtubes have loaded
 			$scope.$on('roomIdChanged', scroll);
-			$rootScope.$on('youtube.player.ready', scroll);
+
+			// Scroll after state changes and when youtubes have loaded
+			$rootScope.$on('youtube.player.ready', function(){
+				if(!atBottomOfPage()) return;
+				scroll();
+			});
 
 			function scroll(waitTime) {
 				$timeout(function () {
