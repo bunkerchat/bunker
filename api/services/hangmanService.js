@@ -107,7 +107,7 @@ function getWord() {
 		}
 	})
 		.spread(function (response, body) {
-			return body.word.toUpperCase();
+			return body.word.replace('-', '').toUpperCase();
 		});
 }
 
