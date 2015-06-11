@@ -39,7 +39,7 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/roll/i.test(text)) {
 		return roll(roomMember, text);
 	}
-	else if (/^\/show\s+:\w+:/i.test(text)) {
+	else if (/^\s?:\w+:\s?$/.test(text)) {
 		return animation(roomMember, text);
 	}
 	else if (/^\/me\s+/i.test(text)) {
