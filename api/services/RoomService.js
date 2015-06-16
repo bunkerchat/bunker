@@ -19,10 +19,10 @@ module.exports.animateInRoom = function (roomMember, emoticon, words) {
 		id: uuid.v4(),
 		type: 'animation',
 		room: roomId,
-		author: user,
+		user: user,
 		words: words,
 		emoticon: emoticon,
-		text: emoticon,
+		text: user.nick + ' shows the room ' + emoticon,
 		createdAt: new Date().toISOString()
 	});
 };
