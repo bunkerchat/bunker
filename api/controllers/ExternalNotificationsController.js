@@ -18,7 +18,8 @@ module.exports.jenkinsBestBuy = function (req, res) {
 	var roomId;
 	var emote = build.status == 'FAILURE' ? ' :buildchicken:' : ':unsmith:';
 	var url = build.full_url + "console";
-	var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '", link: ' + url + ' };';
+	var protractorUrl = build.full_url + 'artifact/e2e_screenshots/my-report.html';
+	var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '", link: ' + url + ', protractorReport: ' + protractorUrl + ' };';
 
 	Room.findOne({name: 'minos'})
 		.then(function (room) {
