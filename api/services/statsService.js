@@ -57,17 +57,20 @@ function generateStats(roomMember, template) {
 						randomMessage: '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')'
 					};
 
-					if(activeDays){
+					if (activeDays) {
 						var mostActive = makeActiveModel(activeDays);
 
-						var activeDaysSorted = _.sortByAll(activeDays, [
-							function (day) {
-								return day._id.year;
-							},
-							function (day) {
-								return day._id.dayOfYear;
-							}
-						]);
+						var activeDaysSorted = _(activeDays)
+							.sortByAll([
+								function (day) {
+									return day._id.year;
+								},
+								function (day) {
+									return day._id.dayOfYear;
+								}
+							])
+							.reverse()
+							.value();
 
 						var lastActive = makeActiveModel(activeDaysSorted);
 
@@ -80,8 +83,8 @@ function generateStats(roomMember, template) {
 		});
 }
 
-function makeActiveModel(activeDays){
-	if(!activeDays) return;
+function makeActiveModel(activeDays) {
+	if (!activeDays) return;
 
 	var mostActiveDayObject = _.first(activeDays);
 	var mostActiveYear = mostActiveDayObject._id.year;
