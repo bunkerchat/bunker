@@ -324,14 +324,14 @@ mark:hover {
 }
 
 .message-list {
-	height: calc(100vh - 86px);
+	height: calc(100vh - 87px);
 	overflow-y: auto;
 	border-right: solid 1px #eee;
 	margin: 0;
 }
 
 .message-list.has-topic {
-	height: calc(100vh - 127px);
+	height: calc(100vh - 128px);
 }
 
 .message-container {
