@@ -127,9 +127,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
-			message.$editable = isEditable(message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = message.id + message.edited;
+			message.$idAndEdited = message.id + new Date().getTime();
 		},
 
 		// Rooms
@@ -273,9 +272,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		_.each(room.$messages, function (message, index) {
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
-			message.$editable = isEditable(message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = message.id + message.edited;
+			message.$idAndEdited = message.id + new Date().getTime();
 		});
 	}
 
@@ -287,10 +285,6 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 	function isFirstInSeries(lastMessage, message) {
 		return !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
-	}
-
-	function isEditable(message) {
-		return moment().diff(message.createdAt) < bunkerConstants.editWindowMilliseconds;
 	}
 
 	function setRoomOrder(roomIndex, room) {

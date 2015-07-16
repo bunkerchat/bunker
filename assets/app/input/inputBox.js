@@ -45,10 +45,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 				if(scope.messageText.replace(/\s/g, '').length == 0) {
 					// Nothing to do! (but still reset things)
 				}
-				else if (!scope.editMode
-					|| previousText == scope.messageText
-					|| chosenMessage.edited
-					|| !canEdit(chosenMessage)) {
+				else if (!scope.editMode) {
 
 					bunkerData.createMessage(newMessage.room, newMessage.text)
 						.then(function (result) {
@@ -57,7 +54,6 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 								scope.submittedMessages.unshift(historicMessage); // Save message for up/down keys to retrieve
 							}
 						});
-
 				}
 				else {
 					scope.submittedMessages[scope.selectedMessageIndex].text = scope.messageText;
@@ -149,7 +145,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					previousText = chosenMessage.text;
 
 					scope.messageText = chosenMessage.text;
-					scope.editMode = canEdit(chosenMessage);
+					scope.editMode = true;
 
 					scope.$digest();
 				}
@@ -179,10 +175,6 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 						searchState = searchStates.NONE;
 					}
 				}
-			}
-
-			function canEdit(message){
-				return !message.edited && datesWithinSeconds(message.createdAt, messageEditWindowSeconds);
 			}
 
 			function datesWithinSeconds(date1, seconds) {

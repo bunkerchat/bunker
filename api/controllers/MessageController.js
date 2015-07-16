@@ -13,7 +13,6 @@ var ForbiddenError = require('../errors/ForbiddenError');
 // Update a message (the edit functionality)
 exports.update = function (req, res) {
 
-	var messageEditWindowSeconds = 60;
 	var pk = actionUtil.requirePk(req);
 	var userId = req.session.userId;
 
@@ -22,12 +21,6 @@ exports.update = function (req, res) {
 
 			if (userId != message.author.id) {
 				throw new ForbiddenError('Only the author may edit their message');
-			}
-			if (moment(message.createdAt).isBefore(moment().subtract(messageEditWindowSeconds, 'seconds'))) {
-				throw new Error('Edit window has past');
-			}
-			if (message.edited) {
-				throw new Error('Only one edit is allowed');
 			}
 
 			if (message.author.busy) {
