@@ -22,6 +22,11 @@ pre {
 	color: #3e3f3a;
 }
 
+.splash-brand{
+	font-size: 150px;
+	text-shadow: 12px 12px 3px #79a736, 24px 24px 6px #000;
+	text-transform: uppercase;
+}
 /* navbar */
 nav,
 .navbar {
