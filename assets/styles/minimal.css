@@ -19,16 +19,13 @@ nav,
 }
 
 .navbar-brand {
+	width: 178px;
 	padding: 16px 15px;
 }
 
 .nav,
 .navbar-brand {
 	line-height: 4px;
-}
-
-.navbar-brand {
-	width: 178px;
 }
 
 .navbar .nav > li > a {
