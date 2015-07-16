@@ -47,6 +47,36 @@ nav,
 	font-weight: bold;
 	text-align: center;
 	text-shadow: 3px 3px 3px rgba(0,0,0,.5);
+	width: 168px;
+}
+
+.navbar-fixed-width{
+	/* 100% - left brand - right controls */
+	max-width: calc(100% - 168px - 186px);
+	overflow-x: auto;
+	overflow-y: hidden;
+	height: 40px;
+	white-space: nowrap;
+	border-radius: 4px;
+}
+
+/* scrollbar stuff */
+.navbar-fixed-width::-webkit-scrollbar {
+	height: 6px;
+	background: #ccc;
+	border: 1px solid #222;
+	border-radius: 4px;
+}
+
+.navbar-fixed-width::-webkit-scrollbar-thumb {
+	background-color: #79a736;
+	border: 1px solid #222;
+	border-radius: 6px;
+}
+
+.navbar-nav>li{
+	display: inline-block;
+	float: none;
 }
 
 .navbar-default .navbar-nav > li > a,
@@ -70,16 +100,21 @@ nav,
 	text-transform: none;
 	font-size: 16px;
 	font-weight: normal;
-	min-width: 100px;
+	min-width: 142px;
 	text-align: center;
 	line-height: 40px;
 	color: #fff;
 	background-color: #666;
 }
 
+.nav.navbar-right{
+	width: 186px;
+}
+
 .navbar .nav.navbar-right > li > a.small-width {
-	min-width: 50px;
-	box-shadow: inset 0px 0px 2px rgba(0,0,0,0.5)
+	min-width: 60px;
+	box-shadow: inset 0px 0px 2px rgba(0,0,0,0.5);
+	padding: 0px;
 }
 
 .navbar .navbar-nav li .badge {
