@@ -31,33 +31,32 @@ nav,
 }
 
 .navbar-default {
-	background-color: #79828C;
+	background-color: #555;
 	border-bottom: 0;
+	color: #e7e7e7;
 }
 
 .navbar-brand {
 	height: 40px;
 	padding: 10px 20px;
-	font-size: 20px;
+	font-size: 24px;
 	font-weight: bold;
+	width: 178px;
+	text-align: center;
+	text-shadow: 3px 3px 3px rgba(0,0,0,.5);
 }
 
 .navbar-default .navbar-nav > li > a,
 .navbar-nav > li > a {
 	padding: 6px 12px;
-	border: solid #8e98a2;
-	border-width: 0 1px 0 0;
-}
-
-.navbar-default .navbar-nav > li:last-child > a,
-.navbar-nav > li > a {
-	border-right: 0;
+	box-shadow: inset 2px 0px 4px rgba(0,0,0,0.50);
+	text-shadow: 0px 0px 4px rgba(0,0,0,.5);
 }
 
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-	background-color: #414B57;
+	background-color: #79a736;
 }
 
 .navbar .nav > li > a,
@@ -66,14 +65,16 @@ nav,
 	text-transform: none;
 	font-size: 16px;
 	font-weight: normal;
-	min-width: 100px;
+	min-width: 142px;
 	text-align: center;
 	line-height: 40px;
 	color: #fff;
+	background-color: #666;
 }
 
-.navbar .nav > li > a.small-width {
-	min-width: 50px;
+.navbar .nav.navbar-right > li > a.small-width {
+	min-width: 80px;
+	box-shadow: inset 0px 0px 2px rgba(0,0,0,0.5)
 }
 
 .navbar .navbar-nav li .badge {
@@ -213,6 +214,7 @@ mark:hover {
 	color: #fff;
 	background-color: #555;
 	padding: 5px 0 3px 5px;
+	text-align: center;
 }
 
 .inbox {

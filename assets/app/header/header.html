@@ -17,12 +17,12 @@
 
 			<ul class="nav navbar-nav navbar-right hidden-xs">
 				<li ng-class="{active: header.emoticonMenu}">
-					<a ng-click="header.toggleEmoticonMenu()">
+					<a ng-click="header.toggleEmoticonMenu()" class="small-width">
 						<img src="/assets/images/emoticons/allthethings.png"/>
 					</a>
 				</li>
-				<li ng-class="{active: header.inboxOpened}">
-					<a ng-click="header.toggleInbox()">
+				<li ng-class="{active: header.inboxOpened}" >
+					<a ng-click="header.toggleInbox()" class="small-width">
 						<i class="fa fa-inbox fa-lg"></i>
 					</a>
 					<span class="badge" ng-show="header.unreadInboxMessages > 0">{{header.unreadInboxMessages}}</span>
