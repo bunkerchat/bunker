@@ -28,6 +28,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					_.assign(bunkerData.inbox, initialData.inbox);
 					_.assign(bunkerData.memberships, initialData.memberships);
 
+					bunkerData.inbox.unreadMessages = _.select(bunkerData.inbox, {read: false}).length;
+
 					// Set $resolved on all rooms (those not in the data set to false)
 					// TODO ideally we could remove the rooms from the array entirely
 					_.each(bunkerData.rooms, function (room) {
@@ -236,7 +238,15 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		markInboxRead: function () {
 			return $q(function (resolve) {
 				io.socket.put('/user/current/markInboxRead', resolve);
-			});
+			})
+				.then(function (data) {
+					_.each(bunkerData.inbox, function (inboxMessage) {
+						inboxMessage.read = true;
+					});
+					bunkerData.inbox.unreadMessages = _.select(bunkerData.inbox, {read: false}).length;
+
+					return data;
+				});
 		},
 
 		clearInbox: function () {
@@ -281,7 +291,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// perhaps overkill, but check the room index has not already been set
 		// trying to solve an edge case where joining a room might
 		// clash with an already set room order
-		if(bunkerData.rooms[roomIndex]){
+		if (bunkerData.rooms[roomIndex]) {
 			var roomIndexUp = roomIndex + 1;
 			return setRoomOrder(roomIndexUp, room);
 		}
@@ -290,7 +300,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		bunkerData.rooms[roomIndex] = room;
 	}
 
-	function decorateEmoticonCounts(emoticonCounts){
+	function decorateEmoticonCounts(emoticonCounts) {
 		var emoteCountsHash = _.indexBy(emoticonCounts, 'name');
 		_.each(emoticons.list, function (emoticon) {
 			emoticon.$count = emoteCountsHash[emoticon.name] ? emoteCountsHash[emoticon.name].count : 0;

@@ -6,8 +6,8 @@ app.directive('emoticonMenu', function ($rootScope, bunkerData, emoticons, fuzzy
 		},
 		controllerAs: 'menu',
 		bindToController: true,
-		link: function (scope, element) {
-			var elementsToSkip = 'li[ng-class="{active: header.emoticonMenu}"], [emoticon-menu]'
+		link: function (scope) {
+			var elementsToSkip = 'li[ng-class="{active: header.emoticonMenu}"], [emoticon-menu]';
 
 			$(document)
 				.on('click.bunker.emoticon-menu', scope.menu.close)

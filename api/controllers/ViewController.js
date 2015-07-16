@@ -15,6 +15,10 @@ module.exports.index = function (req, res) {
 				return _.includes(file, 'templates');
 			});
 
+			if(!isProd){
+				templates = null;
+			}
+
 			res.view(isProd ? 'index-prod' : 'index', {
 				templates: templates,
 				userId: req.session.userId,
