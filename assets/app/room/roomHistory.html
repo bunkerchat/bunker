@@ -20,7 +20,7 @@
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body"
 									 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
-								<span bunker-message="message"></span>
+								<span bunker-message="::message"></span>
 								<span class="message-info text-muted">
 									<i class="fa fa-pencil" ng-if="message.edited"></i>
 									<span ng-if="::message.$firstInSeries">
@@ -37,7 +37,7 @@
 						<div ng-switch-default>
 							<div class="new-message-body">
 								<div class="system-message">
-									<span bunker-message="message"></span>
+									<span bunker-message="::message"></span>
 								</div>
 								<span class="message-info text-muted">
 									<small>

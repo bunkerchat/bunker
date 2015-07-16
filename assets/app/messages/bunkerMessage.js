@@ -29,11 +29,13 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			media: '@',
 		},
 		link: function (scope, elem) {
-			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
-			scope.$watch('bunkerMessage.topic', bunkerText);
 
+			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
 			if(scope.bunkerMessage && scope.bunkerMessage.text){
 				return bunkerText(scope.bunkerMessage.text);
+			}
+			else{
+				scope.$watch('bunkerMessage.topic', bunkerText);
 			}
 
 			function bunkerText(text) {
