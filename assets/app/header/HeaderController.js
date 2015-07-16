@@ -67,7 +67,10 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		}
 	};
 
-	this.clearInbox = bunkerData.clearInbox;
+	this.clearInbox = function () {
+		bunkerData.clearInbox();
+		self.inboxOpened = false;
+	};
 
 	this.goToRoom = function (message) {
 		self.inboxOpened = false;
