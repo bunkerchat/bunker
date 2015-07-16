@@ -11,7 +11,7 @@
 			{{::inboxMessage.message.author.nick}}
 		</div>
 		<div class="inbox-message" ng-class="::{'read': inboxMessage.read}">
-			<span bunker-message="inboxMessage.message" media="false" watch="false"></span>
+			<span bunker-message="inboxMessage.message" media="false"></span>
 			<div class="inbox-time">
 				<small short-time-ago="{{::inboxMessage.createdAt}}" title="{{::inboxMessage.createdAt | date:'medium'}}">
 				</small>

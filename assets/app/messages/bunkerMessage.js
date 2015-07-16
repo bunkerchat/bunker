@@ -27,27 +27,16 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 		scope: {
 			bunkerMessage: '=',
 			media: '@',
-			watch: '@'
 		},
 		link: function (scope, elem) {
+			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
+			scope.$watch('bunkerMessage.topic', bunkerText);
 
-			// since we are passing in a bunker message OR room, run the watch on the room topic
-			var shouldWatch = typeof scope.watch !== 'undefined' ? scope.$eval(scope.watch) : true;
-			var textListener = scope.$watch('bunkerMessage.text', textWatch);
-			var topicListener = scope.$watch('bunkerMessage.topic', textWatch);
-
-			// not sure why we get undefined bunkerMessages sometimes :-/
-			if(scope.bunkerMessage) {
-				scope.$on('messageEdited' + scope.bunkerMessage.id, function (event, message) {
-					elem.find('span')
-						.empty()
-						.siblings().remove();
-
-					textWatch(scope.bunkerMessage.text);
-				});
+			if(scope.bunkerMessage && scope.bunkerMessage.text){
+				return bunkerText(scope.bunkerMessage.text);
 			}
 
-			function textWatch(text) {
+			function bunkerText(text) {
 				if (!text) return;
 
 				if (scope.bunkerMessage.type == 'code') {
@@ -68,22 +57,6 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				}
 
 				scope.formatted = text;
-
-				// After 60 seconds the message is not editable anymore so we can kill the watch on its text
-				var millisecondsSinceCreated = moment().diff(scope.bunkerMessage.createdAt);
-				if (!shouldWatch || millisecondsSinceCreated > bunkerConstants.editWindowMilliseconds) {
-					// We can kill the watch on text, this message is now static
-					textListener();
-				}
-				else {
-					// kill this watch once the window passes
-					$timeout(textListener, bunkerConstants.editWindowMilliseconds - millisecondsSinceCreated);
-				}
-
-				// Most messages are not a topic - at this point we can test this and kill the watch on that if necessary
-				if (!shouldWatch || !scope.bunkerMessage.topic) {
-					topicListener();
-				}
 			}
 
 			function createQuotedBlock(text) {
