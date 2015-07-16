@@ -27,8 +27,17 @@ nav,
 	line-height: 4px;
 }
 
+.navbar-brand {
+	width: 178px;
+}
+
 .navbar .nav > li > a {
 	padding: 0;
+	min-width: 142px;
+}
+
+.navbar .nav.navbar-right > li > a.small-width {
+	min-width: 80px;
 }
 
 .panel-heading {
