@@ -8,10 +8,13 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 			case 'messaged':
 				var message = evt.data;
 				if (message.edited) {
+					bunkerData.decorateMessage(room, message);
+
 					var otherMessage = _.find(room.$messages, {id: message.id});
-					if (otherMessage) {
-						_.assign(otherMessage, message);
-					}
+					message.$firstInSeries = otherMessage.$firstInSeries;
+
+					var index = _.indexOf(room.$messages, otherMessage);
+					room.$messages.splice(index, 1, message);
 				}
 				else {
 					if (!room.$messages) room.$messages = [];

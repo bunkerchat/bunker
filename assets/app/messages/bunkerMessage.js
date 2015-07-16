@@ -36,6 +36,17 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			var textListener = scope.$watch('bunkerMessage.text', textWatch);
 			var topicListener = scope.$watch('bunkerMessage.topic', textWatch);
 
+			// not sure why we get undefined bunkerMessages sometimes :-/
+			if(scope.bunkerMessage) {
+				scope.$on('messageEdited' + scope.bunkerMessage.id, function (event, message) {
+					elem.find('span')
+						.empty()
+						.siblings().remove();
+
+					textWatch(scope.bunkerMessage.text);
+				});
+			}
+
 			function textWatch(text) {
 				if (!text) return;
 

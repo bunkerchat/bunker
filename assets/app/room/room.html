@@ -15,7 +15,7 @@
 
 				<li id="{{::message.id}}" class="message-container"
 					ng-switch="::!!message.author"
-					ng-repeat="message in current.$messages track by message.id">
+					ng-repeat="message in current.$messages track by message.$idAndEdited">
 
 					<div class="message message-type-{{::message.type || 'none'}}"
 						 ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
@@ -50,7 +50,7 @@
 						<div ng-switch-default>
 							<div class="new-message-body">
 								<div class="system-message">
-									<span bunker-message="message"></span>
+									<span bunker-message="message" watch="false"></span>
 								</div>
 								<span class="message-info text-muted">
 									<small am-time-ago="message.createdAt"

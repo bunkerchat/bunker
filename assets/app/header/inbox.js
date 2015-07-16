@@ -28,9 +28,9 @@ app.directive('inbox', function (bunkerData, $state, $location, $anchorScroll) {
 				self.visible = false;
 			};
 
-			this.close = function(){
+			this.close = function () {
 				self.visible = false;
-			}
+			};
 
 			this.goToRoom = function (message) {
 				self.visible = false;

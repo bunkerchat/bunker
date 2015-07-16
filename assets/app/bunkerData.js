@@ -84,9 +84,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		addMessage: function (room, message) {
 			if (!bunkerData.userSettings.showNotifications && !message.author) return; // User does not want to see notifications
 
-			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
-			message.$editable = isEditable(message);
-			message.$mentionsUser = bunkerData.mentionsUser(message.text);
+			bunkerData.decorateMessage(room, message);
+
 			room.$messages.push(message);
 		},
 		createMessage: function (roomId, text) {
@@ -125,6 +124,12 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					resolve(messages);
 				});
 			});
+		},
+		decorateMessage: function (room, message) {
+			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
+			message.$editable = isEditable(message);
+			message.$mentionsUser = bunkerData.mentionsUser(message.text);
+			message.$idAndEdited = message.id + message.edited;
 		},
 
 		// Rooms
@@ -270,6 +275,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$editable = isEditable(message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
+			message.$idAndEdited = message.id + message.edited;
 		});
 	}
 
