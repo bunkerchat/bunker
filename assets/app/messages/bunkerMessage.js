@@ -79,7 +79,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = parseEmoticons(text);
 				}
 
-				var attachedMedia = angular.element('<div message="bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
+				var attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
 
 				angular.element(elem).append(attachedMedia);
 				$compile(attachedMedia)(scope.$new());
