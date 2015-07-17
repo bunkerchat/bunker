@@ -51,6 +51,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/code /i.test(text)) {
 		return code(roomMember, text);
 	}
+	else if (/^\/image\s+/i.test(text)){
+		return imageSearch(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -368,6 +371,16 @@ function code(roomMember, text) {
 		author: roomMember.user,
 		text: text
 	}).then(broadcastMessage)
+}
+
+function imageSearch(roomMember, text) {
+	var match = /^\/image\s+(.*)$/i.exec(text);
+	var searchQuery = match[1];
+
+	return googleSearchService.imageSearch(text)
+		.then(function (imgUrl) {
+			message(roomMember, searchQuery + ' ' + imgUrl);
+		});
 }
 
 function hangman(roomMember, text) {

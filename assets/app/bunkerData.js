@@ -114,8 +114,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			});
 		},
 		clearOldMessages: function (id) {
-			if (!id || !roomLookup[id] || roomLookup[id].$messages.length <= 200) return;
-			roomLookup[id].$messages.splice(0, roomLookup[id].$messages.length - 200);
+			if (!id || !roomLookup[id] || roomLookup[id].$messages.length <= 100) return;
+			roomLookup[id].$messages.splice(0, roomLookup[id].$messages.length - 100);
 		},
 		getHistoryMessages: function (roomId, startDate, endDate) {
 			var url = '/room/' + roomId + '/history?startDate=' + startDate + '&endDate=' + endDate;
