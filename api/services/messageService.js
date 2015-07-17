@@ -54,6 +54,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/image\s+/i.test(text)){
 		return imageSearch(roomMember, text);
 	}
+	else if (/^\/gif\s+/i.test(text)){
+		return gifSearch(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -379,7 +382,17 @@ function imageSearch(roomMember, text) {
 
 	return googleSearchService.imageSearch(text)
 		.then(function (imgUrl) {
-			message(roomMember, searchQuery + ' ' + imgUrl);
+			message(roomMember, '[googled image "' + searchQuery + '"] ' + imgUrl);
+		});
+}
+
+function gifSearch(roomMember, text) {
+	var match = /^\/gif\s+(.*)$/i.exec(text);
+	var searchQuery = match[1];
+
+	return googleSearchService.gifSearch(text)
+		.then(function (imgUrl) {
+			message(roomMember, '[googled gif "' + searchQuery + '"] ' + imgUrl);
 		});
 }
 

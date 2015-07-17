@@ -21,3 +21,20 @@ module.exports.imageSearch = function (query) {
 			return body.responseData.results[0].unescapedUrl;
 		});
 };
+
+module.exports.gifSearch = function (query) {
+	return request.getAsync({
+		json: true,
+		url: 'https://ajax.googleapis.com/ajax/services/search/images',
+		qs: {
+			v: '1.0',
+			rsz: 8,
+			safe: 'active',
+			imgType: 'animated',
+			q: query
+		}
+	})
+		.spread(function (response, body) {
+			return body.responseData.results[0].unescapedUrl;
+		});
+};
