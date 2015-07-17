@@ -154,24 +154,24 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					if (shouldParseMedia) {
 						if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
 							// Image link
-							attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="::' + link + '"><img src="' + link + '"/></div>');
+							attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link +'"><img src="' + link + '"/></a></div>');
 						}
 						else if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
 							var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
 							var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
 							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="::' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
-								'</div>');
+								'<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link +'"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
+								'</a></div>');
 						}
 						else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
 							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="::' + link + '">' +
-								'<video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video>' +
+								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
+								'<a target="_blank" href="' + link +'"><video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video></a>' +
 								'</div>');
 						}
 						else if (youtubeRegexp.test(link) && !attachedMedia) {
 							attachedMedia = angular.element('' +
-								'<div class="default-video-height" message="::bunkerMessage" bunker-media="::' + link + '">' +
+								'<div class="default-video-height" message="::bunkerMessage" bunker-media="' + link + '">' +
 								'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
 								'</div>');
 						}
@@ -179,7 +179,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 							var id = link.substr(link.lastIndexOf('/') + 1);
 							if (id) { /* don't embed tweet if we can't get the id from the link */
 								attachedMedia = angular.element('' +
-									'<div message="::bunkerMessage" bunker-media="::' + link + '">' +
+									'<div message="::bunkerMessage" bunker-media="' + link + '">' +
 									'<div class="tweet_' + id + '">' +
 									'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp">' +
 									'</script></div></div>');
@@ -188,7 +188,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 						else if (/vimeo\.com(?:.*)?\/([A-z0-9]*)$/i.test(link) && !attachedMedia) {
 							var match = /vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.exec(link);
 							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="::' + link + '">' +
+								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
 								'<iframe src="https://player.vimeo.com/video/' + match[1] + '?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
 								'</div>');
 						}
