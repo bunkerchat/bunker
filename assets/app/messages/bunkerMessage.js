@@ -23,7 +23,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 	}
 
 	return {
-		template: '<span ng-bind-html="formatted"></span>',
+		template: '<span ng-bind-html="::formatted"></span>',
 		scope: {
 			bunkerMessage: '=',
 			media: '@',
