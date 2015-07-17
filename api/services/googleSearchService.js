@@ -35,11 +35,13 @@ module.exports.gifSearch = function (query) {
 		}
 	})
 		.spread(function (response, body) {
-			var image = _.find(body.responseData.results, function (result) {
-				// filter out giphy links because they don't animate
-				return result.unescapedUrl.indexOf('giphy') == -1;
+			var image = _.filter(body.responseData.results, function (result) {
+				if(result.unescapedUrl.indexOf('giphy') > -1) return false;
+				if(result.unescapedUrl.indexOf('ytimg') > -1) return false;
+				if(result.unescapedUrl.indexOf('gifsec') > -1) return false;
+				return true;
 			});
 
-			if(image) return image.unescapedUrl;
+			if(image.length) return image[0].unescapedUrl;
 		});
 };
