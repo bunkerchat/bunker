@@ -152,7 +152,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 
 					// Only parse media (images, youtube) if asked to
 					if (shouldParseMedia) {
-						if (/\.(gif|png|jpg|jpeg)$/i.test(link) && !attachedMedia) {
+						if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
 							// Image link
 							attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="::' + link + '"><img src="' + link + '"/></div>');
 						}

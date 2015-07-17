@@ -35,6 +35,11 @@ module.exports.gifSearch = function (query) {
 		}
 	})
 		.spread(function (response, body) {
-			return body.responseData.results[0].unescapedUrl;
+			var image = _.find(body.responseData.results, function (result) {
+				// filter out giphy links because they don't animate
+				return result.unescapedUrl.indexOf('giphy') == -1;
+			});
+
+			if(image) return image.unescapedUrl;
 		});
 };
