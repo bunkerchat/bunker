@@ -40,6 +40,7 @@ module.exports.gifSearch = function (query) {
 				if(result.unescapedUrl.indexOf('ytimg') > -1) return false;
 				if(result.unescapedUrl.indexOf('gifsec') > -1) return false;
 				if(result.unescapedUrl.indexOf('photobucket') > -1) return false;
+				if(result.unescapedUrl.indexOf('replygif') > -1) return false;
 				return true;
 			});
 
