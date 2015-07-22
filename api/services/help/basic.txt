@@ -10,11 +10,13 @@ COMMANDS:
 	help		shows this message
 	away		set away status
 	magic8ball	shake the magic 8-ball
-	me			make your avatar do something
+	me		make your avatar do something
 	nick		change your nickname
 	roll		roll a die
 	topic		change the topic of the room
-	hangman     play a game of hangman
+	hangman     	play a game of hangman
+	image		search and display image from Google
+	gif		search and display gif from Google
 
 TOPICS:
 	formatting	how to format message text (italic, bold, etc)

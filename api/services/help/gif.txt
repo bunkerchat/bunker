@@ -1,0 +1,14 @@
+You want to use that moving image thingy?
+
+NAME
+	/gif - Display gif...let me Google that for you
+
+SYNOPSIS
+	/gif [string]
+
+COMMANDS
+	/gif smashing
+	/gif Suck It Trebek
+	
+REMARKS
+	I'll take Jiff for $200, Alex

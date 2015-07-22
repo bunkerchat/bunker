@@ -1,0 +1,14 @@
+What do you mean you don't want another picture of Ruby? Fine use this to get something you lazy jerk. 
+
+NAME
+	/image - Display image...let me Google that for you
+
+SYNOPSIS
+	/image [string]
+
+COMMANDS
+	/image Koalifications
+	/image The Tides Have Turned
+	
+REMARKS
+	Russian roulette, will the image be relevant...or will it not?

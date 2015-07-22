@@ -28,6 +28,10 @@ module.exports = {
 				return this.readHelpFile('away.txt');
 			} else if (command === 'hangman') {
 				return this.readHelpFile('hangman.txt');
+			} else if (command === 'image') {
+				return this.readHelpFile('image.txt');
+			} else if (command === 'gif') {
+				return this.readHelpFile('gif.txt');
 			}
 		}
 		return this.readHelpFile('basic.txt');
