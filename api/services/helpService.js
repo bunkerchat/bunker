@@ -2,44 +2,24 @@ var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 var helpDir = './api/services/help/';
 
-module.exports = {
-	getHelp: function (input) {
+var helpService = module.exports;
 
-		var arr = input.match(/\/help (.*)/);
-		if (arr != null && arr.length > 1) {
-			var command = arr[1];
-			if (command === 'nick') {
-				return this.readHelpFile('nick.txt');
-			} else if (command === 'me') {
-				return this.readHelpFile('me.txt');
-			} else if (command === 'roll') {
-				return this.readHelpFile('roll.txt');
-			} else if (command === 'topic') {
-				return this.readHelpFile('topic.txt');
-			} else if (command === 'images') {
-				return this.readHelpFile('images.txt');
-			} else if (command === 'gravatar') {
-				return this.readHelpFile('gravatar.txt');
-			} else if (command === 'magic8ball') {
-				return this.readHelpFile('magic8ball.txt');
-			} else if (command === 'formatting') {
-				return this.readHelpFile('formatting.txt');
-			} else if (command === 'away') {
-				return this.readHelpFile('away.txt');
-			} else if (command === 'hangman') {
-				return this.readHelpFile('hangman.txt');
-			} else if (command === 'image') {
-				return this.readHelpFile('image.txt');
-			} else if (command === 'gif') {
-				return this.readHelpFile('gif.txt');
-			}
-		}
-		return this.readHelpFile('basic.txt');
-	},
-	readHelpFile: function (fileName) {
-		return fs.readFileAsync(helpDir + fileName, 'utf-8')
-			.then(function (data) {
-				return '<pre>' + data + '</pre>'; // ew, markup on server
-			});
+helpService.getHelp = function (input) {
+
+	var match = input.match(/\/help (.*)/);
+	if (match && match.length) {
+		var command = match[1];
+		return this.readHelpFile(command + '.txt');
 	}
+	return this.readHelpFile('basic.txt');
+};
+
+helpService.readHelpFile = function (fileName) {
+	return fs.readFileAsync(helpDir + fileName, 'utf-8')
+		.then(function (data) {
+			return '<pre>' + data + '</pre>'; // ew, markup on server
+		})
+		.catch(function () {
+			return helpService.readHelpFile('basic.txt');
+		});
 };

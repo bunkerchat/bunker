@@ -7,21 +7,21 @@ Type a slash and then the command name, like this:
 	/&lt;command&gt;
 
 COMMANDS:
-	help		shows this message
-	away		set away status
-	magic8ball	shake the magic 8-ball
-	me		make your avatar do something
-	nick		change your nickname
-	roll		roll a die
-	topic		change the topic of the room
-	hangman     	play a game of hangman
-	image		search and display image from Google
-	gif		search and display gif from Google
+	help        shows this message
+	away        set away status
+	magic8ball  shake the magic 8-ball
+	me          make your avatar do something
+	nick        change your nickname
+	roll        roll a die
+	topic       change the topic of the room
+	hangman     play a game of hangman
+	image       search and display image from Google
+	gif         search and display gif from Google
 
 TOPICS:
-	formatting	how to format message text (italic, bold, etc)
-	gravatar	how to change your gravatar
-	images		how to upload an image to the room
+	formatting  how to format message text (italic, bold, etc)
+	gravatar    how to change your gravatar
+	images      how to upload an image to the room
 
 To get help on a specific command or topic type '/help [command|topic]'.  Examples:
 

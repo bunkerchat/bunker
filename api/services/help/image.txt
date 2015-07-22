@@ -1,4 +1,5 @@
-What do you mean you don't want another picture of Ruby? Fine use this to get something you lazy jerk. 
+IMAGE
+Use this to find an image, you lazy jerk.
 
 NAME
 	/image - Display image...let me Google that for you
@@ -11,4 +12,4 @@ COMMANDS
 	/image The Tides Have Turned
 	
 REMARKS
-	Russian roulette, will the image be relevant...or will it not?
+	Unfortunately the picture that comes back is a bit of Russian roulette, will the image be relevant...or will it not?
