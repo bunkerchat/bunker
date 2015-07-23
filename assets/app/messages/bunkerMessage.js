@@ -32,15 +32,15 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
 			if(scope.bunkerMessage && scope.bunkerMessage.text){
-				scope.formatted = bunkerText(scope.bunkerMessage.text);
+				scope.formatted = parseText(scope.bunkerMessage.text);
 			}
 			else{
 				scope.$watch('bunkerMessage.topic', function(topic){
-					elem.html(bunkerText(topic));
+					elem.html(parseText(topic));
 				});
 			}
 
-			function bunkerText(text) {
+			function parseText(text) {
 				if (!text) return;
 
 				if (scope.bunkerMessage.type == 'code') {

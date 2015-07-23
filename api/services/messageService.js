@@ -54,6 +54,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/image\s+/i.test(text)){
 		return imageSearch(roomMember, text);
 	}
+	else if (/^\/imagepick\s+/i.test(text)){
+		return imagePick(roomMember, text);
+	}
 	else if (/^\/gif\s+/i.test(text)){
 		return gifSearch(roomMember, text);
 	}
@@ -380,9 +383,19 @@ function imageSearch(roomMember, text) {
 	var match = /^\/image\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.imageSearch(text)
+	return googleSearchService.oneImage(text)
 		.then(function (imgUrl) {
 			message(roomMember, '[googled image "' + searchQuery + '"] ' + imgUrl);
+		});
+}
+
+function imagePick(roomMember, text){
+	var match = /^\/imagepick\s+(.*)$/i.exec(text);
+	var searchQuery = match[1];
+
+	return googleSearchService.imageSearch(text)
+		.then(function (images) {
+			// send these to client somehow
 		});
 }
 
@@ -390,7 +403,7 @@ function gifSearch(roomMember, text) {
 	var match = /^\/gif\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.gifSearch(text)
+	return googleSearchService.oneGif(text)
 		.then(function (imgUrl) {
 			message(roomMember, '[googled gif "' + searchQuery + '"] ' + imgUrl);
 		});
