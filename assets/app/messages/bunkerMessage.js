@@ -23,19 +23,20 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 	}
 
 	return {
-		template: '<span ng-bind-html="::formatted"></span>',
 		scope: {
 			bunkerMessage: '=',
-			media: '@',
+			media: '@'
 		},
 		link: function (scope, elem) {
 
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
 			if(scope.bunkerMessage && scope.bunkerMessage.text){
-				return bunkerText(scope.bunkerMessage.text);
+				elem.html(bunkerText(scope.bunkerMessage.text));
 			}
 			else{
-				scope.$watch('bunkerMessage.topic', bunkerText);
+				scope.$watch('bunkerMessage.topic', function(topic){
+					elem.html(bunkerText(topic));
+				});
 			}
 
 			function bunkerText(text) {
@@ -58,7 +59,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = parseMedia(text);
 				}
 
-				scope.formatted = text;
+				return text;
 			}
 
 			function createQuotedBlock(text) {
