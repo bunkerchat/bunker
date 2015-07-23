@@ -60,6 +60,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/gif\s+/i.test(text)){
 		return gifSearch(roomMember, text);
 	}
+	else if (/^\/gifpick\s+/i.test(text)){
+		return gifPick(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -383,7 +386,7 @@ function imageSearch(roomMember, text) {
 	var match = /^\/image\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.oneImage(text)
+	return googleSearchService.oneImage(searchQuery)
 		.then(function (imgUrl) {
 			message(roomMember, '[googled image "' + searchQuery + '"] ' + imgUrl);
 		});
@@ -393,9 +396,9 @@ function imagePick(roomMember, text){
 	var match = /^\/imagepick\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.imageSearch(text)
+	return googleSearchService.imageSearch(searchQuery)
 		.then(function (images) {
-			// send these to client somehow
+			User.message(roomMember.user, {type:'pick', data:images});
 		});
 }
 
@@ -403,11 +406,22 @@ function gifSearch(roomMember, text) {
 	var match = /^\/gif\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.oneGif(text)
+	return googleSearchService.oneGif(searchQuery)
 		.then(function (imgUrl) {
 			message(roomMember, '[googled gif "' + searchQuery + '"] ' + imgUrl);
 		});
 }
+
+function gifPick(roomMember, text){
+	var match = /^\/gifpick\s+(.*)$/i.exec(text);
+	var searchQuery = match[1];
+
+	return googleSearchService.gifSearch(searchQuery)
+		.then(function (images) {
+			User.message(roomMember.user, {type:'pick', data:images});
+		});
+}
+
 
 function hangman(roomMember, text) {
 	return hangmanService.play(roomMember, text)
