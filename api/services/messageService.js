@@ -54,13 +54,13 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/image\s+/i.test(text)){
 		return imageSearch(roomMember, text);
 	}
-	else if (/^\/imagepick\s+/i.test(text)){
+	else if (/^\/image(?:pick|search)\s+/i.test(text)){
 		return imagePick(roomMember, text);
 	}
 	else if (/^\/gif\s+/i.test(text)){
 		return gifSearch(roomMember, text);
 	}
-	else if (/^\/gifpick\s+/i.test(text)){
+	else if (/^\/gif(?:pick|search)\s+/i.test(text)){
 		return gifPick(roomMember, text);
 	}
 	else {
@@ -393,7 +393,7 @@ function imageSearch(roomMember, text) {
 }
 
 function imagePick(roomMember, text){
-	var match = /^\/imagepick\s+(.*)$/i.exec(text);
+	var match = /^\/image(?:pick|search)\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
 	return googleSearchService.imageSearch(searchQuery)
@@ -413,7 +413,7 @@ function gifSearch(roomMember, text) {
 }
 
 function gifPick(roomMember, text){
-	var match = /^\/gifpick\s+(.*)$/i.exec(text);
+	var match = /^\/gif(?:pick|search)\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
 	return googleSearchService.gifSearch("gif " + searchQuery)
