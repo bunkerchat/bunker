@@ -51,16 +51,16 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/code /i.test(text)) {
 		return code(roomMember, text);
 	}
-	else if (/^\/image\s+/i.test(text)){
+	else if (/^\/image\s+/i.test(text)) {
 		return imageSearch(roomMember, text);
 	}
-	else if (/^\/image(?:pick|search)\s+/i.test(text)){
+	else if (/^\/image(?:pick|search)\s+/i.test(text)) {
 		return imagePick(roomMember, text);
 	}
-	else if (/^\/gif\s+/i.test(text)){
+	else if (/^\/gif\s+/i.test(text)) {
 		return gifSearch(roomMember, text);
 	}
-	else if (/^\/gif(?:pick|search)\s+/i.test(text)){
+	else if (/^\/gif(?:pick|search)\s+/i.test(text)) {
 		return gifPick(roomMember, text);
 	}
 	else {
@@ -388,17 +388,21 @@ function imageSearch(roomMember, text) {
 
 	return googleSearchService.oneImage(searchQuery)
 		.then(function (imgUrl) {
-			message(roomMember, '[googled image "' + searchQuery + '"] ' + imgUrl);
+			message(roomMember, '[googled image (feeling lucky) "' + searchQuery + '"] ' + imgUrl);
 		});
 }
 
-function imagePick(roomMember, text){
+function imagePick(roomMember, text) {
 	var match = /^\/image(?:pick|search)\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
 	return googleSearchService.imageSearch(searchQuery)
 		.then(function (images) {
-			User.message(roomMember.user, {type:'pick', data:images});
+			User.message(roomMember.user, {
+				type: 'pick',
+				message: '[googled image "' + searchQuery + '"] ',
+				data: images
+			});
 		});
 }
 
@@ -408,17 +412,21 @@ function gifSearch(roomMember, text) {
 
 	return googleSearchService.oneGif("gif " + searchQuery)
 		.then(function (imgUrl) {
-			message(roomMember, '[googled gif "' + searchQuery + '"] ' + imgUrl);
+			message(roomMember, '[googled gif (feeling lucky) "' + searchQuery + '"] ' + imgUrl);
 		});
 }
 
-function gifPick(roomMember, text){
+function gifPick(roomMember, text) {
 	var match = /^\/gif(?:pick|search)\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
 	return googleSearchService.gifSearch("gif " + searchQuery)
 		.then(function (images) {
-			User.message(roomMember.user, {type:'pick', data:images});
+			User.message(roomMember.user, {
+				type: 'pick',
+				message: '[googled gif "' + searchQuery + '"] ',
+				data: images
+			});
 		});
 }
 

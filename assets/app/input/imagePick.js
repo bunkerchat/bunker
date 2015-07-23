@@ -5,16 +5,16 @@ app.directive('imagePick', function ($rootScope, $modal) {
 		controllerAs: 'imagePick',
 		controller: function ($scope) {
 			var self = this;
-			$scope.$on('userMessaged_pick', function (evt, data) {
+			$scope.$on('userMessaged_pick', function (evt, userData) {
 				var modalInstance = $modal.open({
 					size: 'lg',
 					templateUrl: '/assets/app/input/imagePick.html',
 					controllerAs: 'modal',
 					controller: function ($modalInstance) {
-						this.images = data;
+						this.images = userData.data;
 
 						this.set = function (image) {
-							$rootScope.$broadcast('inputText', image);
+							$rootScope.$broadcast('inputText', userData.message + image);
 							$modalInstance.dismiss();
 						};
 
