@@ -23,6 +23,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 	}
 
 	return {
+		template: '<span ng-bind-html="::formatted"></span>',
 		scope: {
 			bunkerMessage: '=',
 			media: '@'
@@ -31,7 +32,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
 			if(scope.bunkerMessage && scope.bunkerMessage.text){
-				elem.html(bunkerText(scope.bunkerMessage.text));
+				scope.formatted = bunkerText(scope.bunkerMessage.text);
 			}
 			else{
 				scope.$watch('bunkerMessage.topic', function(topic){
