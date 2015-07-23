@@ -4,8 +4,6 @@ var request = Promise.promisifyAll(require('request'));
 var googleSearchService = module.exports;
 
 googleSearchService.imageSearch = function (query) {
-	console.log('image search');
-
 	// supposedly this API was turned off a year ago but still seems to work :shrug:
 	// there is a new API with a 100 / day limit but I couldn't get it working :fistshake:
 	// notes for new api
@@ -35,9 +33,7 @@ googleSearchService.oneImage = function (query) {
 };
 
 googleSearchService.gifSearch = function (query) {
-	console.log('gif search');
-
-	return request.getAsync({
+	var options = {
 		json: true,
 		url: 'https://ajax.googleapis.com/ajax/services/search/images',
 		qs: {
@@ -45,31 +41,53 @@ googleSearchService.gifSearch = function (query) {
 			rsz: 8,
 			safe: 'active',
 			imgType: 'animated',
+			start: 0,
 			q: query
 		}
-	})
-		.spread(function (response, body) {
-			return body.responseData.results;
-		})
-		.map(function (image) {
-			return image.unescapedUrl;
-		});
+	};
+
+	return loadGifs();
+
+	function loadGifs(goodImageUrls){
+		goodImageUrls = goodImageUrls || [];
+
+		return request.getAsync(options)
+			.spread(function (response, body) {
+				return body.responseData.results;
+			})
+			.map(function (image) {
+				return image.unescapedUrl;
+			})
+			.filter(function (image) {
+				if (image.indexOf('giphy') > -1) return false;
+				if (image.indexOf('ytimg') > -1) return false;
+				if (image.indexOf('gifsec') > -1) return false;
+				if (image.indexOf('photobucket') > -1) return false;
+				if (image.indexOf('replygif') > -1) return false;
+				if (image.indexOf('gifrific') > -1) return false;
+				if (image.indexOf('.jpg') > -1) return false;
+				if (image.indexOf('.jpeg') > -1) return false;
+				if (image.indexOf('.png') > -1) return false;
+				return true;
+			})
+			.then(function (images) {
+				// push all
+				goodImageUrls.push.apply(goodImageUrls, images);
+				goodImageUrls = _.unique(goodImageUrls);
+
+				if(goodImageUrls.length < 8){
+					// next page
+					options.qs.start = options.qs.start + 8;
+					return loadGifs(goodImageUrls);
+				}
+
+				return goodImageUrls;
+			})
+	}
 };
 
 googleSearchService.oneGif = function (query) {
 	return googleSearchService.gifSearch(query)
-		.filter(function (image) {
-			if (image.indexOf('giphy') > -1) return false;
-			if (image.indexOf('ytimg') > -1) return false;
-			if (image.indexOf('gifsec') > -1) return false;
-			if (image.indexOf('photobucket') > -1) return false;
-			if (image.indexOf('replygif') > -1) return false;
-			if (image.indexOf('gifrific') > -1) return false;
-			if (image.indexOf('.jpg') > -1) return false;
-			if (image.indexOf('.jpeg') > -1) return false;
-			if (image.indexOf('.png') > -1) return false;
-			return true;
-		})
 		.then(function (images) {
 			return _.sample(images);
 		});

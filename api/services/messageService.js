@@ -406,7 +406,7 @@ function gifSearch(roomMember, text) {
 	var match = /^\/gif\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.oneGif(searchQuery)
+	return googleSearchService.oneGif("gif " + searchQuery)
 		.then(function (imgUrl) {
 			message(roomMember, '[googled gif "' + searchQuery + '"] ' + imgUrl);
 		});
@@ -416,7 +416,7 @@ function gifPick(roomMember, text){
 	var match = /^\/gifpick\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.gifSearch(searchQuery)
+	return googleSearchService.gifSearch("gif " + searchQuery)
 		.then(function (images) {
 			User.message(roomMember.user, {type:'pick', data:images});
 		});
