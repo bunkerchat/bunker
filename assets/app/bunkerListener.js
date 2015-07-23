@@ -49,6 +49,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 				$rootScope.$broadcast('userUpdated', userData);
 				break;
 			case 'messaged':
+				$rootScope.$broadcast('userMessaged_' + userData.type, userData.data);
 				break;
 		}
 	}

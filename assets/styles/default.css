@@ -604,6 +604,12 @@ img.emoticon {
 	line-height: inherit; /* fa overrides line height, set it back to bootstrap's */
 }
 
+/* image picker */
+.image-search {
+	height: 165px;
+	padding: 5px;
+}
+
 /* status */
 
 .status {

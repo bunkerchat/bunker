@@ -1,0 +1,9 @@
+<div class="modal-header">
+	<h3 class="modal-title">Click one</h3>
+</div>
+<div class="modal-body">
+	<img ng-src="{{image}}"  class="image-search" ng-click="modal.set(image)" ng-repeat="image in modal.images"/>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-warning" ng-click="modal.cancel()">Cancel</button>
+</div>
