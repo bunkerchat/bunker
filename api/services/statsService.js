@@ -36,9 +36,10 @@ function generateStats(roomMember, template) {
 				getActiveDays(roomMember),
 				Message.find({author: roomMember.user.id}).sort('createdAt ASC').limit(1),
 				Message.find({author: roomMember.user.id}).skip(_.random(0, messageCount)).limit(1),
-				getEmoticonCounts(roomMember)
+				getEmoticonCounts(roomMember),
+				getHangmanGuessAccuracy(roomMember.user.id)
 			)
-				.spread(function (template, messageCount, editCount, activeDays, firstMessage, randomMessage, emoticonCounts) {
+				.spread(function (template, messageCount, editCount, activeDays, firstMessage, randomMessage, emoticonCounts, hangmanGuessAccuracy) {
 					firstMessage = firstMessage[0];
 					randomMessage = randomMessage[0];
 
@@ -54,7 +55,8 @@ function generateStats(roomMember, template) {
 						activeDays: activeDays.length,
 						firstMessage: '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')',
 						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
-						randomMessage: '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')'
+						randomMessage: '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')',
+						hangmanGuessAccuracy: hangmanGuessAccuracy + '%'
 					};
 
 					if (activeDays) {
@@ -162,5 +164,20 @@ function getEmoticonCounts(roomMember) {
 					resolve(counts);
 				});
 		});
+	});
+}
+
+function getHangmanGuessAccuracy(userId){
+	return HangmanUserStatistics.findOne({user: userId}).then(function(hangmanUserStatistics) {
+		if (hangmanUserStatistics) {
+			var totalGuesses = hangmanUserStatistics.guessMisses + hangmanUserStatistics.guessHits;
+
+			if (totalGuesses > 0) {
+				if (hangmanUserStatistics.guessHits == 0) { return 0; }
+				return Math.round( (hangmanUserStatistics.guessHits / totalGuesses) * 100 );
+			}
+
+			return 0;
+		}
 	});
 }

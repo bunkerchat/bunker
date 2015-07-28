@@ -7,7 +7,9 @@ module.exports.play = function (roomMember, command) {
 		var guess = match[1];
 
 		if (currentGame && guess) {
-			return makeGuess(roomMember, currentGame, guess);
+			return getHangmanUserStatistics(roomMember.user.id).then(function(hangmanUserStatistics){
+				return makeGuess(roomMember, currentGame, guess, hangmanUserStatistics);
+			});
 		}
 		else if (!currentGame && !guess) {
 			return start(roomMember);
@@ -21,41 +23,58 @@ module.exports.play = function (roomMember, command) {
 	});
 };
 
-function makeGuess(roomMember, game, guess) {
+function getHangmanUserStatistics(userId) {
+	return HangmanUserStatistics.findOne({user: userId}).then(function(hangmanUserStatistics) {
+		if (hangmanUserStatistics) {
+			return hangmanUserStatistics;
+		}
+
+		return HangmanUserStatistics.create({
+			user: userId
+		});
+	});
+}
+
+function makeGuess(roomMember, game, guess, hangmanUserStatistics) {
 	guess = guess.toUpperCase();
 
 	// guessing the word
 	if (guess.length > 1 && guess == game.word) {
 		game.hits.push(guess);
+		hangmanUserStatistics.guessHits++;
 	}
 	// letter guess
 	else if (guess.length == 1 && _.includes(game.word, guess)) {
 		game.hits.push(guess);
+		hangmanUserStatistics.guessHits++;
 	}
 	else {
 		game.misses.push(guess);
+		hangmanUserStatistics.guessMisses++;
 	}
 
 	game.hits = _.unique(game.hits);
 	game.misses = _.unique(game.misses);
 
-	var update = HangmanGame.update({room: roomMember.room}, {
-		hits: game.hits,
-		misses: game.misses
-	});
-
-	var remove = HangmanGame.destroy(game.id);
-
-	// if the game is over, remove it from the database. Otherwise update it
-	var action = checkForEndGame(game, guess) ? remove : update;
-
-	return Promise.join(
-		buildResponse(game, roomMember, guess),
-		action
-	)
-		.spread(function (response, dbGame) {
-			return response;
+	return hangmanUserStatistics.save().then(function(hangmanUserStatistics) {
+		var update = HangmanGame.update({room: roomMember.room}, {
+			hits: game.hits,
+			misses: game.misses
 		});
+
+		var remove = HangmanGame.destroy(game.id);
+
+		// if the game is over, remove it from the database. Otherwise update it
+		var action = checkForEndGame(game, guess) ? remove : update;
+
+		return Promise.join(
+			buildResponse(game, roomMember, guess),
+			action
+		)
+			.spread(function (response, dbGame) {
+				return response;
+			});
+	});
 }
 
 function checkForEndGame(game, guess){
