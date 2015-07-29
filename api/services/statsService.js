@@ -10,16 +10,7 @@ module.exports.getStats = function (roomMember) {
 };
 
 module.exports.getStatsForUser = function (username, roomId) {
-	// find all users with that nick
-	return User.find({nick: username})
-		.then(function (users) {
-			var userIds = users.map(function (user) {
-				return user.id;
-			});
-
-			// get roommember with that nick and roomId
-			return RoomMember.findOne({user: userIds, room: roomId}).populateAll();
-		})
+	return RoomService.getRoomMemberByNickAndRoom(username, roomId)
 		.then(function (roomMember) {
 			if (!roomMember) throw new Error('User not found');
 			return generateStats(roomMember, 'statsForUserTemplate.ejs');

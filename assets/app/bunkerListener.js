@@ -55,7 +55,8 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function handleMembershipEvent(evt) {
-		var membership = _.find(bunkerData.memberships, {id: evt.id});
+		var membership = _(bunkerData.rooms).pluck('$members').flatten().filter({id: evt.id}).value();
+		membership = membership[0];
 		switch (evt.verb) {
 			case 'updated':
 				_.assign(membership, evt.data);

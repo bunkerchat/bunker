@@ -63,11 +63,8 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/gif(?:pick|search)\s+/i.test(text)) {
 		return gifPick(roomMember, text);
 	}
-	else if(/^\/promote\s/i.test(text)) {
-		return changeUserRole(roomMember, text, 'moderator');
-	}
-	else if(/^\/demote\s/i.test(text)) {
-		return changeUserRole(roomMember, text, 'member');
+	else if (/^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.test(text)) {
+		return changeUserRole(roomMember, text);
 	}
 	else {
 		return message(roomMember, text, 'standard');
@@ -172,7 +169,7 @@ function animation(roomMember, text) {
 }
 
 function setUserNick(roomMember, text) {
-	var nickMatches = text.match(/^\/nick\s+(\w[\w\s\-\.]{0,19})/i);
+	var nickMatches = text.match(/^\/nick\s+([\w\s\-\.]{0,19})/i);
 	if (!nickMatches) throw new InvalidInputError('Invalid nick');
 
 	var user = roomMember.user;
@@ -447,27 +444,26 @@ function hangman(roomMember, text) {
 		});
 }
 
-function changeUserRole(roomMember, text, role) {
-
-	if (!(roomMember.role == 'administrator')) {
-		throw new ForbiddenError('Must be an administrator to change to promote');
-	}
-
-	var nickMatches = text.match(/^\/(?:promote|demote)\s+(\w[\w\s\-\.]{0,19})/i);
-	if (!nickMatches) throw new InvalidInputError('Invalid user');
+function changeUserRole(roomMember, text) {
+	if (roomMember.role != 'administrator') throw new ForbiddenError('Must be an administrator to change to promote');
 
 	var user = roomMember.user;
 	var roomId = roomMember.room;
-	var userNick = nickMatches[1];
+
+	var match = /^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.exec(text);
+	var role = match[1] == 'promote' ? 'moderator' : 'member';
+	var userNick = match[2];
 
 	if (user.nick == userNick) throw new InvalidInputError('You cannot promote self');
 
-	return adminService.changeUserRoleInRoom(userNick, roomId, role)
-		.spread( function (roomMember) {
-			if(!roomMember) throw new InvalidInputError('Invalid user');
-
-			var message = user.nick + ' has changed ' + userNick + ' to ' + role;
-			RoomMember.publishUpdate(roomMember.id, {role: roomMember.role});
+	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
+		.then(function (roomMemberToPromote) {
+			if (!roomMemberToPromote) throw new InvalidInputError('Invalid user');
+			return RoomMember.update(roomMemberToPromote.id, {role: role});
+		})
+		.spread(function (roomMemberToPromote) {
+			RoomMember.publishUpdate(roomMemberToPromote.id, {role: role});
+			var message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + role;
 			RoomService.messageRoom(roomId, message);
 		});
 }
