@@ -73,10 +73,15 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 			};
 
 			function keyDown(evt) {
-				if (evt.keyCode == 13) { // enter
+				if (evt.keyCode == 13) {
 					evt.preventDefault();
-					scope.sendMessage();
-					scope.$apply();
+					if(evt.shiftKey) {
+						scope.messageText = scope.messageText + '\n';
+					}
+					else {
+						scope.sendMessage();
+					}
+					scope.$digest();
 				}
 				else if (evt.keyCode == 9) { // tab
 					evt.preventDefault(); // prevent tabbing out of the text input

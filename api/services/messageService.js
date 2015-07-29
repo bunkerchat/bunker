@@ -63,6 +63,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/gif(?:pick|search)\s+/i.test(text)) {
 		return gifPick(roomMember, text);
 	}
+	else if (/^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.test(text)) {
+		return changeUserRole(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -166,7 +169,7 @@ function animation(roomMember, text) {
 }
 
 function setUserNick(roomMember, text) {
-	var nickMatches = text.match(/^\/nick\s+(\w[\w\s\-\.]{0,19})/i);
+	var nickMatches = text.match(/^\/nick\s+([\w\s\-\.]{0,19})/i);
 	if (!nickMatches) throw new InvalidInputError('Invalid nick');
 
 	var user = roomMember.user;
@@ -232,7 +235,7 @@ function setRoomTopic(roomMember, text) {
 
 function setRoomName(roomMember, text) {
 
-	if (roomMember.role == 'member') {
+	if (roomMember.role != 'administrator') {
 		throw new ForbiddenError('Must be an administrator to change room name');
 	}
 
@@ -438,5 +441,38 @@ function hangman(roomMember, text) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'hangman');
 			}
 			return message(roomMember, hangmanResponse.message, 'hangman');
+		});
+}
+
+function changeUserRole(roomMember, text) {
+	if (roomMember.role != 'administrator') throw new ForbiddenError('Must be an administrator to change to promote');
+
+	var newRole;
+	var user = roomMember.user;
+	var roomId = roomMember.room;
+
+	var match = /^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.exec(text);
+	var action = match[1];
+	var userNick = match[2];
+
+	if (user.nick == userNick) throw new InvalidInputError('You cannot promote self');
+
+	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
+		.then(function (roomMemberToPromote) {
+			if (!roomMemberToPromote) throw new InvalidInputError('Invalid user');
+
+			if(action == 'promote'){
+				newRole = roomMemberToPromote.role == 'member' ? 'moderator' : 'administrator';
+			}
+			else { // demote
+				newRole = roomMemberToPromote.role == 'administrator' ? 'moderator' : 'member';
+			}
+
+			return RoomMember.update(roomMemberToPromote.id, {role: newRole});
+		})
+		.spread(function (roomMemberToPromote) {
+			RoomMember.publishUpdate(roomMemberToPromote.id, {role: newRole});
+			var message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
+			RoomService.messageRoom(roomId, message);
 		});
 }

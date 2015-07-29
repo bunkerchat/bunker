@@ -5,7 +5,9 @@ module.exports.jenkinsBestBuy = function (req, res) {
 	var notification = req.body;
 	var build = notification.build;
 
-	if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
+	// new jenkins isn't passing full_url anymore :-(
+	//if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
+	var full_url = "http://minos-ops.na.bestbuy.com:8080/" + build.url;
 
 	// only show completed builds
 	if (build.phase != 'COMPLETED') return res.ok('thanks');
@@ -17,8 +19,8 @@ module.exports.jenkinsBestBuy = function (req, res) {
 
 	var roomId;
 	var emote = build.status == 'FAILURE' ? ' :buildchicken:' : ':unsmith:';
-	var url = build.full_url + "console";
-	var protractorUrl = build.full_url + 'artifact/e2e_screenshots/my-report.html';
+	var url = full_url + "console";
+	var protractorUrl = full_url + 'artifact/e2e_screenshots/my-report.html';
 	var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '", link: ' + url + ', protractorReport: ' + protractorUrl + ' };';
 
 	Room.findOne({name: 'minos'})
