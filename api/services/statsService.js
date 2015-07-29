@@ -158,17 +158,12 @@ function getEmoticonCounts(roomMember) {
 	});
 }
 
-function getHangmanGuessAccuracy(userId){
-	return HangmanUserStatistics.findOne({user: userId}).then(function(hangmanUserStatistics) {
-		if (hangmanUserStatistics) {
-			var totalGuesses = hangmanUserStatistics.guessMisses + hangmanUserStatistics.guessHits;
+function getHangmanGuessAccuracy(userId) {
+	return HangmanUserStatistics.findOne({user: userId}).then(function (hangmanUserStatistics) {
+		if (!hangmanUserStatistics) return 0;
 
-			if (totalGuesses > 0) {
-				if (hangmanUserStatistics.guessHits == 0) { return 0; }
-				return Math.round( (hangmanUserStatistics.guessHits / totalGuesses) * 100 );
-			}
-
-			return 0;
-		}
+		var totalGuesses = hangmanUserStatistics.guessMisses + hangmanUserStatistics.guessHits;
+		if (!totalGuesses || !hangmanUserStatistics.guessHits) return 0;
+		return Math.round((hangmanUserStatistics.guessHits / totalGuesses) * 100);
 	});
 }

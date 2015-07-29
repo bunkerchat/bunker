@@ -56,25 +56,24 @@ function makeGuess(roomMember, game, guess, hangmanUserStatistics) {
 	game.hits = _.unique(game.hits);
 	game.misses = _.unique(game.misses);
 
-	return hangmanUserStatistics.save().then(function(hangmanUserStatistics) {
-		var update = HangmanGame.update({room: roomMember.room}, {
-			hits: game.hits,
-			misses: game.misses
-		});
-
-		var remove = HangmanGame.destroy(game.id);
-
-		// if the game is over, remove it from the database. Otherwise update it
-		var action = checkForEndGame(game, guess) ? remove : update;
-
-		return Promise.join(
-			buildResponse(game, roomMember, guess),
-			action
-		)
-			.spread(function (response, dbGame) {
-				return response;
-			});
+	var update = HangmanGame.update({room: roomMember.room}, {
+		hits: game.hits,
+		misses: game.misses
 	});
+
+	var remove = HangmanGame.destroy(game.id);
+
+	// if the game is over, remove it from the database. Otherwise update it
+	var action = checkForEndGame(game, guess) ? remove : update;
+
+	return Promise.join(
+		buildResponse(game, roomMember, guess),
+		action,
+		hangmanUserStatistics.save()
+	)
+		.spread(function (response, dbGame, hangmanUserStatistics) {
+			return response;
+		});
 }
 
 function checkForEndGame(game, guess){
