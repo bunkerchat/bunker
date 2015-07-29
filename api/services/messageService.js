@@ -63,6 +63,12 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/gif(?:pick|search)\s+/i.test(text)) {
 		return gifPick(roomMember, text);
 	}
+	else if(/^\/promote\s/i.test(text)) {
+		return changeUserRole(roomMember, text, 'moderator');
+	}
+	else if(/^\/demote\s/i.test(text)) {
+		return changeUserRole(roomMember, text, 'member');
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -438,5 +444,30 @@ function hangman(roomMember, text) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'hangman');
 			}
 			return message(roomMember, hangmanResponse.message, 'hangman');
+		});
+}
+
+function changeUserRole(roomMember, text, role) {
+
+	if (!(roomMember.role == 'administrator')) {
+		throw new ForbiddenError('Must be an administrator to change to promote');
+	}
+
+	var nickMatches = text.match(/^\/(?:promote|demote)\s+(\w[\w\s\-\.]{0,19})/i);
+	if (!nickMatches) throw new InvalidInputError('Invalid user');
+
+	var user = roomMember.user;
+	var roomId = roomMember.room;
+	var userNick = nickMatches[1];
+
+	if (user.nick == userNick) throw new InvalidInputError('You cannot promote self');
+
+	return adminService.changeUserRoleInRoom(userNick, roomId, role)
+		.spread( function (roomMember) {
+			if(!roomMember) throw new InvalidInputError('Invalid user');
+
+			var message = user.nick + ' has changed ' + userNick + ' to ' + role;
+			RoomMember.publishUpdate(roomMember.id, {role: roomMember.role});
+			RoomService.messageRoom(roomId, message);
 		});
 }
