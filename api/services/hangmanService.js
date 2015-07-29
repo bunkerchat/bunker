@@ -7,7 +7,7 @@ module.exports.play = function (roomMember, command) {
 		var guess = match[1];
 
 		if (currentGame && guess) {
-			return getHangmanUserStatistics(roomMember.user.id).then(function(hangmanUserStatistics){
+			return getHangmanUserStatistics(roomMember.user.id).then(function (hangmanUserStatistics) {
 				return makeGuess(roomMember, currentGame, guess, hangmanUserStatistics);
 			});
 		}
@@ -24,10 +24,8 @@ module.exports.play = function (roomMember, command) {
 };
 
 function getHangmanUserStatistics(userId) {
-	return HangmanUserStatistics.findOne({user: userId}).then(function(hangmanUserStatistics) {
-		if (hangmanUserStatistics) {
-			return hangmanUserStatistics;
-		}
+	return HangmanUserStatistics.findOne({user: userId}).then(function (hangmanUserStatistics) {
+		if (hangmanUserStatistics) return hangmanUserStatistics;
 
 		return HangmanUserStatistics.create({
 			user: userId
@@ -76,16 +74,16 @@ function makeGuess(roomMember, game, guess, hangmanUserStatistics) {
 		});
 }
 
-function checkForEndGame(game, guess){
+function checkForEndGame(game, guess) {
 	var maxCountReached = game.misses.length >= 6;
 	return (maxCountReached || allLettersMatched(game) || wordGuessed(game, guess));
 }
 
-function allLettersMatched(game){
+function allLettersMatched(game) {
 	return game.hits.length >= _.unique(game.word).length
 }
 
-function wordGuessed(game, guess){
+function wordGuessed(game, guess) {
 	return game.word == guess;
 }
 

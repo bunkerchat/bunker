@@ -28,9 +28,9 @@ function generateStats(roomMember, template) {
 				Message.find({author: roomMember.user.id}).sort('createdAt ASC').limit(1),
 				Message.find({author: roomMember.user.id}).skip(_.random(0, messageCount)).limit(1),
 				getEmoticonCounts(roomMember),
-				getHangmanGuessAccuracy(roomMember.user.id)
+				getHangmanStats(roomMember.user.id)
 			)
-				.spread(function (template, messageCount, editCount, activeDays, firstMessage, randomMessage, emoticonCounts, hangmanGuessAccuracy) {
+				.spread(function (template, messageCount, editCount, activeDays, firstMessage, randomMessage, emoticonCounts, hangmanStats) {
 					firstMessage = firstMessage[0];
 					randomMessage = randomMessage[0];
 
@@ -47,7 +47,8 @@ function generateStats(roomMember, template) {
 						firstMessage: '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')',
 						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
 						randomMessage: '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')',
-						hangmanGuessAccuracy: hangmanGuessAccuracy + '%'
+						hangmanGuessCount: hangmanStats.count,
+						hangmanGuessAccuracy: hangmanStats.guessAccuracy + '%'
 					};
 
 					if (activeDays) {
@@ -158,12 +159,17 @@ function getEmoticonCounts(roomMember) {
 	});
 }
 
-function getHangmanGuessAccuracy(userId) {
+function getHangmanStats(userId) {
 	return HangmanUserStatistics.findOne({user: userId}).then(function (hangmanUserStatistics) {
-		if (!hangmanUserStatistics) return 0;
+		var stats = {count: 0, guessAccuracy: 0};
+		if (!hangmanUserStatistics) return stats;
 
-		var totalGuesses = hangmanUserStatistics.guessMisses + hangmanUserStatistics.guessHits;
-		if (!totalGuesses || !hangmanUserStatistics.guessHits) return 0;
-		return Math.round((hangmanUserStatistics.guessHits / totalGuesses) * 100);
+		stats.count = hangmanUserStatistics.guessMisses + hangmanUserStatistics.guessHits;
+
+		if (!stats.count || !hangmanUserStatistics.guessHits) return stats;
+
+		stats.guessAccuracy = Math.round((hangmanUserStatistics.guessHits / stats.count) * 100);
+
+		return stats;
 	});
 }
