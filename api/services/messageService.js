@@ -235,7 +235,7 @@ function setRoomTopic(roomMember, text) {
 
 function setRoomName(roomMember, text) {
 
-	if (roomMember.role == 'member') {
+	if (roomMember.role != 'administrator') {
 		throw new ForbiddenError('Must be an administrator to change room name');
 	}
 
