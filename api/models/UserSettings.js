@@ -19,11 +19,27 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: true
 		},
+		showEmoticons: {
+			type: 'boolean',
+			defaultsTo: true
+		},
+		showDebugging: {
+			type: 'boolean',
+			defaultsTo: false
+		},
 		minimalView: {
 			type: 'boolean',
 			defaultsTo: false
 		},
 		sortEmoticonsByPopularity: {
+			type: 'boolean',
+			defaultsTo: false
+		},
+		playSoundOnMention: {
+			type:'boolean',
+			defaultsTo:false
+		},
+		desktopMentionNotifications:{
 			type: 'boolean',
 			defaultsTo: false
 		},

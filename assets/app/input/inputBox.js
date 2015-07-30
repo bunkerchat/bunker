@@ -1,6 +1,6 @@
-app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emoticons, rooms) {
+app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerData) {
 
-	var messageEditWindowSeconds = 30;
+	var messageEditWindowSeconds = 60;
 
 	var searchStates = {
 		NONE: 'none',
@@ -34,32 +34,35 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 			scope.sendMessage = function () {
 				if (!scope.messageText) return;
 
-				var newMessage = new bunkerApi.message({
+				var newMessage = {
 					room: $rootScope.roomId,
 					text: scope.messageText
-				});
+				};
 
 				var chosenMessage = scope.selectedMessageIndex > -1 ? scope.submittedMessages[scope.selectedMessageIndex] : {createdAt: null};
 				var historicMessage = {text: scope.messageText, createdAt: Date.now(), history: ''};
 
-				if (!scope.editMode
-					|| previousText == scope.messageText
-					|| chosenMessage.edited
-					|| !datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
-					newMessage.$save(function (result) {
-						// TODO use the result of this? currently this object is just forgotten about
-						historicMessage.id = result.id;
-					});
+				if(scope.messageText.replace(/\s/g, '').length == 0) {
+					// Nothing to do! (but still reset things)
+				}
+				else if (!scope.editMode) {
 
-					// Save message for up/down keys to retrieve
-					scope.submittedMessages.unshift(historicMessage);
-				} else {
+					bunkerData.createMessage(newMessage.room, newMessage.text)
+						.then(function (result) {
+							if (result && result.author) {
+								historicMessage.id = result.id;
+								scope.submittedMessages.unshift(historicMessage); // Save message for up/down keys to retrieve
+							}
+						});
+				}
+				else {
 					scope.submittedMessages[scope.selectedMessageIndex].text = scope.messageText;
 					newMessage.id = scope.submittedMessages[scope.selectedMessageIndex].id;
 					newMessage.edited = true;
 					chosenMessage.edited = true;
-					newMessage.$save();
+					bunkerData.editMessage(newMessage);
 				}
+
 				// Reset all the things
 				scope.selectedMessageIndex = -1;
 				scope.messageText = '';
@@ -70,10 +73,15 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 			};
 
 			function keyDown(evt) {
-				if (evt.keyCode == 13) { // enter
+				if (evt.keyCode == 13) {
 					evt.preventDefault();
-					scope.sendMessage();
-					scope.$apply();
+					if(evt.shiftKey) {
+						scope.messageText = scope.messageText + '\n';
+					}
+					else {
+						scope.sendMessage();
+					}
+					scope.$digest();
 				}
 				else if (evt.keyCode == 9) { // tab
 					evt.preventDefault(); // prevent tabbing out of the text input
@@ -102,10 +110,10 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 						scope.$digest();
 					}
 					else if (searchState === searchStates.NICK) {
-						var currentRoom = rooms.get($rootScope.roomId);
-						var members = _.pluck(currentRoom.$members, 'user');
-						var matchingNames = _.filter(currentRoom && members, function (item) {
-							return item.connected && item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
+						var currentRoom = bunkerData.getRoom($rootScope.roomId);
+						var users = _.pluck(currentRoom.$members, 'user');
+						var matchingNames = _.filter(users, function (item) {
+							return item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
 						});
 
 						if (matchingNames.length == 0) return;
@@ -142,15 +150,11 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 					previousText = chosenMessage.text;
 
 					scope.messageText = chosenMessage.text;
-
-					if (datesWithinSeconds(chosenMessage.createdAt, Date.now(), messageEditWindowSeconds)) {
-						scope.editMode = true;
-					} else {
-						scope.editMode = false;
-					}
+					scope.editMode = true;
 
 					scope.$digest();
-				} else if (evt.keyCode == 27) { // 'escape'
+				}
+				else if (evt.keyCode == 27) { // 'escape'
 					// Reset all the things
 					scope.selectedMessageIndex = -1;
 					scope.messageText = '';
@@ -159,7 +163,8 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 					emoticonSearch = '';
 					emoticonSearchIndex = -1;
 					scope.$digest();
-				} else if (evt.keyCode != 9 && evt.keyCode != 16) {
+				}
+				else if (evt.keyCode != 9 && evt.keyCode != 16) {
 					if (/:\w+$/.test(scope.messageText)) {
 						searchState = searchStates.EMOTE;
 						// if an emoticon is at the end of the message, start the search
@@ -177,13 +182,10 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerApi, emotico
 				}
 			}
 
-			function datesWithinSeconds(date1, date2, seconds) {
-				if (!date1 || !date2) return false;
-				var elapsed = Math.abs(date1 - date2) / 1000;
+			function datesWithinSeconds(date1, seconds) {
+				var elapsed = Math.abs(date1 - Date.now()) / 1000;
 				return elapsed < seconds;
 			}
-
-
 		}
 	};
 });

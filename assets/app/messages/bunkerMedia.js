@@ -1,4 +1,4 @@
-app.directive('bunkerMedia', function (user) {
+app.directive('bunkerMedia', function (bunkerData) {
 	'use strict';
 
 	return {
@@ -10,7 +10,7 @@ app.directive('bunkerMedia', function (user) {
 		},
 		link: function (scope) {
 			if (!("$visible" in scope.message)) {
-				scope.message.$visible = user.settings.showImages;
+				scope.message.$visible = bunkerData.userSettings.showImages;
 			}
 		}
 	};

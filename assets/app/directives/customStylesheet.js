@@ -1,21 +1,21 @@
-app.directive('customStylesheet', function (user, $window, $timeout) {
+app.directive('customStylesheet', function ($rootScope, bunkerData, $window, $timeout) {
 	return {
-		link: function (scope) {
-			scope.stylesheet = 'default';
-			scope.$watch(function () {
-				return user.settings;
-			}, function () {
-				if (!user.settings.$resolved) return;
-				var originalStylesheet = scope.stylesheet;
-				scope.stylesheet = user.settings.minimalView ? 'minimal' : 'default';
+		link: function ($scope) {
 
-				// If we're changing stylesheets, trigger a window resize
-				if (originalStylesheet != scope.stylesheet) {
+			function setStylesheet() {
+				var oldValue = $scope.loadMinimal;
+				$scope.loadMinimal = bunkerData.userSettings.minimalView;
+
+				if (oldValue != $scope.loadMinimal) {
+					// if we change stylesheets, trigger a resize
 					$timeout(function () {
 						angular.element($window).resize();
 					}, 500);
 				}
-			}, true);
+			}
+
+			bunkerData.$promise.then(setStylesheet);
+			$rootScope.$on('userSettingsUpdated', setStylesheet);
 		}
 	};
 });

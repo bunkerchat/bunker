@@ -2,6 +2,13 @@ app.directive('fill', function ($window, $timeout) {
 	return {
 		restrict: 'AC',
 		link: function (scope, elem) {
+
+			function resize(time) {
+				$timeout(function () {
+					windowEl.resize();
+				}, time || 0);
+			}
+
 			var windowEl = angular.element($window);
 			var el = angular.element(elem);
 			var marginBottom = 0;
@@ -11,9 +18,7 @@ app.directive('fill', function ($window, $timeout) {
 				marginBottom = angular.element('.message-input').height();
 
 				if ($window.innerWidth <= 480) {
-					el.css({
-						height: 'auto'
-					});
+					el.removeAttr('style');
 				}
 				else {
 					var fillHeight = Math.ceil($window.innerHeight - el.offset().top - marginBottom - 1);
@@ -24,18 +29,8 @@ app.directive('fill', function ($window, $timeout) {
 				}
 			});
 
-			// Triggers
-			// Initial
-			$timeout(function () {
-				windowEl.resize();
-			}, 500);
-
-			// Room updates
-			scope.$on('roomIdChanged', function (evt, newId, oldId) {
-				$timeout(function () {
-					windowEl.resize();
-				});
-			});
+			scope.$on('roomIdChanged', resize);
+			resize(500);
 		}
 	};
 });

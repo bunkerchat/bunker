@@ -44,7 +44,6 @@ config/local.js
 
 
 
-
 ################################################
 # Dependencies
 #
@@ -80,8 +79,8 @@ assets/vendor
 ################################################
 .tmp
 dump.rdb
-
-
+assets/bundled
+views/index-prod.ejs
 
 
 

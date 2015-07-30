@@ -1,30 +1,26 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-10 col-xs-12 no-gutter">
-			<h2 ng-if="!room.rawMessages.$resolved">Loading...</h2>
+			<h2 ng-if="!room.ready">Loading...</h2>
+			<h2 ng-if="room.ready && room.rawMessages.length == 0">No messages</h2>
 
-			<h2 ng-if="room.rawMessages.$resolved && room.rawMessages.length == 0">No messages</h2>
-
-			<ol class="list-unstyled message-list" fill>
+			<ol class="list-unstyled message-list">
 				<li class="message-container" id="{{::message.id}}" ng-switch="::!!message.author"
-						ng-repeat="message in room.messages">
-					<div class="message" ng-class="::{ local: message.author.id == room.userService.current.id }">
+						ng-repeat="message in room.messages track by message.id">
+					<div class="message" ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
 
 						<!-- standard message -->
-						<div ng-switch-when="true"
-								 message-mention="{{::room.userService.current.nick}}"
-								 message-mention-text="{{::message.text}}">
+						<div ng-switch-when="true">
 							<div class="message-author">
 								<span ng-if="::message.$firstInSeries">
 									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
-									<span status="room.memberLookup[message.author.id].user"></span>
 								</span>
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body"
 									 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
-								<span bunker-message="message"></span>
+								<span bunker-message="::message"></span>
 								<span class="message-info text-muted">
 									<i class="fa fa-pencil" ng-if="message.edited"></i>
 									<span ng-if="::message.$firstInSeries">
@@ -36,27 +32,30 @@
 								</span>
 							</div>
 						</div>
-					</div>
 
-					<!-- system message -->
-					<div class="new-message-body" ng-switch-default>
-						<div class="alert alert-message text-muted">
-							<span bunker-message="message"></span>
+						<!-- system message -->
+						<div ng-switch-default>
+							<div class="new-message-body">
+								<div class="system-message">
+									<span bunker-message="::message"></span>
+								</div>
+								<span class="message-info text-muted">
+									<small>
+										{{::message.createdAt | date:'h:mm:ss a'}}
+									</small>
+								</span>
+							</div>
 						</div>
-						<span class="message-info text-muted">
-							<small>
-								{{::message.createdAt | date:'h:mm:ss a'}}
-							</small>
-						</span>
+
 					</div>
 				</li>
 			</ol>
 		</div>
 
-		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
-			<ul class="list-group">
+		<div class="col-md-2 hidden-sm hidden-xs no-gutter right-pane">
+			<ul class="list-group member-list">
 				<li class="list-group-item"
-						ng-repeat="user in room.members | orderBy:'nick'">
+						ng-repeat="user in room.members | orderBy:'nick' track by user.id">
 					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
 					{{::user.nick}}
 				</li>
@@ -73,7 +72,7 @@
 					</span>
 				</p>
 
-				<a ui-sref="room({roomId: room.roomId})" class="btn btn-link">
+				<a ui-sref="chat.room({roomId: room.roomId})" class="btn btn-link">
 					Leave History
 				</a>
 			</div>

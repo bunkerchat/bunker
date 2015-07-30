@@ -1,95 +1,139 @@
-<div class="container-fluid" ng-show="room.current.$resolved && $root.roomId == room.roomId && !room.$stateParams.date">
+<div class="container-fluid">
 	<div class="row">
 
 		<div class="col-md-10 col-xs-12 no-gutter">
-			<div class="topic" ng-show="room.current.topic">
-				<span bunker-message="room.current" media="false"></span>
+			<div class="topic" ng-show="current.topic">
+				<span bunker-message="current" media="false"></span>
 			</div>
 
 			<!-- message log -->
-			<div>
 
-				<ol class="list-unstyled message-list"
-						fill
-						message-log-scroll="{{room.current.$messages[room.current.$messages.length - 1].id}}"
-						on-scroll-top="room.loadPreviousMessages()">
-					<li class="message-container" ng-switch="::!!message.author" ng-repeat="message in room.current.$messages"
-							id="{{::message.id}}">
-						<div class="message" ng-class="::{ local: message.author.id == room.userService.current.id }">
+			<ol class="list-unstyled message-list" ng-class="{'has-topic': current.topic}"
+				message-log-scroll
+				room-id="{{::current.id}}"
+				on-scroll-top="loadPreviousMessages()">
 
-							<!-- standard message -->
-							<div ng-switch-when="true"
-									 message-mention="{{::room.userService.current.nick}}"
-									 message-mention-text="{{::message.text}}">
-								<div class="message-author">
+				<li id="{{::message.id}}" class="message-container"
+					ng-switch="::!!message.author"
+					ng-repeat="message in current.$messages track by message.$idAndEdited">
+
+					<div class="message message-type-{{::message.type || 'none'}}"
+						 ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
+
+						<!-- standard message -->
+						<div ng-switch-when="true">
+							<div class="message-author">
 								<span ng-if="::message.$firstInSeries">
-									<img gravatar-src-once="::message.author.email | lowercase" gravatar-size="20"/>
+									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
-									<span status="room.memberLookup[message.author.id].user"></span>
-								</span>
-								</div>
-								<div class="message-caret" ng-if="::message.$firstInSeries"></div>
-								<div class="message-body"
-										 ng-class="::{ 'new-message-body': message.$firstInSeries, 'edited': message.edited }">
-									<span bunker-message="message"></span>
-								<span class="message-info text-muted">
-									<i class="fa fa-pencil" ng-if="message.edited"></i>
-									<span ng-if="::message.$firstInSeries">
-										<a ui-sref="roomHistory({roomId: room.current.id, date: message.createdAt, message: message.id})"
-											 class="text-muted">
-											<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}"></small>
-										</a>
+									<span class="status"
+										  ng-class="memberLookup[message.author.id].user.$present ? 'here' : 'away'"
+										  ng-if="memberLookup[message.author.id].user.connected">
 									</span>
 								</span>
-								</div>
+							</div>
+							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
+							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
+								<span bunker-message="::message"></span>
+								<span class="message-info text-muted">
+									<span edit-icon="::message" ng-if="::message.edited"></span>
+									<span class="text-muted" ng-if="::message.$firstInSeries">
+										<small am-time-ago="message.createdAt"
+											   title="{{::message.createdAt | date:'medium'}}">
+										</small>
+									</span>
+								</span>
 							</div>
 						</div>
 
 						<!-- system message -->
-						<div class="new-message-body" ng-switch-default>
-							<div class="alert alert-message text-muted">
-								<span bunker-message="message"></span>
+						<div ng-switch-default>
+							<div class="new-message-body">
+								<div class="system-message">
+									<span bunker-message="::message"></span>
+								</div>
+								<span class="message-info text-muted">
+									<small am-time-ago="message.createdAt"
+										   title="{{::message.createdAt | date:'medium'}}">
+									</small>
+								</span>
 							</div>
-						<span class="message-info text-muted">
-							<small am-time-ago="message.createdAt" title="{{::message.createdAt | date:'medium'}}">
-							</small>
-						</span>
 						</div>
-					</li>
-				</ol>
-			</div>
+
+					</div>
+				</li>
+			</ol>
 		</div>
 
 		<!-- right pane -->
-		<div class="col-md-2 hidden-sm hidden-xs no-gutter member-list">
+		<div class="col-md-2 hidden-sm hidden-xs no-gutter right-pane" ng-if="current.$selected">
 
 			<!-- member list -->
-			<ul class="list-group">
-				<li class="list-group-item" ng-repeat="member in room.memberLookup | membersOrderBy"
-						ng-if="member.user.connected">
-					<span ng-switch="member.user.typingIn == $root.roomId" class="user-icon">
-						<span ng-switch-when="true">
-							<i class="fa fa-ellipsis-h"></i>
-						</span>
-						<span ng-switch-when="false">
+			<ul class="list-group member-list" ng-if="current.$selected">
+				<li class="list-group-item"
+					ng-switch="member.user.connected"
+					ng-repeat="member in memberList track by member.id">
+
+					<span class="offline" ng-switch-when="false">
+						<!-- offline member, much less watches -->
+						<span class="user-icon">
 							<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
 						</span>
+						<a ng-click="mentionUser(member.user.nick)">{{::member.user.nick}}</a>
+						<div class="pull-right">
+							<span ng-show="::member.role != 'member'" ng-switch="::member.role" title="{{::member.role}}">
+								<i class="fa fa-gavel" ng-switch-when="administrator"></i>
+								<i class="fa fa-comments" ng-switch-when="moderator"></i>
+							</span>
+						</div>
 					</span>
 
-					<a ng-click="room.mentionUser(member.user.nick)">{{member.user.nick}}</a>
-
-					<div class="pull-right">
-						<span ng-show="member.role != 'member'" ng-switch="member.role" title="{{member.role}}">
-							<i class="fa fa-gavel" ng-switch-when="administrator"></i>
-							<i class="fa fa-comments" ng-switch-when="moderator"></i>
+					<span ng-switch-default>
+						<!-- default, online member -->
+						<span ng-switch="member.user.busy === true" class="user-icon">
+							<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
+								<span ng-switch-when="false">
+									<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
+								</span>
+								<span ng-switch-default>
+									<i class="fa fa-ellipsis-h"></i>
+								</span>
+							</span>
+							<span ng-switch-default title="Away: {{member.user.busyMessage}}">
+								<i class="fa fa-clock-o"></i>
+							</span>
 						</span>
-						<span status="member.user"></span>
-					</div>
+
+						<a ng-click="mentionUser(member.user.nick)">{{member.user.nick}}</a>
+
+						<div class="pull-right">
+							<span ng-show="member.role != 'member'" ng-switch="member.role" title="{{member.role}}">
+								<i class="fa fa-gavel" ng-switch-when="administrator"></i>
+								<i class="fa fa-comments" ng-switch-when="moderator"></i>
+							</span>
+							<span class="status" ng-class="member.user.$present ? 'here' : 'away'">
+							</span>
+						</div>
+					</span>
 				</li>
 			</ul>
 
 			<div class="room-options">
-				<a ui-sref="roomHistory({roomId: $root.roomId, date: room.now()})" ng-hide="$stateParams.date" class="btn btn-link">
+
+				<div class="debugging" ng-if="settings.showDebugging">
+					<dl class="dl-horizontal" angular-stats watch-count=".watch-count" digest-length=".digest-length"
+						 on-watch-count-update="onWatchCountUpdate(watchCount)"
+						 on-digest-length-update="onDigestLengthUpdate(digestLength)">
+
+						<dt>Watches</dt>
+						<dd class="watch-count"></dd>
+						<dt>Digest length</dt>
+						<dd class="digest-length"></dd>
+
+					</dl>
+				</div>
+
+				<a class="btn btn-link" ng-click="openHistory()">
 					History
 				</a>
 			</div>

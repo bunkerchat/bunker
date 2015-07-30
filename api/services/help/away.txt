@@ -1,0 +1,16 @@
+NAME
+	/away - set or clear away status
+
+SYNOPSIS
+	/away [string]
+
+EXAMPLE
+	/away
+	/away Out to lunch
+
+ALIASES
+	/busy
+	/afk
+
+REMARKS
+	Away status is automatically unset upon submitting a message.

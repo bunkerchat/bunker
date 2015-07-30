@@ -138,9 +138,11 @@ module.exports.sockets = {
 					// Allows time for reconnection
 					userService.pendingTasks[user.id] = setTimeout(function () {
 						User.publishUpdate(user.id, user);
-						if (!user.connected) {
-							RoomService.messageRoomsWithUser(user.id, user.nick + ' has gone offline');
-						}
+						//if (!user.connected) {
+						//	RoomService.messageRoomsWithUser({
+						//		userId: user.id,
+						//		systemMessage: user.nick + ' has gone offline'});
+						//}
 						userService.pendingTasks[user.id] = null; // clear
 
 					}, userService.connectionUpdateWaitSeconds * 1000);

@@ -10,6 +10,7 @@
  */
 
 var moment = require('moment');
+var Promise = require('bluebird');
 var express = require('../node_modules/sails/node_modules/express'),
 	passport = require('passport'),
 	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
@@ -27,20 +28,7 @@ module.exports.http = {
 module.exports.bootstrap = function (cb) {
 
 	// Clear user socket data
-	User.update({}, {sockets: [], connected: false, typingIn: null}).exec(function (error) {
-	});
-
-	// show notifcations migration
-	UserSettings.find().where().exec(function (error, settings) {
-		var nullSettings = _.filter(settings, function (setting) {
-			return typeof setting.showNotifications == 'undefined';
-		})
-		async.each(nullSettings, function (setting, cb) {
-			setting.showNotifications = true;
-			setting.save(cb);
-		});
-	});
-
+	Promise.resolve(User.update({}, {sockets: [], connected: false, typingIn: null}));
 
 	passport.serializeUser(function (user, done) {
 		done(null, user.id);

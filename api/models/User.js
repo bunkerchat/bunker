@@ -31,6 +31,13 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: true
 		},
+		busy: {
+			type: 'boolean',
+			defaultsTo: false
+		},
+		busyMessage: {
+			type: 'string'
+		},
 		typingIn: {
 			type: 'string',
 			defaultsTo: null

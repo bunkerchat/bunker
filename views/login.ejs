@@ -4,28 +4,22 @@
 	<title>Bunker Login</title>
 	<link rel="stylesheet" href="/assets/vendor/bootstrap/dist/css/bootstrap.css"/>
 	<link rel="stylesheet" href="/assets/vendor/bootswatch/sandstone/bootstrap.css"/>
+	<link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.css"/>
 	<link rel="stylesheet" href="/assets/styles/default.css"/>
 </head>
 <body>
 <div class="container">
-	<div class="row">
-		<form class="col-xs-12 col-sm-6 col-md-3 col-center" role="form" action="/login" method="post">
-			<fieldset>
-				<div class="form-group">
-					<label for="username">Username:</label>
-					<input type="text" class="form-control" name="username" id="username"/>
-				</div>
-				<div class="form-group">
-					<label for="password">Password:</label>
-					<input type="password" class="form-control" name="password" id="password"/>
-				</div>
-				<div class="form-group pull-right">
-					<button type="submit" class="btn btn-primary">Log In</button>
-					<a href="/auth/google" class="btn btn-info">Google</a>
-				</div>
-			</fieldset>
-		</form>
+	<h1>Bunker</h1>
+
+	<div class="well">
+		<h3>Login with:</h3>
+		<p>
+			<a href="/auth/google" class="btn btn-info btn-lg">
+				<i class="fa fa-google"></i> Google
+			</a>
+		</p>
 	</div>
+
 </div>
 </body>
 </html>

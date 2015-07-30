@@ -3,6 +3,10 @@
 </div>
 <div class="modal-body">
 
+	<p>You can get detailed help by typing <code>/help</code> in the chat message box. This will invoke
+		some private help messages that only you will see. Otherwise, if you prefer this pretty help pop-up,
+		a quick summary of commands is below:</p>
+
 	<h3>Commands</h3>
 	<table class="table table-condensed">
 		<thead>
@@ -28,10 +32,40 @@
 			<td>Roll a die.</td>
 			<td><code>/roll 20</code></td>
 		</tr>
+		<tr>
+			<td><code>/magic8ball [optional question]</code></td>
+			<td>The magic 8 ball will return 1 of 20 possible answers</td>
+			<td><code>/magic8ball Will it rain today?</code></td>
+		</tr>
+		<tr>
+			<td><code>/hangman [letter guess] | /h [letter guess]</code></td>
+			<td>Play a game of hangman</td>
+			<td><code>/hangman e</code></td>
+		</tr>
+		<tr>
+			<td><code>/image [search query]</code></td>
+			<td>Search google for an image and you pick which image you want</td>
+			<td><code>/imagepick watermellon</code></td>
+		</tr>
+		<tr>
+			<td><code>/imageLucky [search query]</code></td>
+			<td>Search google for an image and post it immediately</td>
+			<td><code>/image watermellon</code></td>
+		</tr>
+		<tr>
+			<td><code>/gif [search query]</code></td>
+			<td>Search google for an animated gif and you pick which image you want</td>
+			<td><code>/gif noooooooo</code></td>
+		</tr>
+		<tr>
+			<td><code>/gifLucky [search query]</code></td>
+			<td>Search google for an animated gif and post it immediately</td>
+			<td><code>/gif noooooooo</code></td>
+		</tr>
 		</tbody>
 	</table>
 
-	<h3>Admin Commands</h3>
+	<h3>Mod Commands</h3>
 	<table class="table table-condensed">
 		<thead>
 		<tr>
@@ -49,6 +83,90 @@
 		</tbody>
 	</table>
 
+	<h3>Admin Commands</h3>
+	<table class="table table-condensed">
+		<thead>
+		<tr>
+			<th>Command</th>
+			<th>Description</th>
+			<th>Example</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><code>/room name [new name]</code></td>
+			<td>Change the room name.</td>
+			<td><code>/room name Cool Corner</code></td>
+		</tr>
+		<tr>
+			<td><code>/promote [username]</code></td>
+			<td>Change users role to Moderator/Administrator</td>
+			<td><code>/promote Aaron</code></td>
+		</tr>
+		<tr>
+			<td><code>/demote [username]</code></td>
+			<td>Change users role to Member</td>
+			<td><code>/demote Aaron</code></td>
+		</tr>
+		</tbody>
+	</table>
+
+	<h3>Images</h3>
+
+	<p>Want to upload an image to a chat room? Just drag-n-drop from your desktop, or copy image data from your
+		desktop and paste into the chat message input box.</p>
+
+	<h3>Gravatar</h3>
+
+	<p>Want a custom avatar icon next to your name in the chat room members list? Create a gravatar at
+		gravatar.com associated with the same email address you logged in with.</p>
+
+	<h3>Text Formatting</h3>
+	<table class="table table-condensed">
+		<thead>
+		<tr>
+			<th>Format</th>
+			<th>Character</th>
+			<th>Description</th>
+			<th>Example</th>
+			<th>Result</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td>Bold</td>
+			<td>*</td>
+			<td>Create text with bold emphasis.</td>
+			<td><code>my *cat* eats fish</code></td>
+			<td>my <strong>cat</strong> eats fish</td>
+		</tr>
+		<tr>
+			<td>Italics</td>
+			<td>_</td>
+			<td>Create text with italic emphasis.</td>
+			<td><code>my _cat_ eats fish</code></td>
+			<td>my <em>cat</em> eats fish</td>
+		</tr>
+		<tr>
+			<td>Spoilers</td>
+			<td>|</td>
+			<td>Hide text, as to not reveal too much.</td>
+			<td><code>|my cat eats fish|</code></td>
+			<td><mark>my cat eats fish</mark></td>
+		</tr>
+		<tr>
+			<td>Strikethrough</td>
+			<td>~</td>
+			<td>Create text with strikethrough styling.</td>
+			<td><code>my ~cat~ eats fish</code></td>
+			<td>my <span style="text-decoration: line-through">cat</span> eats fish</td>
+		</tr>
+		</tbody>
+	</table>
+
+	<h3>Pasting Code</h3>
+	<p>If you want to paste a code snippet, prepend your code block with the text /code. For example</p>
+	<code>/code &#9;&#9;function createQuotedBlock(text) {&#10;&#9;&#9;&#9;&#9;// Scan for overtabs</code>
 </div>
 <div class="modal-footer">
 	<button class="btn btn-primary" ng-click="ok()">OK</button>

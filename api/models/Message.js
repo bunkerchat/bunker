@@ -7,6 +7,24 @@ module.exports = {
 		author: {
 			model: 'User'
 		},
+		type: {
+			type: 'string',
+			enum: [
+				'standard',
+				'emote',
+				'room',
+				'global',
+				'help',
+				'roll',
+				'8ball',
+				'animation',
+				'buildNotification',
+				'hangman',
+				'code',
+				'stats'
+			],
+			defaultsTo: 'standard'
+		},
 		text: {
 			type: 'string',
 			required: true,
@@ -14,7 +32,6 @@ module.exports = {
 		},
 		edited: {
 			type: 'boolean',
-			required: false,
 			defaultsTo: false
 		}
 	}

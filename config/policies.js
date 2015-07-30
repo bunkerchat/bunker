@@ -39,9 +39,12 @@ module.exports.policies = {
 		'logout': true
 	},
 	UserController: {
+		'init': 'isLoggedIn',
 		'findOne': 'isLoggedIn',
-		'activity': ['isLoggedIn', 'isCurrentUser'],
-		'connect': ['isLoggedIn', 'isCurrentUser'],
+		'activity': 'isLoggedIn',
+		'connect': 'isLoggedIn',
+		'markInboxRead': 'isLoggedIn',
+		'clearInbox': 'isLoggedIn',
 		'update': ['isLoggedIn', 'isCurrentUser']
 	},
 	UserSettingsController: {
@@ -51,6 +54,7 @@ module.exports.policies = {
 		'current': 'isLoggedIn'
 	},
 	RoomController: {
+		'message': 'isLoggedIn',
 		'findOne': 'isLoggedIn',
 		'create': 'isLoggedIn',
 		'join': 'isLoggedIn',
@@ -60,10 +64,9 @@ module.exports.policies = {
 		'media': 'isLoggedIn'
 	},
 	RoomMemberController: {
-		'find': 'isLoggedIn'
+		'updateSettings': 'isLoggedIn'
 	},
 	MessageController: {
-		'create': 'isLoggedIn',
 		'update': 'isLoggedIn',
 		'emoticonCounts': true
 	}

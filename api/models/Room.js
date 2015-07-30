@@ -10,7 +10,8 @@ module.exports = {
 	attributes: {
 		name: {
 			type: 'string',
-			required: true
+			required: true,
+			maxLength: 50
 		},
 		topic: {
 			type: 'string',

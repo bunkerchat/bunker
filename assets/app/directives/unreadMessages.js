@@ -1,4 +1,4 @@
-app.directive('unreadMessages', function ($rootScope, user) {
+app.directive('unreadMessages', function ($rootScope, bunkerData) {
 	return function (scope, elem) {
 		var el = angular.element(elem);
 
@@ -18,13 +18,11 @@ app.directive('unreadMessages', function ($rootScope, user) {
 			hasFocus = false;
 		});
 
-		$rootScope.$on('$sailsResourceMessaged', function (evt, resource) {
-			if (hasFocus || resource.model != 'room' || !resource.data.author || !user.current.$resolved ||
-				resource.data.author == user.current.id) return;
+		$rootScope.$on('bunkerMessaged', function (evt, message) {
+			if (!bunkerData.$resolved || hasFocus || !message.author || message.author == bunkerData.user.id) return;
 
 			unreadMessages++;
-			if (new RegExp(user.current.nick + '(?:[^@\\w]|$)', 'i').test(resource.data.text)) {
-				// TODO this probably won't work if user changes their nick
+			if (bunkerData.mentionsUser(message.text)) {
 				mentioned = true;
 			}
 
@@ -35,5 +33,4 @@ app.directive('unreadMessages', function ($rootScope, user) {
 			el.text(newTitle.join(''));
 		});
 	};
-})
-;
+});
