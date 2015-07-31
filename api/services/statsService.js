@@ -37,9 +37,16 @@ function generateStats(roomMember, template) {
 					var dateFormat = 'dddd MMMM Do, YYYY';
 					var dateTimeFormat = 'dddd MMMM Do, YYYY @ h:mm:ssa';
 
+					var averageCountPerDay = 0;
+
+					if (messageCount && activeDays.length) {
+						averageCountPerDay = messageCount / activeDays.length;
+					}
+
 					var data = {
 						user: roomMember.user.nick,
 						messageCount: messageCount,
+						averageMessageCountPerDay: ~~averageCountPerDay,
 						editCount: editCount,
 						startDate: moment(roomMember.user.createdAt).format(dateFormat),
 						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
