@@ -34,7 +34,8 @@ exports.update = function (req, res) {
 			var updates = { // Only certain things are editable
 				text: req.param('text'),
 				history: req.param('history'),
-				edited: true
+				edited: true,
+				editCount: message.editCount + 1
 			};
 
 			return Message.update(pk, updates);

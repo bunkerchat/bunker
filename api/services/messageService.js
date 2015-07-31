@@ -433,7 +433,6 @@ function gif(roomMember, text) {
 		});
 }
 
-
 function hangman(roomMember, text) {
 	return hangmanService.play(roomMember, text)
 		.then(function (hangmanResponse) {

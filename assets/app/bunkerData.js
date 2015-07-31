@@ -128,7 +128,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = message.id + new Date().getTime();
+			message.$idAndEdited = message.id + message.editCount;
 		},
 
 		// Rooms
@@ -273,7 +273,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = message.id + new Date().getTime();
+			message.$idAndEdited = message.id + message.editCount;
 		});
 	}
 

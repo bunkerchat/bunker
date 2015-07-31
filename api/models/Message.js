@@ -33,6 +33,10 @@ module.exports = {
 		edited: {
 			type: 'boolean',
 			defaultsTo: false
+		},
+		editCount:{
+			type: 'integer',
+			defaultsTo: 0
 		}
 	}
 };
