@@ -3,6 +3,6 @@ NAME
 	/h - alias
 
 COMMANDS
-	/hangman | /h 				...Start a new public game; there can be only 1 public game per room.
-	/hangman [letter] | [word]	...Guess a letter or the whole word
-	/hangman [-p] | [-private]	...Start a private game; while playing a private game you cannot play a public game.
+	/hangman or /h			...Start a new public game; there can be only 1 public game per room.
+	/hangman [letter] or [word]	...Guess a letter or the whole word
+	/hangman [-p] or [-private]	...Start a private game; while playing a private game you cannot play a public game.
