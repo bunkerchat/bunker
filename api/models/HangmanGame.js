@@ -3,6 +3,9 @@ module.exports = {
 		room: {
 			model: 'Room'
 		},
+		user: {
+			model: 'User'
+		},
 		word: {
 			type: 'string',
 			required: true
@@ -14,6 +17,9 @@ module.exports = {
 		hits: {
 			type: 'array',
 			defaultsTo: []
+		},
+		isPrivate: {
+			type: 'boolean'
 		},
 		lastGuessSuccess: 'boolean'
 	}

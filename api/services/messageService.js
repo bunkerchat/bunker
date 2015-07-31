@@ -439,6 +439,11 @@ function hangman(roomMember, text) {
 			if (hangmanResponse.error) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'hangman');
 			}
+
+			if (hangmanResponse.isPrivate) {
+				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.message, 'hangman');
+			}
+			
 			return message(roomMember, hangmanResponse.message, 'hangman');
 		});
 }

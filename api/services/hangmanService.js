@@ -2,17 +2,29 @@ var Promise = require('bluebird');
 var request = Promise.promisifyAll(require('request'));
 
 module.exports.play = function (roomMember, command) {
-	return HangmanGame.findOne({room: roomMember.room}).then(function (currentGame) {
+	return getHangmanGame(roomMember).then(function(currentGame){
 		var match = /^\/h(?:angman)?(?:\s(\w*)?|$)/ig.exec(command);
 		var guess = match[1];
 
+		var private = /^\/h(?:angman)?(?:(\s\-p(?:rivate?|$))?|$)/.exec(command);
+		var isPrivate = private[1] ? true : false;
+
 		if (currentGame && guess) {
-			return getHangmanUserStatistics(roomMember.user.id).then(function (hangmanUserStatistics) {
-				return makeGuess(roomMember, currentGame, guess, hangmanUserStatistics);
-			});
+			// async fetch of both statistics objects
+			return Promise.join(
+					getHangmanUserStatistics(roomMember.user.id),
+					getHangmanPublicStatistics()
+				)
+				.spread(function (userStats, publicStats) {
+					return makeGuess(roomMember, currentGame, guess, userStats, publicStats);
+				});
+		}
+		else if (currentGame && currentGame.isPrivate == false && !guess && isPrivate) {
+			// you can start a private game if a public game is in progress
+			return start(roomMember, isPrivate);
 		}
 		else if (!currentGame && !guess) {
-			return start(roomMember);
+			return start(roomMember, isPrivate);
 		}
 		else if (!currentGame && guess) {
 			// tried to guess but no game in progress. Prevents new games from being started during wild guessing
@@ -22,6 +34,20 @@ module.exports.play = function (roomMember, command) {
 		return Promise.resolve({error: buildResponse(currentGame).message + " (Game in Progress)"});
 	});
 };
+
+function getHangmanGame(roomMember) {
+	// always look for a private game first.  A user can't play a public game if they
+	// are already doing a private game.
+	return HangmanGame.findOne({user: roomMember.user.id, isPrivate: true}).then(function (currentPrivateGame) {
+		if (currentPrivateGame) {
+			return currentPrivateGame;
+		}
+		else {
+			// look for an existing public game
+			return HangmanGame.findOne({room: roomMember.room, isPrivate: false});
+		}
+	});
+}
 
 function getHangmanUserStatistics(userId) {
 	return HangmanUserStatistics.findOne({user: userId}).then(function (hangmanUserStatistics) {
@@ -33,45 +59,70 @@ function getHangmanUserStatistics(userId) {
 	});
 }
 
-function makeGuess(roomMember, game, guess, hangmanUserStatistics) {
+function getHangmanPublicStatistics() {
+	return HangmanPublicGameStatistics.find().then(function (publicStats) {
+		if (publicStats && publicStats[0]) return publicStats[0];
+
+		return HangmanPublicGameStatistics.create();
+	});
+}
+
+function makeGuess(roomMember, game, guess, userStats, publicStats) {
 	guess = guess.toUpperCase();
 
 	// guessing the word
 	if (guess.length > 1 && guess == game.word) {
 		game.hits.push(guess);
-		hangmanUserStatistics.guessHits++;
+		userStats.guessHits++;
 	}
 	// letter guess
 	else if (guess.length == 1 && _.includes(game.word, guess)) {
 		game.hits.push(guess);
-		hangmanUserStatistics.guessHits++;
+		userStats.guessHits++;
 	}
 	else {
 		game.misses.push(guess);
-		hangmanUserStatistics.guessMisses++;
+		userStats.guessMisses++;
 	}
 
 	game.hits = _.unique(game.hits);
 	game.misses = _.unique(game.misses);
 
-	var update = HangmanGame.update({room: roomMember.room}, {
-		hits: game.hits,
-		misses: game.misses
-	});
-
-	var remove = HangmanGame.destroy(game.id);
-
 	// if the game is over, remove it from the database. Otherwise update it
-	var action = checkForEndGame(game, guess) ? remove : update;
+	var action = checkForEndGame(game, guess) ? completeHangmanGame(game, guess, userStats, publicStats) : game.save();
 
 	return Promise.join(
 		buildResponse(game, roomMember, guess),
 		action,
-		hangmanUserStatistics.save()
+		userStats.save()
 	)
-		.spread(function (response, dbGame, hangmanUserStatistics) {
+		.spread(function (response, dbGame, userStats) {
 			return response;
 		});
+}
+
+function completeHangmanGame(game, guess, userStats, publicStats){
+	// check for win
+	if (allLettersMatched(game) || wordGuessed(game, guess)) {
+		if (game.isPrivate) {
+			userStats.privateGameWinCount++;
+		} else {
+			publicStats.winCount++;
+		}
+	} else {
+		// loss
+		if (game.isPrivate) {
+			userStats.privateGameLossCount++;
+		} else {
+			publicStats.lossCount++;
+		}
+	}
+
+	var action = game.isPrivate ? userStats.save() : publicStats.save();
+
+	return Promise.join(
+		HangmanGame.destroy(game.id),
+		action);
 }
 
 function checkForEndGame(game, guess) {
@@ -87,13 +138,22 @@ function wordGuessed(game, guess) {
 	return game.word == guess;
 }
 
-function start(roomMember) {
+function start(roomMember, isPrivate) {
 	return getWord()
 		.then(function (word) {
-			return HangmanGame.create({
-				room: roomMember.room,
-				word: word
-			})
+			if (isPrivate) {
+				return HangmanGame.create({
+					user: roomMember.user.id,
+					word: word,
+					isPrivate: true
+				});
+			} else {
+				return HangmanGame.create({
+					room: roomMember.room,
+					word: word,
+					isPrivate: false
+				});
+			}
 		})
 		.then(function (game) {
 			return buildResponse(game, roomMember);
@@ -159,7 +219,11 @@ function buildResponse(game, roomMember, guess) {
 	responseString.push('&nbsp;&nbsp;&nbsp;');
 
 	if (nick && !game.hits.length && !game.misses.length) {
-		responseString.push(' (' + nick + ' started a game of Hangman!)');
+		if (game.isPrivate) {
+			responseString.push(' (' + nick + ' started a private game of Hangman!)');
+		} else {
+			responseString.push(' (' + nick + ' started a game of Hangman!)');
+		}
 	}
 
 	if (game.misses.length > 0) {
@@ -178,7 +242,7 @@ function buildResponse(game, roomMember, guess) {
 		responseString.push(' You Lose! :' + getLoseEmote() + ':');
 	}
 
-	return {message: responseString.join('')}
+	return {message: responseString.join(''), isPrivate: game.isPrivate}
 }
 
 function getWinEmote() {
