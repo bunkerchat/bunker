@@ -55,7 +55,9 @@ function generateStats(roomMember, template) {
 						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
 						randomMessage: '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')',
 						hangmanGuessCount: hangmanStats.count,
-						hangmanGuessAccuracy: hangmanStats.guessAccuracy + '%'
+						hangmanGuessAccuracy: hangmanStats.guessAccuracy + '%',
+						hangmanPrivateWinLoss: hangmanStats.privateWins + ' - ' + hangmanStats.privateLosses,
+						hangmanPublicWinLoss: hangmanStats.publicWins + ' - ' + hangmanStats.publicLosses
 					};
 
 					if (activeDays) {
@@ -167,16 +169,42 @@ function getEmoticonCounts(roomMember) {
 }
 
 function getHangmanStats(userId) {
-	return HangmanUserStatistics.findOne({user: userId}).then(function (hangmanUserStatistics) {
-		var stats = {count: 0, guessAccuracy: 0};
-		if (!hangmanUserStatistics) return stats;
+	return Promise.join(
+		getHangmanUserStatistics(userId),
+		getHangmanPublicStatistics()
+	)
+	.spread(function (userStats, publicStats) {
+		stats = {};
+		stats.count = userStats.guessMisses + userStats.guessHits;
 
-		stats.count = hangmanUserStatistics.guessMisses + hangmanUserStatistics.guessHits;
+		if (!stats.count || !userStats.guessHits) return stats;
 
-		if (!stats.count || !hangmanUserStatistics.guessHits) return stats;
+		stats.guessAccuracy = Math.round((userStats.guessHits / stats.count) * 100);
 
-		stats.guessAccuracy = Math.round((hangmanUserStatistics.guessHits / stats.count) * 100);
+		stats.publicWins = publicStats.winCount;
+		stats.publicLosses = publicStats.lossCount;
+
+		stats.privateWins = userStats.privateGameWinCount;
+		stats.privateLosses = userStats.privateGameLossCount;
 
 		return stats;
+	});
+}
+
+function getHangmanUserStatistics(userId) {
+	return HangmanUserStatistics.findOne({user: userId}).then(function (hangmanUserStatistics) {
+		if (hangmanUserStatistics) return hangmanUserStatistics;
+
+		return HangmanUserStatistics.create({
+			user: userId
+		});
+	});
+}
+
+function getHangmanPublicStatistics() {
+	return HangmanPublicGameStatistics.find().then(function (publicStats) {
+		if (publicStats && publicStats[0]) return publicStats[0];
+
+		return HangmanPublicGameStatistics.create();
 	});
 }
