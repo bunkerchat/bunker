@@ -195,7 +195,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 		mentionsUser: function (text) {
 			if (!bunkerData.$resolved) return false;
-			var regex = new RegExp(bunkerData.user.nick + '\\b|@[Aa]ll', 'i');
+			var regex = new RegExp(bunkerData.user.nick + '\\b|@[Aa]ll\\b', 'i');
 			return regex.test(text);
 		},
 
