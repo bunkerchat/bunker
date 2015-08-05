@@ -33,6 +33,11 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		this.emoticonMenu = false;
 		this.inboxOpened = !this.inboxOpened;
 	};
+	
+	this.toggleSettings = function () { 
+		this.emoticonMenu = false;
+		this.inboxOpened = false;
+	};
 
 	this.showHelp = function () {
 		$modal.open({

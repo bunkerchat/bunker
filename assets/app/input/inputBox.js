@@ -75,7 +75,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 			function keyDown(evt) {
 				if (evt.keyCode == 13) {
 					evt.preventDefault();
-					if(evt.shiftKey) {
+					if(evt.shiftKey && bunkerData.userSettings.multilineShiftEnter) {
 						scope.messageText = scope.messageText + '\n';
 					}
 					else {
