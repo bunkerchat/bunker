@@ -43,6 +43,10 @@ module.exports = {
 			type: 'boolean',
 			defaultsTo: false
 		},
+		multilineShiftEnter: {
+			type: 'boolean',
+			defaultsTo: false
+		},
 		user: {
 			model: 'User'
 		}
