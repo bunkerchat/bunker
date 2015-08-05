@@ -23,7 +23,7 @@
 						<!-- standard message -->
 						<div ng-switch-when="true">
 							<div class="message-author">
-								<span ng-if="::message.$firstInSeries">
+								<span ng-if="::message.$firstInSeries" title="::message.author.email">
 									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
 									<span class="status"
