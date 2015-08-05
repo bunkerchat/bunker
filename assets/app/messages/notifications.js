@@ -53,6 +53,11 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 			mention.$on('error', function (e) {
 				$log.error('desktop notification error', e);
 			});
+
+			// close timeout in 10 seconds
+			$timeout(function () {
+				mention.close();
+			}, 5000)
 		}
 
 	}
