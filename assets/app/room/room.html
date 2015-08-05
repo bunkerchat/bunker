@@ -90,13 +90,13 @@
 
 					<span ng-switch-default>
 						<!-- default, online member -->
-						<span ng-switch="member.user.busy === true" class="user-icon">
+						<span ng-switch="member.user.busy === true" class="user-icon" >
 							<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
 								<span ng-switch-when="false">
-									<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
+									<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20" title="{{::member.user.email}}"/>
 								</span>
 								<span ng-switch-default>
-									<i class="fa fa-ellipsis-h"></i>
+									<i class="fa fa-ellipsis-h" title="{{::member.user.email}}"></i>
 								</span>
 							</span>
 							<span ng-switch-default title="Away: {{member.user.busyMessage}}">
