@@ -23,7 +23,7 @@
 						<!-- standard message -->
 						<div ng-switch-when="true">
 							<div class="message-author">
-								<span ng-if="::message.$firstInSeries" title="::message.author.email">
+								<span ng-if="::message.$firstInSeries" title="{{::message.author.email}}">
 									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
 									<span class="status"
@@ -77,7 +77,7 @@
 					<span class="offline" ng-switch-when="false">
 						<!-- offline member, much less watches -->
 						<span class="user-icon">
-							<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"/>
+							<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20" title="{{::member.user.email}}"/>
 						</span>
 						<a ng-click="mentionUser(member.user.nick)">{{::member.user.nick}}</a>
 						<div class="pull-right">
