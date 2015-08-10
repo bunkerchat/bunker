@@ -20,6 +20,7 @@ module.exports = {
 				'animation',
 				'buildNotification',
 				'hangman',
+				'fight',
 				'code',
 				'stats'
 			],
