@@ -49,6 +49,13 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				else if (scope.bunkerMessage.type == 'hangman') {
 					text = parseHangman(text);
 				}
+				else if (scope.bunkerMessage.type == 'fight') {
+					// fight message can have custom images as well as block text
+					text = parseFight(text);
+					if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
+						text = createQuotedBlock(text);
+					}
+				}
 				else if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
 					text = createQuotedBlock(text);
 				}
@@ -97,6 +104,18 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = text.replace(/\|(.*)\|/i, '<a href="https://www.wordnik.com/words/' + word + '" target="_blank">$1</a>');
 				}
 				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
+			}
+
+			function parseFight(text) {
+				text = parseEmoticons(text);
+				var match = /:(\w*)*:/.exec(text);
+
+				while(match) {
+					text = text.replace(/:(\w*):/, '<img class="emoticon" src="/assets/images/$1.png"/>');
+					match = /:(\w*)*:/.exec(text);
+				}
+
+				return text;
 			}
 
 			function parseCode(text) {

@@ -33,8 +33,8 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		this.emoticonMenu = false;
 		this.inboxOpened = !this.inboxOpened;
 	};
-	
-	this.toggleSettings = function () { 
+
+	this.toggleSettings = function () {
 		this.emoticonMenu = false;
 		this.inboxOpened = false;
 	};
@@ -66,7 +66,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 			return;
 		}
 
-		if (message.type != 'standard' && message.type != 'buildNotification' && message.type != 'hangman') {
+		if (message.type != 'standard' && message.type != 'buildNotification' && message.type != 'hangman' && message.type != 'fight') {
 			return;
 		}
 

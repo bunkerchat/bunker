@@ -48,6 +48,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/h(?:angman)?(?:\s(\w)?|$)/i.test(text)) {
 		return hangman(roomMember, text);
 	}
+	else if (/^\/f(?:ight)?(?:\s(\w)?|$)/i.test(text)) {
+		return fight(roomMember, text);
+	}
 	else if (/^\/code /i.test(text)) {
 		return code(roomMember, text);
 	}
@@ -433,6 +436,31 @@ function gif(roomMember, text) {
 		});
 }
 
+function fight(roomMember, text) {
+	return fightService.play(roomMember, text)
+		.then(function (fightResponse) {
+			if (fightResponse.error) {
+				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, fightResponse.error, 'fight');
+			}
+
+			var messageChallenger;
+			var messageOpponent;
+
+			if (fightResponse.isChallengeMessage) {
+				messageChallenger = RoomService.messageUserInRoom(fightResponse.challengerId, roomMember.room, fightResponse.messageForChallenger, 'fight');
+				messageOpponent = RoomService.messageUserInRoom(fightResponse.opponentId, roomMember.room, fightResponse.messageForOpponent, 'fight');
+			}
+			else {
+				messageChallenger = RoomService.messageUserInRoom(fightResponse.challengerId, roomMember.room, fightResponse.message, 'fight');
+				messageOpponent = RoomService.messageUserInRoom(fightResponse.opponentId, roomMember.room, fightResponse.message, 'fight');
+			}
+
+			return messageChallenger.then(function() {
+				return messageOpponent();
+			});
+		});
+}
+
 function hangman(roomMember, text) {
 	return hangmanService.play(roomMember, text)
 		.then(function (hangmanResponse) {
@@ -443,7 +471,7 @@ function hangman(roomMember, text) {
 			if (hangmanResponse.isPrivate) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.message, 'hangman');
 			}
-			
+
 			return message(roomMember, hangmanResponse.message, 'hangman');
 		});
 }
