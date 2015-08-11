@@ -486,6 +486,11 @@ img.emoticon {
 	max-height: 30px;
 }
 
+img.fatality {
+	max-height: 130px;
+	float: right;
+}
+
 .imgur-gifv {
 	position: relative;
 }

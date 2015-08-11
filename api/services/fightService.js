@@ -54,6 +54,10 @@ module.exports.play = function (roomMember, command) {
 			return Promise.resolve({error: 'Cannot start the fight.  Unable to find a user with the nickname of ' + opponentNick + '.'});
 		}
 
+		if (roomMember.user.id == opponentRoomMember.user.id) {
+			return Promise.resolve({error: 'Cannot start the fight.  Unable to challenge yourself.'});
+		}
+
 		return getFight(roomMember.user.id, opponentRoomMember.user.id, roomMember.room).then(function (fight) {
 			if (!fight) {
 				return Promise.resolve({error: 'Cannot start the fight.  Unable to challenge the user ' + opponentNick + ' in this room, there is already an active fight.'});
@@ -162,20 +166,11 @@ function buildChallengeResponse(fight) {
 			var opponentNick = opponent.nick;
 			var challengerNick = challenger.nick;
 
-			var opponentMessage = [];
-			opponentMessage.push('@' + opponentNick + ' you have been challenged by ' + challengerNick + ' to a fight!');
-			opponentMessage.push('Respond to the challenge using /f -vs ' + challengerNick + ' with your 3 rounds of fight input [ -r [h,m,l] [h,m,l] [h,m,l]; example -r h m l ].');
-			opponentMessage.push('High kick (h) beats Mid kick (m), Mid kick (m) beats Low kick (l), Low kick (l) beats High kick (h).');
+			var message = [];
+			message.push('@' + opponentNick + ' you have been challenged by @' + challengerNick + ' to a fight!');
+			message.push('Respond to the challenge using /f -vs ' + challengerNick + ' with your 3 rounds of fight input; example -r h m l (see /help fight for more details).');
 
-			var challengerMessage = 'Your challenge to ' + opponentNick + ' has been sent.  When they respond to the challenge the fight will begin.';
-
-			return {
-				messageForChallenger: ent.encode(challengerMessage),
-				messageForOpponent: ent.encode(opponentMessage.join('\n')),
-				challengerId: challenger.id,
-				opponentId: opponent.id,
-				isChallengeMessage: true
-			};
+			return { message: ent.encode(message.join('\n')) };
 		});
 }
 
@@ -189,7 +184,7 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 			var challengerNick = challenger.nick;
 
 			var responseString = [];
-			responseString.push('Fight between ' + challengerNick + ' and ' + opponentNick + ' has begun!');
+			responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
 			responseString.push(getRoundPlayResponse(round1, challengerNick, opponentNick));
 			responseString.push(getRoundPlayResponse(round2, challengerNick, opponentNick));
 			responseString.push(getRoundPlayResponse(round3, challengerNick, opponentNick));
@@ -198,12 +193,7 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 			fight.resultMessage = ent.encode(responseString.join('\n'));
 
 			return fight.save().then(function (updatedFight) {
-				return {
-					message: updatedFight.resultMessage,
-					challengerId: challenger.id,
-					opponentId: opponent.id,
-					isChallengeMessage: false
-				};
+				return { message: updatedFight.resultMessage };
 			});
 		});
 }
@@ -229,10 +219,10 @@ function getFightResultResponse(fight, challengerNick, opponentNick, round1, rou
 		return 'The fight was a tie ' + challengerWins + ' to ' + opponentWins + '.';
 	}
 	else if (challengerWins > opponentWins) {
-		return challengerNick + ' wins the fight ' + challengerWins + ' to ' + opponentWins + '.';
+		return challengerNick + ' wins the fight ' + challengerWins + ' to ' + opponentWins + '.  :' + getFatalityEmote() + ":";
 	}
 	else {
-		return opponentNick + ' wins the fight ' + opponentWins + ' to ' + challengerWins + '.';
+		return opponentNick + ' wins the fight ' + opponentWins + ' to ' + challengerWins + '.  :' + getFatalityEmote() + ":";
 	}
 }
 
@@ -322,4 +312,33 @@ function isValidPlay(roundPlay) {
 		default:
 			return false;
 	}
+}
+
+function getFatalityEmote() {
+	return _.sample([
+		'baraka1',
+		'baraka2',
+		'cage2',
+		'jax1',
+		'jax2',
+		'kitana1',
+		'kitana2',
+		'kunglao1',
+		'kunglao2',
+		'liukang1',
+		'liukang2',
+		'mileena1',
+		'mileena2',
+		'rayden1',
+		'rayden2',
+		'reptile1',
+		'reptile2',
+		'scorpion1',
+		'scorpion2',
+		'shangtsung1',
+		'shangtsung2',
+		'shangtsung3',
+		'subzero1',
+		'subzero2'
+	]);
 }
