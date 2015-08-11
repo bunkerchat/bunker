@@ -26,10 +26,10 @@ module.exports.play = function (roomMember, command) {
 	});
 
 	var index = opponentNickParameterIndex + 1;
-	var opponentNick = "";
+	var opponentNick = '';
 
 	while (index < roundPlayIndex) {
-		opponentNick += parameters[index] + " ";
+		opponentNick += parameters[index] + ' ';
 		index++;
 	}
 
@@ -40,7 +40,7 @@ module.exports.play = function (roomMember, command) {
 	round3Play = parameters[roundPlayIndex + 3];
 
 	if (opponentNickParameterIndex <= 0 || roundPlayIndex <= 0 || !isValidPlay(round1Play) || !isValidPlay(round2Play) || !isValidPlay(round3Play)) {
-		return Promise.resolve({error: "Cannot start the fight.  Bad input, see the help topic on fight (/help fight) for correct parameter usage."});
+		return Promise.resolve({error: 'Cannot start the fight.  Bad input, see the help topic on fight (/help fight) for correct parameter usage.'});
 	}
 
 	return RoomMember.find({room: roomMember.room}).populate('user').then(function (roomMembers) {
@@ -51,12 +51,12 @@ module.exports.play = function (roomMember, command) {
 
 		if (!opponentRoomMember) {
 			// we got a bad user nickname
-			return Promise.resolve({error: "Cannot start the fight.  Unable to find a user with the nickname of " + opponentNick + "."});
+			return Promise.resolve({error: 'Cannot start the fight.  Unable to find a user with the nickname of ' + opponentNick + '.'});
 		}
 
 		return getFight(roomMember.user.id, opponentRoomMember.user.id, roomMember.room).then(function (fight) {
 			if (!fight) {
-				return Promise.resolve({error: "Cannot start the fight.  Unable to challenge the user " + opponentNick + " in this room, there is already an active fight."});
+				return Promise.resolve({error: 'Cannot start the fight.  Unable to challenge the user ' + opponentNick + ' in this room, there is already an active fight.'});
 			}
 
 			return FightRound.find({fight: fight.id}).then(function (rounds) {
@@ -163,11 +163,11 @@ function buildChallengeResponse(fight) {
 			var challengerNick = challenger.nick;
 
 			var opponentMessage = [];
-			opponentMessage.push("@" + opponentNick + " you have been challenged by " + challengerNick + " to a fight!");
-			opponentMessage.push("Respond to the challenge using /f -vs " + challengerNick + " with your 3 rounds of fight input [ -r [h,m,l] [h,m,l] [h,m,l]; example -r h m l ].");
-			opponentMessage.push("High kick (h) beats Mid kick (m), Mid kick (m) beats Low kick (l), Low kick (l) beats High kick (h).");
+			opponentMessage.push('@' + opponentNick + ' you have been challenged by ' + challengerNick + ' to a fight!');
+			opponentMessage.push('Respond to the challenge using /f -vs ' + challengerNick + ' with your 3 rounds of fight input [ -r [h,m,l] [h,m,l] [h,m,l]; example -r h m l ].');
+			opponentMessage.push('High kick (h) beats Mid kick (m), Mid kick (m) beats Low kick (l), Low kick (l) beats High kick (h).');
 
-			var challengerMessage = "Your challenge to " + opponentNick + " has been sent.  When they respond to the challenge the fight will begin.";
+			var challengerMessage = 'Your challenge to ' + opponentNick + ' has been sent.  When they respond to the challenge the fight will begin.';
 
 			return {
 				messageForChallenger: ent.encode(challengerMessage),
@@ -188,8 +188,8 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 			var opponentNick = opponent.nick;
 			var challengerNick = challenger.nick;
 
-			responseString = [];
-			responseString.push("Fight between " + challengerNick + " and " + opponentNick + " has begun!");
+			var responseString = [];
+			responseString.push('Fight between ' + challengerNick + ' and ' + opponentNick + ' has begun!');
 			responseString.push(getRoundPlayResponse(round1, challengerNick, opponentNick));
 			responseString.push(getRoundPlayResponse(round2, challengerNick, opponentNick));
 			responseString.push(getRoundPlayResponse(round3, challengerNick, opponentNick));
@@ -211,8 +211,7 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 function getFightResultResponse(fight, challengerNick, opponentNick, round1, round2, round3) {
 	var challengerWins = 0;
 	var opponentWins = 0;
-
-	rounds = [round1, round2, round3];
+	var rounds = [round1, round2, round3];
 
 	_.forEach(rounds, function (round) {
 		var winner = determineRoundWinner(round, challengerNick, opponentNick);
@@ -227,46 +226,46 @@ function getFightResultResponse(fight, challengerNick, opponentNick, round1, rou
 	});
 
 	if (challengerWins == opponentWins) {
-		return "The fight was a tie " + challengerWins + " to " + opponentWins + ".";
+		return 'The fight was a tie ' + challengerWins + ' to ' + opponentWins + '.';
 	}
 	else if (challengerWins > opponentWins) {
-		return challengerNick + " wins the fight " + challengerWins + " to " + opponentWins + ".";
+		return challengerNick + ' wins the fight ' + challengerWins + ' to ' + opponentWins + '.';
 	}
 	else {
-		return opponentNick + " wins the fight " + opponentWins + " to " + challengerWins + ".";
+		return opponentNick + ' wins the fight ' + opponentWins + ' to ' + challengerWins + '.';
 	}
 }
 
 function getRoundPlayResponse(fightRound, challengerNick, opponentNick) {
-	var roundPlayMessage = "Round " + fightRound.roundNumber + "   ";
+	var roundPlayMessage = 'Round ' + fightRound.roundNumber + '   ';
 
 	if (fightRound.challengerPlay == 'h') {
-		roundPlayMessage += ":HighKickRight: ";
+		roundPlayMessage += ':HighKickRight: ';
 	}
 	else if (fightRound.challengerPlay == 'm') {
-		roundPlayMessage += ":MidKickRight: ";
+		roundPlayMessage += ':MidKickRight: ';
 	}
 	else if (fightRound.challengerPlay == 'l') {
-		roundPlayMessage += ":LowKickRight: ";
+		roundPlayMessage += ':LowKickRight: ';
 	}
 
 	if (fightRound.opponentPlay == 'h') {
-		roundPlayMessage += ":HighKickLeft:";
+		roundPlayMessage += ':HighKickLeft:';
 	}
 	else if (fightRound.opponentPlay == 'm') {
-		roundPlayMessage += ":MidKickLeft:";
+		roundPlayMessage += ':MidKickLeft:';
 	}
 	else if (fightRound.opponentPlay == 'l') {
-		roundPlayMessage += ":LowKickLeft:";
+		roundPlayMessage += ':LowKickLeft:';
 	}
 
 	var winner = determineRoundWinner(fightRound, challengerNick, opponentNick);
 
 	if (winner) {
-		roundPlayMessage += "  " + winner + " wins!";
+		roundPlayMessage += '  ' + winner + ' wins!';
 	}
 	else {
-		roundPlayMessage += "  Tie";
+		roundPlayMessage += '  Tie';
 	}
 
 	return roundPlayMessage;
@@ -316,9 +315,9 @@ function isValidPlay(roundPlay) {
 	}
 
 	switch (roundPlay.toLowerCase()) {
-		case "h":
-		case "m":
-		case "l":
+		case 'h':
+		case 'm':
+		case 'l':
 			return true;
 		default:
 			return false;
