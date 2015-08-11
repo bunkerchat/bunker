@@ -107,12 +107,19 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			}
 
 			function parseFight(text) {
-				text = parseEmoticons(text);
-				var match = /:(\w*)*:/.exec(text);
+				var match = /:([^0-9:]*):/.exec(text);
 
 				while(match) {
-					text = text.replace(/:(\w*):/, '<img class="emoticon" src="/assets/images/$1.png"/>');
-					match = /:(\w*)*:/.exec(text);
+					text = text.replace(/:([^0-9:]*):/, '<img class="emoticon" src="/assets/images/$1.png"/>');
+					match = /:([^0-9:]*):/.exec(text);
+				}
+
+				// check for a fatality
+				match = /:(\w*)*:/.exec(text);
+				if (match) {
+					var fatality = '<img class="fatality" src="/assets/images/fatalities/' + match[1] + '.gif"/>';
+					text = text.replace(/:(\w*):/, '');
+					text = fatality + text;
 				}
 
 				return text;
