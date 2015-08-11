@@ -455,9 +455,7 @@ function fight(roomMember, text) {
 				messageOpponent = RoomService.messageUserInRoom(fightResponse.opponentId, roomMember.room, fightResponse.message, 'fight');
 			}
 
-			return messageChallenger.then(function() {
-				return messageOpponent();
-			});
+			return messageChallenger.then(messageOpponent);
 		});
 }
 
