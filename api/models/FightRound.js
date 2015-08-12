@@ -15,6 +15,9 @@ module.exports = {
 			type: 'string',
 			enum: ['h', 'm', 'l', ''],
 			defaultsTo: ''
+		},
+		winningUser: {
+			model: 'User'
 		}
 	}
 };
