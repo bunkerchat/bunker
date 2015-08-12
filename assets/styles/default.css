@@ -26,7 +26,10 @@ pre {
 	font-size: 150px;
 	text-shadow: 12px 12px 3px #79a736, 24px 24px 6px #000;
 	text-transform: uppercase;
+	text-align: center;
 }
+
+
 /* navbar */
 nav,
 .navbar {
@@ -487,8 +490,15 @@ img.emoticon {
 }
 
 img.fatality {
-	max-height: 130px;
-	float: right;
+	max-height: 120px;
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 24px;
+	margin-top: 4px;
+}
+
+.fight-message{
+	display: inline-block;
 }
 
 .imgur-gifv {
@@ -715,6 +725,10 @@ img.fatality {
 /* mobile modifications */
 
 @media (max-width: 480px) {
+
+	.splash-brand {
+		font-size: 56px;
+	}
 
 	.message-list {
 		height: initial;
