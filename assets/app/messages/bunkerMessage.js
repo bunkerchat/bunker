@@ -119,7 +119,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				if (match) {
 					var fatality = '<img class="fatality" src="/assets/images/fatalities/' + match[1] + '.gif"/>';
 					text = text.replace(/:(\w*):/, '');
-					text = fatality + text;
+					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
 				}
 
 				return text;
