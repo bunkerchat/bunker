@@ -13,35 +13,19 @@ var ent = require('ent');
 
 module.exports.play = function (roomMember, command) {
 	// need to parse out the command info so we know what to do
-	var round1Play, round2Play, round3Play, roundPlayIndex, parameters;
+	var round1Play, round2Play, round3Play, parameters;
 
-	parameters = command.split(/\s/);
+	parameters = /^\/f\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$/.exec(command);
 
-	// since user nick name can have spaces, need to handle a little special
-	var opponentNickParameterIndex = _.findIndex(parameters, function (param) {
-		return param == '-vs';
-	});
-	roundPlayIndex = _.findIndex(parameters, function (param) {
-		return param == '-r';
-	});
-
-	var index = opponentNickParameterIndex + 1;
-	var opponentNick = '';
-
-	while (index < roundPlayIndex) {
-		opponentNick += parameters[index] + ' ';
-		index++;
-	}
-
-	opponentNick = opponentNick.trim();
-
-	round1Play = parameters[roundPlayIndex + 1];
-	round2Play = parameters[roundPlayIndex + 2];
-	round3Play = parameters[roundPlayIndex + 3];
-
-	if (opponentNickParameterIndex <= 0 || roundPlayIndex <= 0 || !isValidPlay(round1Play) || !isValidPlay(round2Play) || !isValidPlay(round3Play)) {
+	if (parameters.length != 5) {
 		return Promise.resolve({error: 'Cannot start the fight.  Bad input, see the help topic on fight (/help fight) for correct parameter usage.'});
 	}
+
+	opponentNick = parameters[1];
+
+	round1Play = parameters[2];
+	round2Play = parameters[3];
+	round3Play = parameters[4];
 
 	return RoomMember.find({room: roomMember.room}).populate('user').then(function (roomMembers) {
 
@@ -71,17 +55,17 @@ module.exports.play = function (roomMember, command) {
 					return Promise.join(
 						FightRound.create({
 							fight: fight.id,
-							challengerPlay: round1Play.toLowerCase(),
+							challengerPlay: round1Play,
 							roundNumber: 1
 						}),
 						FightRound.create({
 							fight: fight.id,
-							challengerPlay: round2Play.toLowerCase(),
+							challengerPlay: round2Play,
 							roundNumber: 2
 						}),
 						FightRound.create({
 							fight: fight.id,
-							challengerPlay: round3Play.toLowerCase(),
+							challengerPlay: round3Play,
 							roundNumber: 3
 						})
 					)
@@ -101,9 +85,9 @@ module.exports.play = function (roomMember, command) {
 						return round.roundNumber == 3;
 					});
 
-					rounds[round1Index].opponentPlay = round1Play.toLowerCase();
-					rounds[round2Index].opponentPlay = round2Play.toLowerCase();
-					rounds[round3Index].opponentPlay = round3Play.toLowerCase();
+					rounds[round1Index].opponentPlay = round1Play;
+					rounds[round2Index].opponentPlay = round2Play;
+					rounds[round3Index].opponentPlay = round3Play;
 
 					var round1Update = rounds[round1Index].save();
 					var round2Update = rounds[round2Index].save();
@@ -168,7 +152,7 @@ function buildChallengeResponse(fight) {
 
 			var message = [];
 			message.push('@' + opponentNick + ' you have been challenged by @' + challengerNick + ' to a fight!');
-			message.push('Respond to the challenge using /f -vs ' + challengerNick + ' with your 3 rounds of fight input; example -r h m l (see /help fight for more details).');
+			message.push('Respond to the challenge using /f ' + challengerNick + ' with your 3 rounds of fight input; example = /f ' + challengerNick + ' h m l (see /help fight for more details).');
 
 			return { message: ent.encode(message.join('\n')) };
 		});
@@ -296,21 +280,6 @@ function determineRoundWinner(fightRound, challengerNick, opponentNick) {
 		if (fightRound.opponentPlay == 'l') {
 			return null;
 		}
-	}
-}
-
-function isValidPlay(roundPlay) {
-	if (!roundPlay) {
-		return false;
-	}
-
-	switch (roundPlay.toLowerCase()) {
-		case 'h':
-		case 'm':
-		case 'l':
-			return true;
-		default:
-			return false;
 	}
 }
 
