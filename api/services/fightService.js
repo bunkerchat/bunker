@@ -13,35 +13,19 @@ var ent = require('ent');
 
 module.exports.play = function (roomMember, command) {
 	// need to parse out the command info so we know what to do
-	var round1Play, round2Play, round3Play, roundPlayIndex, parameters;
+	var round1Play, round2Play, round3Play, parameters;
 
-	parameters = command.split(/\s/);
+	parameters = /^\/f\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$/.exec(command);
 
-	// since user nick name can have spaces, need to handle a little special
-	var opponentNickParameterIndex = _.findIndex(parameters, function (param) {
-		return param == '-vs';
-	});
-	roundPlayIndex = _.findIndex(parameters, function (param) {
-		return param == '-r';
-	});
-
-	var index = opponentNickParameterIndex + 1;
-	var opponentNick = '';
-
-	while (index < roundPlayIndex) {
-		opponentNick += parameters[index] + ' ';
-		index++;
-	}
-
-	opponentNick = opponentNick.trim();
-
-	round1Play = parameters[roundPlayIndex + 1];
-	round2Play = parameters[roundPlayIndex + 2];
-	round3Play = parameters[roundPlayIndex + 3];
-
-	if (opponentNickParameterIndex <= 0 || roundPlayIndex <= 0 || !isValidPlay(round1Play) || !isValidPlay(round2Play) || !isValidPlay(round3Play)) {
+	if (parameters.length != 5) {
 		return Promise.resolve({error: 'Cannot start the fight.  Bad input, see the help topic on fight (/help fight) for correct parameter usage.'});
 	}
+
+	opponentNick = parameters[1];
+
+	round1Play = parameters[2];
+	round2Play = parameters[3];
+	round3Play = parameters[4];
 
 	return RoomMember.find({room: roomMember.room}).populate('user').then(function (roomMembers) {
 
@@ -52,6 +36,10 @@ module.exports.play = function (roomMember, command) {
 		if (!opponentRoomMember) {
 			// we got a bad user nickname
 			return Promise.resolve({error: 'Cannot start the fight.  Unable to find a user with the nickname of ' + opponentNick + '.'});
+		}
+
+		if (roomMember.user.id == opponentRoomMember.user.id) {
+			return Promise.resolve({error: 'Cannot start the fight.  Unable to challenge yourself.'});
 		}
 
 		return getFight(roomMember.user.id, opponentRoomMember.user.id, roomMember.room).then(function (fight) {
@@ -67,17 +55,17 @@ module.exports.play = function (roomMember, command) {
 					return Promise.join(
 						FightRound.create({
 							fight: fight.id,
-							challengerPlay: round1Play.toLowerCase(),
+							challengerPlay: round1Play,
 							roundNumber: 1
 						}),
 						FightRound.create({
 							fight: fight.id,
-							challengerPlay: round2Play.toLowerCase(),
+							challengerPlay: round2Play,
 							roundNumber: 2
 						}),
 						FightRound.create({
 							fight: fight.id,
-							challengerPlay: round3Play.toLowerCase(),
+							challengerPlay: round3Play,
 							roundNumber: 3
 						})
 					)
@@ -97,9 +85,9 @@ module.exports.play = function (roomMember, command) {
 						return round.roundNumber == 3;
 					});
 
-					rounds[round1Index].opponentPlay = round1Play.toLowerCase();
-					rounds[round2Index].opponentPlay = round2Play.toLowerCase();
-					rounds[round3Index].opponentPlay = round3Play.toLowerCase();
+					rounds[round1Index].opponentPlay = round1Play;
+					rounds[round2Index].opponentPlay = round2Play;
+					rounds[round3Index].opponentPlay = round3Play;
 
 					var round1Update = rounds[round1Index].save();
 					var round2Update = rounds[round2Index].save();
@@ -162,20 +150,11 @@ function buildChallengeResponse(fight) {
 			var opponentNick = opponent.nick;
 			var challengerNick = challenger.nick;
 
-			var opponentMessage = [];
-			opponentMessage.push('@' + opponentNick + ' you have been challenged by ' + challengerNick + ' to a fight!');
-			opponentMessage.push('Respond to the challenge using /f -vs ' + challengerNick + ' with your 3 rounds of fight input [ -r [h,m,l] [h,m,l] [h,m,l]; example -r h m l ].');
-			opponentMessage.push('High kick (h) beats Mid kick (m), Mid kick (m) beats Low kick (l), Low kick (l) beats High kick (h).');
+			var message = [];
+			message.push('@' + opponentNick + ' you have been challenged by @' + challengerNick + ' to a fight!');
+			message.push('Respond to the challenge using /f ' + challengerNick + ' with your 3 rounds of fight input; example = /f ' + challengerNick + ' h m l (see /help fight for more details).');
 
-			var challengerMessage = 'Your challenge to ' + opponentNick + ' has been sent.  When they respond to the challenge the fight will begin.';
-
-			return {
-				messageForChallenger: ent.encode(challengerMessage),
-				messageForOpponent: ent.encode(opponentMessage.join('\n')),
-				challengerId: challenger.id,
-				opponentId: opponent.id,
-				isChallengeMessage: true
-			};
+			return { message: ent.encode(message.join('\n')) };
 		});
 }
 
@@ -189,7 +168,7 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 			var challengerNick = challenger.nick;
 
 			var responseString = [];
-			responseString.push('Fight between ' + challengerNick + ' and ' + opponentNick + ' has begun!');
+			responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
 			responseString.push(getRoundPlayResponse(round1, challengerNick, opponentNick));
 			responseString.push(getRoundPlayResponse(round2, challengerNick, opponentNick));
 			responseString.push(getRoundPlayResponse(round3, challengerNick, opponentNick));
@@ -198,12 +177,7 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 			fight.resultMessage = ent.encode(responseString.join('\n'));
 
 			return fight.save().then(function (updatedFight) {
-				return {
-					message: updatedFight.resultMessage,
-					challengerId: challenger.id,
-					opponentId: opponent.id,
-					isChallengeMessage: false
-				};
+				return { message: updatedFight.resultMessage };
 			});
 		});
 }
@@ -229,10 +203,10 @@ function getFightResultResponse(fight, challengerNick, opponentNick, round1, rou
 		return 'The fight was a tie ' + challengerWins + ' to ' + opponentWins + '.';
 	}
 	else if (challengerWins > opponentWins) {
-		return challengerNick + ' wins the fight ' + challengerWins + ' to ' + opponentWins + '.';
+		return challengerNick + ' wins the fight ' + challengerWins + ' to ' + opponentWins + '.  :' + getFatalityEmote() + ":";
 	}
 	else {
-		return opponentNick + ' wins the fight ' + opponentWins + ' to ' + challengerWins + '.';
+		return opponentNick + ' wins the fight ' + opponentWins + ' to ' + challengerWins + '.  :' + getFatalityEmote() + ":";
 	}
 }
 
@@ -309,17 +283,31 @@ function determineRoundWinner(fightRound, challengerNick, opponentNick) {
 	}
 }
 
-function isValidPlay(roundPlay) {
-	if (!roundPlay) {
-		return false;
-	}
-
-	switch (roundPlay.toLowerCase()) {
-		case 'h':
-		case 'm':
-		case 'l':
-			return true;
-		default:
-			return false;
-	}
+function getFatalityEmote() {
+	return _.sample([
+		'baraka1',
+		'baraka2',
+		'cage2',
+		'jax1',
+		'jax2',
+		'kitana1',
+		'kitana2',
+		'kunglao1',
+		'kunglao2',
+		'liukang1',
+		'liukang2',
+		'mileena1',
+		'mileena2',
+		'rayden1',
+		'rayden2',
+		'reptile1',
+		'reptile2',
+		'scorpion1',
+		'scorpion2',
+		'shangtsung1',
+		'shangtsung2',
+		'shangtsung3',
+		'subzero1',
+		'subzero2'
+	]);
 }

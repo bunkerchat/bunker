@@ -3,8 +3,8 @@ NAME
 	/f 				...Alias for /fight
 
 PARAMETERS
-	-vs <user nickname>				...The user you are challenging or responding to a challenge for.  You must be in the same room, you cannot challenge others cross room.
-	-r <(h,m,l) (h,m,l) (h,m,l)>	...The 3 rounds of fight input.  h, m, l are the valid inputs describing the types of kicks used.
+	user nickname			...The user you are challenging or responding to a challenge for.  You must be in the same room, you cannot challenge others cross room.
+	(h,m,l) (h,m,l) (h,m,l)		...The 3 rounds of fight input.  h, m, l are the valid inputs describing the types of kicks used.
 
 LEGEND
 	h 				...High Kick; beats Mid Kick, loses to Low Kick.
@@ -12,4 +12,4 @@ LEGEND
 	l				...Low Kick; beats High Kick, loses to Mid Kick.
 
 EXAMPLE
-	/f -vs jpro -r h m l		...This will challenge jpro to a fight using round 1 play of h, round 2 of m, round 3 of l.
+	/f jpro h m l			...This will challenge jpro to a fight using round 1 play of h, round 2 of m, round 3 of l.

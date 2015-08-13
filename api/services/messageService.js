@@ -377,6 +377,31 @@ function saveInMentionedInboxes(message) {
 		});
 }
 
+function saveFightInMentionedInboxes(message, author, room) {
+	if (!message || !author || !room) return;
+
+	// Check if this message mentions anyone
+	// Completely async process that shouldn't disrupt the normal message flow
+	return Promise.join(
+		RoomMember.find({room: message.room}).populate('user')
+	)
+		.spread(function (roomMembers) {
+			return Promise.each(roomMembers, function (roomMember) {
+				var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
+				if (regex.test(message.text)) {
+					return InboxMessage.create({user: roomMember.user.id, message: message.id})
+						.then(function (inboxMessage) {
+							return InboxMessage.findOne(inboxMessage.id).populateAll();
+						})
+						.then(function (inboxMessage) {
+							inboxMessage.message.author = author; // Attach populated author data
+							InboxMessage.message(roomMember.user.id, inboxMessage);
+						});
+				}
+			});
+		});
+}
+
 function code(roomMember, text) {
 	// strip out /code
 	text = text.substr(6);
@@ -443,19 +468,9 @@ function fight(roomMember, text) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, fightResponse.error, 'fight');
 			}
 
-			var messageChallenger;
-			var messageOpponent;
-
-			if (fightResponse.isChallengeMessage) {
-				messageChallenger = RoomService.messageUserInRoom(fightResponse.challengerId, roomMember.room, fightResponse.messageForChallenger, 'fight');
-				messageOpponent = RoomService.messageUserInRoom(fightResponse.opponentId, roomMember.room, fightResponse.messageForOpponent, 'fight');
-			}
-			else {
-				messageChallenger = RoomService.messageUserInRoom(fightResponse.challengerId, roomMember.room, fightResponse.message, 'fight');
-				messageOpponent = RoomService.messageUserInRoom(fightResponse.opponentId, roomMember.room, fightResponse.message, 'fight');
-			}
-
-			return messageChallenger.then(messageOpponent);
+			return message(roomMember, fightResponse.message, 'fight').then(function (message) {
+				return saveFightInMentionedInboxes(message, roomMember.user, roomMember.room);
+			});
 		});
 }
 

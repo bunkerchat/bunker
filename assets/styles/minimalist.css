@@ -5,42 +5,13 @@
 	text-decoration: none;
 }
 
-nav,
-.navbar,
-.navbar > .container-fluid .navbar-brand {
-	min-height: 40px;
-	height: 40px;
-	margin-bottom: 0px;
-}
-
-
-.navbar-default .navbar-nav a {
-	padding: 6px 12px;
-}
-
 .navbar-brand {
-	width: 178px;
 	padding: 16px 15px;
-}
-
-.navbar-default .navbar-nav > li > a,
-.navbar-nav > li > a {
-	box-shadow: inset 2px 0px 4px rgba(0,0,0,0.50);
-	text-shadow: 0px 0px 4px rgba(0,0,0,.5);
 }
 
 .nav,
 .navbar-brand {
 	line-height: 4px;
-}
-
-.navbar .nav > li > a {
-	padding: 0;
-	min-width: 142px;
-}
-
-.navbar .nav.navbar-right > li > a.small-width {
-	min-width: 80px;
 }
 
 .panel-heading {
