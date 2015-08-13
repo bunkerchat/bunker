@@ -1,44 +1,40 @@
-<div class="container-fluid" ng-show="!$root.roomId">
+<div class="container-fluid lobby" ng-show="!$root.roomId">
 
-	<section class="row">
-		<div class="col-md-9">
-			<h3>Known rooms</h3>
+
+
+	<div ng-show="lobby.rooms.length > 0">
+		<div class="page-header">
+			<h3>Your Rooms</h3>
 		</div>
-		<div class="col-md-3">
-			<form ng-submit="lobby.joinRoom(roomGuid)">
-
-				<div class="input-group">
-					<input type="text" class="form-control" placeholder="Existing room guid"
-								 ng-model="roomGuid" ng-required="true"/>
-
-					<span class="input-group-btn">
-							<button class="btn btn-success">Join</button>
-					</span>
-				</div>
-
-			</form>
+		<table class="table table-condensed table-hover">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Topic</th>
+					<th><i class="fa fa-user"></i> Online</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="room in lobby.rooms | orderBy:'name' track by room.id" ng-if="room.$resolved">
+					<td>
+						<a ui-sref="chat.room({roomId: room.id})">{{room.name}}</a>
+					</td>
+					<td ng-bind-html="room.topic"></td>
+					<td>{{room.$members | connectedUsersCount}} / {{room.$members.length}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div ng-show="lobby.rooms.length == 0">
+		<div class="page-header">
+			<h3>No Rooms Found</h3>
 		</div>
-	</section>
+		Why don't you create one or ask your buddy to join his awesomesauce room?
+	</div>
 
-	<table class="table">
-		<thead>
-		<tr>
-			<th>Name</th>
-			<th>Topic</th>
-			<th><i class="fa fa-user"></i> Online</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr ng-repeat="room in lobby.rooms | orderBy:'name' track by room.id" ng-if="room.$resolved">
-			<td>
-				<a ui-sref="chat.room({roomId: room.id})">{{room.name}}</a>
-			</td>
-			<td ng-bind-html="room.topic"></td>
-			<td>{{room.$members | connectedUsersCount}} / {{room.$members.length}}</td>
-		</tr>
-		</tbody>
-	</table>
-
+	<div class="page-header">
+		<h3>Create Room</h3>
+	</div>
 	<form class="col-md-3" ng-submit="lobby.createRoom(newRoomName)">
 
 		<div class="input-group">

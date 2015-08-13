@@ -722,6 +722,11 @@ img.fatality {
 	-o-keyframes: fadeout 1s;
 }
 
+/* lobby styling */
+
+.page-header{
+	border-color: #ddd;
+}
 /* mobile modifications */
 
 @media (max-width: 480px) {
