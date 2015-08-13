@@ -163,34 +163,64 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 		User.findOne({id: fight.challenger.id}),
 		User.findOne({id: fight.opponent.id})
 	)
-		.spread(function (challenger, opponent) {
-			var opponentNick = opponent.nick;
-			var challengerNick = challenger.nick;
+	.spread(function (challenger, opponent) {
+		var opponentNick = opponent.nick;
+		var challengerNick = challenger.nick;
 
-			var responseString = [];
-			responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
-			responseString.push(getRoundPlayResponse(round1, challengerNick, opponentNick));
-			responseString.push(getRoundPlayResponse(round2, challengerNick, opponentNick));
-			responseString.push(getRoundPlayResponse(round3, challengerNick, opponentNick));
-			responseString.push(getFightResultResponse(fight, challengerNick, opponentNick, round1, round2, round3));
+		var responseString = [];
 
-			fight.resultMessage = ent.encode(responseString.join('\n'));
+		var round1Data = getRoundPlayData(round1, challenger, opponent);
+		var round2Data = getRoundPlayData(round2, challenger, opponent);
+		var round3Data = getRoundPlayData(round3, challenger, opponent);
 
-			return fight.save().then(function (updatedFight) {
-				return { message: updatedFight.resultMessage };
-			});
+		responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
+		responseString.push(round1Data.message);
+		responseString.push(round2Data.message);
+		responseString.push(round3Data.message);
+
+		var fightResultData = getFightResultData(challenger, opponent, round1, round2, round3);
+
+		fight.winningUser = fightResultData.winner;
+		round1.winningUser = round1Data.winner;
+		round2.winningUser = round2Data.winner;
+		round3.winningUser = round3Data.winner;
+
+		if (fightResultData.winner)
+		{
+			if (fightResultData.winner.id == challenger.id) {
+				responseString.push(challengerNick + ' wins the fight ' + fightResultData.challengerWins + ' to ' + fightResultData.opponentWins + '.  :' + getFatalityEmote() + ':');
+			}
+			else {
+				responseString.push(opponentNick + ' wins the fight ' + fightResultData.opponentWins + ' to ' + fightResultData.challengerWins + '.  :' + getFatalityEmote() + ':');
+			}
+		} else {
+			// was a tie
+			responseString.push('The fight was a tie ' + fightResultData.challengerWins + ' to ' + fightResultData.opponentWins + '.  :tie0:');
+		}
+
+		fight.resultMessage = ent.encode(responseString.join('\n'));
+
+		return Promise.join(
+			fight.save(),
+			round1.save(),
+			round2.save(),
+			round3.save()
+		)
+		.spread(function (updatedFight, updatedRound1, updatedRound2, updatedRound3) {
+			return { message: updatedFight.resultMessage };
 		});
+	});
 }
 
-function getFightResultResponse(fight, challengerNick, opponentNick, round1, round2, round3) {
+function getFightResultData(challenger, opponent, round1, round2, round3) {
 	var challengerWins = 0;
 	var opponentWins = 0;
 	var rounds = [round1, round2, round3];
 
 	_.forEach(rounds, function (round) {
-		var winner = determineRoundWinner(round, challengerNick, opponentNick);
+		var winner = determineRoundWinner(round, challenger.nick, opponent.nick);
 		if (winner) {
-			if (winner == challengerNick) {
+			if (winner == challenger.nick) {
 				challengerWins++;
 			}
 			else {
@@ -200,17 +230,17 @@ function getFightResultResponse(fight, challengerNick, opponentNick, round1, rou
 	});
 
 	if (challengerWins == opponentWins) {
-		return 'The fight was a tie ' + challengerWins + ' to ' + opponentWins + '.';
+		return { winner: null, challengerWins: challengerWins, opponentWins: opponentWins };
 	}
 	else if (challengerWins > opponentWins) {
-		return challengerNick + ' wins the fight ' + challengerWins + ' to ' + opponentWins + '.  :' + getFatalityEmote() + ":";
+		return { winner: challenger, challengerWins: challengerWins, opponentWins: opponentWins };
 	}
 	else {
-		return opponentNick + ' wins the fight ' + opponentWins + ' to ' + challengerWins + '.  :' + getFatalityEmote() + ":";
+		return { winner: opponent, challengerWins: challengerWins, opponentWins: opponentWins };
 	}
 }
 
-function getRoundPlayResponse(fightRound, challengerNick, opponentNick) {
+function getRoundPlayData(fightRound, challenger, opponent) {
 	var roundPlayMessage = 'Round ' + fightRound.roundNumber + '   ';
 
 	if (fightRound.challengerPlay == 'h') {
@@ -233,49 +263,49 @@ function getRoundPlayResponse(fightRound, challengerNick, opponentNick) {
 		roundPlayMessage += ':LowKickLeft:';
 	}
 
-	var winner = determineRoundWinner(fightRound, challengerNick, opponentNick);
+	var winner = determineRoundWinner(fightRound, challenger, opponent);
 
 	if (winner) {
-		roundPlayMessage += '  ' + winner + ' wins!';
+		roundPlayMessage += '  ' + winner.nick + ' wins!';
+		return { winner: winner, message: roundPlayMessage }
 	}
 	else {
 		roundPlayMessage += '  Tie';
+		return { winner: null, message: roundPlayMessage }
 	}
-
-	return roundPlayMessage;
 }
 
-function determineRoundWinner(fightRound, challengerNick, opponentNick) {
+function determineRoundWinner(fightRound, challenger, opponent) {
 	if (fightRound.challengerPlay == 'h') {
 		if (fightRound.opponentPlay == 'h') {
 			return null;
 		}
 		if (fightRound.opponentPlay == 'm') {
-			return challengerNick;
+			return challenger;
 		}
 		if (fightRound.opponentPlay == 'l') {
-			return opponentNick;
+			return opponent;
 		}
 	}
 
 	if (fightRound.challengerPlay == 'm') {
 		if (fightRound.opponentPlay == 'h') {
-			return opponentNick;
+			return opponent;
 		}
 		if (fightRound.opponentPlay == 'm') {
 			return null;
 		}
 		if (fightRound.opponentPlay == 'l') {
-			return challengerNick;
+			return challenger;
 		}
 	}
 
 	if (fightRound.challengerPlay == 'l') {
 		if (fightRound.opponentPlay == 'h') {
-			return challengerNick;
+			return challenger;
 		}
 		if (fightRound.opponentPlay == 'm') {
-			return opponentNick;
+			return opponent;
 		}
 		if (fightRound.opponentPlay == 'l') {
 			return null;

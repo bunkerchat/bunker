@@ -12,6 +12,9 @@ module.exports = {
 		resultMessage: {
 			type: 'string',
 			defaultsTo: ''
+		},
+		winningUser : {
+			model: 'User'
 		}
 	}
 };
