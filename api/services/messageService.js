@@ -24,6 +24,9 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/stats/i.test(text)) {
 		return stats(roomMember, text);
 	}
+	else if (/^\/leaderboard/i.test(text)) {
+		return leaderboard(roomMember, text);
+	}
 	else if (/^\/topic/i.test(text)) { // Change room topic
 		return setRoomTopic(roomMember, text);
 	}
@@ -520,4 +523,32 @@ function changeUserRole(roomMember, text) {
 			var message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
 			RoomService.messageRoom(roomId, message);
 		});
+}
+
+function leaderboard(roomMember, text) {
+	var match = /^\/leaderboard\s+\-losers.*$/ig.exec(text);
+
+	if (match) {
+		return leaderboardService.getLoserboard()
+			.then(function (loserboard) {
+				return Message.create({
+					room: roomMember.room,
+					type: 'stats',
+					author: roomMember.user,
+					text: loserboard
+				})
+					.then(broadcastMessage);
+			})
+	}
+
+	return leaderboardService.getLeaderboard()
+		.then(function (leaderboard) {
+			return Message.create({
+				room: roomMember.room,
+				type: 'stats',
+				author: roomMember.user,
+				text: leaderboard
+			})
+				.then(broadcastMessage);
+		})
 }
