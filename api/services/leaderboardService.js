@@ -195,10 +195,37 @@ function getHangmanPrivateGameData(sort) {
 			if (err) return reject(err);
 			hangmanUserStatisticsCollection.aggregate(
 				[
-					{ $project: {
-						userId: "$user",
-						winPercentage: { $divide: [ "$privateGameWinCount", { $add: [ "$privateGameWinCount", "$privateGameLossCount" ] } ] }
-					} },
+					{
+						$match:
+						{
+							$or:
+								[
+									{ privateGameWinCount: { $gt: 0 } },
+									{ privateGameLossCount: { $gt: 0 } }
+								]
+						}
+					},
+					{
+						$project:
+						{
+							userId: "$user",
+							winPercentage:
+							{
+								$cond:
+									[
+										{ $gt: [ '$privateGameWinCount', 0 ] },
+										{ $divide:
+											[ "$privateGameWinCount",
+												{
+													$add: [ "$privateGameWinCount", "$privateGameLossCount" ]
+												}
+											]
+										},
+										0
+									]
+							}
+						}
+					},
 					{ $sort: { winPercentage: sort } },
 					{ $limit: 5 }
 				], function (err, hangmanPrivateGameData) {
@@ -215,10 +242,29 @@ function getHangmanAccuracyData(sort) {
 			if (err) return reject(err);
 			hangmanUserStatisticsCollection.aggregate(
 				[
-					{ $project: {
-						userId: "$user",
-						guessAccuracy: { $divide: [ "$guessHits",  { $add: [ "$guessMisses", "$guessHits" ] } ] }
-					} },
+					{
+						$match:
+						{
+							$or:
+								[
+									{ guessHits: { $gt: 0 } },
+									{ guessMisses: { $gt: 0 } }
+								]
+						}
+					},
+					{ $project:
+						{
+							userId: "$user",
+							guessAccuracy:
+							{
+								$cond: [ { $gt: [ '$guessHits', 0 ] },
+									{
+										$divide: [ "$guessHits",  { $add: [ "$guessMisses", "$guessHits" ] } ]
+									}
+									, 0 ]
+							}
+						}
+					},
 					{ $sort: { guessAccuracy: sort } },
 					{ $limit: 5 }
 				], function (err, hangmanAccuracyData) {
