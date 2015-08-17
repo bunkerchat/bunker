@@ -128,8 +128,12 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 								? Math.min(nickSearchIndex + 1, matchingNames.length - 1)
 								: 0;
 						}
-
-						scope.messageText = scope.messageText.replace(/@[\w ]*?$/, '@' + matchingNames[nickSearchIndex].nick + ' ');
+						
+						if (/^\/f(?:ight)?(?:\s(\w)?|$)/i.test(scope.messageText)) {
+							scope.messageText = scope.messageText.replace(/[//\w ]*?$/, '/f ' + matchingNames[nickSearchIndex].nick + ' ');
+						} else {
+							scope.messageText = scope.messageText.replace(/[\w ]*?$/, matchingNames[nickSearchIndex].nick + ' ');
+						}
 						scope.$digest();
 					}
 				}
@@ -171,9 +175,9 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 						emoticonSearch = scope.messageText.match(/:(\w+)$/)[1];
 						emoticonSearchIndex = -1;
 					}
-					else if (/@\w*$/.test(scope.messageText)) {
+					else if (/\w*$/.test(scope.messageText)) {
 						searchState = searchStates.NICK;
-						nickSearch = scope.messageText.match(/@(\w*)$/)[1];
+						nickSearch = scope.messageText.match(/(\w*)$/)[1];
 						nickSearchIndex = -1;
 					}
 					else {
