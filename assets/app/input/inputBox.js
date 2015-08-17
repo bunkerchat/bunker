@@ -132,7 +132,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 						if (/^\/f(?:ight)?(?:\s(\w)?|$)/i.test(scope.messageText)) {
 							scope.messageText = scope.messageText.replace(/[//\w ]*?$/, '/f ' + matchingNames[nickSearchIndex].nick + ' ');
 						} else {
-							scope.messageText = scope.messageText.replace(/[\w ]*?$/, matchingNames[nickSearchIndex].nick + ' ');
+							scope.messageText = scope.messageText.replace(/@[\w ]*?$/, '@' + matchingNames[nickSearchIndex].nick + ' ');
 						}
 						scope.$digest();
 					}
@@ -175,9 +175,13 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 						emoticonSearch = scope.messageText.match(/:(\w+)$/)[1];
 						emoticonSearchIndex = -1;
 					}
-					else if (/\w*$/.test(scope.messageText)) {
+					else if (/@|(\/f(?:ight)?\s)\w*$/.test(scope.messageText)) {				
+						if (scope.messageText.match(/^\/f(?:ight)?(?:\s(\w*)|$)/)) {
+							nickSearch = scope.messageText.match(/^\/f(?:ight)?(?:\s(\w*)|$)/)[1];
+						} else if (scope.messageText.match(/@(\w*)$/)) {
+							nickSearch = scope.messageText.match(/@(\w*)$/)[1];
+						}
 						searchState = searchStates.NICK;
-						nickSearch = scope.messageText.match(/(\w*)$/)[1];
 						nickSearchIndex = -1;
 					}
 					else {
