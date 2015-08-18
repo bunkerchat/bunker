@@ -104,12 +104,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			}
 
 			function parseFight(text) {
-				var match = /:([^0-9:]*):/.exec(text);
-				var newText = text.split('&#10;');
-				var title = newText[0];
-				newText.splice(0,1);
-				text = newText.join('&#10;');
-				
+				var match = /:([^0-9:]*):/.exec(text);				
 
 				while(match) {
 					text = text.replace(/:([^0-9:]*):/, '<img class="emoticon" src="/assets/images/$1.png"/>');
@@ -124,7 +119,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
 				}
 				if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
-						var attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + title + '"><pre>' + text + '</pre></div>');
+						var attachedMedia = angular.element('<div message="::bunkerMessage" ><pre>' + text + '</pre></div>');
 						angular.element(elem).append(attachedMedia);
 						$compile(attachedMedia)(scope.$new());
 						return '';
