@@ -52,9 +52,6 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				else if (scope.bunkerMessage.type == 'fight') {
 					// fight message can have custom images as well as block text
 					text = parseFight(text);
-					if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
-						text = createQuotedBlock(text);
-					}
 				}
 				else if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
 					text = createQuotedBlock(text);
@@ -107,7 +104,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			}
 
 			function parseFight(text) {
-				var match = /:([^0-9:]*):/.exec(text);
+				var match = /:([^0-9:]*):/.exec(text);				
 
 				while(match) {
 					text = text.replace(/:([^0-9:]*):/, '<img class="emoticon" src="/assets/images/$1.png"/>');
@@ -120,6 +117,12 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					var fatality = '<img class="fatality" src="/assets/images/fatalities/' + match[1] + '.gif"/>';
 					text = text.replace(/:(\w*):/, '');
 					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
+				}
+				if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
+						var attachedMedia = angular.element('<div message="::bunkerMessage" ><pre>' + text + '</pre></div>');
+						angular.element(elem).append(attachedMedia);
+						$compile(attachedMedia)(scope.$new());
+						return '';
 				}
 
 				return text;
