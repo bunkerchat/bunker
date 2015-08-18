@@ -151,6 +151,7 @@ function buildChallengeResponse(fight) {
 			var challengerNick = challenger.nick;
 
 			var message = [];
+			message.push(opponentNick + ' you have been challenged by ' + challengerNick + ' to a fight!');
 			message.push('@' + opponentNick + ' you have been challenged by @' + challengerNick + ' to a fight!');
 			message.push('Respond to the challenge using /f ' + challengerNick + ' with your 3 rounds of fight input; example = /f ' + challengerNick + ' h m l (see /help fight for more details).');
 
@@ -172,7 +173,8 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 		var round1Data = getRoundPlayData(round1, challenger, opponent);
 		var round2Data = getRoundPlayData(round2, challenger, opponent);
 		var round3Data = getRoundPlayData(round3, challenger, opponent);
-
+		
+		responseString.push('Fight: ' + challengerNick + ' vs ' + opponentNick);
 		responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
 		responseString.push(round1Data.message);
 		responseString.push(round2Data.message);
