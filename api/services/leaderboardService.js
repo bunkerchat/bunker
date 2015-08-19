@@ -103,11 +103,11 @@ function generateResults(template, fightData, fightRoundData, hangmanPrivateGame
 			});
 
 			data = {
-				fightRank1: fightData[0] ? fightData[0].userNick + " " + fightData[0].totalWins : 'N/A',
-				fightRank2: fightData[1] ? fightData[1].userNick + " " + fightData[1].totalWins : 'N/A',
-				fightRank3: fightData[2] ? fightData[2].userNick + " " + fightData[2].totalWins : 'N/A',
-				fightRank4: fightData[3] ? fightData[3].userNick + " " + fightData[3].totalWins : 'N/A',
-				fightRank5: fightData[4] ? fightData[4].userNick + " " + fightData[4].totalWins : 'N/A',
+				fightRank1: fightData[0] ? fightData[0].userNick + " " + fightData[0].winPercentage + '% (' + fightData[0].wins + '-' + fightData[0].losses + '-' + fightData[0].ties + ')'  : 'N/A',
+				fightRank2: fightData[1] ? fightData[1].userNick + " " + fightData[1].winPercentage + '% (' + fightData[1].wins + '-' + fightData[1].losses + '-' + fightData[1].ties + ')' : 'N/A',
+				fightRank3: fightData[2] ? fightData[2].userNick + " " + fightData[2].winPercentage + '% (' + fightData[2].wins + '-' + fightData[2].losses + '-' + fightData[2].ties + ')' : 'N/A',
+				fightRank4: fightData[3] ? fightData[3].userNick + " " + fightData[3].winPercentage + '% (' + fightData[3].wins + '-' + fightData[3].losses + '-' + fightData[3].ties + ')' : 'N/A',
+				fightRank5: fightData[4] ? fightData[4].userNick + " " + fightData[4].winPercentage + '% (' + fightData[4].wins + '-' + fightData[4].losses + '-' + fightData[4].ties + ')' : 'N/A',
 				fightRounds1: fightRoundData[0] ? fightRoundData[0].userNick + " " + fightRoundData[0].totalWins : 'N/A',
 				fightRounds2: fightRoundData[1] ? fightRoundData[1].userNick + " " + fightRoundData[1].totalWins : 'N/A',
 				fightRounds3: fightRoundData[2] ? fightRoundData[2].userNick + " " + fightRoundData[2].totalWins : 'N/A',
@@ -159,16 +159,78 @@ function getFightAggregateData(sort) {
 			if (err) return reject(err);
 			fightCollection.aggregate(
 				[
-					{ $match: { winningUser: { $ne: null } } },
-					{ $group: { _id: "$winningUser" , totalWins: { $sum: 1 } } },
-					{ $sort: {totalWins: sort} },
-					{ $limit: 5 }
+					{ $project:
+					{
+						winningUser: '$winningUser',
+						losingUser:
+						{
+							$cond: [
+								{ $ne: [ '$winningUser', null ] },
+								{ $cond: [ { $ne: [ '$winningUser', '$challenger' ] }, '$challenger', '$opponent' ] },
+								null
+							]
+						},
+						opponentUser: '$opponent',
+						challengerUser: '$challenger'
+					}
+					}
 				], function (err, fightData) {
 				if (err) return reject(err);
 				resolve(fightData);
 			});
 		});
-	});
+	}).then(function(fightData) {
+
+			if (fightData) {
+				var userStats = {};
+
+				_.forEach(fightData, function (fightDataElement) {
+
+					if (!userStats[fightDataElement.opponentUser])
+					{
+						userStats[fightDataElement.opponentUser] = {};
+						userStats[fightDataElement.opponentUser].wins = 0;
+						userStats[fightDataElement.opponentUser].losses = 0;
+						userStats[fightDataElement.opponentUser].ties = 0;
+						userStats[fightDataElement.opponentUser].totalGames = 0;
+						userStats[fightDataElement.opponentUser]._id = fightDataElement.opponentUser;
+					}
+
+					if (!userStats[fightDataElement.challengerUser])
+					{
+						userStats[fightDataElement.challengerUser] = {};
+						userStats[fightDataElement.challengerUser].wins = 0;
+						userStats[fightDataElement.challengerUser].losses = 0;
+						userStats[fightDataElement.challengerUser].ties = 0;
+						userStats[fightDataElement.challengerUser].totalGames = 0;
+						userStats[fightDataElement.challengerUser]._id = fightDataElement.challengerUser;
+					}
+
+					if (fightDataElement.winningUser) {
+						userStats[fightDataElement.winningUser].wins++;
+						userStats[fightDataElement.winningUser].totalGames++;
+
+						userStats[fightDataElement.losingUser].losses++;
+						userStats[fightDataElement.losingUser].totalGames++;
+					}
+					else {
+						userStats[fightDataElement.opponentUser].ties++;
+						userStats[fightDataElement.opponentUser].totalGames++;
+
+						userStats[fightDataElement.challengerUser].ties++;
+						userStats[fightDataElement.challengerUser].totalGames++;
+					}
+
+					userStats[fightDataElement.opponentUser].winPercentage = userStats[fightDataElement.opponentUser].wins > 0 ? Math.round((userStats[fightDataElement.opponentUser].wins / userStats[fightDataElement.opponentUser].totalGames) * 100) : 0;
+					userStats[fightDataElement.challengerUser].winPercentage = userStats[fightDataElement.challengerUser].wins > 0 ? Math.round((userStats[fightDataElement.challengerUser].wins / userStats[fightDataElement.challengerUser].totalGames) * 100) : 0;
+				});
+
+				var sortString = sort != -1;
+				return _.take(_.sortByOrder(userStats, ['winPercentage'], [sortString]), 5);
+			}
+
+			return null;
+		});
 }
 
 function getFightRoundAggregateData(sort) {
