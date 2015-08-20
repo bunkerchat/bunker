@@ -233,7 +233,13 @@ function getFightAggregateData(sort) {
 				});
 
 				var sortString = sort != -1;
-				return _.take(_.sortByOrder(userStats, ['winPercentage'], [sortString]), 10);
+
+				var usersWithMoreThan10Games = _.filter(userStats, function(user)
+					{
+						return user.totalGames >= 10;
+					});
+
+				return _.take(_.sortByOrder(usersWithMoreThan10Games, ['winPercentage'], [sortString]), 10);
 			}
 
 			return null;
