@@ -25,12 +25,13 @@ function generateStats(roomMember, template) {
 				messageCount,
 				Message.count({author: roomMember.user.id, edited: true}),
 				getActiveDays(roomMember),
-				Message.find({author: roomMember.user.id}).sort('createdAt ASC').limit(1),
-				Message.find({author: roomMember.user.id}).skip(_.random(0, messageCount)).limit(1),
+				Message.find({author: roomMember.user.id, type: 'standard'}).sort('createdAt ASC').limit(1),
+				Message.find({author: roomMember.user.id, type: 'standard'}).skip(_.random(0, messageCount)).limit(1),
 				getEmoticonCounts(roomMember),
-				getHangmanStats(roomMember.user.id)
+				getHangmanStats(roomMember.user.id),
+				getFightStatistics(roomMember.user.id)
 			)
-				.spread(function (template, messageCount, editCount, activeDays, firstMessage, randomMessage, emoticonCounts, hangmanStats) {
+				.spread(function (template, messageCount, editCount, activeDays, firstMessage, randomMessage, emoticonCounts, hangmanStats, fightStats) {
 					firstMessage = firstMessage[0];
 					randomMessage = randomMessage[0];
 
@@ -51,13 +52,20 @@ function generateStats(roomMember, template) {
 						startDate: moment(roomMember.user.createdAt).format(dateFormat),
 						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 						activeDays: activeDays.length,
-						firstMessage: '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')',
+						firstMessage: firstMessage ? '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')' : '',
 						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
-						randomMessage: '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')',
+						randomMessage: randomMessage ? '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')' : '',
 						hangmanGuessCount: hangmanStats.count,
-						hangmanGuessAccuracy: hangmanStats.guessAccuracy + '%',
-						hangmanPrivateWinLoss: hangmanStats.privateWins + ' - ' + hangmanStats.privateLosses,
-						hangmanPublicWinLoss: hangmanStats.publicWins + ' - ' + hangmanStats.publicLosses
+						hangmanGuessAccuracy: hangmanStats.guessAccuracy ? hangmanStats.guessAccuracy + '%': 'N/A',
+						hangmanPrivateWinLoss: (hangmanStats.privateWins ? hangmanStats.privateWins : 0) + ' - ' + (hangmanStats.privateLosses ? hangmanStats.privateLosses : 0),
+						hangmanPublicWinLoss: hangmanStats.publicWins + ' - ' + hangmanStats.publicLosses,
+						fightWinPercentage: fightStats.fightWinPercentage,
+						fightRoundWinPercentage: fightStats.fightRoundWinPercentage,
+						fightVictim1: fightStats.topVictims && fightStats.topVictims[0] ? fightStats.topVictims[0].userNick + " " + fightStats.topVictims[0].beatings : '',
+						fightVictim2: fightStats.topVictims && fightStats.topVictims[1] ? fightStats.topVictims[1].userNick + " " + fightStats.topVictims[1].beatings : '',
+						fightVictim3: fightStats.topVictims && fightStats.topVictims[2] ? fightStats.topVictims[2].userNick + " " + fightStats.topVictims[2].beatings : '',
+						fightVictim4: fightStats.topVictims && fightStats.topVictims[3] ? fightStats.topVictims[3].userNick + " " + fightStats.topVictims[3].beatings : '',
+						fightVictim5: fightStats.topVictims && fightStats.topVictims[4] ? fightStats.topVictims[4].userNick + " " + fightStats.topVictims[4].beatings : ''
 					};
 
 					if (activeDays) {
@@ -177,9 +185,12 @@ function getHangmanStats(userId) {
 		stats = {};
 		stats.count = userStats.guessMisses + userStats.guessHits;
 
-		if (!stats.count || !userStats.guessHits) return stats;
-
-		stats.guessAccuracy = Math.round((userStats.guessHits / stats.count) * 100);
+		if (!stats.count || !userStats.guessHits) {
+			stats.guessAccuracy = 0;
+		}
+		else {
+			stats.guessAccuracy = Math.round((userStats.guessHits / stats.count) * 100);
+		}
 
 		stats.publicWins = publicStats.winCount;
 		stats.publicLosses = publicStats.lossCount;
@@ -207,4 +218,145 @@ function getHangmanPublicStatistics() {
 
 		return HangmanPublicGameStatistics.create();
 	});
+}
+
+function getFightStatistics(userId) {
+	return new Promise(function (resolve, reject) {
+		Fight.native(function (err, fightCollection) {
+			if (err) return reject(err);
+			fightCollection.aggregate(
+				[
+					{ $match: { $or: [ { opponent: ObjectId(userId) },{ challenger: ObjectId(userId) } ] } },
+					{
+						$project:
+						{
+							winningUser: '$winningUser',
+							losingUser:
+							{
+								$cond: [
+									{ $ne: [ '$winningUser', null ] },
+									{ $cond: [ { $ne: [ '$winningUser', '$challenger' ] }, '$challenger', '$opponent' ] },
+									null
+								]
+							},
+							opponentUser: '$opponent',
+							challengerUser: '$challenger',
+						}
+					}
+				], function (err, fightData) {
+					if (err) return reject(err);
+					resolve(fightData);
+				});
+		});
+	}).then(function(fightData) {
+
+			var fightResults = {};
+			var victims = {};
+			var userIds = [];
+			if (fightData) {
+				var userStats = {};
+				userStats.wins = 0;
+				userStats.losses = 0;
+				userStats.ties = 0;
+				userStats.totalGames = 0;
+
+				var fightIds = [];
+
+				_.forEach(fightData, function (fightDataElement) {
+
+					fightIds.push(fightDataElement._id);
+					if (fightDataElement.winningUser) {
+						if (fightDataElement.winningUser == userId) {
+							userStats.wins++;
+
+							if (fightDataElement.opponentUser == userId) {
+								if (!victims[fightDataElement.challengerUser]) {
+									victims[fightDataElement.challengerUser] = {};
+									victims[fightDataElement.challengerUser].beatings = 0;
+									victims[fightDataElement.challengerUser].id = fightDataElement.challengerUser;
+								}
+
+								victims[fightDataElement.challengerUser].beatings++;
+								userIds.push(fightDataElement.challengerUser);
+							}
+							else {
+								if (!victims[fightDataElement.opponentUser]) {
+									victims[fightDataElement.opponentUser] = {};
+									victims[fightDataElement.opponentUser].beatings = 0;
+									victims[fightDataElement.opponentUser].id = fightDataElement.opponentUser;
+								}
+
+								victims[fightDataElement.opponentUser].beatings++;
+								userIds.push(fightDataElement.opponentUser);
+							}
+						}
+						else {
+							userStats.losses++;
+						}
+
+						userStats.totalGames++;
+					}
+					else {
+						userStats.ties++;
+						userStats.totalGames++;
+					}
+
+					userStats.winPercentage = userStats.wins > 0 ?
+						Math.round(((userStats.wins + (userStats.ties * 0.5)) / userStats.totalGames) * 100) : 0;
+				});
+
+				fightResults.fightWinPercentage = userStats.winPercentage + '% (' + userStats.wins + '-' + userStats.ties + '-' + userStats.losses + ')';
+				fightResults.topVictims = _.take(_.sortByOrder(victims, ['beatings'], [false]), 5);
+
+				userIds = _.unique(userIds);
+
+				return User.find({ "_id": { $in : userIds } }).then(function(users) {
+
+					_.forEach(fightResults.topVictims, function (victim) {
+						var userIndex = _.findIndex(users, function (user) {
+							return user.id == victim.id;
+						});
+
+						victim.userNick = users[userIndex].nick;
+					});
+
+					return FightRound.find( { fight: { $in: fightIds } } ).then(function (fightRounds) {
+						var fightRoundStats = {};
+						fightRoundStats.wins = 0;
+						fightRoundStats.losses = 0;
+						fightRoundStats.ties = 0;
+						fightRoundStats.totalRounds = 0;
+
+						_.forEach(fightRounds, function(fightRound) {
+							if (fightRound.winningUser) {
+								if (fightRound.winningUser == userId) {
+									fightRoundStats.wins++;
+								}
+								else {
+									fightRoundStats.losses++;
+								}
+							}
+							else {
+								fightRoundStats.ties++;
+							}
+
+							fightRoundStats.totalRounds++;
+
+							fightRoundStats.winPercentage = fightRoundStats.wins > 0 ?
+								Math.round(((fightRoundStats.wins + (fightRoundStats.ties * 0.5)) / fightRoundStats.totalRounds) * 100) : 0;
+						});
+
+						fightResults.fightRoundWinPercentage = fightRoundStats.winPercentage + '% (' + fightRoundStats.wins + '-' + fightRoundStats.losses + '-' + fightRoundStats.ties + ')';
+
+						return fightResults;
+					});
+				});
+			}
+
+			fightResults.fightWinPercentage = '0% (0-0-0)';
+			fightResults.victims = null;
+			fightResults.fightRoundWinPercentage = '0% (0-0-0)';
+
+			return fightResults;
+		});
 }
