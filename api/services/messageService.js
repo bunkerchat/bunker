@@ -169,10 +169,6 @@ function animation(roomMember, text) {
 			words.push('all-knowing', 'omniscient', 'round', 'number 8', 'bawlz', 'predictions', 'shaking',
 				'future', 'revealing', 'how does it know?', 'not good 4 billiardz lol');
 			break;
-		case ':johncena:':
-			words.push('get ready', 'WWE', 'Suuuuuuuuuuuppper Slam', 'champ', '&#127930;&#127930;&#127930;&#127930;',
-				 'i\'m watching you', 'this sunday night!');
-			break;
 	}
 
 	RoomService.animateInRoom(roomMember, emoticon, _.sample(words, 10));
