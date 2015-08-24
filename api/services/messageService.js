@@ -471,9 +471,14 @@ function fight(roomMember, text) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, fightResponse.error, 'fight');
 			}
 
-			return message(roomMember, fightResponse.message, 'fight').then(function (message) {
-				return saveFightInMentionedInboxes(message, roomMember.user, roomMember.room);
-			});
+			if (fightResponse.isList) {
+				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, fightResponse.message, 'fight');
+			}
+			else {
+				return message(roomMember, fightResponse.message, 'fight').then(function (message) {
+					return saveFightInMentionedInboxes(message, roomMember.user, roomMember.room);
+				});
+			}
 		});
 }
 

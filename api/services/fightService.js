@@ -15,7 +15,14 @@ module.exports.play = function (roomMember, command) {
 	// need to parse out the command info so we know what to do
 	var round1Play, round2Play, round3Play, parameters;
 
-	parameters = /^\/f\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$/.exec(command);
+	parameters = /^\/f(?:ight)\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$/.exec(command);
+
+	// check if we are asking for the list of open fights
+	var listParam = /^\/f(?:ight)?(?:(\s\-list)?|$)/.exec(command);
+
+	if (listParam[1]) {
+		return getOpenFightList(roomMember);
+	}
 
 	if (parameters.length != 5) {
 		return Promise.resolve({error: 'Cannot start the fight.  Bad input, see the help topic on fight (/help fight) for correct parameter usage.'});
@@ -110,6 +117,74 @@ module.exports.play = function (roomMember, command) {
 	});
 };
 
+function getOpenFightList(roomMember) {
+	return Promise.join(
+		Fight.find({ winningUser: null, resultMessage: '', challenger: roomMember.user.id, room: roomMember.room }),
+		Fight.find({ winningUser: null, resultMessage: '', opponent: roomMember.user.id, room: roomMember.room })
+	)
+	.spread(function (myChallenges, mySlacking) {
+
+			if ((myChallenges && myChallenges.length > 0) || ( mySlacking && mySlacking.length > 0)) {
+				var userIds = [];
+
+				_.forEach(myChallenges, function (challenge) {
+					userIds.push(challenge.opponent);
+				});
+
+				_.forEach(mySlacking, function (myUnresponded) {
+					userIds.push(myUnresponded.challenger);
+				});
+
+				userIds = _.unique(userIds);
+
+				return User.find({"id": {$in: userIds}}).then(function (users) {
+					// build our response message.
+					var message = [];
+					var slackers = [];
+					var myUnresponded = [];
+
+					_.forEach(myChallenges, function (challenge) {
+						var userIndex = _.findIndex(users, function (user) {
+							return user.id == challenge.opponent;
+						});
+
+						slackers.push(users[userIndex].nick);
+					});
+
+					slackers = _.unique(slackers);
+
+					if (slackers && slackers.length > 0) {
+						message.push("Unresponded to challenges from me:  " + slackers.join(', '))
+					}
+					else {
+						message.push("No unresponded to challenges from me.");
+					}
+
+					_.forEach(mySlacking, function (unrespondedTo) {
+						var userIndex = _.findIndex(users, function (user) {
+							return user.id == unrespondedTo.challenger;
+						});
+
+						myUnresponded.push(users[userIndex].nick);
+					});
+
+					myUnresponded = _.unique(myUnresponded);
+
+					if (myUnresponded && myUnresponded.length > 0) {
+						message.push("Unresponded to challenges to me:  " + myUnresponded.join(', '));
+					}
+					else {
+						message.push("No unresponded to challenges to me.");
+					}
+
+					return {message: ent.encode(message.join('\n')), isList: true};
+				});
+			}
+
+			return {message: "No outstanding unresponded to challenges to or from you.", isList: true};
+		});
+}
+
 function getFight(userId, opponentUserId, roomId) {
 	// look for both permutations where we are the challenger or the opponent responding to the challenge
 	// if no fight is found between the 2 users, create one and send it as a new challenge
@@ -173,7 +248,7 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 		var round1Data = getRoundPlayData(round1, challenger, opponent);
 		var round2Data = getRoundPlayData(round2, challenger, opponent);
 		var round3Data = getRoundPlayData(round3, challenger, opponent);
-		
+
 		responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
 		responseString.push(round1Data.message);
 		responseString.push(round2Data.message);

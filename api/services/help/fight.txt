@@ -5,6 +5,7 @@ NAME
 PARAMETERS
 	user nickname			...The user you are challenging or responding to a challenge for.  You must be in the same room, you cannot challenge others cross room.
 	(h,m,l) (h,m,l) (h,m,l)		...The 3 rounds of fight input.  h, m, l are the valid inputs describing the types of kicks used.
+	-list				...List outstanding challenges from and to you.
 
 LEGEND
 	h 				...High Kick; beats Mid Kick, loses to Low Kick.
