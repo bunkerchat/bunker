@@ -15,7 +15,7 @@ module.exports.play = function (roomMember, command) {
 	// need to parse out the command info so we know what to do
 	var round1Play, round2Play, round3Play, parameters;
 
-	parameters = /^\/f(?:ight)\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$/.exec(command);
+	parameters = /^\/f(?:ight)?(?:\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$)/.exec(command);
 
 	// check if we are asking for the list of open fights
 	var listParam = /^\/f(?:ight)?(?:(\s\-list)?|$)/.exec(command);
