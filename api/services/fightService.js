@@ -190,7 +190,7 @@ function buildChallengeResponse(fight) {
 			var challengerNick = challenger.nick;
 
 			var message = [];
-			message.push('@' + opponentNick + ' has challenged @' + challengerNick + ' to a fight!');
+			message.push('@' + challengerNick + ' has challenged @' + opponentNick + ' to a fight!');
 			message.push('Respond using /f ' + challengerNick + ' with 3 round moves, i.e. /f ' + challengerNick + ' h m l (see /help fight for more details)');
 			return {message: ent.encode(message.join('\n'))};
 		});
