@@ -26,9 +26,7 @@ module.exports.play = function (roomMember, command) {
 	}
 
 	var opponentNick = parameters[1];
-	var round1Play = parameters[2];
-	var round2Play = parameters[3];
-	var round3Play = parameters[4];
+	var roundPlays = _.takeRight(parameters, 3);
 
 	return RoomMember.find({room: roomMember.room}).populate('user').then(function (roomMembers) {
 
@@ -52,60 +50,32 @@ module.exports.play = function (roomMember, command) {
 				if (!rounds || rounds.length == 0) {
 					// this is a new challenge
 
-					// async execution of the round creation
-					return Promise.join(
-						FightRound.create({
+					return Promise.each(roundPlays, function (roundPlay, index) {
+						return FightRound.create({
 							fight: fight.id,
-							challengerPlay: round1Play,
-							roundNumber: 1
-						}),
-						FightRound.create({
-							fight: fight.id,
-							challengerPlay: round2Play,
-							roundNumber: 2
-						}),
-						FightRound.create({
-							fight: fight.id,
-							challengerPlay: round3Play,
-							roundNumber: 3
-						})
-					)
+							challengerPlay: roundPlay,
+							roundNumber: index + 1
+						});
+					})
 						.spread(function (round1, round2, round3) {
 							return buildChallengeResponse(fight);
 						});
 				}
-				else {
-					// we are responding to a challenge
-					var round1Index = _.findIndex(rounds, function (round) {
-						return round.roundNumber == 1;
-					});
-					var round2Index = _.findIndex(rounds, function (round) {
-						return round.roundNumber == 2;
-					});
-					var round3Index = _.findIndex(rounds, function (round) {
-						return round.roundNumber == 3;
-					});
 
-					rounds[round1Index].opponentPlay = round1Play;
-					rounds[round2Index].opponentPlay = round2Play;
-					rounds[round3Index].opponentPlay = round3Play;
+				// Existing challenge
 
-					var round1Update = rounds[round1Index].save();
-					var round2Update = rounds[round2Index].save();
-					var round3Update = rounds[round3Index].save();
+				rounds = _.sortBy(rounds, 'roundNumber');
+				_.each(rounds, function (round, index) {
+					round.opponentPlay = roundPlays[index];
+				});
 
-					//fight.opponentsRoom = roomMember.room;
-
-					return Promise.join(
-						round1Update,
-						round2Update,
-						round3Update,
-						fight.save()
-					)
-						.spread(function (round1, round2, round3, updatedFight) {
-							return buildFightResultsResponse(updatedFight, round1, round2, round3);
-						});
-				}
+				return Promise.join(
+					fight.save(),
+					Promise.each(rounds, function (round) {
+						return round.save();
+					})
+				)
+					.spread(buildFightResultsResponse);
 			});
 		});
 	});
@@ -221,14 +191,12 @@ function buildChallengeResponse(fight) {
 
 			var message = [];
 			message.push('@' + opponentNick + ' you have been challenged by @' + challengerNick + ' to a fight!');
-			message.push('Respond to the challenge using /f ' + challengerNick + ' with your 3 rounds of fight input;');
-			message.push('example = /f ' + challengerNick + ' h m l (see /help fight for more details).');
-
+			message.push('Respond using /f ' + challengerNick + ' with 3 rounds moves (i.e. /f ' + challengerNick + ' h m l (see /help fight for more details)');
 			return {message: ent.encode(message.join('\n'))};
 		});
 }
 
-function buildFightResultsResponse(fight, round1, round2, round3) {
+function buildFightResultsResponse(fight, rounds) {
 	return Promise.join(
 		User.findOne({id: fight.challenger.id}),
 		User.findOne({id: fight.opponent.id})
@@ -239,21 +207,21 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 
 			var responseString = [];
 
-			var round1Data = getRoundPlayData(round1, challenger, opponent);
-			var round2Data = getRoundPlayData(round2, challenger, opponent);
-			var round3Data = getRoundPlayData(round3, challenger, opponent);
+			var round1Data = getRoundPlayData(rounds[0], challenger, opponent);
+			var round2Data = getRoundPlayData(rounds[1], challenger, opponent);
+			var round3Data = getRoundPlayData(rounds[2], challenger, opponent);
 
 			responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
 			responseString.push(round1Data.message);
 			responseString.push(round2Data.message);
 			responseString.push(round3Data.message);
 
-			var fightResultData = getFightResultData(challenger, opponent, round1, round2, round3);
+			var fightResultData = getFightResultData(challenger, opponent, rounds[0], rounds[1], rounds[2]);
 
 			fight.winningUser = fightResultData.winner;
-			round1.winningUser = round1Data.winner;
-			round2.winningUser = round2Data.winner;
-			round3.winningUser = round3Data.winner;
+			rounds[0].winningUser = round1Data.winner;
+			rounds[1].winningUser = round2Data.winner;
+			rounds[2].winningUser = round3Data.winner;
 
 			if (fightResultData.winner) {
 				if (fightResultData.winner.id == challenger.id) {
@@ -271,11 +239,11 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 
 			return Promise.join(
 				fight.save(),
-				round1.save(),
-				round2.save(),
-				round3.save()
+				Promise.each(rounds, function (round) {
+					return round.save();
+				})
 			)
-				.spread(function (updatedFight, updatedRound1, updatedRound2, updatedRound3) {
+				.spread(function (updatedFight) {
 					return {message: updatedFight.resultMessage};
 				});
 		});
