@@ -1,6 +1,7 @@
 var Promise = require('bluebird');
 var request = Promise.promisifyAll(require('request'));
 var ent = require('ent');
+var InvalidInputError = require('../errors/InvalidInputError');
 
 /*
  Some key notes about the current design decisions for Fight:
@@ -21,7 +22,7 @@ module.exports.play = function (roomMember, command) {
 	// need to parse out the command info so we know what to do
 	var parameters = /^\/f(?:ight)?(?:\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$)/.exec(command);
 	if (!parameters || parameters.length != 5) {
-		return Promise.resolve({error: 'Cannot start the fight.  Bad input, see the help topic on fight (/help fight) for correct parameter usage.'});
+		throw new InvalidInputError('Cannot start the fight — Bad input, see the help topic on fight (/help fight) for correct parameter usage');
 	}
 
 	var opponentNick = parameters[1];
@@ -36,17 +37,15 @@ module.exports.play = function (roomMember, command) {
 		});
 
 		if (!opponentRoomMember) {
-			// we got a bad user nickname
-			return Promise.resolve({error: 'Cannot start the fight.  Unable to find a user with the nickname of ' + opponentNick + '.'});
+			throw new InvalidInputError('Cannot start the fight — ' + opponentNick + ' is not a member of this room');
 		}
-
 		if (roomMember.user.id == opponentRoomMember.user.id) {
-			return Promise.resolve({error: 'Cannot start the fight.  Unable to challenge yourself.'});
+			throw new InvalidInputError('Cannot start the fight — cannot challenge yourself');
 		}
 
 		return getFight(roomMember.user.id, opponentRoomMember.user.id, roomMember.room).then(function (fight) {
 			if (!fight) {
-				return Promise.resolve({error: 'Cannot start the fight.  Unable to challenge the user ' + opponentNick + ' in this room, there is already an active fight.'});
+				throw new InvalidInputError('Cannot start the fight — unable to challenge ' + opponentNick + ', there is already an active fight');
 			}
 
 			return FightRound.find({fight: fight.id}).then(function (rounds) {

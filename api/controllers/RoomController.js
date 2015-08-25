@@ -19,10 +19,12 @@ module.exports.message = function (req, res) {
 
 	var userId = req.session.userId;
 	var roomId = actionUtil.requirePk(req);
+	var currentRoomMember;
 
 	RoomMember.findOne({user: userId, room: roomId}).populate('user').then(function (roomMember) {
 
 		if (!roomMember) throw new ForbiddenError('Must be a member of this room');
+		currentRoomMember = roomMember;
 
 		if (roomMember.user.busy) {
 			// User is flagged as busy, we can now remove this flag since they are interacting with the app
@@ -40,6 +42,7 @@ module.exports.message = function (req, res) {
 			res.forbidden(err);
 		})
 		.catch(InvalidInputError, function (err) {
+			RoomService.messageUserInRoom(currentRoomMember.user.id, currentRoomMember.room, err.message);
 			res.badRequest(err);
 		})
 		.catch(res.serverError);

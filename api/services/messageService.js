@@ -467,10 +467,6 @@ function gif(roomMember, text) {
 function fight(roomMember, text) {
 	return fightService.play(roomMember, text)
 		.then(function (fightResponse) {
-			if (fightResponse.error) {
-				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, fightResponse.error, 'fight');
-			}
-
 			if (fightResponse.isList) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, fightResponse.message, 'fight');
 			}
@@ -485,10 +481,6 @@ function fight(roomMember, text) {
 function hangman(roomMember, text) {
 	return hangmanService.play(roomMember, text)
 		.then(function (hangmanResponse) {
-			if (hangmanResponse.error) {
-				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.error, 'hangman');
-			}
-
 			if (hangmanResponse.isPrivate) {
 				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.message, 'hangman');
 			}
@@ -508,13 +500,13 @@ function changeUserRole(roomMember, text) {
 	var action = match[1];
 	var userNick = match[2];
 
-	if (user.nick == userNick) throw new InvalidInputError('You cannot promote self');
+	if (user.nick == userNick) throw new InvalidInputError('You cannot promote yourself');
 
 	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
 		.then(function (roomMemberToPromote) {
-			if (!roomMemberToPromote) throw new InvalidInputError('Invalid user');
+			if (!roomMemberToPromote) throw new InvalidInputError('Could not find user ' + userNick);
 
-			if(action == 'promote'){
+			if (action == 'promote') {
 				newRole = roomMemberToPromote.role == 'member' ? 'moderator' : 'administrator';
 			}
 			else { // demote

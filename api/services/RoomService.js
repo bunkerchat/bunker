@@ -76,14 +76,18 @@ module.exports.messageUserInRoom = function (userId, roomId, message, type) {
 };
 
 module.exports.getRoomMemberByNickAndRoom = function (userNick, roomId) {
-	return User.find({nick: userNick})
-		.then(function (users) {
-			var userIds = users.map(function (user) {
-				return user.id;
-			});
+	return User.find({nick: userNick}).then(function (users) {
 
-			return RoomMember.findOne({user: userIds, room: roomId}).populateAll();
+		if(users.length == 0) {
+			return null;
+		}
+
+		var userIds = users.map(function (user) {
+			return user.id;
 		});
+
+		return RoomMember.findOne({user: userIds, room: roomId}).populateAll();
+	});
 };
 
 
