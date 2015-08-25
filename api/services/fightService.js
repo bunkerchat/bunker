@@ -6,23 +6,21 @@ var ent = require('ent');
  Some key notes about the current design decisions for Fight:
  - A fight will take place between 2 users in a single room.
  - Even though it is asynchronous, it is currently required that both members be part of the room that the challenger is originating the fight in.
- - A fight will be hangled via private messages to the users involved, it will not be publicly shown.
  - Currently fights, even completed ones, are retained in the Mongo DB.
- - This is intentional for expanding on stasitics later, so all history of fights will be avialable.
+ - This is intentional for expanding on statistics later, so all history of fights will be available.
  */
 
 module.exports.play = function (roomMember, command) {
-	// need to parse out the command info so we know what to do
-	var parameters = /^\/f(?:ight)?(?:\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$)/.exec(command);
 
 	// check if we are asking for the list of open fights
 	var listParam = /^\/f(?:ight)?(?:(\s\-list)?|$)/.exec(command);
-
-	if (listParam[1]) {
+	if (listParam && listParam[1]) {
 		return getOpenFightList(roomMember);
 	}
 
-	if (parameters.length != 5) {
+	// need to parse out the command info so we know what to do
+	var parameters = /^\/f(?:ight)?(?:\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$)/.exec(command);
+	if (!parameters || parameters.length != 5) {
 		return Promise.resolve({error: 'Cannot start the fight.  Bad input, see the help topic on fight (/help fight) for correct parameter usage.'});
 	}
 
@@ -348,40 +346,20 @@ function getRoundPlayData(fightRound, challenger, opponent) {
 }
 
 function determineRoundWinner(fightRound, challenger, opponent) {
-	if (fightRound.challengerPlay == 'h') {
-		if (fightRound.opponentPlay == 'h') {
-			return null;
-		}
-		if (fightRound.opponentPlay == 'm') {
-			return challenger;
-		}
-		if (fightRound.opponentPlay == 'l') {
-			return opponent;
-		}
-	}
 
-	if (fightRound.challengerPlay == 'm') {
-		if (fightRound.opponentPlay == 'h') {
-			return opponent;
-		}
-		if (fightRound.opponentPlay == 'm') {
-			return null;
-		}
-		if (fightRound.opponentPlay == 'l') {
-			return challenger;
-		}
-	}
+	// Assumption: no improper moves are input
 
-	if (fightRound.challengerPlay == 'l') {
-		if (fightRound.opponentPlay == 'h') {
-			return challenger;
-		}
-		if (fightRound.opponentPlay == 'm') {
-			return opponent;
-		}
-		if (fightRound.opponentPlay == 'l') {
-			return null;
-		}
+	if (fightRound.challengerPlay == fightRound.opponentPlay) {
+		return null; // tie
+	}
+	else if (fightRound.challengerPlay == 'h') {
+		return fightRound.opponentPlay == 'm' ? challenger : opponent; // high beats mid
+	}
+	else if (fightRound.challengerPlay == 'm') {
+		return fightRound.opponentPlay == 'l' ? challenger : opponent; // mid beats low
+	}
+	else if (fightRound.challengerPlay == 'l') {
+		return fightRound.opponentPlay == 'h' ? challenger : opponent; // low beats high
 	}
 }
 
