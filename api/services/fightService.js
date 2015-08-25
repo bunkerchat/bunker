@@ -204,24 +204,22 @@ function buildFightResultsResponse(fight, rounds) {
 		.spread(function (challenger, opponent) {
 			var opponentNick = opponent.nick;
 			var challengerNick = challenger.nick;
+			var roundData = _.map(rounds, function (round) {
+				return getRoundPlayData(round, challenger, opponent)
+			});
 
 			var responseString = [];
-
-			var round1Data = getRoundPlayData(rounds[0], challenger, opponent);
-			var round2Data = getRoundPlayData(rounds[1], challenger, opponent);
-			var round3Data = getRoundPlayData(rounds[2], challenger, opponent);
-
 			responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
-			responseString.push(round1Data.message);
-			responseString.push(round2Data.message);
-			responseString.push(round3Data.message);
+			_.each(roundData, function (data) {
+				responseString.push(data.message);
+			});
 
-			var fightResultData = getFightResultData(challenger, opponent, rounds[0], rounds[1], rounds[2]);
+			var fightResultData = getFightResultData(challenger, opponent, rounds);
 
 			fight.winningUser = fightResultData.winner;
-			rounds[0].winningUser = round1Data.winner;
-			rounds[1].winningUser = round2Data.winner;
-			rounds[2].winningUser = round3Data.winner;
+			_.each(rounds, function (round, index) {
+				round.winningUser = roundData[index].winner;
+			});
 
 			if (fightResultData.winner) {
 				if (fightResultData.winner.id == challenger.id) {
@@ -249,10 +247,9 @@ function buildFightResultsResponse(fight, rounds) {
 		});
 }
 
-function getFightResultData(challenger, opponent, round1, round2, round3) {
+function getFightResultData(challenger, opponent, rounds) {
 	var challengerWins = 0;
 	var opponentWins = 0;
-	var rounds = [round1, round2, round3];
 
 	_.forEach(rounds, function (round) {
 		var winner = determineRoundWinner(round, challenger.nick, opponent.nick);
