@@ -551,6 +551,11 @@ img.fatality {
 	margin-right: 4px;
 }
 
+.member-list .pull-right img {
+	max-height: 20px;
+	margin-top: -3px;
+}
+
 /* file upload related styles */
 #bunker-dropzone-overlay {
 	position: absolute;

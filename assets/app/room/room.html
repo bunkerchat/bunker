@@ -107,7 +107,10 @@
 						<a ng-click="mentionUser(member.user.nick)">{{member.user.nick}}</a>
 
 						<div class="pull-right">
-							<span ng-show="member.role != 'member'" ng-switch="member.role" title="{{member.role}}">
+							<span ng-show="member.$fighting">
+								<img src="/assets/images/emoticons/punch.gif"/>
+							</span>
+							<span ng-if="member.role != 'member'" ng-switch="member.role" title="{{member.role}}">
 								<i class="fa fa-gavel" ng-switch-when="administrator"></i>
 								<i class="fa fa-comments" ng-switch-when="moderator"></i>
 							</span>

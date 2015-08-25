@@ -13,9 +13,7 @@ var ent = require('ent');
 
 module.exports.play = function (roomMember, command) {
 	// need to parse out the command info so we know what to do
-	var round1Play, round2Play, round3Play, parameters;
-
-	parameters = /^\/f(?:ight)?(?:\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$)/.exec(command);
+	var parameters = /^\/f(?:ight)?(?:\s+([\w\s\.]{0,19})\s+(h|m|l)\s+(h|m|l)\s+(h|m|l).*$)/.exec(command);
 
 	// check if we are asking for the list of open fights
 	var listParam = /^\/f(?:ight)?(?:(\s\-list)?|$)/.exec(command);
@@ -28,11 +26,10 @@ module.exports.play = function (roomMember, command) {
 		return Promise.resolve({error: 'Cannot start the fight.  Bad input, see the help topic on fight (/help fight) for correct parameter usage.'});
 	}
 
-	opponentNick = parameters[1];
-
-	round1Play = parameters[2];
-	round2Play = parameters[3];
-	round3Play = parameters[4];
+	var opponentNick = parameters[1];
+	var round1Play = parameters[2];
+	var round2Play = parameters[3];
+	var round3Play = parameters[4];
 
 	return RoomMember.find({room: roomMember.room}).populate('user').then(function (roomMembers) {
 
@@ -100,7 +97,7 @@ module.exports.play = function (roomMember, command) {
 					var round2Update = rounds[round2Index].save();
 					var round3Update = rounds[round3Index].save();
 
-					fight.opponentsRoom = roomMember.room;
+					//fight.opponentsRoom = roomMember.room;
 
 					return Promise.join(
 						round1Update,
@@ -119,10 +116,10 @@ module.exports.play = function (roomMember, command) {
 
 function getOpenFightList(roomMember) {
 	return Promise.join(
-		Fight.find({ winningUser: null, resultMessage: '', challenger: roomMember.user.id, room: roomMember.room }),
-		Fight.find({ winningUser: null, resultMessage: '', opponent: roomMember.user.id, room: roomMember.room })
+		Fight.find({winningUser: null, resultMessage: '', challenger: roomMember.user.id, room: roomMember.room}),
+		Fight.find({winningUser: null, resultMessage: '', opponent: roomMember.user.id, room: roomMember.room})
 	)
-	.spread(function (myChallenges, mySlacking) {
+		.spread(function (myChallenges, mySlacking) {
 
 			if ((myChallenges && myChallenges.length > 0) || ( mySlacking && mySlacking.length > 0)) {
 				var userIds = [];
@@ -137,7 +134,7 @@ function getOpenFightList(roomMember) {
 
 				userIds = _.unique(userIds);
 
-				return User.find({"id": {$in: userIds}}).then(function (users) {
+				return User.find({'id': {$in: userIds}}).then(function (users) {
 					// build our response message.
 					var message = [];
 					var slackers = [];
@@ -154,10 +151,10 @@ function getOpenFightList(roomMember) {
 					slackers = _.unique(slackers);
 
 					if (slackers && slackers.length > 0) {
-						message.push("Unresponded to challenges from me:  " + slackers.join(', '))
+						message.push('Unresponded to challenges from me:  ' + slackers.join(', '))
 					}
 					else {
-						message.push("No unresponded to challenges from me.");
+						message.push('No unresponded to challenges from me.');
 					}
 
 					_.forEach(mySlacking, function (unrespondedTo) {
@@ -171,17 +168,17 @@ function getOpenFightList(roomMember) {
 					myUnresponded = _.unique(myUnresponded);
 
 					if (myUnresponded && myUnresponded.length > 0) {
-						message.push("Unresponded to challenges to me:  " + myUnresponded.join(', '));
+						message.push('Unresponded to challenges to me:  ' + myUnresponded.join(', '));
 					}
 					else {
-						message.push("No unresponded to challenges to me.");
+						message.push('No unresponded to challenges to me.');
 					}
 
 					return {message: ent.encode(message.join('\n')), isList: true};
 				});
 			}
 
-			return {message: "No outstanding unresponded to challenges to or from you.", isList: true};
+			return {message: 'No outstanding unresponded to challenges to or from you.', isList: true};
 		});
 }
 
@@ -230,7 +227,7 @@ function buildChallengeResponse(fight) {
 			message.push('Respond to the challenge using /f ' + challengerNick + ' with your 3 rounds of fight input;');
 			message.push('example = /f ' + challengerNick + ' h m l (see /help fight for more details).');
 
-			return { message: ent.encode(message.join('\n')) };
+			return {message: ent.encode(message.join('\n'))};
 		});
 }
 
@@ -239,53 +236,52 @@ function buildFightResultsResponse(fight, round1, round2, round3) {
 		User.findOne({id: fight.challenger.id}),
 		User.findOne({id: fight.opponent.id})
 	)
-	.spread(function (challenger, opponent) {
-		var opponentNick = opponent.nick;
-		var challengerNick = challenger.nick;
+		.spread(function (challenger, opponent) {
+			var opponentNick = opponent.nick;
+			var challengerNick = challenger.nick;
 
-		var responseString = [];
+			var responseString = [];
 
-		var round1Data = getRoundPlayData(round1, challenger, opponent);
-		var round2Data = getRoundPlayData(round2, challenger, opponent);
-		var round3Data = getRoundPlayData(round3, challenger, opponent);
+			var round1Data = getRoundPlayData(round1, challenger, opponent);
+			var round2Data = getRoundPlayData(round2, challenger, opponent);
+			var round3Data = getRoundPlayData(round3, challenger, opponent);
 
-		responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
-		responseString.push(round1Data.message);
-		responseString.push(round2Data.message);
-		responseString.push(round3Data.message);
+			responseString.push('Fight between @' + challengerNick + ' and @' + opponentNick + ' has begun!');
+			responseString.push(round1Data.message);
+			responseString.push(round2Data.message);
+			responseString.push(round3Data.message);
 
-		var fightResultData = getFightResultData(challenger, opponent, round1, round2, round3);
+			var fightResultData = getFightResultData(challenger, opponent, round1, round2, round3);
 
-		fight.winningUser = fightResultData.winner;
-		round1.winningUser = round1Data.winner;
-		round2.winningUser = round2Data.winner;
-		round3.winningUser = round3Data.winner;
+			fight.winningUser = fightResultData.winner;
+			round1.winningUser = round1Data.winner;
+			round2.winningUser = round2Data.winner;
+			round3.winningUser = round3Data.winner;
 
-		if (fightResultData.winner)
-		{
-			if (fightResultData.winner.id == challenger.id) {
-				responseString.push(challengerNick + ' wins the fight ' + fightResultData.challengerWins + ' to ' + fightResultData.opponentWins + '.  :' + getFatalityEmote() + ':');
+			if (fightResultData.winner) {
+				if (fightResultData.winner.id == challenger.id) {
+					responseString.push(challengerNick + ' wins the fight ' + fightResultData.challengerWins + ' to ' + fightResultData.opponentWins + '.  :' + getFatalityEmote() + ':');
+				}
+				else {
+					responseString.push(opponentNick + ' wins the fight ' + fightResultData.opponentWins + ' to ' + fightResultData.challengerWins + '.  :' + getFatalityEmote() + ':');
+				}
+			} else {
+				// was a tie
+				responseString.push('The fight was a tie ' + fightResultData.challengerWins + ' to ' + fightResultData.opponentWins + '.  :' + getTieEmote() + ':');
 			}
-			else {
-				responseString.push(opponentNick + ' wins the fight ' + fightResultData.opponentWins + ' to ' + fightResultData.challengerWins + '.  :' + getFatalityEmote() + ':');
-			}
-		} else {
-			// was a tie
-			responseString.push('The fight was a tie ' + fightResultData.challengerWins + ' to ' + fightResultData.opponentWins + '.  :tie0:');
-		}
 
-		fight.resultMessage = ent.encode(responseString.join('\n'));
+			fight.resultMessage = ent.encode(responseString.join('\n'));
 
-		return Promise.join(
-			fight.save(),
-			round1.save(),
-			round2.save(),
-			round3.save()
-		)
-		.spread(function (updatedFight, updatedRound1, updatedRound2, updatedRound3) {
-			return { message: updatedFight.resultMessage };
+			return Promise.join(
+				fight.save(),
+				round1.save(),
+				round2.save(),
+				round3.save()
+			)
+				.spread(function (updatedFight, updatedRound1, updatedRound2, updatedRound3) {
+					return {message: updatedFight.resultMessage};
+				});
 		});
-	});
 }
 
 function getFightResultData(challenger, opponent, round1, round2, round3) {
@@ -306,13 +302,13 @@ function getFightResultData(challenger, opponent, round1, round2, round3) {
 	});
 
 	if (challengerWins == opponentWins) {
-		return { winner: null, challengerWins: challengerWins, opponentWins: opponentWins };
+		return {winner: null, challengerWins: challengerWins, opponentWins: opponentWins};
 	}
 	else if (challengerWins > opponentWins) {
-		return { winner: challenger, challengerWins: challengerWins, opponentWins: opponentWins };
+		return {winner: challenger, challengerWins: challengerWins, opponentWins: opponentWins};
 	}
 	else {
-		return { winner: opponent, challengerWins: challengerWins, opponentWins: opponentWins };
+		return {winner: opponent, challengerWins: challengerWins, opponentWins: opponentWins};
 	}
 }
 
@@ -343,11 +339,11 @@ function getRoundPlayData(fightRound, challenger, opponent) {
 
 	if (winner) {
 		roundPlayMessage += '  ' + winner.nick + ' wins!';
-		return { winner: winner, message: roundPlayMessage }
+		return {winner: winner, message: roundPlayMessage}
 	}
 	else {
 		roundPlayMessage += '  Tie';
-		return { winner: null, message: roundPlayMessage }
+		return {winner: null, message: roundPlayMessage}
 	}
 }
 
@@ -415,5 +411,13 @@ function getFatalityEmote() {
 		'shangtsung3',
 		'subzero1',
 		'subzero2'
+	]);
+}
+
+function getTieEmote() {
+	return _.sample([
+		'tie0',
+		'tie1',
+		'tie2'
 	]);
 }
