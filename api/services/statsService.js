@@ -305,7 +305,7 @@ function getFightStatistics(userId) {
 						Math.round(((userStats.wins + (userStats.ties * 0.5)) / userStats.totalGames) * 100) : 0;
 				});
 
-				fightResults.fightWinPercentage = userStats.winPercentage + '% (' + userStats.wins + '-' + userStats.ties + '-' + userStats.losses + ')';
+				fightResults.fightWinPercentage = userStats.winPercentage + '% (' + userStats.wins + '-' + userStats.losses + '-' + userStats.ties + ')';
 				fightResults.topVictims = _.take(_.sortByOrder(victims, ['beatings'], [false]), 5);
 
 				userIds = _.unique(userIds);
