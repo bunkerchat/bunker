@@ -14,7 +14,10 @@ app.filter('trusted', ['$sce', function ($sce) {
 	};
 }]);
 
-var youtubeRegexp = /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
+// jesus fucking christ why the god damn hell does regex have state!?
+function youtubeRegexp(){
+	return /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
+}
 
 app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunkerConstants, $timeout) {
 
@@ -31,11 +34,11 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 		link: function (scope, elem) {
 
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
-			if(scope.bunkerMessage && scope.bunkerMessage.text){
+			if (scope.bunkerMessage && scope.bunkerMessage.text) {
 				scope.formatted = parseText(scope.bunkerMessage.text);
 			}
-			else{
-				scope.$watch('bunkerMessage.topic', function(topic){
+			else {
+				scope.$watch('bunkerMessage.topic', function (topic) {
 					elem.html(parseText(topic));
 				});
 			}
@@ -104,9 +107,9 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			}
 
 			function parseFight(text) {
-				var match = /:([^0-9:]*):/.exec(text);				
+				var match = /:([^0-9:]*):/.exec(text);
 
-				while(match) {
+				while (match) {
 					text = text.replace(/:([^0-9:]*):/, '<img class="emoticon" src="/assets/images/$1.png"/>');
 					match = /:([^0-9:]*):/.exec(text);
 				}
@@ -119,10 +122,10 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
 				}
 				if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
-						var attachedMedia = angular.element('<div message="::bunkerMessage" ><pre>' + text + '</pre></div>');
-						angular.element(elem).append(attachedMedia);
-						$compile(attachedMedia)(scope.$new());
-						return '';
+					var attachedMedia = angular.element('<div message="::bunkerMessage" ><pre>' + text + '</pre></div>');
+					angular.element(elem).append(attachedMedia);
+					$compile(attachedMedia)(scope.$new());
+					return '';
 				}
 
 				return text;
@@ -185,22 +188,22 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					if (shouldParseMedia) {
 						if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
 							// Image link
-							attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link +'"><img src="' + link + '"/></a></div>');
+							attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><img src="' + link + '"/></a></div>');
 						}
 						else if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
 							var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
 							var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
 							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link +'"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
+								'<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
 								'</a></div>');
 						}
 						else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
 							attachedMedia = angular.element('' +
 								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-								'<a target="_blank" href="' + link +'"><video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video></a>' +
+								'<a target="_blank" href="' + link + '"><video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video></a>' +
 								'</div>');
 						}
-						else if (youtubeRegexp.test(link) && !attachedMedia) {
+						else if (youtubeRegexp().test(link) && !attachedMedia) {
 							attachedMedia = angular.element('' +
 								'<div class="default-video-height" message="::bunkerMessage" bunker-media="' + link + '">' +
 								'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
@@ -221,6 +224,15 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 							attachedMedia = angular.element('' +
 								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
 								'<iframe src="https://player.vimeo.com/video/' + match[1] + '?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
+								'</div>');
+						}
+						else if (/^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.test(link) && !attachedMedia) {
+							var match = /^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.exec(link);
+							var uri = "spotify%3A" + replaceAll(match[1],'/','%3A');
+
+							attachedMedia = angular.element('' +
+								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
+								'<iframe src="https://embed.spotify.com/?uri=' + uri + '" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>' +
 								'</div>');
 						}
 					}
