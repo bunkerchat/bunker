@@ -30,7 +30,7 @@ module.exports.jenkinsBestBuy = function (req, res) {
 					var emote = build.status == 'FAILURE' ? ' :buildchicken:' : ':unsmith:';
 					var url = full_url + "console";
 					var protractorUrl = full_url + 'artifact/e2e_screenshots/my-report.html';
-					var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '", link: ' + url + ', protractorReport: ' + protractorUrl + ' };';
+					var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '" , link: ' + url + ', protractorReport: ' + protractorUrl + ' };';
 
 					return Message.create({
 						room: roomId,
