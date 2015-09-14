@@ -186,11 +186,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 
 					// Only parse media (images, youtube) if asked to
 					if (shouldParseMedia) {
-						if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
-							// Image link
-							attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><img src="' + link + '"/></a></div>');
-						}
-						else if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
+						if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
 							var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
 							var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
 							attachedMedia = angular.element('' +
@@ -234,6 +230,11 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
 								'<iframe src="https://embed.spotify.com/?uri=' + uri + '" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>' +
 								'</div>');
+						}
+						// run this one last since it conflicts with the gifv check above
+						else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
+							// Image link
+							attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><img src="' + link + '"/></a></div>');
 						}
 					}
 
