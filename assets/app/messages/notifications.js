@@ -1,8 +1,8 @@
-app.factory('notifications', function ($rootScope, bunkerData, $notification, $timeout, $log, $state, ngAudio) {
+app.factory('notifications', function ($rootScope, bunkerData, $notification, $timeout, $log, $state/*, ngAudio*/) {
 	var loaded = false;
 	var bunkerIsVisible = true;
-	var mentionSound = ngAudio.load('/assets/sounds/mention.mp3');
-	var roomSound = ngAudio.load('/assets/sounds/room.mp3');
+	//var mentionSound = ngAudio.load('/assets/sounds/mention.mp3');
+	//var roomSound = ngAudio.load('/assets/sounds/room.mp3');
 
 	$timeout(function () {
 		loaded = true;
@@ -21,7 +21,7 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 
 		if (bunkerData.userSettings.playSoundOnMention) {
 			if (bunkerIsVisible || !bunkerData.mentionsUser(message.text)) return;
-			mentionSound.play();
+			//mentionSound.play();
 		}
 
 		// since there are a total of 1 + (n of rooms) possible notifications, each one of those
