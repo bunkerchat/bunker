@@ -33,6 +33,7 @@ module.exports.routes = {
 	 ***************************************************************************/
 
 	'/': 'ViewController.index',
+	'/debug': 'ViewController.indexDebug',
 	'/login': 'ViewController.login',
 	'/logout': 'AuthController.logout',
 	'/init': 'UserController.init',
