@@ -10,7 +10,6 @@ window.app = angular.module('bunker', [
 	'hljs',
 	'plangular', /* soundcloud embed */
 	'notification',
-	//'ngAudio',
 	'angularStats',
 	'ui.sortable'
 ])
