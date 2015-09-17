@@ -51,11 +51,30 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 				}
 			});
 
-			$scope.$on('roomIdChanged', scroll);
+			$scope.$on('roomIdChanged', function () {
+				$timeout(function () {
+					$('img.emoticon:visible').css('visibility', '');
+					$('img.emoticon:hidden').css('visibility', 'hidden');
+
+					$('video:visible')
+						.css('visibility', '')
+						.each(function (index, el) {
+							el.play();
+						});
+
+					$('video:hidden')
+						.css('visibility', 'hidden')
+						.each(function (index, el) {
+							el.pause();
+						});
+				});
+
+				scroll();
+			});
 
 			// Scroll after state changes and when youtubes have loaded
-			$rootScope.$on('youtube.player.ready', function(){
-				if(!atBottomOfPage()) return;
+			$rootScope.$on('youtube.player.ready', function () {
+				if (!atBottomOfPage()) return;
 				scroll();
 			});
 
