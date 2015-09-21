@@ -7,6 +7,7 @@ config.url = 'http://bunkerchat.net';
 config.db = {
 	host: 'localhost',
 	name: 'bunker',
+	session: 'bunker_sessions',
 	port: '27017'
 };
 

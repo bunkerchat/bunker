@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-//require('mongoose-type-email');
 
 var userSchema = new mongoose.Schema({
 	token: {

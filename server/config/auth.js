@@ -12,8 +12,9 @@ module.exports = function (app) {
 		secret: '64ec1dff67add7c8ff0b08e0b518e43c',
 		resave: false,
 		saveUninitialized: true,
+		collection: 'bunker_sessions',
 		store: new MongoStore({
-			url: 'mongodb://' + config.db.host + ':' + config.db.port + '/' + config.db.name
+			url: 'mongodb://' + config.db.host + ':' + config.db.port + '/' + config.db.session
 		})
 	}));
 

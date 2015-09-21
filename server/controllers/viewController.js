@@ -1,7 +1,9 @@
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
-var config = require('./../config/config');
+var ObjectId = require('mongoose').Types.ObjectId;
 
+var config = require('./../config/config');
+var UserSettings = require('./../models/UserSettings');
 var emoticonService = require('./../services/emoticonService');
 
 //module.exports.version = function (req, res) {
@@ -12,11 +14,11 @@ var emoticonService = require('./../services/emoticonService');
 
 module.exports.index = function (req, res) {
 	Promise.join(
-		fs.readdirAsync('./assets/bundled').catch(empty),
-		emoticonService.getEmoticonNamesFromDisk()
-		//versionService.version()
+		emoticonService.getEmoticonNamesFromDisk(),
+		UserSettings.findOne({user: new ObjectId(req.session.userId)}),
+		fs.readdirAsync('./assets/bundled').catch(empty)
 	)
-		.spread(function (bundledFiles, version) {
+		.spread(function (emoticons, settings, bundledFiles) {
 			//var templates = _.find(bundledFiles, function (file) {
 			//	return _.includes(file, 'templates');
 			//});
@@ -26,11 +28,13 @@ module.exports.index = function (req, res) {
 			//	templates = null;
 			//}
 
+			var templates = null;
+			var isProd = false;
 
-			res.render(isProd ? 'index-prod' : 'index', {
-				//templates: templates,
+			res.render(isProd ? 'index-prod' :'index', {
+				templates: templates,
 				userId: req.session.userId,
-				//isProduction: isProd,
+				isProduction: isProd,
 				emoticons: emoticons,
 				loadingEmote: emoticonService.getLoadScreenEmoticon(),
 				debugging: settings.showDebugging
