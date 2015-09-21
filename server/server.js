@@ -6,8 +6,25 @@ global.Promise = require('bluebird');
 
 var mongoose = require('mongoose');
 
-var app = Promise.promisifyAll(require('./config/express'));
 var config = require('./config/config');
+var app = Promise.promisifyAll(require('./config/express'));
+var server = Promise.promisifyAll(require('http').Server(app));
+var io = require('./config/socketio')(server);
+
+
+//var app = require('express')();
+//var server = require('http').Server(app);
+//var io = require('socket.io')(server);
+
+//
+//io.on('connection', function (socket) {
+//	console.log('socket', socket);
+//	socket.emit('news', { hello: 'world' });
+//	socket.on('my other event', function (data) {
+//		console.log(data);
+//	});
+//});
+
 //var db = require('./config/db');
 //var seed = require('./seed');
 
@@ -28,8 +45,11 @@ module.exports.run = function (cb) {
 			//if (config.useSSL) {
 			//	return https.createServer(config.serverOptions, app).listenAsync(config.express.port);
 			//}
-			return app.listenAsync(config.express.port);
+
+			//return server.listenAsync(config.express.port);
+			server.listen(config.express.port);
 		})
+		//.then(io.connect)
 		.then(function () {
 			log.info('server - hosted - http://' + config.express.ip + ':' + config.express.port);
 		})
