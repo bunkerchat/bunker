@@ -2,6 +2,7 @@ var config = require('./config');
 
 // Controllers
 var viewController = require('../controllers/viewController');
+var authController = require('../controllers/authController');
 //var userController = require('../controllers/userController');
 //var containerController = require('../controllers/containerController');
 //var ruleController = require('../controllers/ruleController');
@@ -36,6 +37,11 @@ module.exports = function (app) {
 	app.get('/login', viewController.login);
 	app.get('/logout', viewController.logout);
 	//app.post('/api/user/login', userController.login);
+	app.get('/auth/google', authController.google);
+	app.get('/auth/googleReturn', authController.googleReturn);
+
+	// Login
+
 
 	// Internal views
 	app.get('/', isLoggedIn, viewController.index);

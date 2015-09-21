@@ -1,10 +1,10 @@
 var express = require('express');
 var app = express();
-var session = require('express-session');
-var lessMiddleware = require('less-middleware');
+//var session = require('express-session');
 var path = require('path');
-var MongoStore = require('connect-mongo')(session);
+//var MongoStore = require('connect-mongo')(session);
 var bodyParser = require('body-parser');
+var auth = require('./auth');
 var config = require('./config');
 
 //app.set('env', config.isProduction ? 'production' : 'development');
@@ -14,18 +14,20 @@ app.use(require('compression')());
 
 app.use('/assets',express.static('assets'));
 
-app.use(session({
-	secret: '64ec1dff67add7c8ff0b08e0b518e43c',
-	resave: false,
-	saveUninitialized: true,
-	store: new MongoStore({
-		url: 'mongodb://' + config.db.host + ':' + config.db.port + '/' + config.db.name
-	})
-}));
+//app.use(session({
+//	secret: '64ec1dff67add7c8ff0b08e0b518e43c',
+//	resave: false,
+//	saveUninitialized: true,
+//	store: new MongoStore({
+//		url: 'mongodb://' + config.db.host + ':' + config.db.port + '/' + config.db.name
+//	})
+//}));
 
 app.set('view engine', 'ejs');
 app.set('views', './server/views');
 app.use(bodyParser.json());
+
+require('./auth')(app);
 
 // system level responses
 app.use(require('../responses/serverError'));
