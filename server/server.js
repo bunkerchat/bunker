@@ -1,5 +1,6 @@
 // set globals
 //global.log = require('./config/log');
+global.log = require('./config/log');
 global._ = require('lodash');
 global.Promise = require('bluebird');
 
@@ -7,8 +8,8 @@ var mongoose = require('mongoose');
 
 var app = Promise.promisifyAll(require('./config/express'));
 var config = require('./config/config');
-var db = require('./config/db');
-var seed = require('./seed');
+//var db = require('./config/db');
+//var seed = require('./seed');
 
 //var migrations = require('./config/migrations');
 //var indexes = require('./config/indexes');
@@ -29,6 +30,9 @@ module.exports.run = function (cb) {
 			//}
 			return app.listenAsync(config.express.port);
 		})
+		.then(function () {
+			log.info('server - hosted - http://' + config.express.ip + ':' + config.express.port);
+		})
 		.then(cb)
 		.catch(function (error) {
 			return log.error('server - Error while starting', error);
@@ -37,7 +41,8 @@ module.exports.run = function (cb) {
 
 function connectToMongoose() {
 	return new Promise(function (resolve, reject) {
-		mongoose.connect(config);
+		var url = "mongodb://" + config.db.host + ":" + config.db.port + "/" + config.db.name;
+		mongoose.connect(url);
 		mongoose.connection.once('open', function (err) {
 			if (err) return reject(err);
 			resolve();

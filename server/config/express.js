@@ -7,7 +7,7 @@ var MongoStore = require('connect-mongo')(session);
 var bodyParser = require('body-parser');
 var config = require('./config');
 
-app.set('env', config.isProduction ? 'production' : 'development');
+//app.set('env', config.isProduction ? 'production' : 'development');
 
 //var bootstrapPath = path.join('bower_components', 'bootstrap');
 app.use(require('compression')());
@@ -24,7 +24,7 @@ app.use(session({
 }));
 
 app.set('view engine', 'ejs');
-app.set('views', process.cwd() + '/server/views');
+app.set('views', './server/views');
 app.use(bodyParser.json());
 
 // system level responses
@@ -34,7 +34,7 @@ app.use(require('../responses/notFound'));
 app.use(require('../responses/badRequest'));
 
 // setup routes
-//require('./routes')(app);
+require('./routes')(app);
 
 // Export the app instance for unit testing via supertest
 module.exports = app;
