@@ -66,13 +66,17 @@
 <!-- endBuild -->
 
 <script src="/socket.io/socket.io.js"></script>
-<script>
-	var socket = io.connect();
-	socket.on('news', function (data) {
-		console.log(data);
-		socket.emit('my other event', { my: 'data' });
-	});
-</script>
+<!--<script>-->
+	<!--var socket = io.connect();-->
+<!--//	socket.on('news', function (data) {-->
+<!--//		console.log(data);-->
+<!--//		socket.emit('my other event', { my: 'data' });-->
+<!--//	});-->
+
+<!--//	socket.emit('/init', 'yay', function (stuff) {-->
+<!--//		console.log('stuff', stuff);-->
+<!--//	})-->
+<!--</script>-->
 
 <!-- build:jsApp /assets/bundled/bundle.js -->
 <script src="/assets/app/bunker.js"></script>

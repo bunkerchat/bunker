@@ -1,5 +1,5 @@
-var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
+var Session = require('express-session');
+var MongoStore = require('connect-mongo')(Session);
 
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
@@ -7,8 +7,8 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var config = require('./config');
 var User = require('./../models/User');
 
-module.exports = function (app) {
-	app.use(session({
+module.exports.init = function (app) {
+	var session = module.exports.session = Session({
 		secret: '64ec1dff67add7c8ff0b08e0b518e43c',
 		resave: false,
 		saveUninitialized: true,
@@ -16,7 +16,9 @@ module.exports = function (app) {
 		store: new MongoStore({
 			url: 'mongodb://' + config.db.host + ':' + config.db.port + '/' + config.db.session
 		})
-	}));
+	});
+
+	app.use(session);
 
 	app.use(passport.initialize());
 	app.use(passport.session());
@@ -54,5 +56,7 @@ module.exports = function (app) {
 			}
 		});
 	}
+
+	return session;
 };
 

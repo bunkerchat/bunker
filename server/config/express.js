@@ -27,7 +27,7 @@ app.set('view engine', 'ejs');
 app.set('views', './server/views');
 app.use(bodyParser.json());
 
-require('./auth')(app);
+require('./auth').init(app);
 
 // system level responses
 app.use(require('../responses/serverError'));
@@ -36,7 +36,7 @@ app.use(require('../responses/notFound'));
 app.use(require('../responses/badRequest'));
 
 // setup routes
-require('./routes')(app);
+require('./routes').http(app);
 
 // Export the app instance for unit testing via supertest
 module.exports = app;

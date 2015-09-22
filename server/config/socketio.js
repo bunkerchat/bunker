@@ -1,22 +1,21 @@
-//var io = require('socket.io')(80);
-//var cfg = require('./config.json');
-//var tw = require('node-tweet-stream')(cfg);
-//tw.track('socket.io');
-//tw.track('javascript');
-//tw.on('tweet', function(tweet){
-//	io.emit('tweet', tweet);
-//});
+var ios = require('socket.io-express-session');
+var routes = require('./routes');
 
-module.exports = function (server) {
+module.exports.connect = function (server) {
+	var session = require('./auth').session;
 	var io = require('socket.io')(server);
-
+	io.use(ios(session));
 	io.on('connection', function (socket) {
-		console.log('socket', socket);
-		socket.emit('news', { hello: 'world' });
-		socket.on('my other event', function (data) {
-			console.log(data);
-		});
+		//console.log('socket', socket);
+		//socket.emit('news', { hello: 'world' });
+		//socket.on('my other event', function (data) {
+		//	console.log(data);
+		//});
+
+		routes.socketio(socket);
 	});
 
 	return io;
 };
+
+

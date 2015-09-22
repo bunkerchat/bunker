@@ -28,6 +28,7 @@
     "request": "2.62.0",
     "require-dir": "0.3.0",
     "socket.io": "1.3.7",
+    "socket.io-express-session": "0.1.2",
     "winston": "1.0.1"
   },
   "scripts": {

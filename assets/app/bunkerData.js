@@ -3,6 +3,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	var io = $window.io;
 	var roomLookup = []; // For fast room lookup
 	var typingTimeout;
+	var resolveBunkerData$Promise;
 
 	var bunkerData = {
 		user: {},
@@ -14,6 +15,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		$promise: null,
 
 		// Initial data, also sets up subscriptions
+		start: function () {
+			resolveBunkerData$Promise(bunkerData.init());
+		},
 
 		init: function () {
 			bunkerData.$resolved = false;
@@ -307,6 +311,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		});
 	}
 
-	bunkerData.$promise = bunkerData.init();
+	bunkerData.$promise = $q(function (resolve, reject) {
+		resolveBunkerData$Promise = resolve;
+	});
+
 	return bunkerData;
 });

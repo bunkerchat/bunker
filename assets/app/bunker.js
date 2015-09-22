@@ -56,7 +56,7 @@ window.app = angular.module('bunker', [
 			'default': 'identicon'
 		}
 	})
-	.run(function ($rootScope, $document, bunkerListener) {
+	.run(function ($rootScope, $document, bunkerListener, bunkerData) {
 
 		// html5 visibility api instead of win.focus or win.blur
 		$document.on('visibilitychange', function () {
@@ -68,5 +68,20 @@ window.app = angular.module('bunker', [
 			$rootScope.$broadcast('roomIdChanged', $rootScope.roomId);
 		});
 
-		bunkerListener.init();
+		var socket = io.connect();
+		socket.on('connect', function () {
+
+			io.socket = sailsApiWrapper(socket);
+			bunkerListener.init();
+			bunkerData.start();
+		});
 	});
+
+
+function sailsApiWrapper(socket){
+	socket.get = function (endpoint, cb) {
+		socket.emit(endpoint, cb);
+	};
+
+	return socket
+}
