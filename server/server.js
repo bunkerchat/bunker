@@ -6,11 +6,15 @@ global.Promise = require('bluebird');
 
 var mongoose = require('mongoose');
 
+String.prototype.toObjectId = function() {
+	var ObjectId = mongoose.Types.ObjectId;
+	return new ObjectId(this.toString());
+};
+
 var config = require('./config/config');
 var app = Promise.promisifyAll(require('./config/express'));
 var server = Promise.promisifyAll(require('http').Server(app));
 var socketio = require('./config/socketio');
-
 
 module.exports.run = function (cb) {
 

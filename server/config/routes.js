@@ -28,25 +28,30 @@ module.exports.socketio = function (socket) {
 
 	// User
 	//socket.on('/init', function (data, cb) {
-	//	console.log('this', this);
+	//	//console.log('this', this);
 	//	cb({'datas': "things and stuff"});
 	//});
 
 
 	socket.on('/init', socketToController(userController.init));
+	socket.on('/user/current/connect', socketToController(userController.connect));
 };
 
 
 function socketToController(controllerFn) {
 	return function (data, cb) {
 		var req = {
+			socket: this,
 			session: this.handshake.session
 		};
 
 		var res = {
-			ok: cb,
+			ok: function (data) {
+				cb(data);
+			},
 			serverError: function (err) {
-				//:itisamystery:
+				log.error('server error', err);
+				cb({error: err.message});
 			}
 		};
 		controllerFn(req, res);

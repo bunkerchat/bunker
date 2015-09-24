@@ -80,8 +80,13 @@ window.app = angular.module('bunker', [
 
 function sailsApiWrapper(socket){
 	socket.get = function (endpoint, cb) {
-		socket.emit(endpoint, cb);
+		socket.emit(endpoint, {}, cb);
 	};
+
+	socket.put = function (endpoint, data, cb) {
+		socket.emit(endpoint, data, cb);
+	};
+
 
 	return socket
 }

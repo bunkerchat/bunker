@@ -9,8 +9,8 @@ var userSchema = new mongoose.Schema({
 	nick: {
 		type: String,
 		required: true,
-		minLength: 1,
-		maxLength: 20
+		minlength: 1,
+		maxlength: 20
 	},
 	email: {
 		type: String
@@ -47,9 +47,9 @@ var userSchema = new mongoose.Schema({
 	}
 });
 
-userSchema.method('toJSON', function () {
-	return removeSensitiveData(this);
-});
+userSchema.options.toObject.transform = function (doc, ret, options) {
+
+};
 
 module.exports = mongoose.model('User', userSchema, 'user');
 

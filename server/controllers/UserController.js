@@ -9,17 +9,27 @@
 var moment = require('moment');
 var Promise = require('bluebird');
 
+var emoticonService = require('./../services/emoticonService');
+var User = require('./../models/User');
+var UserSettings = require('./../models/UserSettings');
+var RoomMember = require('./../models/RoomMember');
+var InboxMessage = require('./../models/InboxMessage');
+var Room = require('./../models/Room');
+var Message = require('./../models/Message');
+
 // A connecting client will call this endpoint. It should subscribe them to all relevant data and
 // return all rooms and user data necessary to run the application.
 module.exports.init = function (req, res) {
 
 	var localUser, localUserSettings, localMemberships, localInboxMessages;
 
+	var userId = req.session.userId.toObjectId();
+
 	Promise.join(
-		User.findOne(req.session.userId),
-		UserSettings.findOne({user: req.session.userId}),
-		RoomMember.find({user: req.session.userId}).sort('roomOrder').populate('room'),
-		InboxMessage.find({user: req.session.userId}).sort('createdAt DESC').limit(20).populate('message')
+		User.findById(userId),
+		UserSettings.findOne({user: userId}),
+		RoomMember.find({user: userId}).sort('roomOrder').populate('room'),
+		InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message')
 	)
 		.spread(function (user, userSettings, memberships, inboxMessages) {
 
@@ -42,24 +52,25 @@ module.exports.init = function (req, res) {
 				})
 				.value();
 
-			// Setup subscriptions
-			User.subscribe(req, user, ['update', 'message']);
-			UserSettings.subscribe(req, userSettings, 'update');
-			RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
-			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
-			InboxMessage.subscribe(req, user.id, 'message');
+			// TODO: Setup subscriptions
+			//User.subscribe(req, user, ['update', 'message']);
+			//UserSettings.subscribe(req, userSettings, 'update');
+			//RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
+			//Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
+			//InboxMessage.subscribe(req, user.id, 'message');
 
 			return Promise.join(
 
 				// Get all room members and 40 initial messages for each room
 				Promise.map(rooms, function (room) {
 					return Promise.join(
-						Message.find({room: room.id}).sort('createdAt DESC').limit(40).populate('author'),
+						Message.find({room: room.id}).sort('-createdAt').limit(40).populate('author'),
 						RoomMember.find({room: room.id}).populate('user')
 					)
 						.spread(function (messages, members) {
-							RoomMember.subscribe(req, members, ['update', 'destroy']);
-							User.subscribe(req, _.pluck(members, 'user'), 'update');
+							// TODO: Setup subscriptions
+							//RoomMember.subscribe(req, members, ['update', 'destroy']);
+							//User.subscribe(req, _.pluck(members, 'user'), 'update');
 
 							room.$messages = [];
 							_.each(messages, function (message) {
@@ -95,7 +106,7 @@ module.exports.init = function (req, res) {
 		})
 		.spread(function (rooms, inboxMessages, emoticonCounts) {
 			return {
-				user: localUser.toJSON(),
+				user: localUser.toObject(),
 				userSettings: localUserSettings,
 				memberships: localMemberships,
 				inbox: inboxMessages,
@@ -130,7 +141,7 @@ module.exports.activity = function (req, res) {
 module.exports.connect = function (req, res) {
 	var lastConnected, previouslyConnected;
 
-	User.findOne(req.session.userId)
+	User.findById(req.session.userId.toObjectId())
 		.then(function (user) {
 			lastConnected = user.lastConnected;
 			previouslyConnected = user.connected;

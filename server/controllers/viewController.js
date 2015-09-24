@@ -1,6 +1,5 @@
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
-var ObjectId = require('mongoose').Types.ObjectId;
 
 var config = require('./../config/config');
 var UserSettings = require('./../models/UserSettings');
@@ -15,7 +14,7 @@ var emoticonService = require('./../services/emoticonService');
 module.exports.index = function (req, res) {
 	Promise.join(
 		emoticonService.getEmoticonNamesFromDisk(),
-		UserSettings.findOne({user: new ObjectId(req.session.userId)}),
+		UserSettings.findOne({user: req.session.userId.toObjectId()}),
 		fs.readdirAsync('./assets/bundled').catch(empty)
 	)
 		.spread(function (emoticons, settings, bundledFiles) {
