@@ -49,3 +49,29 @@ module.exports.jenkinsBestBuy = function (req, res) {
 				.catch(res.serverError);
 		});
 };
+
+module.exports.serverStatus = function (req, res) {
+	var notification = req.body;
+	var build = notification.build;
+	var roomId;
+
+	Room.findOne({name: 'minos'})
+
+		.then(function (room) {
+			roomId = room.id;
+			return Message.create({
+				room: room.id,
+				text: 'Uptime Check Notification. Down: ' + _.map(req.body.down, 'url').join(', '),
+				type: 'buildNotification'
+			})
+		})
+		.then(function (message) {
+			return Message.findOne(message.id).populateAll();
+		})
+		.then(function (message) {
+			Room.message(roomId, message);
+			return message;
+		})
+		.then(res.ok)
+		.catch(res.serverError);
+};

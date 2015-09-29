@@ -31,7 +31,7 @@ module.exports.policies = {
 		'*': true
 	},
 	ExternalNotifications: {
-		jenkinsBestBuy: true
+		'*': true
 	},
 	ViewController: {
 		'*': 'isLoggedIn',
