@@ -15,11 +15,11 @@ app.filter('trusted', ['$sce', function ($sce) {
 }]);
 
 // jesus fucking christ why the god damn hell does regex have state!?
-function youtubeRegexp(){
+function youtubeRegexp() {
 	return /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
 }
 
-app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunkerConstants, $timeout) {
+app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
 
 	function replaceAll(str, find, replace) {
 		return str.split(find).join(replace);
@@ -178,6 +178,8 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 
 			function parseMedia(text) {
 				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
+				if (!shouldParseMedia) return text;
+
 				var replacedLinks = {};
 
 				// Parse links
@@ -185,57 +187,63 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
 
 					// Only parse media (images, youtube) if asked to
-					if (shouldParseMedia) {
-						if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
-							var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
-							var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
-							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
-								'</a></div>');
-						}
-						else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
-							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-								'<a target="_blank" href="' + link + '"><video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video></a>' +
-								'</div>');
-						}
-						else if (youtubeRegexp().test(link) && !attachedMedia) {
-							attachedMedia = angular.element('' +
-								'<div class="default-video-height" message="::bunkerMessage" bunker-media="' + link + '">' +
-								'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
-								'</div>');
-						}
-						else if (/(www\.)?(twitter\.com\/)/i.test(link) && !attachedMedia) {
-							var id = link.substr(link.lastIndexOf('/') + 1);
-							if (id) { /* don't embed tweet if we can't get the id from the link */
-								attachedMedia = angular.element('' +
-									'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-									'<div class="tweet_' + id + '">' +
-									'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp">' +
-									'</script></div></div>');
-							}
-						}
-						else if (/vimeo\.com(?:.*)?\/([A-z0-9]*)$/i.test(link) && !attachedMedia) {
-							var match = /vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.exec(link);
+					if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
+						var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
+						var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
+						attachedMedia = angular.element('' +
+							'<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
+							'</a></div>');
+					}
+					else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
+						attachedMedia = angular.element('' +
+							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
+							'<a target="_blank" href="' + link + '"><video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video></a>' +
+							'</div>');
+					}
+					else if (youtubeRegexp().test(link) && !attachedMedia) {
+						attachedMedia = angular.element('' +
+							'<div class="default-video-height" message="::bunkerMessage" bunker-media="' + link + '">' +
+							'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
+							'</div>');
+					}
+					else if (/(www\.)?(twitter\.com\/)/i.test(link) && !attachedMedia) {
+						var id = link.substr(link.lastIndexOf('/') + 1);
+						if (id) { /* don't embed tweet if we can't get the id from the link */
 							attachedMedia = angular.element('' +
 								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-								'<iframe src="https://player.vimeo.com/video/' + match[1] + '?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
-								'</div>');
+								'<div class="tweet_' + id + '">' +
+								'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp">' +
+								'</script></div></div>');
 						}
-						else if (/^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.test(link) && !attachedMedia) {
-							var match = /^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.exec(link);
-							var uri = "spotify%3A" + replaceAll(match[1],'/','%3A');
+					}
+					else if (/vimeo\.com(?:.*)?\/([A-z0-9]*)$/i.test(link) && !attachedMedia) {
+						var match = /vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.exec(link);
+						attachedMedia = angular.element('' +
+							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
+							'<iframe src="https://player.vimeo.com/video/' + match[1] + '?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
+							'</div>');
+					}
+					else if (/^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.test(link) && !attachedMedia) {
+						var match = /^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.exec(link);
+						var uri = "spotify%3A" + replaceAll(match[1], '/', '%3A');
 
-							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-								'<iframe src="https://embed.spotify.com/?uri=' + uri + '" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>' +
-								'</div>');
-						}
-						// run this one last since it conflicts with the gifv check above
-						else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
-							// Image link
-							attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><img src="' + link + '"/></a></div>');
-						}
+						attachedMedia = angular.element('' +
+							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
+							'<iframe src="https://embed.spotify.com/?uri=' + uri + '" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>' +
+							'</div>');
+					}
+					else if (/^https?:\/\/gfycat\.com\/(.*)/gi.test(link) && !attachedMedia) {
+						var match = /^https?:\/\/gfycat\.com\/(.*)/gi.exec(link);
+
+						attachedMedia = angular.element('' +
+							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
+							'<div gfycat="' + match[1] + '"></div>'+
+							'</div>');
+					}
+					// run this one last since it conflicts with the gifv check above
+					else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
+						// Image link
+						attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><img src="' + link + '"/></a></div>');
 					}
 
 					if (!replacedLinks[link]) {
