@@ -242,7 +242,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
 
 						attachedMedia = angular.element('' +
 							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-							'<div gfycat="' + match[1] + '"></div>'+
+							'<div gfycat class="gfyitem" data-title=true data-autoplay=true data-controls=true data-expand=true data-id="' + match[1] +'" ></div> ', +
 							'</div>');
 					}
 					// run this one last since it conflicts with the gifv check above
