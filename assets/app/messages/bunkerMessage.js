@@ -232,8 +232,8 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
 							'<iframe src="https://embed.spotify.com/?uri=' + uri + '" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>' +
 							'</div>');
 					}
-					else if (/^https?:\/\/gfycat\.com\/(.*)/gi.test(link) && !attachedMedia) {
-						var match = /^https?:\/\/gfycat\.com\/(.*)/gi.exec(link);
+					else if (/gfycat\.com\/(.*)/gi.test(link) && !attachedMedia) {
+						var match = /gfycat\.com\/(.*)/gi.exec(link);
 
 						attachedMedia = angular.element('' +
 							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
