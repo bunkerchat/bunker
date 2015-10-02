@@ -177,14 +177,19 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
 			}
 
 			function parseMedia(text) {
-				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
-				if (!shouldParseMedia) return text;
-
 				var replacedLinks = {};
+
+				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
 
 				// Parse links
 				var attachedMedia;
 				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
+					if (!replacedLinks[link]) {
+						text = replaceAll(text, link, '<a href="' + link + '" target="_blank">' + link + '</a>');
+						replacedLinks[link] = true;
+					}
+
+					if (!shouldParseMedia) return text;
 
 					// Only parse media (images, youtube) if asked to
 					if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
@@ -244,11 +249,6 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
 					else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
 						// Image link
 						attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><img src="' + link + '"/></a></div>');
-					}
-
-					if (!replacedLinks[link]) {
-						text = replaceAll(text, link, '<a href="' + link + '" target="_blank">' + link + '</a>');
-						replacedLinks[link] = true;
 					}
 				});
 
