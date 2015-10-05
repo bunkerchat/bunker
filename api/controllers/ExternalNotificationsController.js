@@ -61,7 +61,7 @@ module.exports.serverStatus = function (req, res) {
 			roomId = room.id;
 			return Message.create({
 				room: room.id,
-				text: 'Uptime Check Notification. Down: ' + _.map(req.body.down, 'url').join(', '),
+				text: 'Uptime Check Notification. Down: ' + _.map(req.body.down, 'url').join(' '),
 				type: 'buildNotification'
 			})
 		})
