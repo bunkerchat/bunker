@@ -13,13 +13,32 @@
 
 	<div class="well">
 		<h3>Login with:</h3>
-		<p>
-			<a href="/auth/google" class="btn btn-info btn-lg">
-				<i class="fa fa-google"></i> Google
-			</a>
-		</p>
+			<span class="g-signin"
+						data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email"
+						data-clientid="<%= clientID %>"
+						data-redirecturi="postmessage"
+						data-accesstype="offline"
+						data-cookiepolicy="single_host_origin"
+						data-callback="signInCallback">
+			</span>
 	</div>
 
 </div>
+
+<script type="text/javascript">
+	function signInCallback(authResult) {
+		if (authResult.code) {
+			$.post('/auth/googleCallback', { code: authResult.code})
+					.done(function(data) {
+						window.location = '/'
+					});
+		} else if (authResult.error) {
+			console.log('There was an error: ' + authResult.error);
+		}
+	}
+</script>
+
+<script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+<script src="//apis.google.com/js/client:plusone.js"></script>
 </body>
 </html>

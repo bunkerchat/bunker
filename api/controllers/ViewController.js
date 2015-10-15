@@ -48,11 +48,9 @@ module.exports.indexDebug = function (req, res) {
 };
 
 module.exports.login = function (req, res) {
-	res.view('login');
-};
-
-module.exports.login = function (req, res) {
-	res.view('login');
+	res.view('login', {
+		clientID: sails.config.google.clientID
+	});
 };
 
 function empty() {

@@ -13,14 +13,20 @@ var moment = require('moment');
 var Promise = require('bluebird');
 var express = require('../node_modules/sails/node_modules/express'),
 	passport = require('passport'),
-	GoogleStrategy = require('passport-google-oauth2').Strategy,
-	LocalStrategy = require('passport-local').Strategy;
-
+//GoogleStrategy = require('passport-google-oauth2').Strategy,
+//	GoogleStrategy = require('./passport-google-oauth2');
+	GooglePlusStrategy = require('passport-google-plus');
 
 module.exports.http = {
 	customMiddleware: function (app) {
 		app.use(express.compress());
 		app.use('/assets', express.static(__dirname + '/../assets/'));
+
+		app.post('/auth/googleCallback', passport.authenticate('google'), function (req, res) {
+			req.session.googleCredentials = req.authInfo;
+			// Return user profile back to client
+			res.send(req.user);
+		});
 	}
 };
 
@@ -40,38 +46,18 @@ module.exports.bootstrap = function (cb) {
 		});
 	});
 
-	passport.use(new LocalStrategy(
-		function (username, password, done) {
-			User.findOne({username: username}, function (err, user) {
-				if (err) {
-					return done(err);
-				}
-				if (!user || !user.validPassword(password)) {
-					return done(null, false, {message: 'Incorrect username or password'});
-				}
-
-				return done(null, user);
-			});
-		}
-	));
-
-	passport.use(new GoogleStrategy({
-			clientID: sails.config.google.clientID,
-			clientSecret: sails.config.google.clientSecret,
-			callbackURL: sails.config.url + '/auth/googleReturn',
-			passReqToCallback   : true
+	passport.use(new GooglePlusStrategy({
+			clientId: sails.config.google.clientID,
+			clientSecret: sails.config.google.clientSecret
 		},
-		function (request, accessToken, refreshToken, profile, done) {
+		function (tokens, profile, done) {
 			var email = profile.emails[0].value;
 			User.findOne({email: email}).exec(function (error, user) {
 				if (user) {
-					User.update(user.id, {token: accessToken}).exec(function (error, user) {
-						done(error, user[0]);
-					});
+					done(error, user);
 				}
 				else {
 					User.create({
-						token: accessToken,
 						// when no display name, get everything before @ in email
 						nick: (profile.displayName || email.replace(/@.*/, "")).substr(0, 20),
 						email: email
