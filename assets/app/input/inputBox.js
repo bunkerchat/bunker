@@ -112,7 +112,10 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					else if (searchState === searchStates.NICK) {
 						var currentRoom = bunkerData.getRoom($rootScope.roomId);
 						var users = _.pluck(currentRoom.$members, 'user');
-						var matchingNames = _.filter(users, function (item) {
+						var activeUsers = _.filter(users, function (item) {
+							return moment().diff(item.lastConnected, 'days') < 45;
+						});
+						var matchingNames = _.filter(activeUsers, function (item) {
 							return item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
 						});
 
@@ -128,7 +131,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 								? Math.min(nickSearchIndex + 1, matchingNames.length - 1)
 								: 0;
 						}
-						
+
 						if (/^\/f(?:ight)?(?:\s(\w)?|$)/i.test(scope.messageText)) {
 							scope.messageText = scope.messageText.replace(/[//\w ]*?$/, '/f ' + matchingNames[nickSearchIndex].nick + ' ');
 						} else {
@@ -175,7 +178,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 						emoticonSearch = scope.messageText.match(/:(\w+)$/)[1];
 						emoticonSearchIndex = -1;
 					}
-					else if (/@|(\/f(?:ight)?\s)\w*$/.test(scope.messageText)) {				
+					else if (/@|(\/f(?:ight)?\s)\w*$/.test(scope.messageText)) {
 						if (scope.messageText.match(/^\/f(?:ight)?(?:\s(\w*)|$)/)) {
 							nickSearch = scope.messageText.match(/^\/f(?:ight)?(?:\s(\w*)|$)/)[1];
 						} else if (scope.messageText.match(/@(\w*)$/)) {
