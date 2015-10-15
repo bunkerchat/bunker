@@ -13,7 +13,7 @@ var moment = require('moment');
 var Promise = require('bluebird');
 var express = require('../node_modules/sails/node_modules/express'),
 	passport = require('passport'),
-	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
+	GoogleStrategy = require('passport-google-oauth2').Strategy,
 	LocalStrategy = require('passport-local').Strategy;
 
 
@@ -58,9 +58,10 @@ module.exports.bootstrap = function (cb) {
 	passport.use(new GoogleStrategy({
 			clientID: sails.config.google.clientID,
 			clientSecret: sails.config.google.clientSecret,
-			callbackURL: sails.config.url + '/auth/googleReturn'
+			callbackURL: sails.config.url + '/auth/googleReturn',
+			passReqToCallback   : true
 		},
-		function (accessToken, refreshToken, profile, done) {
+		function (request, accessToken, refreshToken, profile, done) {
 			var email = profile.emails[0].value;
 			User.findOne({email: email}).exec(function (error, user) {
 				if (user) {
