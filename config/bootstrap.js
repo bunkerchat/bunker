@@ -13,8 +13,6 @@ var moment = require('moment');
 var Promise = require('bluebird');
 var express = require('../node_modules/sails/node_modules/express'),
 	passport = require('passport'),
-//GoogleStrategy = require('passport-google-oauth2').Strategy,
-//	GoogleStrategy = require('./passport-google-oauth2');
 	GooglePlusStrategy = require('passport-google-plus');
 
 module.exports.http = {
@@ -32,10 +30,6 @@ module.exports.http = {
 
 
 module.exports.bootstrap = function (cb) {
-
-	// Clear user socket data
-	Promise.resolve(User.update({}, {sockets: [], connected: false, typingIn: null}));
-
 	passport.serializeUser(function (user, done) {
 		done(null, user.id);
 	});
@@ -47,25 +41,61 @@ module.exports.bootstrap = function (cb) {
 	});
 
 	passport.use(new GooglePlusStrategy({
-			clientId: sails.config.google.clientID,
-			clientSecret: sails.config.google.clientSecret
-		},
-		function (tokens, profile, done) {
-			var email = profile.emails[0].value;
-			User.findOne({email: email}).exec(function (error, user) {
-				if (user) {
-					done(error, user);
-				}
-				else {
-					User.create({
-						// when no display name, get everything before @ in email
-						nick: (profile.displayName || email.replace(/@.*/, "")).substr(0, 20),
-						email: email
-					}).exec(done);
-				}
-			});
-		}
-	));
+		clientId: sails.config.google.clientID,
+		clientSecret: sails.config.google.clientSecret
+	}, authenticateUser));
 
-	cb();
+	// Clear user socket data
+	Promise.join(
+		User.update({}, {sockets: [], connected: false, typingIn: null}),
+		ensureFirstRoom()
+	)
+		.nodeify(cb);
 };
+
+function ensureFirstRoom() {
+	return Room.findOne({name: 'First'})
+		.then(function (firstRoom) {
+			if (!firstRoom) return Room.create({name: 'First'});
+		})
+}
+
+function authenticateUser(tokens, profile, done) {
+	var email = profile.emails[0].value;
+	var user, room;
+
+	return User.findOne({email: email})
+		.then(function (dbUser) {
+			if (dbUser) return dbUser;
+
+			return Promise.join(
+				User.create({
+					// when no display name, get everything before @ in email
+					nick: (profile.displayName || email.replace(/@.*/, "")).substr(0, 20),
+					email: email
+				}),
+				Room.findOne({name: 'First'})
+			)
+				.spread(function (dbUser, dbRoom) {
+					user = dbUser;
+					room = dbRoom;
+
+					return Promise.join(
+						User.count({}),
+						RoomMember.create({room: room.id, user: user.id})
+					);
+				})
+				.spread(function (userCount, roomMember) {
+					if(userCount > 1) return;
+
+					// if starting bunker for the first time, make the first logged in user admin of first room
+					roomMember.role = 'administrator';
+					return roomMember.save();
+				})
+				.then(function () {
+					return user;
+				})
+
+		})
+		.nodeify(done);
+}
