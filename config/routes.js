@@ -47,6 +47,7 @@ module.exports.routes = {
 	'/room/:id/messages': 'RoomController.messages',
 	'/room/:id/history': 'RoomController.history',
 	'/room/:id/media': 'RoomController.media',
+	'/room/:id/pins': 'RoomController.pinMessage',
 	'/message/emoticons': 'MessageController.emoticonCounts',
 
 	/***************************************************************************

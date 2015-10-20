@@ -48,6 +48,18 @@ module.exports.message = function (req, res) {
 		.catch(res.serverError);
 };
 
+module.exports.pinMessage = function(req, res) {
+
+	var roomId = actionUtil.requirePk(req);
+
+	// TODO: ensure user is member of room
+	// get room?
+	// get room pins?
+	// prune pins?
+	// save pin?
+
+};
+
 // GET /room/:id
 module.exports.findOne = function (req, res) {
 	var pk = actionUtil.requirePk(req);
