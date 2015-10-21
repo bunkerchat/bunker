@@ -48,16 +48,36 @@ module.exports.message = function (req, res) {
 		.catch(res.serverError);
 };
 
+// POST /room/:id/pins
 module.exports.pinMessage = function(req, res) {
 
 	var roomId = actionUtil.requirePk(req);
 
+	PinnedMessage
+			.create({ message: req.body.messageId, room: roomId })
+			.then(res.ok);
+
 	// TODO: ensure user is member of room
-	// get room?
+	// get room/room user?
+	// get message?
+	// only allow certain message types?
 	// get room pins?
 	// prune pins?
 	// save pin?
+	// send update/notify?
+};
 
+// GET /room/:id/pins
+module.exports.getPins = function(req, res) {
+	var roomId = actionUtil.requirePk(req);
+
+	PinnedMessage
+			.find({ room: roomId })
+			.populate('message')
+			.then(function(pins) {
+				return { pins: pins };
+			})
+			.then(res.ok);
 };
 
 // GET /room/:id
