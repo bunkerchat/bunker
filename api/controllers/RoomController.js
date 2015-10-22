@@ -63,7 +63,7 @@ module.exports.pinMessage = function(req, res) {
 	// only allow certain message types?
 	// get room pins?
 	// prune pins?
-	// save pin?
+	// save pinBoard?
 	// send update/notify?
 };
 

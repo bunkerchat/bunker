@@ -48,6 +48,7 @@ module.exports.init = function (req, res) {
 			RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 			InboxMessage.subscribe(req, user.id, 'message');
+			PinnedMessage.subscribe(req, rooms, ['message']);
 
 			return Promise.join(
 
@@ -55,9 +56,10 @@ module.exports.init = function (req, res) {
 				Promise.map(rooms, function (room) {
 					return Promise.join(
 						Message.find({room: room.id}).sort('createdAt DESC').limit(40).populate('author'),
-						RoomMember.find({room: room.id}).populate('user')
+						RoomMember.find({room: room.id}).populate('user'),
+						PinnedMessage.find({ room: room.id }).populate('message')
 					)
-						.spread(function (messages, members) {
+						.spread(function (messages, members, pinnedMessages) {
 							RoomMember.subscribe(req, members, ['update', 'destroy']);
 							User.subscribe(req, _.pluck(members, 'user'), 'update');
 
@@ -69,6 +71,11 @@ module.exports.init = function (req, res) {
 							room.$members = [];
 							_.each(members, function (member) {
 								room.$members.push(member.toJSON());
+							});
+
+							room.$pinnedMessages = [];
+							_.each(pinnedMessages, function(message) {
+								room.$pinnedMessages.push(message.message);
 							});
 
 							return room;

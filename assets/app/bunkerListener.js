@@ -1,4 +1,4 @@
-app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerData, $state, notifications) {
+app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerData, $state, notifications, pinBoard) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt.id);
@@ -78,6 +78,19 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 		}
 	}
 
+	function handleMessagePin(event) {
+
+		var room = bunkerData.getRoom(event.data.room.id);
+
+		switch (event.verb) {
+			case 'messaged':
+				// TODO: is this the best way to do this??
+				bunkerData.decorateMessage(room, event.data);
+				room.$pinnedMessages.unshift(event.data);
+				break;
+		}
+	}
+
 	function handleVisibilityShow() {
 		bunkerData.broadcastPresent(true);
 	}
@@ -109,6 +122,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 		// usersettings are only updated by the client and mirroring is off
 		{name: 'roomMember', type: 'socket', handler: handleMembershipEvent},
 		{name: 'inboxMessage', type: 'socket', handler: handleInboxEvent},
+		{name: 'pinnedMessage', type: 'socket', handler: handleMessagePin},
 		{name: 'connect', type: 'socket', handler: handleConnect},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},

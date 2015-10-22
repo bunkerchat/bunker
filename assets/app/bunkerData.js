@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons) {
+app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, pinBoard) {
 
 	var io = $window.io;
 	var roomLookup = []; // For fast room lookup
@@ -269,12 +269,16 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			return moment(message.createdAt).unix();
 		});
 
-		_.each(room.$messages, function (message, index) {
+		var messageDecorator = function (message, index) {
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 			message.$idAndEdited = message.id + message.editCount;
-		});
+		};
+
+
+		_.each(room.$messages, messageDecorator);
+		_.each(room.$pinnedMessages, messageDecorator);
 	}
 
 	function decorateMembers(room) {
