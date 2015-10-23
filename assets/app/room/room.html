@@ -11,11 +11,12 @@
 			<ol class="list-unstyled message-list" ng-class="{'has-topic': current.topic}"
 				message-log-scroll
 				room-id="{{::current.id}}"
-				on-scroll-top="loadPreviousMessages()">
+				on-scroll-top="loadPreviousMessages()"
+				message-pin-controller>
 
 				<li id="{{::message.id}}" class="message-container"
 					ng-switch="::!!message.author"
-					ng-repeat="message in current.$messages track by message.$idAndEdited">
+					ng-repeat="message in current.$messages track by message.$idAndEdited" >
 
 					<div class="message message-type-{{::message.type || 'none'}}"
 						 ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
@@ -35,6 +36,9 @@
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
 								<span bunker-message="::message"></span>
+								<span message-pin class="message-info">
+
+								</span>
 								<span class="message-info text-muted">
 									<span class="fa fa-pencil" ng-if="::message.edited"></span>
 									<span class="text-muted" ng-if="::message.$firstInSeries">
