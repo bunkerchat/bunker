@@ -36,9 +36,11 @@
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
 								<span bunker-message="::message"></span>
-								<span message-pin class="message-info">
 
+								<span message-pin-id="{{::message.id}}" class="message-pin message-info">
+									<i class="fa fa-bookmark-o message-pin-icon"></i>
 								</span>
+
 								<span class="message-info text-muted">
 									<span class="fa fa-pencil" ng-if="::message.edited"></span>
 									<span class="text-muted" ng-if="::message.$firstInSeries">
