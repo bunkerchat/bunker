@@ -66,6 +66,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 						decorateMembers(room);
 					});
 
+					// gather up all initial pinned messages
+					pinBoard.initialize(_.chain(initialData.rooms).map('$pinnedMessages').flatten().value());
+
 					// creates a hashmap of rooms by its id
 					roomLookup = _.indexBy(bunkerData.rooms, 'id');
 

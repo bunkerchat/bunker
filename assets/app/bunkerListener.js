@@ -86,6 +86,9 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 			case 'messaged':
 				// TODO: is this the best way to do this??
 				bunkerData.decorateMessage(room, event.data);
+
+				// TODO: need to distinguish between removing/adding a pin.
+				pinBoard.pinChanged(event.data);
 				room.$pinnedMessages.unshift(event.data);
 				break;
 		}
