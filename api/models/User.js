@@ -3,12 +3,6 @@
 module.exports = {
 
 	attributes: {
-
-		token: {
-			type: 'string',
-			required: true,
-			minLength: 20
-		},
 		nick: {
 			type: 'string',
 			required: true,

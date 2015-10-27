@@ -1,8 +1,8 @@
-app.factory('notifications', function ($rootScope, bunkerData, $notification, $timeout, $log, $state, ngAudio) {
+app.factory('notifications', function ($rootScope, bunkerData, $notification, $timeout, $log, $state) {
+	var isSafariOnOSX = navigator.appVersion.indexOf("Mac") != -1 && navigator.userAgent.indexOf('Version\/9.0 Safari') != -1;
 	var loaded = false;
 	var bunkerIsVisible = true;
-	var mentionSound = ngAudio.load('/assets/sounds/mention.mp3');
-	var roomSound = ngAudio.load('/assets/sounds/room.mp3');
+	var mentionSound = new Audio('/assets/sounds/mention.mp3');
 
 	$timeout(function () {
 		loaded = true;
@@ -53,6 +53,9 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 			mention.$on('error', function (e) {
 				$log.error('desktop notification error', e);
 			});
+
+			// don't close timeouts for safari on osx
+			if(isSafariOnOSX) return;
 
 			// close timeout in 10 seconds
 			$timeout(function () {
