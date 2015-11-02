@@ -272,6 +272,21 @@ mark:hover {
 	font-size: 12px;
 }
 
+/* pin board */
+.pin-board {
+	position: fixed;
+	display: none;
+	bottom: 20px;
+	background: white;
+	right: 16.666%;
+	left: 80px;
+	z-index: 100;
+}
+
+.pin-board-active {
+	display: block;
+}
+
 /* emoticon */
 
 [emoticon-menu] .row {

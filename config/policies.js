@@ -63,7 +63,8 @@ module.exports.policies = {
 		'history': 'isLoggedIn',
 		'media': 'isLoggedIn',
 		'getPins': 'isLoggedIn',
-		'pinMessage': 'isLoggedIn'
+		'pinMessage': 'isLoggedIn',
+		'unPinMessage': 'isLoggedIn'
 	},
 	RoomMemberController: {
 		'updateSettings': 'isLoggedIn'

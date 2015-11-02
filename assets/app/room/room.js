@@ -24,11 +24,6 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 				updateMemberList();
 			});
 
-
-			$scope.openPins = function() {
-
-			};
-
 			$scope.openHistory = function () {
 				$state.go('roomHistory', {roomId: $scope.roomId, date: moment().format('YYYY-MM-DD')});
 			};

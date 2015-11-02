@@ -11,8 +11,7 @@
 			<ol class="list-unstyled message-list" ng-class="{'has-topic': current.topic}"
 				message-log-scroll
 				room-id="{{::current.id}}"
-				on-scroll-top="loadPreviousMessages()"
-				message-pin-controller>
+				on-scroll-top="loadPreviousMessages()">
 
 				<li id="{{::message.id}}" class="message-container"
 					ng-switch="::!!message.author"
@@ -37,7 +36,7 @@
 							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
 								<span bunker-message="::message"></span>
 
-								<span message-pin="{{::message.id}}" message-pin-id="{{::message.id}}" class="message-info">
+								<span message-pin="{{::message.id}}" class="message-info">
 
 								</span>
 
@@ -145,9 +144,7 @@
 				<a class="btn btn-link" ng-click="openHistory()">
 					History
 				</a>
-				<a href="javascript:void(0);" ng-click="openPins()" >
-					<i class="fa fa-bookmark fa-lg"></i>
-				</a>
+
 				<div pins="current.$pinnedMessages">
 
 				</div>

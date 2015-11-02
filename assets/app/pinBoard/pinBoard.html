@@ -1,3 +1,9 @@
-<div ng-repeat="message in pinnedMessages">
-	{{message}}
+<a href="javascript:void(0);" ng-click="boardOpen = !boardOpen" >
+	<i class="fa fa-bookmark fa-lg"></i>
+</a>
+
+<div class="pin-board" ng-class="{'pin-board-active': boardOpen }">
+	<div ng-repeat="message in pinnedMessages">
+		{{message}}
+	</div>
 </div>

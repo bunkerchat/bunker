@@ -80,16 +80,28 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 
 	function handleMessagePin(event) {
 
-		var room = bunkerData.getRoom(event.data.room.id);
+		var room = bunkerData.getRoom(event.data.roomId);
 
 		switch (event.verb) {
 			case 'messaged':
-				// TODO: is this the best way to do this??
-				bunkerData.decorateMessage(room, event.data);
 
-				// TODO: need to distinguish between removing/adding a pin.
-				pinBoard.pinChanged(event.data);
-				room.$pinnedMessages.unshift(event.data);
+				// If we are trying to pin the message, but it's already on the
+				// pinboard, don't add it again.
+				if (event.data.pinned && !pinBoard.isPinned(event.data.messageId)) {
+					bunkerData.decorateMessage(room, event.data.message);
+
+					room.$pinnedMessages.unshift(event.data.message);
+
+					pinBoard.pinChanged(event.data);
+				}
+				else if (!event.data.pinned) {
+					_.remove(room.$pinnedMessages, function(item) {
+						return item.id === event.data.messageId;
+					});
+
+					pinBoard.pinChanged(event.data);
+				}
+
 				break;
 		}
 	}
