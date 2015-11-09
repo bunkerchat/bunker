@@ -287,6 +287,17 @@ mark:hover {
 	display: block;
 }
 
+.message-pin-icon {
+	cursor: pointer;
+	font-size: 1.5em;
+	display: none;
+}
+
+.message:hover .fa-bookmark-o, .message-pin-icon.fa-bookmark {
+	display: inline;
+}
+
+
 /* emoticon */
 
 [emoticon-menu] .row {
