@@ -30,7 +30,7 @@
 		if (authResult.code) {
 			$.post('/auth/googleCallback', { code: authResult.code})
 					.done(function(data) {
-						window.location = '/'
+						window.location = '/' + window.location.hash;
 					});
 		} else if (authResult.error) {
 			console.log('There was an error: ' + authResult.error);
