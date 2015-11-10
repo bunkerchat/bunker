@@ -48,12 +48,13 @@ function socketToController(controllerFn, params) {
 		var req = {
 			socket: this,
 			session: this.handshake.session,
-			params: params
+			params: params,
+			body: data
 		};
 
 		var res = {
-			ok: function (data) {
-				cb(data);
+			ok: function (returnData) {
+				cb(returnData);
 			},
 			serverError: function (err) {
 				log.error('server error', err);

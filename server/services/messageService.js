@@ -1,15 +1,17 @@
-var ent = require('ent');
+//var ent = require('ent');
 var moment = require('moment');
 var Promise = require('bluebird');
 
 var Message = require('../models/Message');
+var User = require('../models/User');
+var RoomMember = require('../models/RoomMember');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
 
 module.exports.createMessage = function (roomMember, text) {
 
-	text = ent.encode(text);
+	//text = ent.encode(text);
 
 	if (!text || !text.length) {
 		throw new InvalidInputError(); // block the trolls
@@ -79,7 +81,7 @@ module.exports.createMessage = function (roomMember, text) {
 	}
 };
 
-module.exports.broadcastMessage = broadcastMessage;
+//module.exports.broadcastMessage = broadcastMessage;
 
 function getHelp(roomMember, text) {
 	return helpService.getHelp(text).then(function (helpMessage) {
@@ -360,7 +362,7 @@ function message(roomMember, text, type) {
 //}
 
 function populateMessage(message) {
-	return Message.findById(message._id.toObjectId())
+	return Message.findById(message._id)
 		.populate('room')
 		.populate('author')
 }

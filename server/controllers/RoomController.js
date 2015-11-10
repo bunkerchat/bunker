@@ -30,7 +30,7 @@ module.exports.message = function (req, res) {
 			currentRoomMember = roomMember;
 
 			return Promise.join(
-				messageService.createMessage(roomMember, req.param('text')),
+				messageService.createMessage(roomMember, req.body.text),
 				User.findByIdAndUpdate(userId, {busy: false})
 			)
 		})
