@@ -65,6 +65,9 @@ googleSearchService.gifSearch = function (query) {
 				if (image.indexOf('photobucket') > -1) return false;
 				if (image.indexOf('replygif') > -1) return false;
 				if (image.indexOf('gifrific') > -1) return false;
+				if (image.indexOf('phinzmania') > -1) return false;
+				if (image.indexOf('gifsoup') > -1) return false;
+				if (image.indexOf('gifwave') > -1) return false;
 				if (image.indexOf('.jpg') > -1) return false;
 				if (image.indexOf('.jpeg') > -1) return false;
 				if (image.indexOf('.png') > -1) return false;

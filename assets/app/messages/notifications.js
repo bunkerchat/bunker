@@ -1,8 +1,11 @@
-app.factory('notifications', function ($rootScope, bunkerData, $notification, $timeout, $log, $state, ngAudio) {
+app.factory('notifications', function ($rootScope, bunkerData, $notification, $timeout, $log, $state) {
+	var isSafariOnOSX = navigator.appVersion.indexOf("Mac") != -1 && navigator.userAgent.indexOf('Version\/9.0 Safari') != -1;
 	var loaded = false;
 	var bunkerIsVisible = true;
-	var mentionSound = ngAudio.load('/assets/sounds/mention.mp3');
-	var roomSound = ngAudio.load('/assets/sounds/room.mp3');
+	var mentionSound = new Audio('/assets/sounds/mention.mp3');
+	var mentionSoundAlt = new Audio('/assets/sounds/turret.mp3');
+
+	console.log(bunkerData);
 
 	$timeout(function () {
 		loaded = true;
@@ -21,7 +24,13 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 
 		if (bunkerData.userSettings.playSoundOnMention) {
 			if (bunkerIsVisible || !bunkerData.mentionsUser(message.text)) return;
-			mentionSound.play();
+
+			if (bunkerData.user.nick === 'Jason') {
+				mentionSoundAlt.play();
+			}
+			else {
+				mentionSound.play();
+			}
 		}
 
 		// since there are a total of 1 + (n of rooms) possible notifications, each one of those
@@ -53,6 +62,9 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 			mention.$on('error', function (e) {
 				$log.error('desktop notification error', e);
 			});
+
+			// don't close timeouts for safari on osx
+			if(isSafariOnOSX) return;
 
 			// close timeout in 10 seconds
 			$timeout(function () {

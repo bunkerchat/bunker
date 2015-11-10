@@ -13,23 +13,23 @@ var moment = require('moment');
 var Promise = require('bluebird');
 var express = require('../node_modules/sails/node_modules/express'),
 	passport = require('passport'),
-	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
-	LocalStrategy = require('passport-local').Strategy;
-
+	GooglePlusStrategy = require('passport-google-plus');
 
 module.exports.http = {
 	customMiddleware: function (app) {
 		app.use(express.compress());
 		app.use('/assets', express.static(__dirname + '/../assets/'));
+
+		app.post('/auth/googleCallback', passport.authenticate('google'), function (req, res) {
+			req.session.googleCredentials = req.authInfo;
+			// Return user profile back to client
+			res.send(req.user);
+		});
 	}
 };
 
 
 module.exports.bootstrap = function (cb) {
-
-	// Clear user socket data
-	Promise.resolve(User.update({}, {sockets: [], connected: false, typingIn: null}));
-
 	passport.serializeUser(function (user, done) {
 		done(null, user.id);
 	});
@@ -40,45 +40,62 @@ module.exports.bootstrap = function (cb) {
 		});
 	});
 
-	passport.use(new LocalStrategy(
-		function (username, password, done) {
-			User.findOne({username: username}, function (err, user) {
-				if (err) {
-					return done(err);
-				}
-				if (!user || !user.validPassword(password)) {
-					return done(null, false, {message: 'Incorrect username or password'});
-				}
+	passport.use(new GooglePlusStrategy({
+		clientId: sails.config.google.clientID,
+		clientSecret: sails.config.google.clientSecret
+	}, authenticateUser));
 
-				return done(null, user);
-			});
-		}
-	));
-
-	passport.use(new GoogleStrategy({
-			clientID: sails.config.google.clientID,
-			clientSecret: sails.config.google.clientSecret,
-			callbackURL: sails.config.url + '/auth/googleReturn'
-		},
-		function (accessToken, refreshToken, profile, done) {
-			var email = profile.emails[0].value;
-			User.findOne({email: email}).exec(function (error, user) {
-				if (user) {
-					User.update(user.id, {token: accessToken}).exec(function (error, user) {
-						done(error, user[0]);
-					});
-				}
-				else {
-					User.create({
-						token: accessToken,
-						// when no display name, get everything before @ in email
-						nick: (profile.displayName || email.replace(/@.*/, "")).substr(0, 20),
-						email: email
-					}).exec(done);
-				}
-			});
-		}
-	));
-
-	cb();
+	// Clear user socket data
+	Promise.join(
+		User.update({}, {sockets: [], connected: false, typingIn: null}),
+		ensureFirstRoom()
+	)
+		.nodeify(cb);
 };
+
+function ensureFirstRoom() {
+	return Room.findOne({name: 'First'})
+		.then(function (firstRoom) {
+			if (!firstRoom) return Room.create({name: 'First'});
+		})
+}
+
+function authenticateUser(tokens, profile, done) {
+	var email = profile.emails[0].value;
+	var user, room;
+
+	return User.findOne({email: email})
+		.then(function (dbUser) {
+			if (dbUser) return dbUser;
+
+			return Promise.join(
+				User.create({
+					// when no display name, get everything before @ in email
+					nick: (profile.displayName || email.replace(/@.*/, "")).substr(0, 20),
+					email: email
+				}),
+				Room.findOne({name: 'First'})
+			)
+				.spread(function (dbUser, dbRoom) {
+					user = dbUser;
+					room = dbRoom;
+
+					return Promise.join(
+						User.count({}),
+						RoomMember.create({room: room.id, user: user.id})
+					);
+				})
+				.spread(function (userCount, roomMember) {
+					if(userCount > 1) return;
+
+					// if starting bunker for the first time, make the first logged in user admin of first room
+					roomMember.role = 'administrator';
+					return roomMember.save();
+				})
+				.then(function () {
+					return user;
+				})
+
+		})
+		.nodeify(done);
+}

@@ -40,7 +40,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 			});
 
 			// Watch scrolling to top, execute given function
-			angular.element(el).bind('scroll', function () {
+			angular.element(el).bind('scroll', _.throttle(function () {
 				if (el.scrollTop == 0 && angular.isFunction($scope.onScrollTop)) { // We're at the top
 					var originalHeight = el.scrollHeight;
 					$scope.onScrollTop().then(function () {
@@ -49,13 +49,32 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 						});
 					});
 				}
+			}, 50));
+
+			$scope.$on('roomIdChanged', function () {
+				$timeout(function () {
+					$('img[src$=".gif"]:visible').css('visibility', '');
+					$('img[src$=".gif"]:hidden').css('visibility', 'hidden');
+
+					$('video:visible')
+						.css('visibility', '')
+						.each(function (index, el) {
+							el.play();
+						});
+
+					$('video:hidden')
+						.css('visibility', 'hidden')
+						.each(function (index, el) {
+							el.pause();
+						});
+				});
+
+				scroll();
 			});
 
-			$scope.$on('roomIdChanged', scroll);
-
 			// Scroll after state changes and when youtubes have loaded
-			$rootScope.$on('youtube.player.ready', function(){
-				if(!atBottomOfPage()) return;
+			$rootScope.$on('youtube.player.ready', function () {
+				if (!atBottomOfPage()) return;
 				scroll();
 			});
 
