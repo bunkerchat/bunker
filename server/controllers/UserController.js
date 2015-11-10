@@ -63,6 +63,8 @@ module.exports.init = function (req, res) {
 
 				// Get all room members and 40 initial messages for each room
 				Promise.map(rooms, function (room) {
+					room = room.toJSON();
+
 					return Promise.join(
 						Message.find({room: room._id}).sort('-createdAt').limit(40).populate('author'),
 						RoomMember.find({room: room._id}).populate('user')
@@ -91,7 +93,7 @@ module.exports.init = function (req, res) {
 					.then(function (inboxUsers) {
 						return Promise.map(localInboxMessages, function (inboxMessage) {
 
-							var authorData = _.find(inboxUsers, {id: inboxMessage.message.author});
+							var authorData = _.find(inboxUsers, {_id: inboxMessage.message.author});
 							if (authorData) {
 								inboxMessage.message.author = authorData.toJSON();
 							}
