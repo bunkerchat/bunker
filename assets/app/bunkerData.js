@@ -37,29 +37,29 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					// Set $resolved on all rooms (those not in the data set to false)
 					// TODO ideally we could remove the rooms from the array entirely
 					_.each(bunkerData.rooms, function (room) {
-						room.$resolved = _.any(initialData.rooms, {id: room.id});
+						room.$resolved = _.any(initialData.rooms, {id: room._id});
 					});
 
 					// Go through data and sync messages
 					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
 					_.each(initialData.rooms, function (roomData, index) {
-						var room = _.find(bunkerData.rooms, {id: roomData.id});
+						var room = _.find(bunkerData.rooms, {id: roomData._id});
 
 						if (!room) {
 							room = roomData;
 
 							// Set the room tab order
-							var membership = _.findWhere(bunkerData.memberships, {room: room.id});
+							var membership = _.findWhere(bunkerData.memberships, {room: room._id});
 							var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : index;
 							setRoomOrder(roomIndex, room);
 						}
 						else {
 
-							var existingMessagesLookup = _.indexBy(room.$messages, 'id');
+							var existingMessagesLookup = _.indexBy(room.$messages, '_id');
 
 							// Add on messages that were previously not in the list
 							_.each(roomData.$messages, function (message) {
-								if (!existingMessagesLookup[message.id]) {
+								if (!existingMessagesLookup[message._id]) {
 									room.$messages.push(message);
 								}
 							});
@@ -71,7 +71,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					});
 
 					// creates a hashmap of rooms by its id
-					roomLookup = _.indexBy(bunkerData.rooms, 'id');
+					roomLookup = _.indexBy(bunkerData.rooms, '_id');
 
 					resolve(bunkerData);
 					$rootScope.$digest();
@@ -101,14 +101,14 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 		editMessage: function (message) {
 			return $q(function (resolve) {
-				io.socket.put('/message/' + message.id, message, function (message) {
+				io.socket.put('/message/' + message._id, message, function (message) {
 					resolve(message);
 				});
 			});
 		},
 		loadMessages: function (room, skip) {
 			return $q(function (resolve) {
-				io.socket.get('/room/' + room.id + '/messages?skip=' + skip || 0, function (messages) {
+				io.socket.get('/room/' + room._id + '/messages?skip=' + skip || 0, function (messages) {
 					_.eachRight(messages, function (message) {
 						room.$messages.unshift(message);
 					});
@@ -132,7 +132,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = message.id + message.editCount;
+			message.$idAndEdited = message._id + message.editCount;
 		},
 
 		// Rooms
@@ -206,7 +206,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// UserSettings
 
 		saveUserSettings: function () {
-			io.socket.put('/usersettings/' + bunkerData.userSettings.id, bunkerData.userSettings);
+			io.socket.put('/usersettings/' + bunkerData.userSettings._id, bunkerData.userSettings);
 			$rootScope.$broadcast('userSettingsUpdated', bunkerData.userSettings);
 		},
 		toggleUserSetting: function (name, checkForNotifications) {
@@ -277,7 +277,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = message.id + message.editCount;
+			message.$idAndEdited = message._id + message.editCount;
 		});
 	}
 
@@ -288,7 +288,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	}
 
 	function isFirstInSeries(lastMessage, message) {
-		return !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+		return !lastMessage || !lastMessage.author || !message.author || lastMessage.author._id != message.author._id;
 	}
 
 	function setRoomOrder(roomIndex, room) {

@@ -41,7 +41,7 @@ app.controller('RoomHistoryController', function ($scope, bunkerData, $statePara
 				_.each(messages, function (message) {
 					addMessage(message);
 					if (message.author) {
-						self.members[message.author.id] = message.author;
+						self.members[message.author._id] = message.author;
 					}
 				});
 
@@ -57,7 +57,7 @@ app.controller('RoomHistoryController', function ($scope, bunkerData, $statePara
 
 	function addMessage(message) {
 		var lastMessage = _.last(self.messages);
-		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author._id != message.author._id;
 		message.$mentionsUser = bunkerData.mentionsUser(message.text);
 		self.messages.push(message);
 	}

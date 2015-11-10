@@ -31,7 +31,7 @@ module.exports.http = {
 
 module.exports.bootstrap = function (cb) {
 	passport.serializeUser(function (user, done) {
-		done(null, user.id);
+		done(null, user._id);
 	});
 
 	passport.deserializeUser(function (id, done) {
@@ -82,7 +82,7 @@ function authenticateUser(tokens, profile, done) {
 
 					return Promise.join(
 						User.count({}),
-						RoomMember.create({room: room.id, user: user.id})
+						RoomMember.create({room: room._id, user: user._id})
 					);
 				})
 				.spread(function (userCount, roomMember) {

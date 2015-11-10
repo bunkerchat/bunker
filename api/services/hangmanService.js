@@ -12,7 +12,7 @@ module.exports.play = function (roomMember, command) {
 		if (currentGame && guess) {
 			// async fetch of both statistics objects
 			return Promise.join(
-					getHangmanUserStatistics(roomMember.user.id),
+					getHangmanUserStatistics(roomMember.user._id),
 					getHangmanPublicStatistics()
 				)
 				.spread(function (userStats, publicStats) {
@@ -38,7 +38,7 @@ module.exports.play = function (roomMember, command) {
 function getHangmanGame(roomMember) {
 	// always look for a private game first.  A user can't play a public game if they
 	// are already doing a private game.
-	return HangmanGame.findOne({user: roomMember.user.id, isPrivate: true}).then(function (currentPrivateGame) {
+	return HangmanGame.findOne({user: roomMember.user._id, isPrivate: true}).then(function (currentPrivateGame) {
 		if (currentPrivateGame) {
 			return currentPrivateGame;
 		}
@@ -121,7 +121,7 @@ function completeHangmanGame(game, guess, userStats, publicStats){
 	var action = game.isPrivate ? userStats.save() : publicStats.save();
 
 	return Promise.join(
-		HangmanGame.destroy(game.id),
+		HangmanGame.destroy(game._id),
 		action);
 }
 
@@ -143,7 +143,7 @@ function start(roomMember, isPrivate) {
 		.then(function (word) {
 			if (isPrivate) {
 				return HangmanGame.create({
-					user: roomMember.user.id,
+					user: roomMember.user._id,
 					word: word,
 					isPrivate: true
 				});

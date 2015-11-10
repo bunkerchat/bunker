@@ -15,9 +15,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="room in lobby.rooms | orderBy:'name' track by room.id" ng-if="room.$resolved">
+				<tr ng-repeat="room in lobby.rooms | orderBy:'name' track by room._id" ng-if="room.$resolved">
 					<td>
-						<a ui-sref="chat.room({roomId: room.id})">{{room.name}}</a>
+						<a ui-sref="chat.room({roomId: room._id})">{{room.name}}</a>
 					</td>
 					<td ng-bind-html="room.topic"></td>
 					<td>{{room.$members | connectedUsersCount}} / {{room.$members.length}}</td>

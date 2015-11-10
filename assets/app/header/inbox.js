@@ -39,18 +39,18 @@ app.directive('inbox', function (bunkerData, $state, $location, $anchorScroll) {
 				var room = _.find(bunkerData.rooms, {id: message.room});
 
 				// go to loaded room's message
-				if(_.any(room.$messages, {id: message.id})){
+				if(_.any(room.$messages, {id: message._id})){
 					return $state.go('chat.room', {roomId: message.room})
 						.then(function () {
 							// scroll to message
-							$location.hash(message.id);
+							$location.hash(message._id);
 							$anchorScroll();
 						});
 				}
 
 				// otherwise load room history view
 				var date = moment(message.createdAt).format('YYYY-MM-DD');
-				$state.go('roomHistory', {roomId: message.room, date: date, message: message.id});
+				$state.go('roomHistory', {roomId: message.room, date: date, message: message._id});
 			};
 		}
 	};

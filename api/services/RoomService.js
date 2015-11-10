@@ -1,7 +1,7 @@
 var uuid = require('node-uuid');
 
 module.exports.messageRoom = function (room, message) {
-	var roomId = room.id ? room.id : room;
+	var roomId = room._id ? room._id : room;
 	Room.message(roomId, {
 		id: uuid.v4(),
 		type: 'room',
@@ -14,7 +14,7 @@ module.exports.messageRoom = function (room, message) {
 module.exports.animateInRoom = function (roomMember, emoticon, words) {
 	var room = roomMember.room;
 	var user = roomMember.user;
-	var roomId = room.id ? room.id : room;
+	var roomId = room._id ? room._id : room;
 	Room.message(roomId, {
 		id: uuid.v4(),
 		type: 'animation',
@@ -48,11 +48,11 @@ module.exports.messageRoomsWithUser = function (spec) {
 			if (!room) return;
 			// If we were provided a message, send it down to affected rooms
 			if (spec.systemMessage) {
-				Room.message(room.id, {
+				Room.message(room._id, {
 					id: uuid.v4(),
 					type: 'room',
 					text: spec.systemMessage,
-					room: room.id,
+					room: room._id,
 					createdAt: new Date().toISOString()
 				});
 			}
@@ -64,7 +64,7 @@ module.exports.messageRoomsWithUser = function (spec) {
 
 module.exports.messageUserInRoom = function (userId, roomId, message, type) {
 	return RoomMember.findOne({room: roomId, user: userId}).populateAll().then(function (roomMember) {
-		return RoomMember.message(roomMember.id, {
+		return RoomMember.message(roomMember._id, {
 			id: uuid.v4(),
 			text: message,
 			type: type,
@@ -83,7 +83,7 @@ module.exports.getRoomMemberByNickAndRoom = function (userNick, roomId) {
 		}
 
 		var userIds = users.map(function (user) {
-			return user.id;
+			return user._id;
 		});
 
 		return RoomMember.findOne({user: userIds, room: roomId}).populateAll();

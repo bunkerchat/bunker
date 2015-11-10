@@ -37,7 +37,7 @@ module.exports.init = function (req, res) {
 					return !membership.room;
 				})
 				.each(function (membership, index) {
-					membership.room = membership.room.id;
+					membership.room = membership.room._id;
 					membership.roomOrder = index;
 				})
 				.value();
@@ -47,15 +47,15 @@ module.exports.init = function (req, res) {
 			UserSettings.subscribe(req, userSettings, 'update');
 			RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
-			InboxMessage.subscribe(req, user.id, 'message');
+			InboxMessage.subscribe(req, user._id, 'message');
 
 			return Promise.join(
 
 				// Get all room members and 40 initial messages for each room
 				Promise.map(rooms, function (room) {
 					return Promise.join(
-						Message.find({room: room.id}).sort('createdAt DESC').limit(40).populate('author'),
-						RoomMember.find({room: room.id}).populate('user')
+						Message.find({room: room._id}).sort('createdAt DESC').limit(40).populate('author'),
+						RoomMember.find({room: room._id}).populate('user')
 					)
 						.spread(function (messages, members) {
 							RoomMember.subscribe(req, members, ['update', 'destroy']);
@@ -136,7 +136,7 @@ module.exports.connect = function (req, res) {
 			previouslyConnected = user.connected;
 
 			if (!user.sockets) user.sockets = [];
-			user.sockets.push(req.socket.id);
+			user.sockets.push(req.socket._id);
 			user.connected = true;
 			user.lastConnected = new Date().toISOString();
 			user.typingIn = null;
@@ -146,20 +146,20 @@ module.exports.connect = function (req, res) {
 		})
 		.then(function (user) {
 
-			User.publishUpdate(user.id, user);
+			User.publishUpdate(user._id, user);
 
 			// Send connecting message, if not previously connected or reconnecting
 			//if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > userService.connectionUpdateWaitSeconds) {
 			//	RoomService.messageRoomsWithUser({
-			//		userId: user.id,
+			//		userId: user._id,
 			//		systemMessage: user.nick + ' is now online'
 			//	});
 			//}
 
 			// Clear any disconnect messages that haven't gone out yet
-			if (userService.pendingTasks[user.id]) {
-				clearTimeout(userService.pendingTasks[user.id]);
-				userService.pendingTasks[user.id] = null;
+			if (userService.pendingTasks[user._id]) {
+				clearTimeout(userService.pendingTasks[user._id]);
+				userService.pendingTasks[user._id] = null;
 			}
 
 			// ARS wasn't seeing a data object, so return an empty one?

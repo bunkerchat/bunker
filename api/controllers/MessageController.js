@@ -19,7 +19,7 @@ exports.update = function (req, res) {
 	Message.findOne(pk).populate('author')
 		.then(function (message) {
 
-			if (userId != message.author.id) {
+			if (userId != message.author._id) {
 				throw new ForbiddenError('Only the author may edit their message');
 			}
 

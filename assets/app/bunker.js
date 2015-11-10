@@ -86,6 +86,12 @@ function sailsApiWrapper(socket){
 		socket.emit(endpoint, data, cb);
 	};
 
+	socket.post = function (endpoint, _data, _cb){
+		var cb = _cb || _data;
+		var data = _.isObject(_data) ? _data : undefined;
+		socket.emit(endpoint, data, cb);
+	}
+
 
 	return socket
 }

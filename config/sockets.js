@@ -120,7 +120,7 @@ module.exports.sockets = {
 	 *                                                                          *
 	 ***************************************************************************/
 	afterDisconnect: function (session, socket, cb) {
-		var socketId = sails.sockets.id(socket);
+		var socketId = sails.sockets._id(socket);
 		//if (!session.user) return;
 
 		return Promise.resolve(User.find().where({connected: true}))
@@ -136,14 +136,14 @@ module.exports.sockets = {
 
 					// Wait 15 seconds before performing the update and/or sending disconnect message
 					// Allows time for reconnection
-					userService.pendingTasks[user.id] = setTimeout(function () {
-						User.publishUpdate(user.id, user);
+					userService.pendingTasks[user._id] = setTimeout(function () {
+						User.publishUpdate(user._id, user);
 						//if (!user.connected) {
 						//	RoomService.messageRoomsWithUser({
-						//		userId: user.id,
+						//		userId: user._id,
 						//		systemMessage: user.nick + ' has gone offline'});
 						//}
-						userService.pendingTasks[user.id] = null; // clear
+						userService.pendingTasks[user._id] = null; // clear
 
 					}, userService.connectionUpdateWaitSeconds * 1000);
 				});

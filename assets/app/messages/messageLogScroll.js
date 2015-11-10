@@ -17,7 +17,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 
 				if (atBottomOfPage()) {
 					// Check for images
-					var image = angular.element('#' + message.id).find('img');
+					var image = angular.element('#' + message._id).find('img');
 					if (image.length) {
 						// If we have an image, wait for it to load before scrolling
 						image.load(function () {

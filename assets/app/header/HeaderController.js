@@ -53,7 +53,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 				var room = self.rooms[i];
 
 				// check each membership
-				var membership = _.findWhere(self.memberships, {room: room.id});
+				var membership = _.findWhere(self.memberships, {room: room._id});
 
 				membership.roomOrder = i;
 			}
@@ -62,7 +62,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	};
 
 	$rootScope.$on('bunkerMessaged', function (evt, message) {
-		if (!bunkerData.$resolved || message.room.id == $rootScope.roomId || (message.type == 'standard' && message.author.id == bunkerData.user.id)) {
+		if (!bunkerData.$resolved || message.room._id == $rootScope.roomId || (message.type == 'standard' && message.author._id == bunkerData.user._id)) {
 			return;
 		}
 
@@ -70,7 +70,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 			return;
 		}
 
-		var otherRoom = bunkerData.getRoom(message.room.id);
+		var otherRoom = bunkerData.getRoom(message.room._id);
 		if (otherRoom) {
 			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
 			if (bunkerData.mentionsUser(message.text)) {

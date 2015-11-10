@@ -1,7 +1,7 @@
 app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerData, $state, notifications) {
 
 	function handleRoomEvent(evt) {
-		var room = bunkerData.getRoom(evt.id);
+		var room = bunkerData.getRoom(evt._id);
 		if (!room) throw new Error('Received a message from a room we did not know about: ' + JSON.stringify(evt));
 
 		switch (evt.verb) {
@@ -10,7 +10,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 				if (message.edited) {
 					bunkerData.decorateMessage(room, message);
 
-					var otherMessage = _.find(room.$messages, {id: message.id});
+					var otherMessage = _.find(room.$messages, {id: message._id});
 					message.$firstInSeries = otherMessage.$firstInSeries;
 
 					var index = _.indexOf(room.$messages, otherMessage);
@@ -32,7 +32,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 
 	function handleUserEvent(evt) {
 		var userData = evt.data;
-		var users = _(bunkerData.rooms).pluck('$members').flatten().pluck('user').filter({id: evt.id}).value();
+		var users = _(bunkerData.rooms).pluck('$members').flatten().pluck('user').filter({id: evt._id}).value();
 
 		switch (evt.verb) {
 			case 'updated':
@@ -40,7 +40,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 					_.assign(user, userData);
 					user.$present = isPresent(user);
 				});
-				if (evt.id == bunkerData.user.id) {
+				if (evt._id == bunkerData.user._id) {
 					_.assign(bunkerData.user, userData);
 					if (userData.typingIn == null) {
 						bunkerData.cancelBroadcastTyping();
@@ -55,14 +55,14 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function handleMembershipEvent(evt) {
-		var membership = _(bunkerData.rooms).pluck('$members').flatten().filter({id: evt.id}).value();
+		var membership = _(bunkerData.rooms).pluck('$members').flatten().filter({id: evt._id}).value();
 		membership = membership[0];
 		switch (evt.verb) {
 			case 'updated':
 				_.assign(membership, evt.data);
 				break;
 			case 'messaged':
-				var room = bunkerData.getRoom(evt.data.room.id);
+				var room = bunkerData.getRoom(evt.data.room._id);
 				bunkerData.addMessage(room, evt.data);
 				$rootScope.$broadcast('bunkerMessaged', evt.data);
 				break;

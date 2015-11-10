@@ -8,14 +8,14 @@ app.controller('LobbyController', function ($state, bunkerData) {
 	this.joinRoom = function (roomId) {
 		bunkerData.joinRoom(roomId)
 			.then(function (room) {
-				$state.go('chat.room', {roomId: room.id});
+				$state.go('chat.room', {roomId: room._id});
 			});
 	};
 
 	this.createRoom = function (roomName) {
 		bunkerData.createRoom(roomName)
 			.then(function (room) {
-				$state.go('chat.room', {roomId: room.id});
+				$state.go('chat.room', {roomId: room._id});
 			});
 	};
 });

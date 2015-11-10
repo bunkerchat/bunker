@@ -19,7 +19,7 @@ app.directive('unreadMessages', function ($rootScope, bunkerData) {
 		});
 
 		$rootScope.$on('bunkerMessaged', function (evt, message) {
-			if (!bunkerData.$resolved || hasFocus || !message.author || message.author == bunkerData.user.id) return;
+			if (!bunkerData.$resolved || hasFocus || !message.author || message.author == bunkerData.user._id) return;
 
 			unreadMessages++;
 			if (bunkerData.mentionsUser(message.text)) {

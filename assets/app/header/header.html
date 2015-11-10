@@ -5,8 +5,8 @@
 			<a class="navbar-brand" ui-sref="lobby">Bunker</a>
 		</div>
 		<ul class="nav navbar-nav hidden-xs" as-sortable="header.dragRoomListeners" ng-model="header.rooms">
-			<li ui-sref-active="active" ng-repeat="room in header.rooms track by room.id" as-sortable-item  ng-if="room.$resolved">
-				<a as-sortable-item-handle ui-sref="chat.room({roomId: room.id})" title="{{room.topic}}">{{room.name}}</a>
+			<li ui-sref-active="active" ng-repeat="room in header.rooms track by room._id" as-sortable-item  ng-if="room.$resolved">
+				<a as-sortable-item-handle ui-sref="chat.room({roomId: room._id})" title="{{room.topic}}">{{room.name}}</a>
 				<span class="badge" ng-class="{'badge-mention': room.$unreadMention}" ng-show="room.$unreadMessages > 0">
 					{{room.$unreadMessages}}
 				</span>

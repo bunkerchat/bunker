@@ -37,22 +37,22 @@ module.exports.play = function (roomMember, command) {
 		if (!opponentRoomMember) {
 			throw new InvalidInputError('Cannot start the fight — ' + opponentNick + ' is not a member of this room');
 		}
-		if (roomMember.user.id == opponentRoomMember.user.id) {
+		if (roomMember.user._id == opponentRoomMember.user._id) {
 			throw new InvalidInputError('Cannot start the fight — cannot challenge yourself');
 		}
 
-		return getFight(roomMember.user.id, opponentRoomMember.user.id, roomMember.room).then(function (fight) {
+		return getFight(roomMember.user._id, opponentRoomMember.user._id, roomMember.room).then(function (fight) {
 			if (!fight) {
 				throw new InvalidInputError('Cannot start the fight — unable to challenge ' + opponentNick + ', there is already an active fight');
 			}
 
-			return FightRound.find({fight: fight.id}).then(function (rounds) {
+			return FightRound.find({fight: fight._id}).then(function (rounds) {
 				if (!rounds || rounds.length == 0) {
 					// this is a new challenge
 
 					return Promise.each(roundPlays, function (roundPlay, index) {
 						return FightRound.create({
-							fight: fight.id,
+							fight: fight._id,
 							challengerPlay: roundPlay,
 							roundNumber: index + 1
 						});
@@ -83,8 +83,8 @@ module.exports.play = function (roomMember, command) {
 
 function getOpenFightList(roomMember) {
 	return Promise.join(
-		Fight.find({winningUser: null, resultMessage: '', challenger: roomMember.user.id, room: roomMember.room}),
-		Fight.find({winningUser: null, resultMessage: '', opponent: roomMember.user.id, room: roomMember.room})
+		Fight.find({winningUser: null, resultMessage: '', challenger: roomMember.user._id, room: roomMember.room}),
+		Fight.find({winningUser: null, resultMessage: '', opponent: roomMember.user._id, room: roomMember.room})
 	)
 		.spread(function (myChallenges, mySlacking) {
 
@@ -109,7 +109,7 @@ function getOpenFightList(roomMember) {
 
 					_.forEach(myChallenges, function (challenge) {
 						var userIndex = _.findIndex(users, function (user) {
-							return user.id == challenge.opponent;
+							return user._id == challenge.opponent;
 						});
 
 						slackers.push(users[userIndex].nick);
@@ -126,7 +126,7 @@ function getOpenFightList(roomMember) {
 
 					_.forEach(mySlacking, function (unrespondedTo) {
 						var userIndex = _.findIndex(users, function (user) {
-							return user.id == unrespondedTo.challenger;
+							return user._id == unrespondedTo.challenger;
 						});
 
 						myUnresponded.push(users[userIndex].nick);
@@ -198,8 +198,8 @@ function buildChallengeResponse(fight) {
 
 function buildFightResultsResponse(fight, rounds) {
 	return Promise.join(
-		User.findOne({id: fight.challenger.id}),
-		User.findOne({id: fight.opponent.id})
+		User.findOne({id: fight.challenger._id}),
+		User.findOne({id: fight.opponent._id})
 	)
 		.spread(function (challenger, opponent) {
 			var opponentNick = opponent.nick;
@@ -222,7 +222,7 @@ function buildFightResultsResponse(fight, rounds) {
 			});
 
 			if (fightResultData.winner) {
-				if (fightResultData.winner.id == challenger.id) {
+				if (fightResultData.winner._id == challenger._id) {
 					responseString.push(challengerNick + ' wins the fight ' + fightResultData.challengerWins + ' to ' + fightResultData.opponentWins + '.  :' + getFatalityEmote() + ':');
 				}
 				else {

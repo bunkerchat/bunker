@@ -50,14 +50,14 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					bunkerData.createMessage(newMessage.room, newMessage.text)
 						.then(function (result) {
 							if (result && result.author) {
-								historicMessage.id = result.id;
+								historicMessage._id = result._id;
 								scope.submittedMessages.unshift(historicMessage); // Save message for up/down keys to retrieve
 							}
 						});
 				}
 				else {
 					scope.submittedMessages[scope.selectedMessageIndex].text = scope.messageText;
-					newMessage.id = scope.submittedMessages[scope.selectedMessageIndex].id;
+					newMessage._id = scope.submittedMessages[scope.selectedMessageIndex]._id;
 					newMessage.edited = true;
 					chosenMessage.edited = true;
 					bunkerData.editMessage(newMessage);

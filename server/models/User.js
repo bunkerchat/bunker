@@ -47,9 +47,9 @@ var userSchema = new mongoose.Schema({
 	}
 });
 
-userSchema.options.toObject.transform = function (doc, ret, options) {
-
-};
+//userSchema.options.toObject.transform = function (doc, ret, options) {
+//
+//};
 
 module.exports = mongoose.model('User', userSchema, 'user');
 

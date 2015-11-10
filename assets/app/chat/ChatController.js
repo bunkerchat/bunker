@@ -16,7 +16,7 @@ app.controller('ChatController', function ($rootScope, bunkerData) {
 		}
 
 		_.each(self.rooms, function (room) {
-			room.$selected = room.id == $rootScope.roomId;
+			room.$selected = room._id == $rootScope.roomId;
 		});
 	}
 });
