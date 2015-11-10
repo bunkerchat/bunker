@@ -35,14 +35,20 @@ module.exports.socketio = function (socket) {
 
 	socket.on('/init', socketToController(userController.init));
 	socket.on('/user/current/connect', socketToController(userController.connect));
+	socket.on('/user/current/connect', socketToController(userController.connect));
 };
 
+module.exports.register = function (options) {
+	var route = _.template(options.route)(options.params);
+	options.socket.on(route, socketToController(options.action, options.params));
+};
 
-function socketToController(controllerFn) {
+function socketToController(controllerFn, params) {
 	return function (data, cb) {
 		var req = {
 			socket: this,
-			session: this.handshake.session
+			session: this.handshake.session,
+			params: params
 		};
 
 		var res = {

@@ -16,6 +16,8 @@ var RoomMember = require('./../models/RoomMember');
 var InboxMessage = require('./../models/InboxMessage');
 var Room = require('./../models/Room');
 var Message = require('./../models/Message');
+var routes = require('../config/routes');
+var RoomController = require('./RoomController');
 
 // A connecting client will call this endpoint. It should subscribe them to all relevant data and
 // return all rooms and user data necessary to run the application.
@@ -24,13 +26,14 @@ module.exports.init = function (req, res) {
 	var localUser, localUserSettings, localMemberships, localInboxMessages;
 
 	var userId = req.session.userId.toObjectId();
+	var socket = req.socket;
 
 	Promise.join(
 		User.findById(userId),
 		UserSettings.findOne({user: userId}),
 		RoomMember.find({user: userId}).sort('roomOrder').populate('room'),
 		InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message')
-	)
+		)
 		.spread(function (user, userSettings, memberships, inboxMessages) {
 
 			localUser = user;
@@ -53,22 +56,34 @@ module.exports.init = function (req, res) {
 				.value();
 
 			// TODO: Setup subscriptions
+
+			socket.join('user:' + userId);
 			//User.subscribe(req, user, ['update', 'message']);
 			//UserSettings.subscribe(req, userSettings, 'update');
 			//RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
 			//Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
+			_.each(rooms, function (room) {
+				socket.join('room:' + room._id.toString());
+			});
 			//InboxMessage.subscribe(req, user._id, 'message');
 
 			return Promise.join(
-
 				// Get all room members and 40 initial messages for each room
 				Promise.map(rooms, function (room) {
 					room = room.toJSON();
 
+					// register room message event
+					routes.register({
+						socket: socket,
+						route: '/room/${roomId}/message',
+						params: {roomId: room._id.toString()},
+						action: RoomController.message
+					});
+
 					return Promise.join(
 						Message.find({room: room._id}).sort('-createdAt').limit(40).populate('author'),
 						RoomMember.find({room: room._id}).populate('user')
-					)
+						)
 						.spread(function (messages, members) {
 							// TODO: Setup subscriptions
 							//RoomMember.subscribe(req, members, ['update', 'destroy']);
@@ -136,7 +151,7 @@ module.exports.activity = function (req, res) {
 		lastActivity: new Date().toISOString()
 	};
 
-	User.publishUpdate(req.session.userId, updates);
+	//User.publishUpdate(req.session.userId, updates);
 	res.ok(updates);
 };
 
@@ -159,7 +174,7 @@ module.exports.connect = function (req, res) {
 		})
 		.then(function (user) {
 
-			User.publishUpdate(user._id, user);
+			//User.publishUpdate(user._id, user);
 
 			// Send connecting message, if not previously connected or reconnecting
 			//if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > userService.connectionUpdateWaitSeconds) {
