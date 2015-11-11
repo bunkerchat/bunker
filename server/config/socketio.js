@@ -13,5 +13,3 @@ module.exports.connect = function (server) {
 
 	return io;
 };
-
-

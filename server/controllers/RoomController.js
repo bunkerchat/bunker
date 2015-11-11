@@ -40,7 +40,7 @@ module.exports.message = function (req, res) {
 			//User.publishUpdate(userId, {busy: false, typingIn: null});
 			var roomId = message.room.toString();
 			req.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'messaged', data: message});
-			req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'update', data: notTypingUpdate});
+			req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: notTypingUpdate});
 			res.ok(message);
 		})
 		.catch(ForbiddenError, function (err) {

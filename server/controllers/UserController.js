@@ -141,6 +141,7 @@ module.exports.init = function (req, res) {
 // It can only be called by the current user.
 // It's sole purpose is to enable away and typing notifications.
 module.exports.activity = function (req, res) {
+	var userId = req.session.userId;
 
 	// Only allow updates for the following values
 	// There's no need for us to save these in the db, this may change in the future
@@ -152,7 +153,7 @@ module.exports.activity = function (req, res) {
 		lastActivity: new Date().toISOString()
 	};
 
-	//User.publishUpdate(req.session.userId, updates);
+	req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: updates});
 	res.ok(updates);
 };
 

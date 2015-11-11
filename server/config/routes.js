@@ -28,7 +28,7 @@ module.exports.http = function (app) {
 module.exports.socketio = function (socket) {
 	socket.on('/init', socketToController(userController.init));
 	socket.on('/user/current/connect', socketToController(userController.connect));
-	socket.on('/user/current/connect', socketToController(userController.connect));
+	socket.on('/user/current/activity', socketToController(userController.activity));
 };
 
 module.exports.register = function (options) {
