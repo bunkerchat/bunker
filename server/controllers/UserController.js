@@ -56,17 +56,16 @@ module.exports.init = function (req, res) {
 				})
 				.value();
 
-			// TODO: Setup subscriptions
-
+			// Setup subscriptions
 			socket.join('user_' + userId);
-			//User.subscribe(req, user, ['update', 'message']);
-			//UserSettings.subscribe(req, userSettings, 'update');
-			//RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
-			//Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
+			socket.join('inboxmessage_' + userId);
+
+			_.each(memberships, function (membership) {
+				socket.join('roommember_' + membership._id);
+			});
 			_.each(rooms, function (room) {
 				socket.join('room_' + room._id);
 			});
-			//InboxMessage.subscribe(req, user._id, 'message');
 
 			return Promise.join(
 				// Get all room members and 40 initial messages for each room
@@ -86,9 +85,15 @@ module.exports.init = function (req, res) {
 						RoomMember.find({room: room._id}).populate('user')
 						)
 						.spread(function (messages, members) {
-							// TODO: Setup subscriptions
-							//RoomMember.subscribe(req, members, ['update', 'destroy']);
-							//User.subscribe(req, _.pluck(members, 'user'), 'update');
+
+							// Setup subscriptions
+							_.each(members, function (member) {
+								socket.join('roommember_' + member._id);
+							});
+
+							_.each(_.pluck(members, 'user'), function (user) {
+								socket.join('user_' + user._id);
+							});
 
 							room.$messages = [];
 							_.each(messages, function (message) {
