@@ -184,35 +184,25 @@ module.exports.connect = function (req, res) {
 			//User.publishUpdate(user._id, user);
 			req.io.to('user_' + user._id).emit('user', {_id: user._id, verb: 'updated', data: user});
 
-			// Send connecting message, if not previously connected or reconnecting
-			//if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > userService.connectionUpdateWaitSeconds) {
-			//	RoomService.messageRoomsWithUser({
-			//		userId: user._id,
-			//		systemMessage: user.nick + ' is now online'
-			//	});
-			//}
-
 			// Clear any disconnect messages that haven't gone out yet
 			if (userService.pendingTasks[user._id]) {
 				clearTimeout(userService.pendingTasks[user._id]);
 				userService.pendingTasks[user._id] = null;
 			}
 
-			// ARS wasn't seeing a data object, so return an empty one?
-			return {};
+			res.ok({});
 		})
-		.then(res.ok)
 		.catch(res.serverError);
 };
 
 module.exports.markInboxRead = function (req, res) {
-	InboxMessage.update({user: req.session.userId}, {read: true})
+	InboxMessage.update({user: req.session.userId.toObjectId()}, {read: true})
 		.then(res.ok)
 		.catch(res.serverError);
 };
 
 module.exports.clearInbox = function (req, res) {
-	InboxMessage.destroy({user: req.session.userId})
+	InboxMessage.remove({user: req.session.userId.toObjectId()})
 		.then(res.ok)
 		.catch(res.serverError);
 };
