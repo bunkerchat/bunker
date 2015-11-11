@@ -363,7 +363,7 @@ function message(roomMember, text, type) {
 
 function populateMessage(message) {
 	return Message.findById(message._id)
-		.populate('room')
+		.lean()
 		.populate('author')
 }
 

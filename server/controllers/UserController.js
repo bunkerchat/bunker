@@ -10,6 +10,7 @@ var moment = require('moment');
 var Promise = require('bluebird');
 
 var emoticonService = require('./../services/emoticonService');
+//var userService = require('../services/userService');
 var User = require('./../models/User');
 var UserSettings = require('./../models/UserSettings');
 var RoomMember = require('./../models/RoomMember');
@@ -57,13 +58,14 @@ module.exports.init = function (req, res) {
 
 			// TODO: Setup subscriptions
 
-			socket.join('user:' + userId);
+			socket.join('user_' + userId + ':update');
+			socket.join('user_' + userId + ':message');
 			//User.subscribe(req, user, ['update', 'message']);
 			//UserSettings.subscribe(req, userSettings, 'update');
 			//RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
 			//Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 			_.each(rooms, function (room) {
-				socket.join('room:' + room._id.toString());
+				socket.join('room_' + room._id.toString()+':message');
 			});
 			//InboxMessage.subscribe(req, user._id, 'message');
 
@@ -156,45 +158,46 @@ module.exports.activity = function (req, res) {
 };
 
 module.exports.connect = function (req, res) {
-	var lastConnected, previouslyConnected;
-
-	User.findById(req.session.userId.toObjectId())
-		.then(function (user) {
-			lastConnected = user.lastConnected;
-			previouslyConnected = user.connected;
-
-			if (!user.sockets) user.sockets = [];
-			user.sockets.push(req.socket._id);
-			user.connected = true;
-			user.lastConnected = new Date().toISOString();
-			user.typingIn = null;
-			user.present = true;
-
-			return user.save();
-		})
-		.then(function (user) {
-
-			//User.publishUpdate(user._id, user);
-
-			// Send connecting message, if not previously connected or reconnecting
-			//if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > userService.connectionUpdateWaitSeconds) {
-			//	RoomService.messageRoomsWithUser({
-			//		userId: user._id,
-			//		systemMessage: user.nick + ' is now online'
-			//	});
-			//}
-
-			// Clear any disconnect messages that haven't gone out yet
-			if (userService.pendingTasks[user._id]) {
-				clearTimeout(userService.pendingTasks[user._id]);
-				userService.pendingTasks[user._id] = null;
-			}
-
-			// ARS wasn't seeing a data object, so return an empty one?
-			return {};
-		})
-		.then(res.ok)
-		.catch(res.serverError);
+	res.ok({})
+	//var lastConnected, previouslyConnected;
+	//
+	//User.findById(req.session.userId.toObjectId())
+	//	.then(function (user) {
+	//		lastConnected = user.lastConnected;
+	//		previouslyConnected = user.connected;
+	//
+	//		if (!user.sockets) user.sockets = [];
+	//		user.sockets.push(req.socket._id);
+	//		user.connected = true;
+	//		user.lastConnected = new Date().toISOString();
+	//		user.typingIn = null;
+	//		user.present = true;
+	//
+	//		return user.save();
+	//	})
+	//	.then(function (user) {
+	//
+	//		//User.publishUpdate(user._id, user);
+	//
+	//		// Send connecting message, if not previously connected or reconnecting
+	//		//if (!previouslyConnected && Math.abs(moment(lastConnected).diff(moment(), 'seconds')) > userService.connectionUpdateWaitSeconds) {
+	//		//	RoomService.messageRoomsWithUser({
+	//		//		userId: user._id,
+	//		//		systemMessage: user.nick + ' is now online'
+	//		//	});
+	//		//}
+	//
+	//		// Clear any disconnect messages that haven't gone out yet
+	//		if (userService.pendingTasks[user._id]) {
+	//			clearTimeout(userService.pendingTasks[user._id]);
+	//			userService.pendingTasks[user._id] = null;
+	//		}
+	//
+	//		// ARS wasn't seeing a data object, so return an empty one?
+	//		return {};
+	//	})
+	//	.then(res.ok)
+	//	.catch(res.serverError);
 };
 
 module.exports.markInboxRead = function (req, res) {

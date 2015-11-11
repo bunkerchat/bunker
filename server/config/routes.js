@@ -1,4 +1,5 @@
 var config = require('./config');
+var socketio = require('./socketio');
 
 // Controllers
 var viewController = require('../controllers/viewController');
@@ -47,6 +48,7 @@ function socketToController(controllerFn, params) {
 	return function (data, cb) {
 		var req = {
 			socket: this,
+			io: socketio.io,
 			session: this.handshake.session,
 			params: params,
 			body: data
@@ -54,7 +56,7 @@ function socketToController(controllerFn, params) {
 
 		var res = {
 			ok: function (returnData) {
-				cb(returnData);
+				if(cb) cb(returnData);
 			},
 			serverError: function (err) {
 				log.error('server error', err);

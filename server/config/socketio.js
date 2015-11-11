@@ -4,14 +4,10 @@ var routes = require('./routes');
 module.exports.connect = function (server) {
 	var session = require('./auth').session;
 	var io = require('socket.io')(server);
+	module.exports.io = io;
+
 	io.use(ios(session));
 	io.on('connection', function (socket) {
-		//console.log('socket', socket);
-		//socket.emit('news', { hello: 'world' });
-		//socket.on('my other event', function (data) {
-		//	console.log(data);
-		//});
-
 		routes.socketio(socket);
 	});
 

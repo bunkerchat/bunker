@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
 
 var messageSchema = new mongoose.Schema({
+	createdAt:{
+		type: Date,
+		default: Date.now
+	},
 	room: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Room'
