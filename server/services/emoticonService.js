@@ -63,7 +63,7 @@ module.exports.emoticonCounts = function () {
 
 						_.each(emoticonCounts, function (count) {
 							_.each(count.usedBy, function (usedByCount, id) {
-								var user = _.find(users, {id: id});
+								var user = _.find(users, {_id: id});
 								count.usedBy[user.nick + ' (' + id + ')'] = usedByCount;
 								delete count.usedBy[id];
 							});

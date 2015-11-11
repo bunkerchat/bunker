@@ -10,7 +10,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 				if (message.edited) {
 					bunkerData.decorateMessage(room, message);
 
-					var otherMessage = _.find(room.$messages, {id: message._id});
+					var otherMessage = _.find(room.$messages, {_id: message._id});
 					message.$firstInSeries = otherMessage.$firstInSeries;
 
 					var index = _.indexOf(room.$messages, otherMessage);
@@ -32,7 +32,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 
 	function handleUserEvent(evt) {
 		var userData = evt.data;
-		var users = _(bunkerData.rooms).pluck('$members').flatten().pluck('user').filter({id: evt._id}).value();
+		var users = _(bunkerData.rooms).pluck('$members').flatten().pluck('user').filter({_id: evt._id}).value();
 
 		switch (evt.verb) {
 			case 'updated':
@@ -55,7 +55,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function handleMembershipEvent(evt) {
-		var membership = _(bunkerData.rooms).pluck('$members').flatten().filter({id: evt._id}).value();
+		var membership = _(bunkerData.rooms).pluck('$members').flatten().filter({_id: evt._id}).value();
 		membership = membership[0];
 		switch (evt.verb) {
 			case 'updated':

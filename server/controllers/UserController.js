@@ -58,14 +58,13 @@ module.exports.init = function (req, res) {
 
 			// TODO: Setup subscriptions
 
-			socket.join('user_' + userId + ':update');
-			socket.join('user_' + userId + ':message');
+			socket.join('user_' + userId);
 			//User.subscribe(req, user, ['update', 'message']);
 			//UserSettings.subscribe(req, userSettings, 'update');
 			//RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
 			//Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 			_.each(rooms, function (room) {
-				socket.join('room_' + room._id.toString()+':message');
+				socket.join('room_' + room._id);
 			});
 			//InboxMessage.subscribe(req, user._id, 'message');
 

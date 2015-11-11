@@ -26,14 +26,6 @@ module.exports.http = function (app) {
 };
 
 module.exports.socketio = function (socket) {
-
-	// User
-	//socket.on('/init', function (data, cb) {
-	//	//console.log('this', this);
-	//	cb({'datas': "things and stuff"});
-	//});
-
-
 	socket.on('/init', socketToController(userController.init));
 	socket.on('/user/current/connect', socketToController(userController.connect));
 	socket.on('/user/current/connect', socketToController(userController.connect));

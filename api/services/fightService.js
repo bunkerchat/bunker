@@ -182,8 +182,8 @@ function getFight(userId, opponentUserId, roomId) {
 
 function buildChallengeResponse(fight) {
 	return Promise.join(
-		User.findOne({id: fight.challenger}),
-		User.findOne({id: fight.opponent})
+		User.findOne({_id: fight.challenger}),
+		User.findOne({_id: fight.opponent})
 	)
 		.spread(function (challenger, opponent) {
 			var opponentNick = opponent.nick;
@@ -198,8 +198,8 @@ function buildChallengeResponse(fight) {
 
 function buildFightResultsResponse(fight, rounds) {
 	return Promise.join(
-		User.findOne({id: fight.challenger._id}),
-		User.findOne({id: fight.opponent._id})
+		User.findOne({_id: fight.challenger._id}),
+		User.findOne({_id: fight.opponent._id})
 	)
 		.spread(function (challenger, opponent) {
 			var opponentNick = opponent.nick;

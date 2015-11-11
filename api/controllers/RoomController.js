@@ -226,7 +226,7 @@ module.exports.media = function (req, res) {
 			res.ok(_.map(messages, function (message) {
 				return _(message)
 					.pick(['author', 'text', 'createdAt'])
-					.extend({id: message._id})
+					.extend({_id: message._id})
 					.value();
 			}));
 		});

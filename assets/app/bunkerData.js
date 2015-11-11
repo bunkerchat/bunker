@@ -37,13 +37,13 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					// Set $resolved on all rooms (those not in the data set to false)
 					// TODO ideally we could remove the rooms from the array entirely
 					_.each(bunkerData.rooms, function (room) {
-						room.$resolved = _.any(initialData.rooms, {id: room._id});
+						room.$resolved = _.any(initialData.rooms, {_id: room._id});
 					});
 
 					// Go through data and sync messages
 					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
 					_.each(initialData.rooms, function (roomData, index) {
-						var room = _.find(bunkerData.rooms, {id: roomData._id});
+						var room = _.find(bunkerData.rooms, {_id: roomData._id});
 
 						if (!room) {
 							room = roomData;

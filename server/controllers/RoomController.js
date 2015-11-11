@@ -22,6 +22,7 @@ module.exports.message = function (req, res) {
 	var userId = req.session.userId.toObjectId();
 	var roomId = req.params.roomId.toObjectId();
 	var currentRoomMember;
+	var notTypingUpdate = {busy: false, typingIn: null};
 
 	RoomMember.findOne({user: userId, room: roomId}).populate('user')
 		.then(function (roomMember) {
@@ -31,15 +32,15 @@ module.exports.message = function (req, res) {
 
 			return Promise.join(
 				messageService.createMessage(roomMember, req.body.text),
-				User.findByIdAndUpdate(userId, {busy: false})
+				User.findByIdAndUpdate(userId, notTypingUpdate)
 			)
 		})
-		.spread(function(message, user){
+		.spread(function (message, user) {
 			// Inform clients that use is not busy and typing has ceased
 			//User.publishUpdate(userId, {busy: false, typingIn: null});
 			var roomId = message.room.toString();
-			req.io.to('room_' + roomId+':message').emit('room', {_id:roomId, verb:'messaged', data:message});
-			req.io.to('user_' + userId.toString()+':update').emit('user', {_id:userId.toString(), verb:'update', data:{busy: false, typingIn: null}} );
+			req.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'messaged', data: message});
+			req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'update', data: notTypingUpdate});
 			res.ok(message);
 		})
 		.catch(ForbiddenError, function (err) {
@@ -230,7 +231,7 @@ module.exports.media = function (req, res) {
 			res.ok(_.map(messages, function (message) {
 				return _(message)
 					.pick(['author', 'text', 'createdAt'])
-					.extend({id: message._id})
+					.extend({_id: message._id})
 					.value();
 			}));
 		});

@@ -80,7 +80,7 @@ module.exports.init = function (req, res) {
 					.then(function (inboxUsers) {
 						return Promise.map(localInboxMessages, function (inboxMessage) {
 
-							var authorData = _.find(inboxUsers, {id: inboxMessage.message.author});
+							var authorData = _.find(inboxUsers, {_id: inboxMessage.message.author});
 							if (authorData) {
 								inboxMessage.message.author = authorData.toJSON();
 							}
