@@ -36,7 +36,8 @@ module.exports.socketio = function (socket) {
 	socket.on('/user/current/clearInbox', socketToController(userController.clearInbox));
 
 	// room
-	socket.on('/room', socketToController(roomController.create))
+	socket.on('/room', socketToController(roomController.create));
+	socket.on('/room/join', socketToController(roomController.join));
 };
 
 module.exports.register = function (options) {

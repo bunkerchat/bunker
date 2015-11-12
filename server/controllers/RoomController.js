@@ -13,6 +13,7 @@ var RoomMember = require('../models/RoomMember');
 var User = require('../models/User');
 var Room = require('../models/Room');
 
+var RoomService = require('../services/RoomService');
 var messageService = require('../services/messageService');
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -82,7 +83,6 @@ module.exports.create = function (req, res) {
 	// Create new instance of model using data from params
 	Room.create({name: name})
 		.then(function (_room) {
-
 			room = _room;
 
 			// Make user an administrator
@@ -96,49 +96,54 @@ module.exports.create = function (req, res) {
 // GET /room/:id/join
 // Join a room
 module.exports.join = function (req, res) {
-	var pk = actionUtil.requirePk(req);
+	var roomId = req.params.roomId;
 	var userId = req.session.userId;
 
 	Promise.join(
-		Room.findOne(pk),
-		RoomMember.count({room: pk, user: userId})
+		Room.findById(roomId),
+		RoomMember.count({room: roomId, user: userId})
 		)
 		.spread(function (room, existingRoomMember) {
-
 			if (!room) {
 				return new InvalidInputError('Requested room does not exist');
 			}
 
 			if (existingRoomMember > 0) {
 				// Already exists!
-				return RoomMember.findOne({room: pk, user: userId}).populate('user');
+				return RoomMember.findOne({room: roomId, user: userId}).populate('user');
 			}
 
-			return RoomMember.create({room: pk, user: userId})
+			return RoomMember.create({room: roomId, user: userId})
 				.then(function (createdRoomMember) {
 					return [
 						createdRoomMember,
 						User.findOne(userId),
-						Room.findOne(pk),
-						RoomMember.find({room: pk}).populate('user')
+						Room.findOne(roomId),
+						RoomMember.find({room: roomId}).populate('user')
 					];
 				})
 				.spread(function (createdRoomMember, user, room, roomMembers) {
-					Room.publishUpdate(pk, {$members: roomMembers});
+					req.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'updated', data: {$members: roomMembers}});
 
 					// Create system message to inform other users of this user joining
-					RoomService.messageRoom(pk, user.nick + ' has joined the room');
+					RoomService.messageRoom(roomId, user.nick + ' has joined the room');
 
 					// Add subscriptions for requestor
-					Room.subscribe(req, pk, ['update', 'destroy', 'message']);
-					RoomMember.subscribe(req, roomMembers, ['update', 'destroy']);
-					User.subscribe(req, _.pluck(roomMembers, 'user'), 'update');
-
-					// Add subscriptions for existing room members
-					_.each(Room.subscribers(pk, 'update'), function (subscriber) {
-						RoomMember.subscribe(subscriber, createdRoomMember, ['update', 'destroy']);
-						User.subscribe(subscriber, userId, 'update');
+					req.socket.join('room_' + roomId);
+					_.each(roomMembers, function (roomMember) {
+						req.socket.join('roommember_' + roomMember._id);
+						req.socket.join('user_' + roomMember.user._id);
 					});
+
+
+					//req.io.of('room_' + roomId);
+
+					// TODO: UGH CONFUSED HOW DO I DO THIS?
+					// Add subscriptions for existing room members
+					//_.each(Room.subscribers(roomId, 'update'), function (subscriber) {
+					//	RoomMember.subscribe(subscriber, createdRoomMember, ['update', 'destroy']);
+					//	User.subscribe(subscriber, userId, 'update');
+					//});
 
 					return room;
 				});

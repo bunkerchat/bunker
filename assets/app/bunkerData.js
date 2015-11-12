@@ -151,7 +151,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 		joinRoom: function (roomId) {
 			return $q(function (resolve) {
-				io.socket.post('/room/' + roomId + '/join', function (room) {
+				io.socket.post('/room/join', {roomId: roomId}, function (room) {
 					bunkerData.init().then(function () {
 						resolve(room);
 					});
