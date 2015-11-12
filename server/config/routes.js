@@ -58,7 +58,7 @@ function socketToController(controllerFn, params) {
 			},
 			serverError: function (err) {
 				log.error('server error', err);
-				cb({error: err.message});
+				if(cb) cb({error: err.message});
 			}
 		};
 		controllerFn(req, res);

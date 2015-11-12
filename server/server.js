@@ -16,6 +16,9 @@ var app = Promise.promisifyAll(require('./config/express'));
 var server = Promise.promisifyAll(require('http').Server(app));
 var socketio = require('./config/socketio');
 
+var User = require('./models/User');
+var Room = require('./models/Room');
+
 module.exports.run = function (cb) {
 
 	log.info('server - Starting "' + config.environment + '"');
@@ -25,6 +28,7 @@ module.exports.run = function (cb) {
 		//.then(seed.run)
 		//.then(migrations.run)
 		//.then(minosEvents.configure)
+		.then(startup)
 		.then(function () {
 			//if (config.useSSL) {
 			//	return https.createServer(config.serverOptions, app).listenAsync(config.express.port);
@@ -52,4 +56,27 @@ function connectToMongoose() {
 			resolve();
 		});
 	});
+}
+
+function startup(){
+	return Promise.join(
+		clearSocketsAndConnected(),
+		ensureFirstRoom()
+	)
+}
+
+function clearSocketsAndConnected(){
+	return new Promise(function (resolve, reject) {
+		User.update({}, {sockets: [], connected: false, typingIn: null}, { multi: true },  function (err, result) {
+			if(err)return reject(err);
+			resolve();
+		})
+	})
+}
+
+function ensureFirstRoom() {
+	return Room.findOne({name: 'First'})
+		.then(function (firstRoom) {
+			if (!firstRoom) return Room.create({name: 'First'});
+		})
 }

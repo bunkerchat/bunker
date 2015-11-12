@@ -30,7 +30,7 @@ module.exports.init = function (req, res) {
 	var socket = req.socket;
 
 	Promise.join(
-		User.findById(userId),
+		User.findById(userId).lean(),
 		UserSettings.findOne({user: userId}),
 		RoomMember.find({user: userId}).sort('roomOrder').populate('room'),
 		InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message')
@@ -129,7 +129,7 @@ module.exports.init = function (req, res) {
 		})
 		.spread(function (rooms, inboxMessages, emoticonCounts) {
 			return {
-				user: localUser.toObject(),
+				user: localUser,
 				userSettings: localUserSettings,
 				memberships: localMemberships,
 				inbox: inboxMessages,
