@@ -38,21 +38,16 @@ module.exports.socketio = function (socket) {
 	// room
 	socket.on('/room', socketToController(roomController.create));
 	socket.on('/room/join', socketToController(roomController.join));
+	socket.on('/room/message', socketToController(roomController.message));
 };
 
-module.exports.register = function (options) {
-	var route = _.template(options.route)(options.params);
-	options.socket.on(route, socketToController(options.action, options.params));
-};
-
-function socketToController(controllerFn, params) {
+function socketToController(controllerFn) {
 	return function (data, cb) {
 		var req = {
 			socket: this,
 			io: socketio.io,
 			session: this.handshake.session,
-			params: params,
-			body: data
+			body: data || {}
 		};
 
 		var res = {

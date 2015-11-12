@@ -94,7 +94,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 		createMessage: function (roomId, text) {
 			return $q(function (resolve) {
-				io.socket.post('/room/' + roomId + '/message', {text: text}, function (message) {
+				io.socket.post('/room/message', {roomId: roomId, text: text}, function (message) {
 					resolve(message);
 				});
 			});

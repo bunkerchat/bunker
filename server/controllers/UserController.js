@@ -72,14 +72,6 @@ module.exports.init = function (req, res) {
 				Promise.map(rooms, function (room) {
 					room = room.toJSON();
 
-					// register room message event
-					routes.register({
-						socket: socket,
-						route: '/room/${roomId}/message',
-						params: {roomId: room._id.toString()},
-						action: RoomController.message
-					});
-
 					return Promise.join(
 						Message.find({room: room._id}).sort('-createdAt').limit(40).populate('author'),
 						RoomMember.find({room: room._id}).populate('user')

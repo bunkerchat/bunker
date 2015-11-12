@@ -23,7 +23,7 @@ var InvalidInputError = require('../errors/InvalidInputError');
 module.exports.message = function (req, res) {
 
 	var userId = req.session.userId.toObjectId();
-	var roomId = req.params.roomId.toObjectId();
+	var roomId = req.body.roomId.toObjectId();
 	var currentRoomMember;
 	var notTypingUpdate = {busy: false, typingIn: null};
 
@@ -96,7 +96,7 @@ module.exports.create = function (req, res) {
 // GET /room/:id/join
 // Join a room
 module.exports.join = function (req, res) {
-	var roomId = req.params.roomId;
+	var roomId = req.body.roomId;
 	var userId = req.session.userId;
 
 	Promise.join(

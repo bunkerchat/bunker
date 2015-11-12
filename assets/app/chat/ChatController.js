@@ -8,7 +8,7 @@ app.controller('ChatController', function ($rootScope, bunkerData) {
 
 	function selectRoom() {
 
-		if (bunkerData.$resolved && $rootScope.roomId && !_.any(self.rooms, {id: $rootScope.roomId})) {
+		if (bunkerData.$resolved && $rootScope.roomId && !_.any(self.rooms, {_id: $rootScope.roomId})) {
 			// Functionality to allow users to join a room by entering it's URL
 			bunkerData.joinRoom($rootScope.roomId).then(function() {
 				selectRoom();
