@@ -60,18 +60,9 @@ function connectToMongoose() {
 
 function startup(){
 	return Promise.join(
-		clearSocketsAndConnected(),
+		User.update({}, {sockets: [], connected: false, typingIn: null}, { multi: true }),
 		ensureFirstRoom()
 	)
-}
-
-function clearSocketsAndConnected(){
-	return new Promise(function (resolve, reject) {
-		User.update({}, {sockets: [], connected: false, typingIn: null}, { multi: true },  function (err, result) {
-			if(err)return reject(err);
-			resolve();
-		})
-	})
 }
 
 function ensureFirstRoom() {

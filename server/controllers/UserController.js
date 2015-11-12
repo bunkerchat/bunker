@@ -171,7 +171,7 @@ module.exports.connect = function (req, res) {
 			previouslyConnected = user.connected;
 
 			if (!user.sockets) user.sockets = [];
-			user.sockets.push(req.socket._id);
+			user.sockets.push(req.socket.id);
 			user.connected = true;
 			user.lastConnected = new Date().toISOString();
 			user.typingIn = null;
@@ -181,7 +181,6 @@ module.exports.connect = function (req, res) {
 		})
 		.then(function (user) {
 
-			//User.publishUpdate(user._id, user);
 			req.io.to('user_' + user._id).emit('user', {_id: user._id, verb: 'updated', data: user});
 
 			// Clear any disconnect messages that haven't gone out yet
