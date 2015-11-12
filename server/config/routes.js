@@ -5,6 +5,7 @@ var socketio = require('./socketio');
 var viewController = require('../controllers/viewController');
 var authController = require('../controllers/AuthController');
 var userController = require('../controllers/UserController');
+var roomController = require('../controllers/RoomController');
 
 // Policies
 var isLoggedIn = require('../policies/isLoggedIn');
@@ -34,7 +35,8 @@ module.exports.socketio = function (socket) {
 	socket.on('/user/current/markInboxRead', socketToController(userController.markInboxRead));
 	socket.on('/user/current/clearInbox', socketToController(userController.clearInbox));
 
-
+	// room
+	socket.on('/room', socketToController(roomController.create))
 };
 
 module.exports.register = function (options) {
@@ -54,11 +56,11 @@ function socketToController(controllerFn, params) {
 
 		var res = {
 			ok: function (returnData) {
-				if(cb) cb(returnData);
+				if(_.isFunction(cb)) cb(returnData);
 			},
 			serverError: function (err) {
 				log.error('server error', err);
-				if(cb) cb({error: err.message});
+				if(_.isFunction(cb)) cb({error: err.message});
 			}
 		};
 		controllerFn(req, res);

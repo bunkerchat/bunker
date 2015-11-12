@@ -11,6 +11,8 @@ var Promise = require('bluebird');
 
 var RoomMember = require('../models/RoomMember');
 var User = require('../models/User');
+var Room = require('../models/Room');
+
 var messageService = require('../services/messageService');
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -73,22 +75,22 @@ module.exports.findOne = function (req, res) {
 // Create a room
 module.exports.create = function (req, res) {
 	var userId = req.session.userId;
-	var name = req.param('name') || 'Untitled';
+	var name = req.body.name || 'Untitled';
+
+	var room;
 
 	// Create new instance of model using data from params
-	Room.create({name: name}).exec(function (err, room) {
+	Room.create({name: name})
+		.then(function (_room) {
 
-		// Make user an administrator
-		RoomMember.create({room: room._id, user: userId, role: 'administrator'}).exec(function (error, roomMember) {
-			RoomMember.publishCreate(roomMember);
+			room = _room;
 
-			// WARNING
-			// Do not publishCreate of this room, it will go to all users who's client will then join it
-
-			res.status(201);
-			res.ok(room.toJSON());
+			// Make user an administrator
+			return RoomMember.create({room: room._id, user: userId, role: 'administrator'})
+		})
+		.then(function (roomMember) {
+			res.ok(room.toObject());
 		});
-	});
 };
 
 // GET /room/:id/join
