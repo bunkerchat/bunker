@@ -17,7 +17,6 @@ var RoomMember = require('./../models/RoomMember');
 var InboxMessage = require('./../models/InboxMessage');
 var Room = require('./../models/Room');
 var Message = require('./../models/Message');
-var routes = require('../config/routes');
 var RoomController = require('./RoomController');
 
 // A connecting client will call this endpoint. It should subscribe them to all relevant data and

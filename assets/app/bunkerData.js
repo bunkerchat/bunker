@@ -16,7 +16,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// Initial data, also sets up subscriptions
 		start: function () {
-			resolveBunkerData$Promise(bunkerData.init());
+			resolveBunkerData$Promise($q.all([
+				bunkerData.init(),
+				bunkerData.connect()
+			]));
 		},
 
 		init: function () {
@@ -76,7 +79,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 
 		connect: function () {
-			return io.socket.emitAsync('/user/current/connect');
+			return io.socket.emit('/user/current/connect');
 		},
 
 		// Messages
