@@ -160,7 +160,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 		leaveRoom: function (roomId) {
 			return $q(function (resolve) {
-				io.socket.put('/room/' + roomId + '/leave', function () {
+				io.socket.put('/room/leave', {roomId: roomId}, function () {
 					bunkerData.init().then(function () {
 						resolve();
 					});

@@ -38,6 +38,7 @@ module.exports.socketio = function (socket) {
 	// room
 	socket.on('/room', socketToController(roomController.create));
 	socket.on('/room/join', socketToController(roomController.join));
+	socket.on('/room/leave', socketToController(roomController.leave));
 	socket.on('/room/message', socketToController(roomController.message));
 };
 

@@ -11,5 +11,14 @@ module.exports.connect = function (server) {
 		routes.socketio(socket);
 	});
 
+
+	// get all the sockets connected to a room
+	io.inRoom = function findClientsSocketByRoomId(roomId) {
+		return _.map(_.keys(io.sockets.adapter.rooms[roomId]), function (id) {
+			return io.sockets.adapter.nsp.connected[id];
+		});
+	};
+
 	return io;
 };
+

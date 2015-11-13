@@ -5,6 +5,7 @@ global._ = require('lodash');
 global.Promise = require('bluebird');
 
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
 String.prototype.toObjectId = function() {
 	var ObjectId = mongoose.Types.ObjectId;

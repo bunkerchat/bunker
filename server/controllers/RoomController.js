@@ -115,12 +115,12 @@ module.exports.join = function (req, res) {
 
 			return RoomMember.create({room: roomId, user: userId})
 				.then(function (createdRoomMember) {
-					return [
+					return Promise.join(
 						createdRoomMember,
-						User.findOne(userId),
-						Room.findOne(roomId),
+						User.findById(userId),
+						Room.findById(roomId),
 						RoomMember.find({room: roomId}).populate('user')
-					];
+					);
 				})
 				.spread(function (createdRoomMember, user, room, roomMembers) {
 					req.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'updated', data: {$members: roomMembers}});
@@ -135,15 +135,11 @@ module.exports.join = function (req, res) {
 						req.socket.join('user_' + roomMember.user._id);
 					});
 
-
-					//req.io.of('room_' + roomId);
-
-					// TODO: UGH CONFUSED HOW DO I DO THIS?
 					// Add subscriptions for existing room members
-					//_.each(Room.subscribers(roomId, 'update'), function (subscriber) {
-					//	RoomMember.subscribe(subscriber, createdRoomMember, ['update', 'destroy']);
-					//	User.subscribe(subscriber, userId, 'update');
-					//});
+					_.each(req.io.inRoom('room_' + roomId), function (socket) {
+						socket.join('roommember_' + createdRoomMember._id);
+						socket.join('user_' + userId);
+					});
 
 					return room;
 				});
@@ -159,29 +155,28 @@ module.exports.join = function (req, res) {
 // Current user requesting to leave a room
 module.exports.leave = function (req, res) {
 
-	var pk = actionUtil.requirePk(req);
-	var userId = req.session.userId;
+	var roomId = req.body.roomId.toObjectId();
+	var userId = req.session.userId.toObjectId();
 
-	RoomMember.count({room: pk, user: userId})
+	RoomMember.count({room: roomId, user: userId})
 		.then(function (existingRoomMember) {
 
 			if (existingRoomMember == 0) {
 				return 'ok';
 			}
 
-			return RoomMember.destroy({room: pk, user: userId})
+			return RoomMember.remove({room: roomId, user: userId})
 				.then(function () {
 					return [
-						User.findOne(userId),
-						RoomMember.find({room: pk}).populate('user')
+						User.findById(userId),
+						RoomMember.find({room: roomId}).populate('user')
 					];
 				})
 				.spread(function (user, roomMembers) {
-					Room.publishUpdate(pk, {$members: roomMembers});
+					req.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'updated', data: {$members: roomMembers}});
+					req.socket.leave('room_' + roomId);
 
-					RoomService.messageRoom(pk, user.nick + ' has left the room');
-
-					Room.unsubscribe(req, pk, ['update', 'destroy', 'message']);
+					RoomService.messageRoom(roomId, user.nick + ' has left the room');
 					// TODO unsubscribe all members? probably not... need to figure out which ones
 				});
 		})

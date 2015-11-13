@@ -16,7 +16,7 @@ RoomService.messageRoom = function (room, message) {
 		createdAt: new Date().toISOString()
 	};
 
-	socketio.io.to('room_' + roomId).emit('room', {_id: joinMessage._id, verb: 'messaged', data: joinMessage});
+	socketio.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'messaged', data: joinMessage});
 };
 
 RoomService.animateInRoom = function (roomMember, emoticon, words) {
