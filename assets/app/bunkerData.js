@@ -21,10 +21,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		init: function () {
 			bunkerData.$resolved = false;
-			return $q(function (resolve) {
-
-				io.socket.get('/init', function (initialData) {
-
+			return io.socket.emitAsync('/init')
+				.then(function (initialData) {
 					bunkerData.$resolved = true;
 					decorateEmoticonCounts(initialData.emoticonCounts);
 					_.assign(bunkerData.user, initialData.user);
@@ -73,14 +71,12 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					// creates a hashmap of rooms by its id
 					roomLookup = _.indexBy(bunkerData.rooms, '_id');
 
-					resolve(bunkerData);
-					$rootScope.$digest();
+					return bunkerData;
 				});
-			});
 		},
 
 		connect: function () {
-			io.socket.put('/user/current/connect');
+			return io.socket.emitAsync('/user/current/connect');
 		},
 
 		// Messages
@@ -93,42 +89,36 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			room.$messages.push(message);
 		},
 		createMessage: function (roomId, text) {
-			return $q(function (resolve) {
-				io.socket.post('/room/message', {roomId: roomId, text: text}, function (message) {
-					resolve(message);
-				});
-			});
+			return io.socket.emitAsync('/room/message', {roomId: roomId, text: text});
 		},
+
+		// TODO: server side editMessage changes
 		editMessage: function (message) {
-			return $q(function (resolve) {
-				io.socket.put('/message/' + message._id, message, function (message) {
-					resolve(message);
-				});
-			});
+			return io.socket.emitAsync('/message/edit', {messageId: message._id, message: message});
 		},
 		loadMessages: function (room, skip) {
-			return $q(function (resolve) {
-				io.socket.get('/room/' + room._id + '/messages?skip=' + skip || 0, function (messages) {
+			return io.socket.emit('/room/messages', {roomId: room._id, skip: skip || 0})
+				.then(function (messages) {
 					_.eachRight(messages, function (message) {
 						room.$messages.unshift(message);
 					});
 					decorateMessages(room);
-					resolve(room);
+					return room;
 				});
-			});
 		},
 		clearOldMessages: function (id) {
 			if (!id || !roomLookup[id] || roomLookup[id].$messages.length <= 100) return;
 			roomLookup[id].$messages.splice(0, roomLookup[id].$messages.length - 100);
 		},
-		getHistoryMessages: function (roomId, startDate, endDate) {
-			var url = '/room/' + roomId + '/history?startDate=' + startDate + '&endDate=' + endDate;
-			return $q(function (resolve) {
-				io.socket.get(url, function (messages) {
-					resolve(messages);
-				});
-			});
-		},
+		// TODO: fix history
+		//getHistoryMessages: function (roomId, startDate, endDate) {
+		//	var url = '/room/' + roomId + '/history?startDate=' + startDate + '&endDate=' + endDate;
+		//	return $q(function (resolve) {
+		//		io.socket.emit(url, null, function (messages) {
+		//			resolve(messages);
+		//		});
+		//	});
+		//},
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
@@ -141,55 +131,36 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			return roomLookup[id];
 		},
 		createRoom: function (roomName) {
-			return $q(function (resolve) {
-				io.socket.post('/room', {name: roomName}, function (room) {
-					bunkerData.init().then(function () {
-						resolve(room);
-					});
-				});
-			});
+			return io.socket.emitAsync('/room', {name: roomName}).then(reinit);
 		},
 		joinRoom: function (roomId) {
-			return $q(function (resolve) {
-				io.socket.post('/room/join', {roomId: roomId}, function (room) {
-					bunkerData.init().then(function () {
-						resolve(room);
-					});
-				});
-			});
+			return io.socket.emitAsync('/room/join', {roomId: roomId}).then(reinit);
 		},
 		leaveRoom: function (roomId) {
-			return $q(function (resolve) {
-				io.socket.put('/room/leave', {roomId: roomId}, function () {
-					bunkerData.init().then(function () {
-						resolve();
-					});
-				});
-			});
+			return io.socket.emitAsync('/room/leave', {roomId: roomId}).then(reinit);
 		},
 
 		// User
 
 		broadcastTyping: function (roomId) {
-
 			if (!bunkerData.$resolved) return; // Not ready yet
 
 			if (bunkerData.user.typingIn != roomId) { // Only need to do anything if it's not already set
 				bunkerData.user.typingIn = roomId;
-				io.socket.put('/user/current/activity', {typingIn: roomId});
+				io.socket.emit('/user/current/activity', {typingIn: roomId});
 			}
 
 			bunkerData.cancelBroadcastTyping();
 			typingTimeout = $timeout(function () {
 				bunkerData.user.typingIn = null;
-				io.socket.put('/user/current/activity', {typingIn: null});
+				io.socket.emit('/user/current/activity', {typingIn: null});
 				typingTimeout = null;
 			}, 3000);
 		},
 		broadcastPresent: function (present) {
 			bunkerData.user.present = present;
 			bunkerData.user.lastActivity = new Date().toISOString();
-			io.socket.put('/user/current/activity', {
+			io.socket.emit('/user/current/activity', {
 				typingIn: present ? bunkerData.user.typingIn : null,
 				present: present
 			});
@@ -206,7 +177,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// UserSettings
 
 		saveUserSettings: function () {
-			io.socket.put('/usersettings/' + bunkerData.userSettings._id, bunkerData.userSettings);
+			io.socket.emit('/usersettings/' + bunkerData.userSettings._id, bunkerData.userSettings);
 			$rootScope.$broadcast('userSettingsUpdated', bunkerData.userSettings);
 		},
 		toggleUserSetting: function (name, checkForNotifications) {
@@ -227,26 +198,23 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// RoomMember
 		saveRoomMemberSettings: function (roomMembers) {
 			var data = {roomMembers: roomMembers};
-			io.socket.put('/roommember/updateSettings', data);
+			io.socket.emit('/roommember/updateSettings', data);
 		},
 
 		// Emoticons
 
 		refreshEmoticonCounts: function () {
-			return $q(function (resolve) {
-				io.socket.get('/message/emoticoncounts', function (counts) {
+			return io.socket.emitAsync('/message/emoticoncounts')
+				.then(function (counts) {
 					decorateEmoticonCounts(counts);
-					resolve(counts);
+					return counts;
 				});
-			});
 		},
 
 		// Inbox
 
 		markInboxRead: function () {
-			return $q(function (resolve) {
-				io.socket.put('/user/current/markInboxRead', resolve);
-			})
+			return io.socket.emitAsync('/user/current/markInboxRead')
 				.then(function (data) {
 					_.each(bunkerData.inbox, function (inboxMessage) {
 						inboxMessage.read = true;
@@ -258,13 +226,16 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 
 		clearInbox: function () {
-			return $q(function (resolve) {
-				bunkerData.inbox.length = 0;
-				io.socket.put('/user/current/clearInbox', resolve);
-			});
+			bunkerData.inbox.length = 0;
+			return io.socket.emitAsync('/user/current/clearInbox');
 		}
-
 	};
+
+	function reinit(data) {
+		bunkerData.init().then(function () {
+			return data;
+		});
+	}
 
 	function decorateMessages(room) {
 

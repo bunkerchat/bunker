@@ -4,10 +4,10 @@ module.exports = function serverError(err, req, res) {
 
 	// if environment is defined (aka production), strip error information
 	if (config.isProduction) {
-		err = {message: "Sorry, a server error has occurred"};
+		err = {serverErrorMessage: "Sorry, a server error has occurred"};
 	}
 
-	res.status(500);
+	err.serverErrorMessage = "Sorry, a server error has occurred";
 
 	if (/application\/json/.test(req.get("accept"))) {
 		// Tests if req explicitly requested JSON

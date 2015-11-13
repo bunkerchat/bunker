@@ -12,6 +12,7 @@ var Promise = require('bluebird');
 var RoomMember = require('../models/RoomMember');
 var User = require('../models/User');
 var Room = require('../models/Room');
+var Message = require('../models/Message');
 
 var RoomService = require('../services/RoomService');
 var messageService = require('../services/messageService');
@@ -151,7 +152,6 @@ module.exports.join = function (req, res) {
 		.catch(res.serverError);
 };
 
-// PUT /room/:id/leave
 // Current user requesting to leave a room
 module.exports.leave = function (req, res) {
 
@@ -177,24 +177,21 @@ module.exports.leave = function (req, res) {
 					req.socket.leave('room_' + roomId);
 
 					RoomService.messageRoom(roomId, user.nick + ' has left the room');
-					// TODO unsubscribe all members? probably not... need to figure out which ones
 				});
 		})
 		.then(res.ok)
 		.catch(res.serverError);
 };
 
-// GET /room/:id/messages
 // Get the messages of a room, with optional skip amount
 module.exports.messages = function (req, res) {
-	var roomId = actionUtil.requirePk(req);
-	var skip = req.param('skip') || 0;
-	// TODO check for roomId and user values
+	var roomId = req.body.roomId.toObjectId();
+	var skip =  req.body.roomId.skip || 0;
 
 	// find finds multiple instances of a model, using the where criteria (in this case the roomId
 	// we also want to sort in DESCing (latest) order and limit to 50
 	// populateAll hydrates all of the associations
-	Message.find({room: roomId}).sort('createdAt DESC').skip(skip).limit(40).populateAll()
+	Message.find({room: roomId}).sort('-createdAt').skip(skip).limit(40).populate('author')
 		.then(res.ok)
 		.catch(res.serverError);
 };

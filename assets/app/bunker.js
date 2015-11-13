@@ -1,18 +1,18 @@
 window.app = angular.module('bunker', [
-	'ngTouch',
-	'ngSanitize',
-	'ui.router',
-	'ui.gravatar',
-	'angularMoment',
-	'ui.bootstrap',
-	'youtube-embed',
-	'angular.filter',
-	'hljs',
-	'plangular', /* soundcloud embed */
-	'notification',
-	'angularStats',
-	'ui.sortable'
-])
+		'ngTouch',
+		'ngSanitize',
+		'ui.router',
+		'ui.gravatar',
+		'angularMoment',
+		'ui.bootstrap',
+		'youtube-embed',
+		'angular.filter',
+		'hljs',
+		'plangular', /* soundcloud embed */
+		'notification',
+		'angularStats',
+		'ui.sortable'
+	])
 	.config(function ($stateProvider, $urlRouterProvider) {
 
 		$urlRouterProvider.otherwise('/');
@@ -55,7 +55,7 @@ window.app = angular.module('bunker', [
 			'default': 'identicon'
 		}
 	})
-	.run(function ($rootScope, $document, bunkerListener, bunkerData) {
+	.run(function ($rootScope, $document, bunkerListener, bunkerData, $q) {
 
 		// html5 visibility api instead of win.focus or win.blur
 		$document.on('visibilitychange', function () {
@@ -70,29 +70,39 @@ window.app = angular.module('bunker', [
 		var socket = io.connect();
 		socket.on('connect', function () {
 
-			io.socket = sailsApiWrapper(socket);
+			io.socket = sailsApiWrapper(socket, $q);
 			bunkerListener.init();
 			bunkerData.start();
 		});
 	});
 
 
-function sailsApiWrapper(socket){
-	socket.get = function (endpoint, cb) {
-		socket.emit(endpoint, {}, cb);
-	};
+function sailsApiWrapper(socket, $q) {
+	//socket.get = function (endpoint, cb) {
+	//	socket.emit(endpoint, {}, cb);
+	//};
+	//
+	//socket.put = function (endpoint, _data, _cb) {
+	//	var cb = _cb || _data;
+	//	var data = _.isObject(_data) ? _data : undefined;
+	//	socket.emit(endpoint, data, cb);
+	//};
+	//
+	//socket.post = function (endpoint, _data, _cb){
+	//	var cb = _cb || _data;
+	//	var data = _.isObject(_data) ? _data : undefined;
+	//	socket.emit(endpoint, data, cb);
+	//}
 
-	socket.put = function (endpoint, _data, _cb) {
-		var cb = _cb || _data;
+	socket.emitAsync = function (endpoint, _data) {
 		var data = _.isObject(_data) ? _data : undefined;
-		socket.emit(endpoint, data, cb);
+		return $q(function (resolve, reject) {
+			socket.emit(endpoint, data, function(returnData){
+				if(returnData && returnData.serverErrorMessage) return reject(returnData);
+				resolve(returnData);
+			});
+		})
 	};
-
-	socket.post = function (endpoint, _data, _cb){
-		var cb = _cb || _data;
-		var data = _.isObject(_data) ? _data : undefined;
-		socket.emit(endpoint, data, cb);
-	}
 
 
 	return socket
