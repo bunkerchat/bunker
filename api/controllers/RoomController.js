@@ -53,11 +53,13 @@ module.exports.pinMessage = function(req, res) {
 
 	var roomId = actionUtil.requirePk(req);
 
-	PinnedMessage
-		.create({ message: req.body.messageId, room: roomId })
-		.then(function() {
+	Promise.join(
+		PinnedMessage.create({ message: req.body.messageId, room: roomId }),
+		Message.findOne(req.body.messageId).populate('author'),
 
-			PinnedMessage.message(roomId, { pinned: true, messageId: req.body.messageId, message: { id: req.body.messageId, message: 'here' }, roomId: roomId });
+		function(pinnedMessage, message) {
+
+			PinnedMessage.message(roomId, { pinned: true, messageId: req.body.messageId, message: message, roomId: roomId });
 
 			res.ok();
 		});
@@ -69,7 +71,7 @@ module.exports.pinMessage = function(req, res) {
 	// get room pins?
 	// prune pins?
 	// save pinBoard?
-	// send update/notify?
+	// x send update/notify?
 };
 
 module.exports.unPinMessage = function(req, res) {
@@ -77,13 +79,14 @@ module.exports.unPinMessage = function(req, res) {
 	var messageId = req.param('messageId'),
 		roomId = req.param('roomId');
 
-
 	PinnedMessage
 			.destroy({ message: messageId })
 			.then(function() {
-				PinnedMessage.message(roomId, { messageId: messageId, pinned: false, roomId: roomId });
+				var unPinResult = { messageId: messageId, pinned: false, roomId: roomId };
 
-				res.ok({ messageId: messageId, pinned: false });
+				PinnedMessage.message(roomId, unPinResult);
+
+				res.ok(unPinResult);
 			})
 			.catch(res.serverError);
 };
@@ -95,6 +98,7 @@ module.exports.getPins = function(req, res) {
 	PinnedMessage
 		.find({ room: roomId })
 		.populate('message')
+		.populate('author')
 		.then(function(pins) {
 			return { pins: pins };
 		})

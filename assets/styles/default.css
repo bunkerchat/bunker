@@ -280,11 +280,24 @@ mark:hover {
 	background: white;
 	right: 16.666%;
 	left: 80px;
+	min-height: 400px;
+	border: 3px solid #ddd;
+	padding: 10px;
+	border-radius: 4px 4px 0 0;
 	z-index: 100;
 }
 
 .pin-board-active {
 	display: block;
+}
+
+.pin-board-message {
+	float: left;
+	border: 1px solid #ddd;
+	margin-left: 20px;
+	margin-bottom: 10px;
+	box-shadow: 0 2px 3px 0 #aaa;
+	padding: 8px;
 }
 
 .message-pin-icon {
