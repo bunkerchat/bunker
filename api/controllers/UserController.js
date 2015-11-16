@@ -81,7 +81,17 @@ module.exports.init = function (req, res) {
 								room.$pinnedMessages.push(message.message);
 							});
 
-							return room;
+							return User.find({ id: _.pluck(pinnedMessages, 'message.author') });
+						})
+						.then(function(users) {
+								// TODO: do this differently so it's more efficient
+								var lookup = _.indexBy(users, 'id');
+								room.$pinnedMessages = _.map(room.$pinnedMessages, function(pinnedMessage) {
+									pinnedMessage.author = lookup[pinnedMessage.author];
+									return pinnedMessage;
+								});
+
+								return room;
 						});
 				}),
 

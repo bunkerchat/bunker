@@ -297,7 +297,29 @@ mark:hover {
 	margin-left: 20px;
 	margin-bottom: 10px;
 	box-shadow: 0 2px 3px 0 #aaa;
-	padding: 8px;
+	padding: 16px 16px 14px 14px;
+	position: relative;
+}
+
+.pin-board-message > img {
+	margin-right: 8px;
+}
+
+.pin-board-message:hover .pin-board-unpin {
+	display: block;
+}
+
+.pin-board-unpin {
+	display: none;
+	color: #888;
+	cursor: pointer;
+	position: absolute;
+	top: 4px;
+	right: 4px;
+}
+
+.pin-board-unpin:hover {
+	color: #000;
 }
 
 .message-pin-icon {

@@ -95,12 +95,28 @@ module.exports.unPinMessage = function(req, res) {
 module.exports.getPins = function(req, res) {
 	var roomId = actionUtil.requirePk(req);
 
+	var pinnedMessages = null;
+
+	// TODO: this isn't used except for testing :P
 	PinnedMessage
 		.find({ room: roomId })
 		.populate('message')
-		.populate('author')
 		.then(function(pins) {
-			return { pins: pins };
+
+			pinnedMessages = pins;
+
+			return User.find({ id: _.pluck(pins, 'message.author') });
+		})
+		.then(function(users) {
+
+			var lookup = _.indexBy(users, 'id');
+
+			pinnedMessages = _.map(pinnedMessages, function(item) {
+				item.message.author = lookup[item.message.author];
+				return item;
+			});
+
+			return { pins: pinnedMessages };
 		})
 		.then(res.ok);
 };
