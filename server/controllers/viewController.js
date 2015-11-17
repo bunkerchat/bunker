@@ -13,6 +13,9 @@ var emoticonService = require('./../services/emoticonService');
 
 module.exports.index = function (req, res) {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
+
+	console.log('userId', userId)
+
 	Promise.join(
 		emoticonService.getEmoticonNamesFromDisk(),
 		UserSettings.findOne({user: userId}),
@@ -33,7 +36,7 @@ module.exports.index = function (req, res) {
 
 			res.render(isProd ? 'index-prod' :'index', {
 				templates: templates,
-				userId: req.session.userId,
+				userId: userId,
 				isProduction: isProd,
 				emoticons: emoticons,
 				loadingEmote: emoticonService.getLoadScreenEmoticon(),
