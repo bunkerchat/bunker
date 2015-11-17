@@ -7,7 +7,7 @@ config.url = 'http://bunkerchat.net:443';
 config.db = {
 	host: 'localhost',
 	name: 'bunker-beta',
-	session: 'bunker_sessions',
+	session: 'bunker_sessions-beta',
 	port: '27017'
 };
 
