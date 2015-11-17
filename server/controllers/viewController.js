@@ -12,9 +12,10 @@ var emoticonService = require('./../services/emoticonService');
 //};
 
 module.exports.index = function (req, res) {
+	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
 	Promise.join(
 		emoticonService.getEmoticonNamesFromDisk(),
-		UserSettings.findOne({user: req.session.userId.toObjectId()}),
+		UserSettings.findOne({user: userId}),
 		fs.readdirAsync('./assets/bundled').catch(empty)
 	)
 		.spread(function (emoticons, settings, bundledFiles) {
