@@ -1,18 +1,18 @@
 window.app = angular.module('bunker', [
-		'ngTouch',
-		'ngSanitize',
-		'ui.router',
-		'ui.gravatar',
-		'angularMoment',
-		'ui.bootstrap',
-		'youtube-embed',
-		'angular.filter',
-		'hljs',
-		'plangular', /* soundcloud embed */
-		'notification',
-		'angularStats',
-		'ui.sortable'
-	])
+	'ngTouch',
+	'ngSanitize',
+	'ui.router',
+	'ui.gravatar',
+	'angularMoment',
+	'ui.bootstrap',
+	'youtube-embed',
+	'angular.filter',
+	'hljs',
+	'plangular', /* soundcloud embed */
+	'notification',
+	'angularStats',
+	'ui.sortable'
+])
 	.config(function ($stateProvider, $urlRouterProvider) {
 
 		$urlRouterProvider.otherwise('/');
@@ -69,11 +69,14 @@ window.app = angular.module('bunker', [
 
 		var socket = io.connect();
 		socket.on('connect', function () {
-
-			io.socket = sailsApiWrapper(socket, $q);
-			bunkerListener.init();
-			bunkerData.start();
+			console.log('socket connected');
 		});
+
+		// Can't put the init and start in the above closure or it causes multiplication of messages for some weird reason
+		// https://github.com/socketio/socket.io/issues/430
+		io.socket = sailsApiWrapper(socket, $q);
+		bunkerListener.init();
+		bunkerData.start();
 	});
 
 
@@ -97,8 +100,8 @@ function sailsApiWrapper(socket, $q) {
 	socket.emitAsync = function (endpoint, _data) {
 		var data = _.isObject(_data) ? _data : undefined;
 		return $q(function (resolve, reject) {
-			socket.emit(endpoint, data, function(returnData){
-				if(returnData && returnData.serverErrorMessage) return reject(returnData);
+			socket.emit(endpoint, data, function (returnData) {
+				if (returnData && returnData.serverErrorMessage) return reject(returnData);
 				resolve(returnData);
 			});
 		})
