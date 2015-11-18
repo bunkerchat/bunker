@@ -17,25 +17,26 @@ module.exports.findOrCreateBunkerUser = function (profile) {
 				createNewUser(),
 				Room.findOne({name: 'First'})
 			)
-		})
-		.spread(function (dbUser, dbRoom) {
-			user = dbUser;
-			room = dbRoom;
+				.spread(function (dbUser, dbRoom) {
+					user = dbUser;
 
-			return Promise.join(
-				User.count({}),
-				RoomMember.create({room: room, user: user})
-			);
-		})
-		.spread(function (userCount, roomMember) {
-			if (userCount > 1) return;
+					return Promise.join(
+						User.count({}),
+						RoomMember.create({room: dbRoom, user: user})
+					);
+				})
+				.spread(function (userCount, roomMember) {
+					if (userCount > 1) return;
 
-			// if starting bunker for the first time, make the first logged in user admin of first room
-			roomMember.role = 'administrator';
-			return roomMember.save();
-		})
-		.then(function () {
-			return user;
+					console.log(userCount, roomMember);
+
+					// if starting bunker for the first time, make the first logged in user admin of first room
+					roomMember.role = 'administrator';
+					return roomMember.save();
+				})
+				.then(function () {
+					return user;
+				});
 		});
 
 	function createNewUser() {
