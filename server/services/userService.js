@@ -9,37 +9,36 @@ module.exports.connectionUpdateWaitSeconds = 15;
 module.exports.findOrCreateBunkerUser = function (profile) {
 	var email = profile.emails[0].value;
 
-	return User.findOne({email:email})
+	return User.findOne({email: email})
 		.then(function (dbUser) {
 			if (dbUser) return dbUser;
 
 			return Promise.join(
 				createNewUser(),
 				Room.findOne({name: 'First'})
-				)
-				.spread(function (dbUser, dbRoom) {
-					user = dbUser;
-					room = dbRoom;
+			)
+		})
+		.spread(function (dbUser, dbRoom) {
+			user = dbUser;
+			room = dbRoom;
 
-					return Promise.join(
-						User.count({}),
-						RoomMember.create({room: room, user: user})
-					);
-				})
-				.spread(function (userCount, roomMember) {
-					if (userCount > 1) return;
+			return Promise.join(
+				User.count({}),
+				RoomMember.create({room: room, user: user})
+			);
+		})
+		.spread(function (userCount, roomMember) {
+			if (userCount > 1) return;
 
-					// if starting bunker for the first time, make the first logged in user admin of first room
-					roomMember.role = 'administrator';
-					return roomMember.save();
-				})
-				.then(function () {
-					return user;
-				})
+			// if starting bunker for the first time, make the first logged in user admin of first room
+			roomMember.role = 'administrator';
+			return roomMember.save();
+		})
+		.then(function () {
+			return user;
 		});
 
-
-	function createNewUser(){
+	function createNewUser() {
 		var user = new User({
 			//token: accessToken,
 			// when no display name, get everything before @ in email
@@ -54,5 +53,4 @@ module.exports.findOrCreateBunkerUser = function (profile) {
 				return user.save();
 			});
 	}
-
-}
+};
