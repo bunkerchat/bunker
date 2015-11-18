@@ -1,10 +1,10 @@
 var Session = require('express-session');
 var MongoStore = require('connect-mongo')(Session);
-
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var config = require('./config');
+var userService = require('./../services/userService');
 var User = require('./../models/User');
 
 module.exports.init = function (app) {
@@ -39,22 +39,7 @@ module.exports.init = function (app) {
 	}, loginCallback));
 
 	function loginCallback(accessToken, refreshToken, profile, done) {
-		var email = profile.emails[0].value;
-		User.findOne({email: email}).exec(function (error, user) {
-			if(error) return done(error);
-
-			if (user) {
-				done(error, user);
-			}
-			else {
-				User.create({
-					//token: accessToken,
-					// when no display name, get everything before @ in email
-					nick: (profile.displayName || email.replace(/@.*/, "")).substr(0, 20),
-					email: email
-				}, done);
-			}
-		});
+		userService.findOrCreateBunkerUser(profile).nodeify(done);
 	}
 
 	return session;
