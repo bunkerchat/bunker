@@ -27,6 +27,7 @@ module.exports.http = function (app) {
 };
 
 module.exports.socketio = function (socket) {
+	// init
 	socket.on('/init', socketToController(userController.init));
 
 	// user
@@ -35,12 +36,24 @@ module.exports.socketio = function (socket) {
 	socket.on('/user/current/markInboxRead', socketToController(userController.markInboxRead));
 	socket.on('/user/current/clearInbox', socketToController(userController.clearInbox));
 
+	// user settings
+	//socket.on('/usersettings/') // TODO
+	//socket.on('/usersettings/updateSettings') // TODO
+
 	// room
 	socket.on('/room', socketToController(roomController.create));
 	socket.on('/room/join', socketToController(roomController.join));
 	socket.on('/room/leave', socketToController(roomController.leave));
 	socket.on('/room/message', socketToController(roomController.message));
+	//socket.on('/room/message/edit') // TODO
 	socket.on('/room/messages', socketToController(roomController.messages));
+
+	// roommember
+	//socket.on('/roommember/updateSettings') // TODO
+
+	// message
+	//socket.on('/message/emoticoncounts') // TODO
+
 };
 
 function socketToController(controllerFn) {

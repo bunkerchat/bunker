@@ -207,11 +207,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// Emoticons
 
 		refreshEmoticonCounts: function () {
-			return io.socket.emitAsync('/message/emoticoncounts')
-				.then(function (counts) {
-					decorateEmoticonCounts(counts);
-					return counts;
-				});
+			return io.socket.emitAsync('/message/emoticoncounts').then(decorateEmoticonCounts);
 		},
 
 		// Inbox
@@ -283,6 +279,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		_.each(emoticons.list, function (emoticon) {
 			emoticon.$count = emoteCountsHash[emoticon.name] ? emoteCountsHash[emoticon.name].count : 0;
 		});
+
+		return emoticonCounts
 	}
 
 	bunkerData.$promise = $q(function (resolve, reject) {
