@@ -24,58 +24,57 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		init: function () {
 			bunkerData.$resolved = false;
-			return io.socket.emitAsync('/init')
-				.then(function (initialData) {
-					bunkerData.$resolved = true;
-					decorateEmoticonCounts(initialData.emoticonCounts);
-					_.assign(bunkerData.user, initialData.user);
-					_.assign(bunkerData.userSettings, initialData.userSettings);
-					_.assign(bunkerData.inbox, initialData.inbox);
-					_.assign(bunkerData.memberships, initialData.memberships);
+			return io.socket.emitAsync('/init').then(function (initialData) {
+				bunkerData.$resolved = true;
+				decorateEmoticonCounts(initialData.emoticonCounts);
+				_.assign(bunkerData.user, initialData.user);
+				_.assign(bunkerData.userSettings, initialData.userSettings);
+				_.assign(bunkerData.inbox, initialData.inbox);
+				_.assign(bunkerData.memberships, initialData.memberships);
 
-					bunkerData.inbox.unreadMessages = _.select(bunkerData.inbox, {read: false}).length;
+				bunkerData.inbox.unreadMessages = _.select(bunkerData.inbox, {read: false}).length;
 
-					// Set $resolved on all rooms (those not in the data set to false)
-					// TODO ideally we could remove the rooms from the array entirely
-					_.each(bunkerData.rooms, function (room) {
-						room.$resolved = _.any(initialData.rooms, {_id: room._id});
-					});
-
-					// Go through data and sync messages
-					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
-					_.each(initialData.rooms, function (roomData, index) {
-						var room = _.find(bunkerData.rooms, {_id: roomData._id});
-
-						if (!room) {
-							room = roomData;
-
-							// Set the room tab order
-							var membership = _.findWhere(bunkerData.memberships, {room: room._id});
-							var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : index;
-							setRoomOrder(roomIndex, room);
-						}
-						else {
-
-							var existingMessagesLookup = _.indexBy(room.$messages, '_id');
-
-							// Add on messages that were previously not in the list
-							_.each(roomData.$messages, function (message) {
-								if (!existingMessagesLookup[message._id]) {
-									room.$messages.push(message);
-								}
-							});
-						}
-
-						room.$resolved = true;
-						decorateMessages(room);
-						decorateMembers(room);
-					});
-
-					// creates a hashmap of rooms by its id
-					roomLookup = _.indexBy(bunkerData.rooms, '_id');
-
-					return bunkerData;
+				// Set $resolved on all rooms (those not in the data set to false)
+				// TODO ideally we could remove the rooms from the array entirely
+				_.each(bunkerData.rooms, function (room) {
+					room.$resolved = _.any(initialData.rooms, {_id: room._id});
 				});
+
+				// Go through data and sync messages
+				// Doing it this way keeps the rooms array intact so we don't disrupt the UI
+				_.each(initialData.rooms, function (roomData, index) {
+					var room = _.find(bunkerData.rooms, {_id: roomData._id});
+
+					if (!room) {
+						room = roomData;
+
+						// Set the room tab order
+						var membership = _.findWhere(bunkerData.memberships, {room: room._id});
+						var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : index;
+						setRoomOrder(roomIndex, room);
+					}
+					else {
+
+						var existingMessagesLookup = _.indexBy(room.$messages, '_id');
+
+						// Add on messages that were previously not in the list
+						_.each(roomData.$messages, function (message) {
+							if (!existingMessagesLookup[message._id]) {
+								room.$messages.push(message);
+							}
+						});
+					}
+
+					room.$resolved = true;
+					decorateMessages(room);
+					decorateMembers(room);
+				});
+
+				// creates a hashmap of rooms by its id
+				roomLookup = _.indexBy(bunkerData.rooms, '_id');
+
+				return bunkerData;
+			});
 		},
 
 		connect: function () {
@@ -125,7 +124,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = message._id + message.editCount;
+			message.$idAndEdited = message._id + '_' + message.editCount;
 		},
 
 		// Rooms
@@ -247,7 +246,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = message._id + message.editCount;
+			message.$idAndEdited = message._id + '_' + message.editCount;
 		});
 	}
 

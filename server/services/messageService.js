@@ -1,10 +1,12 @@
 //var ent = require('ent');
 var moment = require('moment');
 var Promise = require('bluebird');
+var socketio = require('../config/socketio');
 
 var Message = require('../models/Message');
 var User = require('../models/User');
 var RoomMember = require('../models/RoomMember');
+var RoomService = require('../services/RoomService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -81,7 +83,7 @@ module.exports.createMessage = function (roomMember, text) {
 	}
 };
 
-//module.exports.broadcastMessage = broadcastMessage;
+module.exports.broadcastMessage = broadcastMessage;
 
 function getHelp(roomMember, text) {
 	return helpService.getHelp(text).then(function (helpMessage) {
@@ -97,11 +99,11 @@ function stats(roomMember, text) {
 		return statsService.getStatsForUser(userNick, roomMember.room)
 			.then(function (stats) {
 				return Message.create({
-						room: roomMember.room,
-						type: 'stats',
-						author: roomMember.user,
-						text: stats
-					})
+					room: roomMember.room,
+					type: 'stats',
+					author: roomMember.user,
+					text: stats
+				})
 					.then(broadcastMessage);
 			})
 	}
@@ -187,12 +189,15 @@ function setUserNick(roomMember, text) {
 	if (user.nick == newNick) throw new InvalidInputError('Nick is already set');
 
 	return Promise.join(
-		User.update(user._id, {nick: newNick}),
+		User.findByIdAndUpdate(user._id, {nick: newNick}, {new: true}),
 		RoomMember.find({user: user._id})
-		)
+	)
 		.spread(function (updatedUser, memberships) {
-			updatedUser = updatedUser[0];
-			User.publishUpdate(user._id, {nick: updatedUser.nick});
+			socketio.io.to('user_' + updatedUser._id).emit('user', {
+				_id: updatedUser._id,
+				verb: 'updated',
+				data: {nick: updatedUser.nick}
+			});
 			RoomService.messageRooms(_.pluck(memberships, 'room'), user.nick + ' changed their handle to ' + updatedUser.nick);
 		});
 }
@@ -345,21 +350,17 @@ function message(roomMember, text, type) {
 		author: type == 'standard' ? roomMember.user : null,
 		text: text
 	}).then(function (message) {
-		//broadcastMessage(message);
+		broadcastMessage(message);
 		saveInMentionedInboxes(message);
-		return populateMessage(message);;
+		return populateMessage(message);
 	});
 }
 
-//function broadcastMessage(message) {
-//	// now that message has been created, get the populated version
-//	return Message.findById(message._id.toObjectId())
-//		.populate('room')
-//		.populate('author')
-//		.then(function (message) {
-//			Room.message(message.room, message); // message all subscribers of the room that with the new message as data
-//		});
-//}
+function broadcastMessage(message) {
+	return Message.findById(message._id).populate('room author').then(function (message) {
+		socketio.io.to('room_' + message.room._id).emit('room', {_id: message.room._id, verb: 'messaged', data: message});
+	});
+}
 
 function populateMessage(message) {
 	return Message.findById(message._id)
@@ -375,7 +376,7 @@ function saveInMentionedInboxes(message) {
 	return Promise.join(
 		User.findOne(message.author),
 		RoomMember.find({room: message.room}).populate('user')
-		)
+	)
 		.spread(function (author, roomMembers) {
 			return Promise.each(roomMembers, function (roomMember) {
 				var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
@@ -400,7 +401,7 @@ function saveFightInMentionedInboxes(message, author, room) {
 	// Completely async process that shouldn't disrupt the normal message flow
 	return Promise.join(
 		RoomMember.find({room: message.room}).populate('user')
-		)
+	)
 		.spread(function (roomMembers) {
 			return Promise.each(roomMembers, function (roomMember) {
 				var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
@@ -542,11 +543,11 @@ function leaderboard(roomMember, text) {
 		return leaderboardService.getLoserboard()
 			.then(function (loserboard) {
 				return Message.create({
-						room: roomMember.room,
-						type: 'stats',
-						author: roomMember.user,
-						text: loserboard
-					})
+					room: roomMember.room,
+					type: 'stats',
+					author: roomMember.user,
+					text: loserboard
+				})
 					.then(broadcastMessage);
 			})
 	}
@@ -554,11 +555,11 @@ function leaderboard(roomMember, text) {
 	return leaderboardService.getLeaderboard()
 		.then(function (leaderboard) {
 			return Message.create({
-					room: roomMember.room,
-					type: 'stats',
-					author: roomMember.user,
-					text: leaderboard
-				})
+				room: roomMember.room,
+				type: 'stats',
+				author: roomMember.user,
+				text: leaderboard
+			})
 				.then(broadcastMessage);
 		})
 }

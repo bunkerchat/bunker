@@ -87,7 +87,12 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function handleReconnect() {
+		console.log('socket reconnected');
 		bunkerData.init();
+	}
+
+	function handleDisconnect() {
+		console.log('socket disconnected');
 	}
 
 	function handleClose() {
@@ -106,6 +111,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 		{name: 'roomMember', type: 'socket', handler: handleMembershipEvent},
 		{name: 'inboxMessage', type: 'socket', handler: handleInboxEvent},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
+		{name: 'disconnect', type: 'socket', handler: handleDisconnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},
 		{name: 'visibilityHide', type: 'rootScope', handler: handleVisibilityHide},
 		{name: 'onbeforeunload', type: 'window', handler: handleClose}

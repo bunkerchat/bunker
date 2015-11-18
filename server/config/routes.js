@@ -68,6 +68,9 @@ function socketToController(controllerFn) {
 			serverError: function (err) {
 				log.error('server error', err);
 				if(_.isFunction(cb)) cb({error: err.message});
+			},
+			badRequest: function(err) {
+				if(_.isFunction(cb)) cb({error: err.message});
 			}
 		};
 		controllerFn(req, res);

@@ -1,6 +1,7 @@
 var uuid = require('node-uuid');
 
 var Room = require('../models/Room');
+var RoomMember = require('../models/RoomMember');
 var socketio = require('../config/socketio');
 
 var RoomService = module.exports;
@@ -70,15 +71,17 @@ RoomService.messageRoomsWithUser = function (spec) {
 	});
 };
 
-RoomService.messageUserInRoom = function (userId, roomId, message, type) {
-	return RoomMember.findOne({room: roomId, user: userId}).populateAll().then(function (roomMember) {
-		return RoomMember.message(roomMember._id, {
-			id: uuid.v4(),
-			text: message,
-			type: type,
-			room: roomMember.room,
-			user: roomMember.user,
-			createdAt: new Date().toISOString()
+RoomService.messageUserInRoom = function (userId, roomId, messageText, type) {
+	return RoomMember.findOne({room: roomId, user: userId}).populate('user room').then(function (roomMember) {
+		socketio.io.to('roommember_' + roomMember._id).emit('roommember', {
+			_id: roomMember._id, verb: 'messaged', data: {
+				id: uuid.v4(),
+				text: messageText,
+				type: type,
+				room: roomMember.room,
+				user: roomMember.user,
+				createdAt: new Date().toISOString()
+			}
 		});
 	});
 };
