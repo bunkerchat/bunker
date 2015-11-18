@@ -5,6 +5,7 @@ var socketio = require('../config/socketio');
 
 var Message = require('../models/Message');
 var User = require('../models/User');
+var Room = require('../models/Room');
 var RoomMember = require('../models/RoomMember');
 var RoomService = require('../services/RoomService');
 
@@ -211,11 +212,9 @@ function setUserBusy(roomMember, text) {
 			var busyMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
 			var busyMessage = busy && busyMessageMatches ? busyMessageMatches[1] : null;
 
-			return [User.update(user._id, {busy: busy, busyMessage: busyMessage}), memberships];
+			return [User.findByIdAndUpdate(user._id, {busy: busy, busyMessage: busyMessage}, {new: true}), memberships];
 		})
 		.spread(function (user, memberships) {
-			user = user[0];
-
 			var message = [];
 			message.push(user.nick);
 			message.push(user.busy ? 'is now away' : 'is back');
@@ -224,7 +223,12 @@ function setUserBusy(roomMember, text) {
 			}
 
 			RoomService.messageRooms(_.pluck(memberships, 'room'), message.join(' '));
-			User.publishUpdate(user._id, {busy: user.busy, busyMessage: user.busyMessage});
+
+			socketio.io.to('user_' + user._id).emit('user', {
+				_id: user._id,
+				verb: 'updated',
+				data: {busy: user.busy, busyMessage: user.busyMessage}
+			});
 		});
 }
 
@@ -239,12 +243,15 @@ function setRoomTopic(roomMember, text) {
 	var topicMatches = text.match(/topic\s+(.+)/i);
 	var topic = topicMatches ? topicMatches[1].substr(0, 200) : null;
 
-	return Room.update(roomId, {topic: topic}).then(function (room) {
-		room = room[0];
-		var message = user.nick + (room.topic ? ' changed the topic to "' + room.topic + '"' : ' cleared the topic');
+	return Room.findByIdAndUpdate(roomId, {topic: topic}, {new: true}).then(function (room) {
 
-		Room.publishUpdate(roomId, {topic: room.topic});
-		RoomService.messageRoom(roomId, message);
+		socketio.io.to('room_' + room._id).emit('room', {
+			_id: room._id,
+			verb: 'updated',
+			data: {topic: room.topic}
+		});
+
+		RoomService.messageRoom(roomId, user.nick + (room.topic ? ' changed the topic to "' + room.topic + '"' : ' cleared the topic'));
 	});
 }
 
@@ -262,12 +269,15 @@ function setRoomName(roomMember, text) {
 
 	var name = nameMatches[1].substr(0, 50);
 
-	return Room.update(roomId, {name: name}).then(function (room) {
-		room = room[0];
-		var message = user.nick + ' changed the room name to "' + room.name + '"';
+	return Room.findByIdAndUpdate(roomId, {name: name}, {new: true}).then(function (room) {
 
-		Room.publishUpdate(roomId, {name: room.name});
-		RoomService.messageRoom(roomId, message);
+		socketio.io.to('room_' + room._id).emit('room', {
+			_id: room._id,
+			verb: 'updated',
+			data: {name: room.name}
+		});
+
+		RoomService.messageRoom(roomId, user.nick + ' changed the room name to "' + room.name + '"');
 	});
 }
 
