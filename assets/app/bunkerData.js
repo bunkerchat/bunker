@@ -14,14 +14,15 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		$resolved: false,
 		$promise: null,
 
-		// Initial data, also sets up subscriptions
 		start: function () {
+			// Call start once we are finished connecting (bunker.js)
 			resolveBunkerData$Promise($q.all([
-				bunkerData.init(),
-				bunkerData.connect()
+				bunkerData.connect(),
+				bunkerData.init()
 			]));
 		},
 
+		// Initial data, also sets up subscriptions
 		init: function () {
 			bunkerData.$resolved = false;
 			return io.socket.emitAsync('/init').then(function (initialData) {
