@@ -25,19 +25,10 @@ module.exports.run = function (cb) {
 	log.info('server - Starting "' + config.environment + '"');
 
 	connectToMongoose()
-		//.then(indexes.run)
-		//.then(seed.run)
-		//.then(migrations.run)
-		//.then(minosEvents.configure)
 		.then(startup)
 		.then(function () {
-			//if (config.useSSL) {
-			//	return https.createServer(config.serverOptions, app).listenAsync(config.express.port);
-			//}
-
 			socketio.connect(server);
-			//return server.listenAsync(config.express.port);
-			server.listenAsync(config.express.port);
+			return server.listenAsync(config.express.port);
 		})
 		.then(function () {
 			log.info('server - hosted - http://' + config.express.ip + ':' + config.express.port);

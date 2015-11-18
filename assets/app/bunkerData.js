@@ -235,7 +235,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	};
 
 	function reinit(data) {
-		bunkerData.init().then(function () {
+		return bunkerData.init().then(function () {
 			return data;
 		});
 	}
