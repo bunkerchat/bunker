@@ -41,9 +41,7 @@ module.exports.message = function (req, res) {
 		})
 		.spread(function (message, user) {
 			// Inform clients that use is not busy and typing has ceased
-			var roomId = message.room.toString();
-			req.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'messaged', data: message});
-			req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: notTypingUpdate});
+			req.io.to('user_' + userId).emit('user', {_id: user._id, verb: 'updated', data: notTypingUpdate});
 			res.ok(message);
 		})
 		.catch(ForbiddenError, function (err) {
