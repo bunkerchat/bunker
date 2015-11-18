@@ -70,7 +70,6 @@ window.app = angular.module('bunker', [
 		var socket = io.connect();
 		socket.on('connect', function () {
 			console.log('socket connected');
-			bunkerData.start();
 		});
 
 		io.socket = sailsApiWrapper(socket, $q);
@@ -78,6 +77,7 @@ window.app = angular.module('bunker', [
 		// Can't put this bunkerListener init in the `connect` closure or it causes duplication of messages
 		// per https://github.com/socketio/socket.io/issues/430
 		bunkerListener.init();
+		bunkerData.start();
 	});
 
 

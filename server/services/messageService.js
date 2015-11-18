@@ -358,7 +358,11 @@ function message(roomMember, text, type) {
 
 function broadcastMessage(message) {
 	return Message.findById(message._id).populate('room author').then(function (message) {
-		socketio.io.to('room_' + message.room._id).emit('room', {_id: message.room._id, verb: 'messaged', data: message});
+		socketio.io.to('room_' + message.room._id).emit('room', {
+			_id: message.room._id,
+			verb: 'messaged',
+			data: message
+		});
 	});
 }
 
@@ -514,7 +518,7 @@ function changeUserRole(roomMember, text) {
 	var action = match[1];
 	var userNick = match[2];
 
-	if (user.nick == userNick) throw new InvalidInputError('You cannot promote yourself');
+	if (user.nick == userNick) throw new InvalidInputError('You cannot promote or demote yourself');
 
 	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
 		.then(function (roomMemberToPromote) {
@@ -527,10 +531,16 @@ function changeUserRole(roomMember, text) {
 				newRole = roomMemberToPromote.role == 'administrator' ? 'moderator' : 'member';
 			}
 
-			return RoomMember.update(roomMemberToPromote._id, {role: newRole});
+			return RoomMember.findByIdAndUpdate(roomMemberToPromote._id, {role: newRole}, {new: true});
 		})
-		.spread(function (roomMemberToPromote) {
-			RoomMember.publishUpdate(roomMemberToPromote._id, {role: newRole});
+		.then(function (roomMemberToPromote) {
+
+			socketio.io.to('roommember_' + roomMemberToPromote._id).emit('roommember', {
+				_id: roomMemberToPromote._id,
+				verb: 'updated',
+				data: {role: newRole}
+			});
+
 			var message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
 			RoomService.messageRoom(roomId, message);
 		});
