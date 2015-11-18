@@ -47,7 +47,9 @@ module.exports.index = function (req, res) {
 };
 
 module.exports.login = function (req, res) {
-	res.render('login');
+	res.render('login', {
+		clientID: config.google.clientID
+	});
 };
 
 module.exports.logout = function (req, res) {

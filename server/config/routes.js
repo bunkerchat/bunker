@@ -18,10 +18,6 @@ module.exports.http = function (app) {
 	app.get('/login', viewController.login);
 	app.get('/logout', viewController.logout);
 
-	// Login
-	app.get('/auth/google', authController.google);
-	app.get('/auth/googleReturn', authController.googleReturn);
-
 	// Internal views
 	app.get('/', isLoggedIn, viewController.index);
 };

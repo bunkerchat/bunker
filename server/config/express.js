@@ -26,6 +26,7 @@ app.use('/assets',express.static('assets'));
 app.set('view engine', 'ejs');
 app.set('views', './server/views');
 app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({extended: false}));
 
 require('./auth').init(app);
 
