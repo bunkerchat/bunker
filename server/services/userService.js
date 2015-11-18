@@ -28,8 +28,6 @@ module.exports.findOrCreateBunkerUser = function (profile) {
 				.spread(function (userCount, roomMember) {
 					if (userCount > 1) return;
 
-					console.log(userCount, roomMember);
-
 					// if starting bunker for the first time, make the first logged in user admin of first room
 					roomMember.role = 'administrator';
 					return roomMember.save();
