@@ -8,6 +8,7 @@ var User = require('../models/User');
 var Room = require('../models/Room');
 var RoomMember = require('../models/RoomMember');
 var RoomService = require('../services/RoomService');
+var googleSearchService = require('../services/googleSearchService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -448,48 +449,52 @@ function imageLucky(roomMember, text) {
 	var match = /^\/imagelucky\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.oneImage(searchQuery)
-		.then(function (imgUrl) {
-			message(roomMember, '[googled image (feeling lucky) "' + searchQuery + '"] ' + imgUrl);
-		});
+	return googleSearchService.oneImage(searchQuery).then(function (imgUrl) {
+		message(roomMember, '[googled image (feeling lucky) "' + searchQuery + '"] ' + imgUrl);
+	});
 }
 
 function image(roomMember, text) {
 	var match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.imageSearch(searchQuery)
-		.then(function (images) {
-			User.message(roomMember.user, {
+	return googleSearchService.imageSearch(searchQuery).then(function (images) {
+		socketio.io.to('user_' + roomMember.user._id).emit('user', {
+			_id: roomMember.user._id,
+			verb: 'messaged',
+			data: {
 				type: 'pick',
 				message: '[googled image "' + searchQuery + '"] ',
 				data: images
-			});
+			}
 		});
+	});
 }
 
 function gifLucky(roomMember, text) {
 	var match = /^\/giflucky\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.oneGif("gif " + searchQuery)
-		.then(function (imgUrl) {
-			message(roomMember, '[googled gif (feeling lucky) "' + searchQuery + '"] ' + imgUrl);
-		});
+	return googleSearchService.oneGif("gif " + searchQuery).then(function (imgUrl) {
+		message(roomMember, '[googled gif (feeling lucky) "' + searchQuery + '"] ' + imgUrl);
+	});
 }
 
 function gif(roomMember, text) {
 	var match = /^\/gif(?:pick|search)*\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.gifSearch("gif " + searchQuery)
-		.then(function (images) {
-			User.message(roomMember.user, {
+	return googleSearchService.gifSearch("gif " + searchQuery).then(function (images) {
+		socketio.io.to('user_' + roomMember.user._id).emit('user', {
+			_id: roomMember.user._id,
+			verb: 'messaged',
+			data: {
 				type: 'pick',
 				message: '[googled gif "' + searchQuery + '"] ',
 				data: images
-			});
+			}
 		});
+	});
 }
 
 function fight(roomMember, text) {
@@ -543,10 +548,10 @@ function changeUserRole(roomMember, text) {
 
 			return RoomMember.findByIdAndUpdate(roomMemberToPromote._id, {role: newRole}, {new: true});
 		})
-		.then(function (roomMemberToPromote) {
+		.then(function (promotedMember) {
 
-			socketio.io.to('roommember_' + roomMemberToPromote._id).emit('roommember', {
-				_id: roomMemberToPromote._id,
+			socketio.io.to('roommember_' + promotedMember._id).emit('roommember', {
+				_id: promotedMember._id,
 				verb: 'updated',
 				data: {role: newRole}
 			});
