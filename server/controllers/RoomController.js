@@ -26,7 +26,6 @@ module.exports.message = function (req, res) {
 	var userId = req.session.userId.toObjectId();
 	var roomId = req.body.roomId.toObjectId();
 	var currentRoomMember;
-	var notTypingUpdate = {busy: false, typingIn: null};
 
 	RoomMember.findOne({user: userId, room: roomId}).populate('user')
 		.then(function (roomMember) {
@@ -34,23 +33,19 @@ module.exports.message = function (req, res) {
 			if (!roomMember) throw new ForbiddenError('Must be a member of this room');
 			currentRoomMember = roomMember;
 
-			return Promise.join(
-				messageService.createMessage(roomMember, req.body.text),
-				User.findByIdAndUpdate(userId, notTypingUpdate)
-			)
-		})
-		.spread(function (message, user) {
 			// Inform clients that use is not busy and typing has ceased
-			req.io.to('user_' + userId).emit('user', {_id: user._id, verb: 'updated', data: notTypingUpdate});
-			res.ok(message);
+			var notTypingUpdate = {busy: false, typingIn: null};
+			User.findByIdAndUpdate(userId, notTypingUpdate).exec();
+			req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: notTypingUpdate});
+
+			return messageService.createMessage(roomMember, req.body.text);
 		})
-		.catch(ForbiddenError, function (err) {
-			res.forbidden(err);
-		})
+		.then(res.ok)
 		.catch(InvalidInputError, function (err) {
 			RoomService.messageUserInRoom(currentRoomMember.user._id, currentRoomMember.room, err.message);
 			res.badRequest(err);
 		})
+		.catch(ForbiddenError, res.forbidden)
 		.catch(res.serverError);
 };
 
@@ -61,7 +56,7 @@ module.exports.findOne = function (req, res) {
 		Room.findOne(pk),
 		Message.find({room: pk}).limit(40).populate('author'),
 		RoomMember.find({room: pk}).populate('user')
-		)
+	)
 		.spread(function (room, messages, members) {
 			room.$messages = messages;
 			room.$members = members;
@@ -101,7 +96,7 @@ module.exports.join = function (req, res) {
 	Promise.join(
 		Room.findById(roomId),
 		RoomMember.count({room: roomId, user: userId})
-		)
+	)
 		.spread(function (room, existingRoomMember) {
 			if (!room) {
 				return new InvalidInputError('Requested room does not exist');
@@ -122,7 +117,11 @@ module.exports.join = function (req, res) {
 					);
 				})
 				.spread(function (createdRoomMember, user, room, roomMembers) {
-					req.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'updated', data: {$members: roomMembers}});
+					req.io.to('room_' + roomId).emit('room', {
+						_id: roomId,
+						verb: 'updated',
+						data: {$members: roomMembers}
+					});
 
 					// Create system message to inform other users of this user joining
 					RoomService.messageRoom(roomId, user.nick + ' has joined the room');
@@ -171,7 +170,11 @@ module.exports.leave = function (req, res) {
 					];
 				})
 				.spread(function (user, roomMembers) {
-					req.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'updated', data: {$members: roomMembers}});
+					req.io.to('room_' + roomId).emit('room', {
+						_id: roomId,
+						verb: 'updated',
+						data: {$members: roomMembers}
+					});
 					req.socket.leave('room_' + roomId);
 
 					RoomService.messageRoom(roomId, user.nick + ' has left the room');
@@ -184,7 +187,7 @@ module.exports.leave = function (req, res) {
 // Get the messages of a room, with optional skip amount
 module.exports.messages = function (req, res) {
 	var roomId = req.body.roomId.toObjectId();
-	var skip =  req.body.roomId.skip || 0;
+	var skip = req.body.roomId.skip || 0;
 
 	// find finds multiple instances of a model, using the where criteria (in this case the roomId
 	// we also want to sort in DESCing (latest) order and limit to 50

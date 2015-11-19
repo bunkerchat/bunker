@@ -283,7 +283,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		return emoticonCounts
 	}
 
-	bunkerData.$promise = $q(function (resolve, reject) {
+	bunkerData.$promise = $q(function (resolve) {
 		resolveBunkerData$Promise = resolve;
 	});
 

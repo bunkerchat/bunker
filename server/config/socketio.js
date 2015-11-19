@@ -29,7 +29,7 @@ socketio.connect = function (server) {
 
 
 function afterDisconnect(socket) {
-	User.findOne({sockets: socket.id}).then(function (user) {
+	return User.findOne({sockets: socket.id}).then(function (user) {
 		if (!user) return;
 		user.sockets = _.without(user.sockets, socket.id);
 		user.connected = user.sockets.length > 0;
