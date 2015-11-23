@@ -57,6 +57,31 @@ app.directive('pins', ['pinBoard', function (pinBoard) {
 		},
 		link: function (scope, element, attrs) {
 
+			scope.boardOpen = false;
+
+			//$('[pins]').on('click.pinBoard', function() {
+			//	return false;
+			//});
+
+			var closeClickListener = function () {
+				if (!scope.boardOpen) {
+					return true;
+				}
+
+				scope.boardOpen = false;
+				scope.$digest();
+			};
+
+			$(document)
+					.on('click.pinBoard', closeClickListener)
+					.on('click.pinBoard', '[pins]', function () {
+						return false;
+					});
+
+			scope.$on('$destroy', function () {
+				$(document).off('click.pinBoard', closeClickListener);
+			});
+
 		}
 	};
 }]);
@@ -67,7 +92,7 @@ app.directive('messagePin', ['pinBoard', function (pinBoard) {
 
 		var $pinIconForMessage = $('[message-pin=' + pinResult.messageId + '] .message-pin-icon');
 
-		if (pinResult.pinned)  {
+		if (pinResult.pinned) {
 			$pinIconForMessage.removeClass('fa-bookmark-o').addClass('fa-bookmark');
 		}
 		else {
@@ -81,7 +106,9 @@ app.directive('messagePin', ['pinBoard', function (pinBoard) {
 
 		var messageId = $(this).closest('[message-pin]').attr('message-pin');
 
-		if (!messageId) { return; }
+		if (!messageId) {
+			return;
+		}
 
 		if (pinBoard.isPinned(messageId)) {
 			pinBoard.unPin(messageId);
