@@ -12,7 +12,7 @@ socketio.connect = function (server) {
 	io.use(ios(session));
 	io.on('connection', function (socket) {
 		routes.socketio(socket);
-		socket.on('disconnect', function(){
+		socket.on('disconnect', function () {
 			afterDisconnect(socket);
 		});
 	});
@@ -29,29 +29,12 @@ socketio.connect = function (server) {
 
 
 function afterDisconnect(socket) {
-	//var socketId = sails.sockets._id(socket);
-	//if (!session.user) return;
-
-	User.find({connected: true}).in('sockets', socket.id)
-		.each(function (user) {
-			user.sockets = _.without(user.sockets, socketId);
-			user.connected = user.sockets.length > 0;
-			user.lastConnected = new Date().toISOString();
-			user.typingIn = null;
-			return user.save().then(function () {
-
-				// Wait 15 seconds before performing the update and/or sending disconnect message
-				// Allows time for reconnection
-				userService.pendingTasks[user._id] = setTimeout(function () {
-					User.publishUpdate(user._id, user);
-					//if (!user.connected) {
-					//	RoomService.messageRoomsWithUser({
-					//		userId: user._id,
-					//		systemMessage: user.nick + ' has gone offline'});
-					//}
-					userService.pendingTasks[user._id] = null; // clear
-
-				}, userService.connectionUpdateWaitSeconds * 1000);
-			});
-		})
+	return User.findOne({sockets: socket.id}).then(function (user) {
+		if (!user) return;
+		user.sockets = _.without(user.sockets, socket.id);
+		user.connected = user.sockets.length > 0;
+		user.lastConnected = new Date().toISOString();
+		user.typingIn = null;
+		return user.save();
+	});
 }

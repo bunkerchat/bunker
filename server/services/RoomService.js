@@ -1,23 +1,23 @@
 var uuid = require('node-uuid');
 
+var User = require('../models/User');
 var Room = require('../models/Room');
 var RoomMember = require('../models/RoomMember');
 var socketio = require('../config/socketio');
 
 var RoomService = module.exports;
 
-RoomService.messageRoom = function (room, message) {
+RoomService.messageRoom = function (room, messageText) {
 	var roomId = room._id ? room._id : room;
-
-	var joinMessage = {
-		_id: uuid.v4(),
-		type: 'room',
-		text: message,
-		room: roomId,
-		createdAt: new Date().toISOString()
-	};
-
-	socketio.io.to('room_' + roomId).emit('room', {_id: roomId, verb: 'messaged', data: joinMessage});
+	socketio.io.to('room_' + roomId).emit('room', {
+		_id: roomId, verb: 'messaged', data: {
+			_id: uuid.v4(),
+			type: 'room',
+			text: messageText,
+			room: roomId,
+			createdAt: new Date().toISOString()
+		}
+	});
 };
 
 RoomService.animateInRoom = function (roomMember, emoticon, words) {
@@ -58,7 +58,7 @@ RoomService.messageRoomsWithUser = function (spec) {
 			// If we were provided a message, send it down to affected rooms
 			if (spec.systemMessage) {
 				Room.message(room._id, {
-					id: uuid.v4(),
+					_id: uuid.v4(),
 					type: 'room',
 					text: spec.systemMessage,
 					room: room._id,
@@ -75,7 +75,7 @@ RoomService.messageUserInRoom = function (userId, roomId, messageText, type) {
 	return RoomMember.findOne({room: roomId, user: userId}).populate('user room').then(function (roomMember) {
 		socketio.io.to('roommember_' + roomMember._id).emit('roommember', {
 			_id: roomMember._id, verb: 'messaged', data: {
-				id: uuid.v4(),
+				_id: uuid.v4(),
 				text: messageText,
 				type: type,
 				room: roomMember.room,
