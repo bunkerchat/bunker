@@ -9,16 +9,11 @@ Type a slash and then the command name, like this:
 COMMANDS:
 	help        	shows this message
 	away        	set away status
-	magic8ball  	shake the magic 8-ball
 	me          	make your avatar do something
 	nick        	change your nickname
-	roll        	roll a die
 	topic       	change the topic of the room
-	hangman     	play a game of hangman
-	fight			challeng a user to a fight
-	image       	search and display image from Google
-	gif         	search and display gif from Google
-	leaderboard 	view the hangman games leaderboard
+
+For the full command list type '/help commands'
 
 TOPICS:
 	formatting  	how to format message text (italic, bold, etc)

@@ -1,0 +1,15 @@
+IMAGELUCKY
+Use this to find an image if you don't feel like picking one, you lazy jerk.
+
+NAME
+	/imagelucky - Displays image from feeling lucky searchDisplay image...let me Google that for you
+
+SYNOPSIS
+	/imagelucky [string]
+
+COMMANDS
+	/imagelucky Koalifications
+	/imagelucky The Tides Have Turned
+	
+REMARKS
+	Unfortunately the picture that comes back is a bit of Russian roulette, will the image be relevant...or will it not?
