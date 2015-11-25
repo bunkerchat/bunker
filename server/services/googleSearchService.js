@@ -1,5 +1,5 @@
 var Promise = require('bluebird');
-var request = Promise.promisifyAll(require('request'));
+var request = Promise.promisifyAll(require('request'), {multiArgs:true});
 
 var googleSearchService = module.exports;
 

@@ -494,6 +494,8 @@ function gif(roomMember, text) {
 				data: images
 			}
 		});
+
+		return null;
 	});
 }
 

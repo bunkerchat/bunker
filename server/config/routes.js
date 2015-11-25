@@ -63,7 +63,7 @@ function socketToController(controllerFn) {
 
 		var res = {
 			ok: function (returnData) {
-				if(_.isFunction(cb)) cb(returnData);
+				if(_.isFunction(cb) && returnData) cb(returnData);
 			},
 			serverError: function (err) {
 				log.error('server error', err);
