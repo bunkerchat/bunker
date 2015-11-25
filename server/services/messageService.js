@@ -10,6 +10,7 @@ var RoomMember = require('../models/RoomMember');
 var RoomService = require('../services/RoomService');
 var googleSearchService = require('../services/googleSearchService');
 var helpService = require('../services/helpService');
+var statsService = require('../services/statsService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -104,17 +105,16 @@ function stats(roomMember, text) {
 				return Message.create({
 					room: roomMember.room,
 					type: 'stats',
-					author: roomMember.user,
+					author: roomMember.user._id,
 					text: stats
 				})
 					.then(broadcastMessage);
-			})
+			});
 	}
 
-	return statsService.getStats(roomMember)
-		.then(function (message) {
-			RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, message, 'stats');
-		})
+	return statsService.getStats(roomMember).then(function (message) {
+		RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, message, 'stats');
+	});
 }
 
 function animation(roomMember, text) {

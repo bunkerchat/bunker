@@ -97,7 +97,7 @@ RoomService.getRoomMemberByNickAndRoom = function (userNick, roomId) {
 			return user._id;
 		});
 
-		return RoomMember.findOne({user: userIds, room: roomId}).populateAll();
+		return RoomMember.findOne({user: userIds, room: roomId}).populate('user room');
 	});
 };
 
