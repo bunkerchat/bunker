@@ -9,6 +9,7 @@ var Room = require('../models/Room');
 var RoomMember = require('../models/RoomMember');
 var RoomService = require('../services/RoomService');
 var googleSearchService = require('../services/googleSearchService');
+var helpService = require('../services/helpService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
