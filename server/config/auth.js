@@ -27,7 +27,7 @@ module.exports.init = function (app) {
 
 	// what is this doing
 	passport.serializeUser(function (user, done) {
-		done(null, user._id);
+		done(null, user._id.toString());
 	});
 
 	passport.deserializeUser(function (id, done) {

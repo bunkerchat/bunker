@@ -28,7 +28,7 @@ app.set('views', './server/views');
 app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({extended: false}));
 
-require('./auth').init(app);
+auth.init(app);
 
 // system level responses
 app.use(require('../responses/serverError'));
