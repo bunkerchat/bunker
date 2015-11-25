@@ -1,3 +1,4 @@
+
 var gulp = require('gulp');
 var usemin = require('gulp-usemin');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -17,7 +18,7 @@ gulp.task('clear-build-folder', function (cb) {
 });
 
 gulp.task('usemin', ['clear-build-folder'], function () {
-	return gulp.src('./views/index.ejs')
+	return gulp.src('./server/views/index.ejs')
 		.pipe(usemin({
 			assetsDir: './',
 			css: ['concat'],
@@ -41,7 +42,7 @@ gulp.task('usemin', ['clear-build-folder'], function () {
 gulp.task('move-index-prod', ['usemin'], function (done) {
 	fs.rename(
 		path.join('index.ejs'),
-		path.join('views', 'index-prod.ejs'),
+		path.join('server', 'views', 'index-prod.ejs'),
 		done);
 });
 

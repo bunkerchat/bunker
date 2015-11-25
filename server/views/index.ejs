@@ -20,7 +20,7 @@
 <div splash ng-show="loading">
 	<p class="loading-font">
 		Loading
-		<div class="splash-brand">Bunker</div>
+	<div class="splash-brand">Bunker</div>
 	</p>
 	<p><img src="/assets/images/emoticons/<%- loadingEmote %>"/></p>
 </div>
@@ -41,7 +41,7 @@
 <script src="/assets/vendor/moment/min/moment.min.js"></script>
 <script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
 <script src="/assets/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="/assets/vendor/angular/angular.js"></script>
+<script src="/assets/vendor/angular/angular.min.js"></script>
 <script src="/assets/vendor/angular-touch/angular-touch.min.js"></script>
 <script src="/assets/vendor/angular-sanitize/angular-sanitize.min.js"></script>
 <script src="/assets/vendor/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
@@ -60,23 +60,9 @@
 
 <!-- build:jsLibMin /assets/bundled/vendor.min.js -->
 <script src="/assets/vendor/jquery.dragbetter/jquery.dragbetter.js"></script>
-<!--<script src="/assets/vendor/socket.io-client/socket.io.js"></script>-->
-<!--<script src="/assets/vendor/sails.io.js/sails.io.js"></script>-->
-<script src="/assets/vendor/angular-audio/app/angular.audio.js"></script>
+<script src="/assets/vendor/socket.io-client/socket.io.js"></script>
+<script src="/assets/vendor/sails.io.js/sails.io.js"></script>
 <!-- endBuild -->
-
-<script src="/socket.io/socket.io.js"></script>
-<!--<script>-->
-	<!--var socket = io.connect();-->
-<!--//	socket.on('news', function (data) {-->
-<!--//		console.log(data);-->
-<!--//		socket.emit('my other event', { my: 'data' });-->
-<!--//	});-->
-
-<!--//	socket.emit('/init', 'yay', function (stuff) {-->
-<!--//		console.log('stuff', stuff);-->
-<!--//	})-->
-<!--</script>-->
 
 <!-- build:jsApp /assets/bundled/bundle.js -->
 <script src="/assets/app/bunker.js"></script>
@@ -84,6 +70,7 @@
 <script src="/assets/app/bunkerListener.js"></script>
 <script src="/assets/app/bunkerConstants.js"></script>
 <script src="/assets/app/messages/bunkerMessage.js"></script>
+<script src="/assets/app/messages/gfycat.js"></script>
 <script src="/assets/app/messages/bunkerMedia.js"></script>
 <script src="/assets/app/messages/messageLogScroll.js"></script>
 <script src="/assets/app/messages/notifications.js"></script>
