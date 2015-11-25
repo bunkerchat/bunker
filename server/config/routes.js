@@ -6,6 +6,7 @@ var viewController = require('../controllers/viewController');
 var authController = require('../controllers/AuthController');
 var userController = require('../controllers/UserController');
 var roomController = require('../controllers/RoomController');
+var userSettingsController = require('../controllers/UserSettingsController');
 
 // Policies
 var isLoggedIn = require('../policies/isLoggedIn');
@@ -33,8 +34,7 @@ module.exports.socketio = function (socket) {
 	socket.on('/user/current/clearInbox', socketToController(userController.clearInbox));
 
 	// user settings
-	//socket.on('/usersettings/') // TODO
-	//socket.on('/usersettings/updateSettings') // TODO
+	socket.on('/usersettings/save', socketToController(userSettingsController.save));
 
 	// room
 	socket.on('/room', socketToController(roomController.create));
