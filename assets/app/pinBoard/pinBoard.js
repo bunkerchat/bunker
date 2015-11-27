@@ -57,12 +57,14 @@ app.directive('pins', ['pinBoard', function (pinBoard) {
 		},
 		link: function (scope, element, attrs) {
 
+			scope.removePin = function(message) {
+				console.log(message);
+			};
+
 			scope.boardOpen = false;
 
-			//$('[pins]').on('click.pinBoard', function() {
-			//	return false;
-			//});
-
+			// Using 'handler' option for on/off because of race condition with
+			// scope create/destroy with this directive.
 			var closeClickListener = function () {
 				if (!scope.boardOpen) {
 					return true;

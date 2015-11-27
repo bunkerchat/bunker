@@ -1,5 +1,5 @@
-<a href="javascript:void(0);" ng-click="boardOpen = !boardOpen" title="Pinned messages">
-	<i class="fa fa-bookmark fa-lg"></i>
+<a class="btn btn-link" href="javascript:void(0);" ng-click="boardOpen = !boardOpen" title="Pinned messages">
+	<i class="fa fa-lg" ng-class="{'fa-bookmark': boardOpen, 'fa-bookmark-o': !boardOpen}"></i>
 </a>
 
 <div class="pin-board" ng-class="{'pin-board-active': boardOpen }" ng-switch="!!pinnedMessages.length">
@@ -7,7 +7,7 @@
 	<div ng-switch-when="true" ng-repeat="message in pinnedMessages" class="pin-board-message">
 		<img title="{{::message.author.nick}}" gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 		<span bunker-message="::message"></span>
-		<span><i title="Remove from pin board" class="fa fa-times pin-board-unpin"></i></span>
+		<i title="Remove from pin board" class="fa fa-times pin-board-unpin" ng-click="removePin(message)"></i>
 	</div>
 
 	<div ng-switch-default>
