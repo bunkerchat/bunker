@@ -20,22 +20,19 @@ module.exports.index = function (req, res) {
 		fs.readdirAsync('./assets/bundled').catch(empty)
 	)
 		.spread(function (emoticons, settings, bundledFiles) {
-			//var templates = _.find(bundledFiles, function (file) {
-			//	return _.includes(file, 'templates');
-			//});
+			var templates = _.find(bundledFiles, function (file) {
+				return _.includes(file, 'templates');
+			});
 
-			// no template caching for dev
-			//if (!config.useJavascriptBundle) {
-			//	templates = null;
-			//}
+			 //no template caching for dev
+			if (!config.useJavascriptBundle) {
+				templates = null;
+			}
 
-			var templates = null;
-			var isProd = false;
-
-			res.render(isProd ? 'index-prod' :'index', {
+			res.render(config.isProduction ? 'index-prod' :'index', {
 				templates: templates,
 				userId: userId,
-				isProduction: isProd,
+				isProduction: config.isProduction,
 				emoticons: emoticons,
 				loadingEmote: emoticonService.getLoadScreenEmoticon(),
 				debugging: settings.showDebugging
