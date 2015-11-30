@@ -1,4 +1,4 @@
-//var ent = require('ent');
+var ent = require('ent');
 var moment = require('moment');
 var Promise = require('bluebird');
 var socketio = require('../config/socketio');
@@ -17,7 +17,7 @@ var InvalidInputError = require('../errors/InvalidInputError');
 
 module.exports.createMessage = function (roomMember, text) {
 
-	//text = ent.encode(text);
+	text = ent.encode(text);
 
 	if (!text || !text.length) {
 		throw new InvalidInputError(); // block the trolls

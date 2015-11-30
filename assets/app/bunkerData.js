@@ -200,8 +200,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// RoomMember
 		saveRoomMemberSettings: function (roomMembers) {
-			var data = {roomMembers: roomMembers};
-			io.socket.emit('/roommember/updateSettings', data);
+			io.socket.emit('/roommember/updateSettings', {roomMembers: roomMembers});
 		},
 
 		// Emoticons

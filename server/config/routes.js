@@ -45,7 +45,7 @@ module.exports.socketio = function (socket) {
 	socket.on('/room/messages', socketToController(roomController.messages));
 
 	// roommember
-	//socket.on('/roommember/updateSettings') // TODO
+	socket.on('/roommember/updateSettings', socketToController(userSettingsController.saveRoomMember)) // TODO
 
 	// message
 	//socket.on('/message/emoticoncounts') // TODO
