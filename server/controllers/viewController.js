@@ -32,7 +32,7 @@ module.exports.index = function (req, res) {
 			res.render(config.useJavascriptBundle ? 'index-prod' :'index', {
 				templates: templates,
 				userId: userId,
-				isProduction: config.useJavascriptBundle,
+				useJavascriptBundle: config.useJavascriptBundle,
 				emoticons: emoticons,
 				loadingEmote: emoticonService.getLoadScreenEmoticon(),
 				debugging: settings.showDebugging
