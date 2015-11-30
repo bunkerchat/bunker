@@ -11,6 +11,7 @@ var RoomService = require('../services/RoomService');
 var googleSearchService = require('../services/googleSearchService');
 var helpService = require('../services/helpService');
 var statsService = require('../services/statsService');
+var leaderboardService = require('../services/leaderboardService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
