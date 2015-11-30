@@ -10,6 +10,7 @@ var ForbiddenError = require('../errors/ForbiddenError');
 var Message = require('../models/Message');
 var User = require('../models/User');
 var messageService = require('../services/messageService');
+var emoticonService = require('../services/emoticonService');
 
 // PUT /message/:id
 // Update a message (the edit functionality)

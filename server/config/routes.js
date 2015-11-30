@@ -44,11 +44,11 @@ module.exports.socketio = function (socket) {
 	socket.on('/room/messages', socketToController(roomController.messages));
 
 	// roommember
-	socket.on('/roommember/updateSettings', socketToController(userSettingsController.saveRoomMember)) // TODO
+	socket.on('/roommember/updateSettings', socketToController(userSettingsController.saveRoomMember));
 
 	// message
-	socket.on('/message/edit', socketToController(messageController.update)) // TODO
-	socket.on('/message/emoticoncounts', socketToController(messageController.emoticonCounts)) // TODO
+	socket.on('/message/edit', socketToController(messageController.update));
+	socket.on('/message/emoticoncounts', socketToController(messageController.emoticonCounts));
 
 };
 
