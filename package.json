@@ -7,7 +7,7 @@
   "dependencies": {
     "bluebird": "3.0.5",
     "body-parser": "1.14.1",
-    "bower": "1.4.2",
+    "bower": "1.6.8",
     "cache-manager": "1.2.2",
     "compression": "1.6.0",
     "connect-mongo": "0.8.2",

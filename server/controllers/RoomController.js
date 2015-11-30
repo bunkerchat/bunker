@@ -111,9 +111,9 @@ module.exports.join = function (req, res) {
 				.then(function (createdRoomMember) {
 					return Promise.join(
 						createdRoomMember,
-						User.findById(userId),
-						Room.findById(roomId),
-						RoomMember.find({room: roomId}).populate('user')
+						User.findById(userId).lean(),
+						Room.findById(roomId).lean(),
+						RoomMember.find({room: roomId}).populate('user').lean()
 					);
 				})
 				.spread(function (createdRoomMember, user, room, roomMembers) {

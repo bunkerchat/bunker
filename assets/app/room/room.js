@@ -19,6 +19,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					$scope.memberLookup = _.indexBy(members, function (roomMember) {
 						return roomMember.user._id;
 					});
+					updateMemberList();
 				});
 
 				updateMemberList();
