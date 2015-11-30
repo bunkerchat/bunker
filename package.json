@@ -33,6 +33,7 @@
     "mongodb": "2.0.49",
     "mongoose": "4.2.7",
     "node-uuid": "1.4.7",
+    "npm": "3.5.0",
     "passport": "0.3.2",
     "passport-google-plus": "0.5.1",
     "password-hash": "1.2.2",
