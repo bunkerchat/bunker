@@ -10,8 +10,6 @@ var messageController = require('../controllers/MessageController');
 
 // Policies
 var isLoggedIn = require('../policies/isLoggedIn');
-//var isEditor = require('../policies/isEditor');
-//var isAdmin = require('../policies/isAdmin');
 
 module.exports.http = function (app) {
 
