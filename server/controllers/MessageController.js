@@ -8,6 +8,7 @@
 var moment = require('moment');
 var ForbiddenError = require('../errors/ForbiddenError');
 var Message = require('../models/Message');
+var User = require('../models/User');
 var messageService = require('../services/messageService');
 
 // PUT /message/:id
@@ -24,13 +25,10 @@ exports.update = function (req, res) {
 				throw new ForbiddenError('Only the author may edit their message');
 			}
 
-			// TODO
-			//if (message.author.busy) {
-			//	// User is flagged as busy, we can now remove this flag since they are interacting with the app
-			//	User.update(userId, {busy: false}).exec(function (err, users) {
-			//	});
-			//}
-			//		User.publishUpdate(userId, {busy: false, typingIn: null});
+			// Inform clients that use is not busy and typing has ceased
+			var notTypingUpdate = {busy: false, typingIn: null};
+			User.findByIdAndUpdate(userId, notTypingUpdate).exec();
+			req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: notTypingUpdate});
 
 			// Only certain things are editable
 			var updates = {
