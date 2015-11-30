@@ -95,9 +95,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			return io.socket.emitAsync('/room/message', {roomId: roomId, text: text});
 		},
 
-		// TODO: server side editMessage changes
 		editMessage: function (message) {
-			return io.socket.emitAsync('/message/edit', {messageId: message._id, message: message});
+			return io.socket.emitAsync('/message/edit', {message: message});
 		},
 		loadMessages: function (room, skip) {
 			return io.socket.emitAsync('/room/messages', {roomId: room._id, skip: skip || 0})
@@ -200,8 +199,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// RoomMember
 		saveRoomMemberSettings: function (roomMembers) {
-			var data = {roomMembers: roomMembers};
-			io.socket.emit('/roommember/updateSettings', data);
+			io.socket.emit('/roommember/updateSettings', {roomMembers: roomMembers});
 		},
 
 		// Emoticons

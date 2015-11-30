@@ -45,8 +45,7 @@ module.exports.init = function (app) {
 
 	app.post('/auth/googleCallback', passport.authenticate('google'), function (req, res) {
 		req.session.googleCredentials = req.authInfo;
-		// Return user profile back to client
-		res.json(req.user);
+		res.json({});
 	});
 
 	return session;

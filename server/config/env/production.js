@@ -1,7 +1,6 @@
 var config = module.exports;
 
 config.environment = 'production';
-config.isProduction = true;
 config.url = 'http://bunkerchat.net';
 
 config.db = {
@@ -25,3 +24,5 @@ config.google = {
 config.consoleLogLevel = 'error';
 config.cacheLess = true;
 config.useJavascriptBundle = true;
+
+config.showServerErrors = false;

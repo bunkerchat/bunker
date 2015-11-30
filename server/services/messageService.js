@@ -1,4 +1,4 @@
-//var ent = require('ent');
+var ent = require('ent');
 var moment = require('moment');
 var Promise = require('bluebird');
 var socketio = require('../config/socketio');
@@ -17,7 +17,7 @@ var InvalidInputError = require('../errors/InvalidInputError');
 
 module.exports.createMessage = function (roomMember, text) {
 
-	//text = ent.encode(text);
+	text = ent.encode(text);
 
 	if (!text || !text.length) {
 		throw new InvalidInputError(); // block the trolls
@@ -460,7 +460,7 @@ function image(roomMember, text) {
 	var searchQuery = match[1];
 
 	return googleSearchService.imageSearch(searchQuery).then(function (images) {
-		socketio.io.to('user_' + roomMember.user._id).emit('user', {
+		socketio.io.to('userself_' + roomMember.user._id).emit('user', {
 			_id: roomMember.user._id,
 			verb: 'messaged',
 			data: {
@@ -486,7 +486,7 @@ function gif(roomMember, text) {
 	var searchQuery = match[1];
 
 	return googleSearchService.gifSearch("gif " + searchQuery).then(function (images) {
-		socketio.io.to('user_' + roomMember.user._id).emit('user', {
+		socketio.io.to('userself_' + roomMember.user._id).emit('user', {
 			_id: roomMember.user._id,
 			verb: 'messaged',
 			data: {

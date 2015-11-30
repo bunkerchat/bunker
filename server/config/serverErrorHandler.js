@@ -3,7 +3,7 @@ var config = require('./../config/config');
 module.exports = function serverError(err, req, res) {
 
 	// if environment is defined (aka production), strip error information
-	if (config.isProduction) {
+	if (!config.showServerErrors) {
 		err = {serverErrorMessage: "Sorry, a server error has occurred"};
 	}
 

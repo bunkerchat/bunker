@@ -8,6 +8,7 @@ module.exports.connectionUpdateWaitSeconds = 15;
 
 module.exports.findOrCreateBunkerUser = function (profile) {
 	var email = profile.emails[0].value;
+	var user;
 
 	return User.findOne({email: email})
 		.then(function (dbUser) {

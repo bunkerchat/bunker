@@ -3,15 +3,13 @@ var socketio = require('./socketio');
 
 // Controllers
 var viewController = require('../controllers/viewController');
-var authController = require('../controllers/AuthController');
 var userController = require('../controllers/UserController');
 var roomController = require('../controllers/RoomController');
 var userSettingsController = require('../controllers/UserSettingsController');
+var messageController = require('../controllers/MessageController');
 
 // Policies
 var isLoggedIn = require('../policies/isLoggedIn');
-//var isEditor = require('../policies/isEditor');
-//var isAdmin = require('../policies/isAdmin');
 
 module.exports.http = function (app) {
 
@@ -41,14 +39,14 @@ module.exports.socketio = function (socket) {
 	socket.on('/room/join', socketToController(roomController.join));
 	socket.on('/room/leave', socketToController(roomController.leave));
 	socket.on('/room/message', socketToController(roomController.message));
-	//socket.on('/room/message/edit') // TODO
 	socket.on('/room/messages', socketToController(roomController.messages));
 
 	// roommember
-	//socket.on('/roommember/updateSettings') // TODO
+	socket.on('/roommember/updateSettings', socketToController(userSettingsController.saveRoomMember));
 
 	// message
-	//socket.on('/message/emoticoncounts') // TODO
+	socket.on('/message/edit', socketToController(messageController.update));
+	socket.on('/message/emoticoncounts', socketToController(messageController.emoticonCounts));
 
 };
 

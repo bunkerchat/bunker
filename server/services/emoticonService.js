@@ -3,25 +3,20 @@ var fs = Promise.promisifyAll(require('fs'));
 var path = require('path');
 
 var cacheService = require('./cacheService');
+var Message = require('../models/Message');
+var User = require('../models/User');
 
 module.exports.emoticonCounts = function () {
 	return new Promise(function (resolve, reject) {
-		//HACK: fix this
-		return resolve([]);
+			// setting the request url as as the cache key
+			cacheService.short.wrap('Message/emoticonCounts', lookup, done);
 
+			function lookup(cacheLoadedCb) {
+				var emoticonRegex = /:\w+:/g;
+				var countMap = {};
 
-		// setting the request url as as the cache key
-		cacheService.short.wrap('Message/emoticonCounts', lookup, done);
-
-		function lookup(cacheLoadedCb) {
-			var emoticonRegex = /:\w+:/g;
-			var countMap = {};
-
-			// .native gives you a callback function with a hook to the model's collection
-			Message.native(function (err, messageCollection) {
-				if (err) return cacheLoadedCb(err);
-
-				messageCollection.find({text: {$regex: emoticonRegex}}).toArray(function (err, messages) {
+				// .native gives you a callback function with a hook to the model's collection
+				Message.find({text: {$regex: emoticonRegex}}, function (err, messages) {
 					_.each(messages, function (message) {
 
 						var matches = message.text.match(emoticonRegex);
@@ -59,11 +54,16 @@ module.exports.emoticonCounts = function () {
 						.value();
 
 					// Replace the id's in the userBy section with nick + id
-					User.find().then(function (users) {
+					User.find({}).then(function (users) {
+						var userHash = {};
+
+						_.each(users, function (user) {
+							userHash[user._id.toString()] = user;
+						});
 
 						_.each(emoticonCounts, function (count) {
 							_.each(count.usedBy, function (usedByCount, id) {
-								var user = _.find(users, {_id: id});
+								var user = userHash[id];
 								count.usedBy[user.nick + ' (' + id + ')'] = usedByCount;
 								delete count.usedBy[id];
 							});
@@ -73,14 +73,14 @@ module.exports.emoticonCounts = function () {
 					})
 						.catch(reject);
 				});
-			});
-		}
+			}
 
-		function done(err, emoticonCounts) {
-			if (err) return reject(err);
-			resolve(emoticonCounts);
+			function done(err, emoticonCounts) {
+				if (err) return reject(err);
+				resolve(emoticonCounts);
+			}
 		}
-	});
+	);
 };
 
 module.exports.getEmoticonNamesFromDisk = function () {
