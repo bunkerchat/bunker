@@ -28,6 +28,9 @@ module.exports.init = function (req, res) {
 	var userId = req.session.userId.toObjectId();
 	var socket = req.socket;
 
+	// allows sending async messages back to connected client from server
+	socket.join('userself_' + userId);
+
 	Promise.join(
 		User.findById(userId).lean(),
 		UserSettings.findOne({user: userId}),

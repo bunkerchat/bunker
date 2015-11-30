@@ -460,7 +460,7 @@ function image(roomMember, text) {
 	var searchQuery = match[1];
 
 	return googleSearchService.imageSearch(searchQuery).then(function (images) {
-		socketio.io.to('user_' + roomMember.user._id).emit('user', {
+		socketio.io.to('userself_' + roomMember.user._id).emit('user', {
 			_id: roomMember.user._id,
 			verb: 'messaged',
 			data: {
@@ -486,7 +486,7 @@ function gif(roomMember, text) {
 	var searchQuery = match[1];
 
 	return googleSearchService.gifSearch("gif " + searchQuery).then(function (images) {
-		socketio.io.to('user_' + roomMember.user._id).emit('user', {
+		socketio.io.to('userself_' + roomMember.user._id).emit('user', {
 			_id: roomMember.user._id,
 			verb: 'messaged',
 			data: {
