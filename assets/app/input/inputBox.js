@@ -40,7 +40,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 				};
 
 				var chosenMessage = scope.selectedMessageIndex > -1 ? scope.submittedMessages[scope.selectedMessageIndex] : {createdAt: null};
-				var historicMessage = {text: scope.messageText, createdAt: Date.now(), history: ''};
+				var historicMessage = {text: scope.messageText, createdAt: Date.now()};
 
 				if(scope.messageText.replace(/\s/g, '').length == 0) {
 					// Nothing to do! (but still reset things)
