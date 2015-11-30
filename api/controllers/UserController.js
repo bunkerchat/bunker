@@ -55,7 +55,7 @@ module.exports.init = function (req, res) {
 				// Get all room members and 40 initial messages for each room
 				Promise.map(rooms, function (room) {
 					return Promise.join(
-						Message.find({room: room.id}).sort('createdAt DESC').limit(40).populate('author'),
+						Message.find({room: room.id}).sort('createdAt ASC').limit(40).populate('author'),
 						RoomMember.find({room: room.id}).populate('user'),
 						PinnedMessage.find({ room: room.id }).populate('message')
 					)
