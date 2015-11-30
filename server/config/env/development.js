@@ -26,3 +26,5 @@ config.google = {
 config.consoleLogLevel = 'debug';
 config.cacheLess = false;
 config.useJavascriptBundle = false;
+
+config.showServerErrors = true;

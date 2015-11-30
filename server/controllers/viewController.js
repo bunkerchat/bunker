@@ -29,10 +29,10 @@ module.exports.index = function (req, res) {
 				templates = null;
 			}
 
-			res.render(config.isProduction ? 'index-prod' :'index', {
+			res.render(config.useJavascriptBundle ? 'index-prod' :'index', {
 				templates: templates,
 				userId: userId,
-				isProduction: config.isProduction,
+				isProduction: config.useJavascriptBundle,
 				emoticons: emoticons,
 				loadingEmote: emoticonService.getLoadScreenEmoticon(),
 				debugging: settings.showDebugging
