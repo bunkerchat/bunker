@@ -6,8 +6,8 @@ module.exports.jenkinsBestBuy = function (req, res) {
 	var roomId;
 
 	// new jenkins isn't passing full_url anymore :-(
-	//if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
-	var full_url = "http://minos-ops.na.bestbuy.com:8080/" + build.url;
+	if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
+	//var full_url = "http://minos-ops.na.bestbuy.com:8080/" + build.url;
 
 	// only show completed builds
 	if (build.phase != 'COMPLETED') return res.ok('thanks');
@@ -28,9 +28,9 @@ module.exports.jenkinsBestBuy = function (req, res) {
 			return externalNotification.save()
 				.then(function () {
 					var emote = build.status == 'FAILURE' ? ' :buildchicken:' : ':unsmith:';
-					var url = full_url + "console";
-					var protractorUrl = full_url + 'artifact/e2e_screenshots/my-report.html';
-					var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '" , link: ' + url + ', protractorReport: ' + protractorUrl + ' };';
+					var url = build.full_url + "console";
+					var protractorUrl = build.full_url + 'artifact/e2e_screenshots/my-report.html';
+					var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '" , link: ' + url + ' , protractorReport: ' + protractorUrl + ' };';
 
 					return Message.create({
 						room: roomId,
