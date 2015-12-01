@@ -5,7 +5,7 @@ module.exports.jenkinsBestBuy = function (req, res) {
 	var build = notification.build;
 	var roomId;
 
-	log.info('build', build);
+	console.log('build', JSON.stringify(build, null, 2));
 
 	// new jenkins isn't passing full_url anymore :-(
 	if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
