@@ -7,6 +7,8 @@ var Message = require('../models/Message');
 var User = require('../models/User');
 var Room = require('../models/Room');
 var RoomMember = require('../models/RoomMember');
+var InboxMessage = require('../models/InboxMessage');
+
 var RoomService = require('../services/RoomService');
 var googleSearchService = require('../services/googleSearchService');
 var helpService = require('../services/helpService');
