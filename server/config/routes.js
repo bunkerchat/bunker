@@ -7,6 +7,7 @@ var userController = require('../controllers/UserController');
 var roomController = require('../controllers/RoomController');
 var userSettingsController = require('../controllers/UserSettingsController');
 var messageController = require('../controllers/MessageController');
+var externalNotificationsController = require('../controllers/ExternalNotificationsController');
 
 // Policies
 var isLoggedIn = require('../policies/isLoggedIn');
@@ -19,6 +20,10 @@ module.exports.http = function (app) {
 
 	// Internal views
 	app.get('/', isLoggedIn, viewController.index);
+
+	// External Notifications
+	app.post('/externalnotifications/jenkinsBestBuy', externalNotificationsController.jenkinsBestBuy);
+	app.post('/externalnotifications/serverStatus', externalNotificationsController.serverStatus);
 };
 
 module.exports.socketio = function (socket) {
