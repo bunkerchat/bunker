@@ -60,9 +60,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 						// Add on messages that were previously not in the list
 						_.each(roomData.$messages, function (message) {
-							if (!existingMessagesLookup[message._id]) {
-								room.$messages.push(message);
-							}
+							if (existingMessagesLookup[message._id]) return;
+							room.$messages.push(message);
 						});
 					}
 
@@ -85,7 +84,11 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// Messages
 
 		addMessage: function (room, message) {
-			if (!bunkerData.userSettings.showNotifications && !message.author) return; // User does not want to see notifications
+			// User does not want to see notifications
+			if (!bunkerData.userSettings.showNotifications && !message.author) return;
+
+			// we already have this message, please skip
+			if (_.any(room.$messages, '_id', message._id)) return false;
 
 			bunkerData.decorateMessage(room, message);
 
@@ -101,9 +104,13 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		loadMessages: function (room, skip) {
 			return io.socket.emitAsync('/room/messages', {roomId: room._id, skip: skip || 0})
 				.then(function (messages) {
+					var existingMessagesLookup = _.indexBy(room.$messages, '_id');
+
 					_.eachRight(messages, function (message) {
+						if (existingMessagesLookup[message._id]) return;
 						room.$messages.unshift(message);
 					});
+
 					decorateMessages(room);
 					return room;
 				});
@@ -179,7 +186,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// UserSettings
 
 		saveUserSettings: function () {
-			io.socket.emit('/usersettings/save', {userSettingsId: bunkerData.userSettings._id, settings: bunkerData.userSettings});
+			io.socket.emit('/usersettings/save', {
+				userSettingsId: bunkerData.userSettings._id,
+				settings: bunkerData.userSettings
+			});
 			$rootScope.$broadcast('userSettingsUpdated', bunkerData.userSettings);
 		},
 		toggleUserSetting: function (name, checkForNotifications) {

@@ -5,8 +5,6 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 	var mentionSound = new Audio('/assets/sounds/mention.mp3');
 	var mentionSoundAlt = new Audio('/assets/sounds/turret.mp3');
 
-	console.log(bunkerData);
-
 	$timeout(function () {
 		loaded = true;
 	}, 5000);
