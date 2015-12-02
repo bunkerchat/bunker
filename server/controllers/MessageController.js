@@ -27,7 +27,7 @@ exports.update = function (req, res) {
 			}
 
 			// Inform clients that use is not busy and typing has ceased
-			var notTypingUpdate = {busy: false, typingIn: null};
+			var notTypingUpdate = {busy: false, typingIn: null, connected: true};
 			User.findByIdAndUpdate(userId, notTypingUpdate).exec();
 			req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: notTypingUpdate});
 
