@@ -12,7 +12,7 @@ config.db = {
 
 config.express = {
 	hostName: 'localhost',
-	port: 9002,
+	port: 8080,
 	ip: '0.0.0.0'
 };
 
