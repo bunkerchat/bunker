@@ -427,7 +427,7 @@ function saveFightInMentionedInboxes(message, author, room) {
 				if (regex.test(message.text)) {
 					return InboxMessage.create({user: roomMember.user._id, message: message._id})
 						.then(function (inboxMessage) {
-							return InboxMessage.findOne(inboxMessage._id).populateAll();
+							return InboxMessage.findOne(inboxMessage._id).populate('user message');
 						})
 						.then(function (inboxMessage) {
 							inboxMessage.message.author = author; // Attach populated author data
