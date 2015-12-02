@@ -402,7 +402,7 @@ function saveInMentionedInboxes(message) {
 				if (regex.test(message.text)) {
 					return InboxMessage.create({user: roomMember.user._id, message: message._id})
 						.then(function (inboxMessage) {
-							return InboxMessage.findOne(inboxMessage._id).populateAll();
+							return InboxMessage.findOne(inboxMessage._id).populate();
 						})
 						.then(function (inboxMessage) {
 							inboxMessage.message.author = author; // Attach populated author data
