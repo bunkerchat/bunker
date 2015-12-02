@@ -27,20 +27,22 @@ module.exports.message = function (req, res) {
 	var roomId = req.body.roomId.toObjectId();
 	var currentRoomMember;
 
-	RoomMember.findOne({user: userId, room: roomId}).populate('user')
-		.then(function (roomMember) {
-
+	RoomMember.findOne({user: userId, room: roomId})
+		.populate('user')
+		.then(roomMember => {
 			if (!roomMember) throw new ForbiddenError('Must be a member of this room');
 			currentRoomMember = roomMember;
 
 			// Inform clients that use is not busy and typing has ceased
 			var notTypingUpdate = {busy: false, typingIn: null, connected: true};
-			User.findByIdAndUpdate(userId, notTypingUpdate).exec();
-			req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: notTypingUpdate});
+			req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: notTypingUpdate});
 
-			return messageService.createMessage(roomMember, req.body.text);
+			return Promise.join(
+				User.findByIdAndUpdate(userId, notTypingUpdate),
+				messageService.createMessage(roomMember, req.body.text)
+			);
 		})
-		.then(res.ok)
+		.spread((userUpdate, message) => res.ok(message))
 		.catch(InvalidInputError, function (err) {
 			RoomService.messageUserInRoom(currentRoomMember.user._id, currentRoomMember.room, err.message);
 			res.badRequest(err);
