@@ -187,7 +187,7 @@ module.exports.leave = function (req, res) {
 // Get the messages of a room, with optional skip amount
 module.exports.messages = function (req, res) {
 	var roomId = req.body.roomId.toObjectId();
-	var skip = req.body.roomId.skip || 0;
+	var skip = req.body.skip || 0;
 
 	// find finds multiple instances of a model, using the where criteria (in this case the roomId
 	// we also want to sort in DESCing (latest) order and limit to 50
