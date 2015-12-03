@@ -18,18 +18,18 @@ module.exports.getStatsForUser = function (username, roomId) {
 };
 
 function generateStats(roomMember, template) {
-	return Message.count({author: roomMember.user.id})
+	return Message.count({author: roomMember.user._id})
 		.then(function (messageCount) {
 			return Promise.join(
 				fs.readFileAsync(path.join(__dirname, template)),
 				messageCount,
-				Message.count({author: roomMember.user.id, edited: true}),
+				Message.count({author: roomMember.user._id, edited: true}),
 				getActiveDays(roomMember),
-				Message.find({author: roomMember.user.id, type: 'standard'}).sort('createdAt ASC').limit(1),
-				Message.find({author: roomMember.user.id, type: 'standard'}).skip(_.random(0, messageCount)).limit(1),
+				Message.find({author: roomMember.user._id, type: 'standard'}).sort('createdAt ASC').limit(1),
+				Message.find({author: roomMember.user._id, type: 'standard'}).skip(_.random(0, messageCount)).limit(1),
 				getEmoticonCounts(roomMember),
-				getHangmanStats(roomMember.user.id),
-				getFightStatistics(roomMember.user.id)
+				getHangmanStats(roomMember.user._id),
+				getFightStatistics(roomMember.user._id)
 			)
 				.spread(function (template, messageCount, editCount, activeDays, firstMessage, randomMessage, emoticonCounts, hangmanStats, fightStats) {
 					firstMessage = firstMessage[0];
@@ -117,7 +117,7 @@ function getActiveDays(roomMember) {
 			messageCollection.aggregate([
 				{
 					$match: {
-						author: new ObjectId(roomMember.user.id)
+						author: new ObjectId(roomMember.user._id)
 					}
 				},
 				{
@@ -148,7 +148,7 @@ function getEmoticonCounts(roomMember) {
 		Message.native(function (err, messageCollection) {
 			if (err) return reject(err);
 
-			messageCollection.find({author: new ObjectId(roomMember.user.id), text: {$regex: emoticonRegex}})
+			messageCollection.find({author: new ObjectId(roomMember.user._id), text: {$regex: emoticonRegex}})
 				.toArray(function (err, messages) {
 					if (err) return reject(err);
 					_.each(messages, function (message) {
@@ -273,7 +273,7 @@ function getFightStatistics(userId) {
 								if (!victims[fightDataElement.challengerUser]) {
 									victims[fightDataElement.challengerUser] = {};
 									victims[fightDataElement.challengerUser].beatings = 0;
-									victims[fightDataElement.challengerUser].id = fightDataElement.challengerUser;
+									victims[fightDataElement.challengerUser]._id = fightDataElement.challengerUser;
 								}
 
 								victims[fightDataElement.challengerUser].beatings++;
@@ -283,7 +283,7 @@ function getFightStatistics(userId) {
 								if (!victims[fightDataElement.opponentUser]) {
 									victims[fightDataElement.opponentUser] = {};
 									victims[fightDataElement.opponentUser].beatings = 0;
-									victims[fightDataElement.opponentUser].id = fightDataElement.opponentUser;
+									victims[fightDataElement.opponentUser]._id = fightDataElement.opponentUser;
 								}
 
 								victims[fightDataElement.opponentUser].beatings++;
@@ -314,7 +314,7 @@ function getFightStatistics(userId) {
 
 					_.forEach(fightResults.topVictims, function (victim) {
 						var userIndex = _.findIndex(users, function (user) {
-							return user.id == victim.id;
+							return user._id == victim._id;
 						});
 
 						victim.userNick = users[userIndex].nick;

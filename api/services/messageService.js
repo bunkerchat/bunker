@@ -81,7 +81,7 @@ module.exports.broadcastMessage = broadcastMessage;
 
 function getHelp(roomMember, text) {
 	return helpService.getHelp(text).then(function (helpMessage) {
-		return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, helpMessage, 'help');
+		return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, helpMessage, 'help');
 	});
 }
 
@@ -104,7 +104,7 @@ function stats(roomMember, text) {
 
 	return statsService.getStats(roomMember)
 		.then(function (message) {
-			RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, message, 'stats');
+			RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, message, 'stats');
 		})
 }
 
@@ -183,18 +183,18 @@ function setUserNick(roomMember, text) {
 	if (user.nick == newNick) throw new InvalidInputError('Nick is already set');
 
 	return Promise.join(
-		User.update(user.id, {nick: newNick}),
-		RoomMember.find({user: user.id})
+		User.update(user._id, {nick: newNick}),
+		RoomMember.find({user: user._id})
 	)
 		.spread(function (updatedUser, memberships) {
 			updatedUser = updatedUser[0];
-			User.publishUpdate(user.id, {nick: updatedUser.nick});
+			User.publishUpdate(user._id, {nick: updatedUser.nick});
 			RoomService.messageRooms(_.pluck(memberships, 'room'), user.nick + ' changed their handle to ' + updatedUser.nick);
 		});
 }
 
 function setUserBusy(roomMember, text) {
-	return RoomMember.find({user: roomMember.user.id})
+	return RoomMember.find({user: roomMember.user._id})
 		.then(function (memberships) {
 
 			var user = roomMember.user;
@@ -202,7 +202,7 @@ function setUserBusy(roomMember, text) {
 			var busyMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
 			var busyMessage = busy && busyMessageMatches ? busyMessageMatches[1] : null;
 
-			return [User.update(user.id, {busy: busy, busyMessage: busyMessage}), memberships];
+			return [User.update(user._id, {busy: busy, busyMessage: busyMessage}), memberships];
 		})
 		.spread(function (user, memberships) {
 			user = user[0];
@@ -215,7 +215,7 @@ function setUserBusy(roomMember, text) {
 			}
 
 			RoomService.messageRooms(_.pluck(memberships, 'room'), message.join(' '));
-			User.publishUpdate(user.id, {busy: user.busy, busyMessage: user.busyMessage});
+			User.publishUpdate(user._id, {busy: user.busy, busyMessage: user.busyMessage});
 		});
 }
 
@@ -349,7 +349,7 @@ function message(roomMember, text, type) {
 
 function broadcastMessage(message) {
 	// now that message has been created, get the populated version
-	return Message.findOne(message.id).populateAll().exec(function (error, message) {
+	return Message.findOne(message._id).populateAll().exec(function (error, message) {
 		Room.message(message.room, message); // message all subscribers of the room that with the new message as data
 	});
 }
@@ -367,13 +367,13 @@ function saveInMentionedInboxes(message) {
 			return Promise.each(roomMembers, function (roomMember) {
 				var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
 				if (regex.test(message.text)) {
-					return InboxMessage.create({user: roomMember.user.id, message: message.id})
+					return InboxMessage.create({user: roomMember.user._id, message: message._id})
 						.then(function (inboxMessage) {
-							return InboxMessage.findOne(inboxMessage.id).populateAll();
+							return InboxMessage.findOne(inboxMessage._id).populateAll();
 						})
 						.then(function (inboxMessage) {
 							inboxMessage.message.author = author; // Attach populated author data
-							InboxMessage.message(roomMember.user.id, inboxMessage);
+							InboxMessage.message(roomMember.user._id, inboxMessage);
 						});
 				}
 			});
@@ -392,13 +392,13 @@ function saveFightInMentionedInboxes(message, author, room) {
 			return Promise.each(roomMembers, function (roomMember) {
 				var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
 				if (regex.test(message.text)) {
-					return InboxMessage.create({user: roomMember.user.id, message: message.id})
+					return InboxMessage.create({user: roomMember.user._id, message: message._id})
 						.then(function (inboxMessage) {
-							return InboxMessage.findOne(inboxMessage.id).populateAll();
+							return InboxMessage.findOne(inboxMessage._id).populateAll();
 						})
 						.then(function (inboxMessage) {
 							inboxMessage.message.author = author; // Attach populated author data
-							InboxMessage.message(roomMember.user.id, inboxMessage);
+							InboxMessage.message(roomMember.user._id, inboxMessage);
 						});
 				}
 			});
@@ -468,7 +468,7 @@ function fight(roomMember, text) {
 	return fightService.play(roomMember, text)
 		.then(function (fightResponse) {
 			if (fightResponse.isList) {
-				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, fightResponse.message, 'fight');
+				return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, fightResponse.message, 'fight');
 			}
 			else {
 				return message(roomMember, fightResponse.message, 'fight').then(function (message) {
@@ -482,7 +482,7 @@ function hangman(roomMember, text) {
 	return hangmanService.play(roomMember, text)
 		.then(function (hangmanResponse) {
 			if (hangmanResponse.isPrivate) {
-				return RoomService.messageUserInRoom(roomMember.user.id, roomMember.room, hangmanResponse.message, 'hangman');
+				return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, hangmanResponse.message, 'hangman');
 			}
 
 			return message(roomMember, hangmanResponse.message, 'hangman');
@@ -513,10 +513,10 @@ function changeUserRole(roomMember, text) {
 				newRole = roomMemberToPromote.role == 'administrator' ? 'moderator' : 'member';
 			}
 
-			return RoomMember.update(roomMemberToPromote.id, {role: newRole});
+			return RoomMember.update(roomMemberToPromote._id, {role: newRole});
 		})
 		.spread(function (roomMemberToPromote) {
-			RoomMember.publishUpdate(roomMemberToPromote.id, {role: newRole});
+			RoomMember.publishUpdate(roomMemberToPromote._id, {role: newRole});
 			var message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
 			RoomService.messageRoom(roomId, message);
 		});

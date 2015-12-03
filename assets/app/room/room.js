@@ -17,8 +17,9 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 				$scope.$watchCollection('current.$members', function (members) {
 					if (!members) return;
 					$scope.memberLookup = _.indexBy(members, function (roomMember) {
-						return roomMember.user.id;
+						return roomMember.user._id;
 					});
+					updateMemberList();
 				});
 
 				updateMemberList();
@@ -35,7 +36,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			};
 
 			$rootScope.$on('bunkerMessaged.animation', function (evt, message) {
-				if (message.room !== $scope.current.id) return;
+				if (message.room !== $scope.current._id) return;
 
 				var body = angular.element(document).find('body').eq(0);
 				var colors = ['red', 'green', 'blue', 'purple', 'brown', 'orange'];

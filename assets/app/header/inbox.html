@@ -5,7 +5,7 @@
 	No inbox messages <img src="/assets/images/emoticons/qq.gif"/>
 </div>
 <ol class="list-unstyled " ng-if="inbox.messages.length > 0">
-	<li ng-click="inbox.goToRoom(inboxMessage.message)" ng-repeat="inboxMessage in inbox.messages track by inboxMessage.id">
+	<li ng-click="inbox.goToRoom(inboxMessage.message)" ng-repeat="inboxMessage in inbox.messages track by inboxMessage._id">
 		<div class="inbox-author">
 			<img gravatar-src-once="inboxMessage.message.author.email | lowercase" gravatar-size="20"/>
 			{{::inboxMessage.message.author.nick}}

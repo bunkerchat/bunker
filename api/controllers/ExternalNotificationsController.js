@@ -6,8 +6,8 @@ module.exports.jenkinsBestBuy = function (req, res) {
 	var roomId;
 
 	// new jenkins isn't passing full_url anymore :-(
-	//if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
-	var full_url = "http://minos-ops.na.bestbuy.com:8080/" + build.url;
+	if (build.full_url.indexOf('bestbuy.com') == 0) return res.ok('welp');
+	//var full_url = "http://minos-ops.na.bestbuy.com:8080/" + build.url;
 
 	// only show completed builds
 	if (build.phase != 'COMPLETED') return res.ok('thanks');
@@ -17,7 +17,7 @@ module.exports.jenkinsBestBuy = function (req, res) {
 		ExternalNotifications.findOne({type: notification.name})
 	)
 		.spread(function (room, externalNotification) {
-			roomId = room.id;
+			roomId = room._id;
 			return externalNotification || ExternalNotifications.create({type: notification.name});
 		})
 		.then(function (externalNotification) {
@@ -28,9 +28,9 @@ module.exports.jenkinsBestBuy = function (req, res) {
 			return externalNotification.save()
 				.then(function () {
 					var emote = build.status == 'FAILURE' ? ' :buildchicken:' : ':unsmith:';
-					var url = full_url + "console";
-					var protractorUrl = full_url + 'artifact/e2e_screenshots/my-report.html';
-					var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '" , link: ' + url + ', protractorReport: ' + protractorUrl + ' };';
+					var url = build.full_url + "console";
+					var protractorUrl = build.full_url + 'artifact/e2e_screenshots/my-report.html';
+					var text = emote + ' Build Notification: { name: "' + notification.name + '" , status: "' + build.status + '" , link: ' + url + ' , protractorReport: ' + protractorUrl + ' };';
 
 					return Message.create({
 						room: roomId,
@@ -39,7 +39,7 @@ module.exports.jenkinsBestBuy = function (req, res) {
 					})
 				})
 				.then(function (message) {
-					return Message.findOne(message.id).populateAll();
+					return Message.findOne(message._id).populateAll();
 				})
 				.then(function (message) {
 					Room.message(roomId, message);
@@ -58,15 +58,15 @@ module.exports.serverStatus = function (req, res) {
 	Room.findOne({name: 'minos'})
 
 		.then(function (room) {
-			roomId = room.id;
+			roomId = room._id;
 			return Message.create({
-				room: room.id,
+				room: room._id,
 				text: 'Uptime Check Notification. Down: ' + _.map(req.body.down, 'url').join(' '),
 				type: 'buildNotification'
 			})
 		})
 		.then(function (message) {
-			return Message.findOne(message.id).populateAll();
+			return Message.findOne(message._id).populateAll();
 		})
 		.then(function (message) {
 			Room.message(roomId, message);

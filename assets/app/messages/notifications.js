@@ -5,8 +5,6 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 	var mentionSound = new Audio('/assets/sounds/mention.mp3');
 	var mentionSoundAlt = new Audio('/assets/sounds/turret.mp3');
 
-	console.log(bunkerData);
-
 	$timeout(function () {
 		loaded = true;
 	}, 5000);
@@ -40,19 +38,19 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 			if (!bunkerData.mentionsUser(message.text) || !message.author) return;
 
 			// if bunker is open and user is in room, don't show notification
-			if (bunkerIsVisible && $rootScope.roomId == room.id) return;
+			if (bunkerIsVisible && $rootScope.roomId == room._id) return;
 
 			var decodedText = $('<div/>').html(message.text).text();
 
 			//TODO: Check if creating event listeners like this causes memory leaks
 			var mention = $notification(room.name + " - bunker", {
 				body: message.author.nick + ': ' + decodedText,
-				tag: message.id,
+				tag: message._id,
 				icon: '/assets/images/bunkerIcon.png'
 			});
 
 			mention.$on('click', function () {
-				$state.go('chat.room', {roomId: room.id});
+				$state.go('chat.room', {roomId: room._id});
 			});
 
 			mention.$on('close', function () {

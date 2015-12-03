@@ -72,7 +72,7 @@ function generateResults(template, fightData, fightRoundData, hangmanPrivateGame
 			// add user nick to the data we have retrieved
 			_.forEach(fightData, function (fightDataElement) {
 				var userIndex = _.findIndex(users, function (user) {
-					return user.id == fightDataElement._id;
+					return user._id == fightDataElement._id;
 				});
 
 				fightDataElement.userNick = users[userIndex].nick;
@@ -80,7 +80,7 @@ function generateResults(template, fightData, fightRoundData, hangmanPrivateGame
 
 			_.forEach(fightRoundData, function (fightRoundDataElement) {
 				var userIndex = _.findIndex(users, function (user) {
-					return user.id == fightRoundDataElement._id;
+					return user._id == fightRoundDataElement._id;
 				});
 
 				fightRoundDataElement.userNick = users[userIndex].nick;
@@ -88,7 +88,7 @@ function generateResults(template, fightData, fightRoundData, hangmanPrivateGame
 
 			_.forEach(hangmanPrivateGameData, function (hangmanPrivateGameDataElement) {
 				var userIndex = _.findIndex(users, function (user) {
-					return user.id == hangmanPrivateGameDataElement.userId;
+					return user._id == hangmanPrivateGameDataElement.userId;
 				});
 
 				hangmanPrivateGameDataElement.userNick = users[userIndex].nick;
@@ -96,7 +96,7 @@ function generateResults(template, fightData, fightRoundData, hangmanPrivateGame
 
 			_.forEach(hangmanGuessAccuracyData, function (hangmanGuessAccuracyDataElement) {
 				var userIndex = _.findIndex(users, function (user) {
-					return user.id == hangmanGuessAccuracyDataElement.userId;
+					return user._id == hangmanGuessAccuracyDataElement.userId;
 				});
 
 				hangmanGuessAccuracyDataElement.userNick = users[userIndex].nick;

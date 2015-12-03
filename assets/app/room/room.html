@@ -10,15 +10,15 @@
 
 			<ol class="list-unstyled message-list" ng-class="{'has-topic': current.topic}"
 				message-log-scroll
-				room-id="{{::current.id}}"
+				room-id="{{::current._id}}"
 				on-scroll-top="loadPreviousMessages()">
 
-				<li id="{{::message.id}}" class="message-container"
+				<li id="{{::message._id}}" class="message-container"
 					ng-switch="::!!message.author"
 					ng-repeat="message in current.$messages track by message.$idAndEdited" >
 
 					<div class="message message-type-{{::message.type || 'none'}}"
-						 ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
+						 ng-class="::{ local: message.author._id == user._id, 'message-mention': message.$mentionsUser }">
 
 						<!-- standard message -->
 						<div ng-switch-when="true">
@@ -27,8 +27,8 @@
 									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
 									<div class="name">{{::message.author.nick}}</div>
 									<span class="status"
-										  ng-class="memberLookup[message.author.id].user.$present ? 'here' : 'away'"
-										  ng-if="memberLookup[message.author.id].user.connected">
+										  ng-class="memberLookup[message.author._id].user.$present ? 'here' : 'away'"
+										  ng-if="memberLookup[message.author._id].user.connected">
 									</span>
 								</span>
 							</div>
@@ -77,7 +77,7 @@
 			<ul class="list-group member-list" ng-if="current.$selected">
 				<li class="list-group-item"
 					ng-switch="member.user.connected"
-					ng-repeat="member in memberList track by member.id">
+					ng-repeat="member in memberList track by member._id">
 
 					<span class="offline" ng-switch-when="false">
 						<!-- offline member, much less watches -->

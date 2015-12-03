@@ -28,7 +28,7 @@ module.exports.message = function (req, res) {
 
 		if (roomMember.user.busy) {
 			// User is flagged as busy, we can now remove this flag since they are interacting with the app
-			User.update(roomMember.user.id, {busy: false}).exec(function (err, users) {
+			User.update(roomMember.user._id, {busy: false}).exec(function (err, users) {
 			});
 		}
 
@@ -42,7 +42,7 @@ module.exports.message = function (req, res) {
 			res.forbidden(err);
 		})
 		.catch(InvalidInputError, function (err) {
-			RoomService.messageUserInRoom(currentRoomMember.user.id, currentRoomMember.room, err.message);
+			RoomService.messageUserInRoom(currentRoomMember.user._id, currentRoomMember.room, err.message);
 			res.badRequest(err);
 		})
 		.catch(res.serverError);
@@ -148,7 +148,7 @@ module.exports.create = function (req, res) {
 	Room.create({name: name}).exec(function (err, room) {
 
 		// Make user an administrator
-		RoomMember.create({room: room.id, user: userId, role: 'administrator'}).exec(function (error, roomMember) {
+		RoomMember.create({room: room._id, user: userId, role: 'administrator'}).exec(function (error, roomMember) {
 			RoomMember.publishCreate(roomMember);
 
 			// WARNING
@@ -299,7 +299,7 @@ module.exports.media = function (req, res) {
 			res.ok(_.map(messages, function (message) {
 				return _(message)
 					.pick(['author', 'text', 'createdAt'])
-					.extend({id: message._id})
+					.extend({_id: message._id})
 					.value();
 			}));
 		});

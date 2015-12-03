@@ -40,7 +40,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 				};
 
 				var chosenMessage = scope.selectedMessageIndex > -1 ? scope.submittedMessages[scope.selectedMessageIndex] : {createdAt: null};
-				var historicMessage = {text: scope.messageText, createdAt: Date.now(), history: ''};
+				var historicMessage = {text: scope.messageText, createdAt: Date.now()};
 
 				if(scope.messageText.replace(/\s/g, '').length == 0) {
 					// Nothing to do! (but still reset things)
@@ -50,14 +50,14 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					bunkerData.createMessage(newMessage.room, newMessage.text)
 						.then(function (result) {
 							if (result && result.author) {
-								historicMessage.id = result.id;
+								historicMessage._id = result._id;
 								scope.submittedMessages.unshift(historicMessage); // Save message for up/down keys to retrieve
 							}
 						});
 				}
 				else {
 					scope.submittedMessages[scope.selectedMessageIndex].text = scope.messageText;
-					newMessage.id = scope.submittedMessages[scope.selectedMessageIndex].id;
+					newMessage._id = scope.submittedMessages[scope.selectedMessageIndex]._id;
 					newMessage.edited = true;
 					chosenMessage.edited = true;
 					bunkerData.editMessage(newMessage);
