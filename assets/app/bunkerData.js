@@ -258,17 +258,11 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-<<<<<<< HEAD
-			message.$idAndEdited = message.id + message.editCount;
+			message.$idAndEdited = message._id + '_' + message.editCount;
 		};
-
 
 		_.each(room.$messages, messageDecorator);
 		_.each(room.$pinnedMessages, messageDecorator);
-=======
-			message.$idAndEdited = message._id + '_' + message.editCount;
-		});
->>>>>>> upstream/master
 	}
 
 	function decorateMembers(room) {

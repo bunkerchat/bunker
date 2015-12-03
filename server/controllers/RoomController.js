@@ -13,6 +13,7 @@ var RoomMember = require('../models/RoomMember');
 var User = require('../models/User');
 var Room = require('../models/Room');
 var Message = require('../models/Message');
+var PinnedMessage = require('../models/PinnedMessage');
 
 var RoomService = require('../services/RoomService');
 var messageService = require('../services/messageService');
@@ -236,4 +237,78 @@ module.exports.media = function (req, res) {
 			}));
 		});
 	});
+};
+
+// POST /room/:id/pins
+module.exports.pinMessage = function(req, res) {
+
+	var roomId = req.body.roomId.toObjectId();
+	var messageId = req.body.messageId.toObjectId();
+
+	Promise.join(
+		PinnedMessage.create({ message: messageId, room: roomId }),
+		Message.findOne(messageId).populate('author'),
+
+		function(pinnedMessage, message) {
+
+			PinnedMessage.message(req.body.roomId, { pinned: true, messageId: req.body.messageId, message: message, roomId: req.body.roomId });
+
+			res.ok();
+		});
+
+	// TODO: ensure user is member of room
+	// get room/room user?
+	// get message?
+	// only allow certain message types?
+	// get room pins?
+	// prune pins?
+	// save pinBoard?
+	// x send update/notify?
+};
+
+module.exports.unPinMessage = function(req, res) {
+
+	var roomId = req.body.roomId.toObjectId();
+	var messageId = req.body.messageId.toObjectId();
+
+	PinnedMessage
+			.destroy({ message: messageId })
+			.then(function() {
+				var unPinResult = { messageId: req.body.messageId, pinned: false, roomId: req.body.roomId };
+
+				PinnedMessage.message(req.body.roomId, unPinResult);
+
+				res.ok(unPinResult);
+			})
+			.catch(res.serverError);
+};
+
+// GET /room/:id/pins
+module.exports.getPins = function(req, res) {
+	var roomId = actionUtil.requirePk(req);
+
+	var pinnedMessages = null;
+
+	// TODO: this isn't used except for testing :P
+	PinnedMessage
+		.find({ room: roomId })
+		.populate('message')
+		.then(function(pins) {
+
+			pinnedMessages = pins;
+
+			return User.find({ id: _.pluck(pins, 'message.author') });
+		})
+		.then(function(users) {
+
+			var lookup = _.indexBy(users, 'id');
+
+			pinnedMessages = _.map(pinnedMessages, function(item) {
+				item.message.author = lookup[item.message.author];
+				return item;
+			});
+
+			return { pins: pinnedMessages };
+		})
+		.then(res.ok);
 };

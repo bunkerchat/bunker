@@ -27,19 +27,10 @@ app.factory('pinBoard', ['$window', '$rootScope', '$q', function ($window, $root
 		pinChanged: pinChanged,
 
 		savePin: function (messageId) {
-			return $q(function (resolve) {
-				io.socket.post('/room/' + $rootScope.roomId + '/pins', {messageId: messageId}, function () {
-					resolve();
-				});
-			});
+			return io.socket.emitAsync('/room/pinMessage', {messageId: messageId, roomId: $rootScope.roomId})
 		},
 		unPin: function (messageId) {
-			return $q(function (resolve) {
-				io.socket.delete('/room/' + $rootScope.roomId + '/pins/' + messageId, function (res) {
-
-					resolve(res);
-				});
-			});
+			return io.socket.emitAsync('/room/unPinMessage', {messageId: messageId, roomId: $rootScope.roomId});
 		},
 		isPinned: function (messageId) {
 			return !!pinLookup[messageId];
