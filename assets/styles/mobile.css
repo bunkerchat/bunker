@@ -1,6 +1,63 @@
+a, [ng-click], [ui-sref] {
+	cursor: pointer;
+}
+
 header {
 	height: 50px;
 	padding: 10px;
 	background-color: #596470;
 	color: #fff;
+}
+
+.message-container {
+	position: relative;
+	margin: 3px 0;
+}
+
+.message-author {
+	float: left;
+	margin-left: 10px;
+}
+
+.message.local .message-author {
+	float: right;
+	margin-right: 10px;
+}
+
+.message-caret {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 43px;
+	width: 0;
+	height: 0;
+	border-bottom: 8px solid #fff;
+	border-bottom: 8px solid rgba(255, 255, 255, 0); /* needs to be here for carets to work */
+	border-top: 8px solid #fff;
+	border-top: 8px solid rgba(255, 255, 255, 0); /* needs to be here for carets to work */
+	border-right: 8px solid #fff;
+}
+
+.message.local .message-caret {
+	border-right-color: lightblue;
+}
+
+.message-body {
+	margin: 0 50px;
+	padding: 10px;
+	border: solid #ddd 1px;
+	border-radius: 3px;
+	background-color: white;
+}
+
+.message.local .message-body {
+	background-color: lightblue;
+}
+
+.message-body .name {
+	font-weight: bold;
+}
+
+.system-message-body {
+	margin: 0 50px;
 }

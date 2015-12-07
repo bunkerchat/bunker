@@ -12,6 +12,12 @@ window.app = angular.module('bunkerMobile', [
 				templateUrl: '/assets/app/mobile/lobby/lobby.html',
 				controller: 'LobbyController as lobby'
 			})
+			.state('room', {
+				url: '/room/{roomId}',
+				templateUrl: '/assets/app/mobile/room/room.html',
+				controller: 'RoomController as room'
+			});
+
 	})
 	.run(function ($rootScope, $document, bunkerListener, bunkerData, $q) {
 
