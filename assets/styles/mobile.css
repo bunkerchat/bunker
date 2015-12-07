@@ -1,5 +1,16 @@
+body {
+	max-width: 500px;
+	margin: 0 auto;
+	border: solid red 1px;
+	box-sizing: content-box;
+}
+
 a, [ng-click], [ui-sref] {
 	cursor: pointer;
+}
+
+[bunker-media] img {
+	display: none;
 }
 
 header {
@@ -7,11 +18,27 @@ header {
 	padding: 10px;
 	background-color: #596470;
 	color: #fff;
+	line-height: 25px;
+}
+
+header h3 {
+	margin: 0;
+}
+
+.header-left {
+	float: left;
+	display: inline-block;
+	margin-right: 10px;
+}
+.header-center {
+	float: left;
+	display: inline-block;
 }
 
 .message-container {
 	position: relative;
 	margin: 3px 0;
+	overflow: hidden;
 }
 
 .message-author {
@@ -43,11 +70,19 @@ header {
 }
 
 .message-body {
-	margin: 0 50px;
+	float: right;
 	padding: 10px;
 	border: solid #ddd 1px;
 	border-radius: 3px;
 	background-color: white;
+}
+
+.message-body:not(.new-message-body) {
+	margin-left: 50px;
+}
+
+.message.local .message-body:not(.new-message-body) {
+	margin-right: 50px;
 }
 
 .message.local .message-body {
@@ -60,4 +95,6 @@ header {
 
 .system-message-body {
 	margin: 0 50px;
+	padding: 10px;
+	border: solid #eee 1px;
 }

@@ -1,3 +1,5 @@
+<room-header room="room.current"></room-header>
+
 <ol class="list-unstyled">
 	<li id="{{::message._id}}"
 		class="message-container"
@@ -16,7 +18,7 @@
 					</span>
 				</div>
 				<div class="message-caret" ng-if="::message.$firstInSeries"></div>
-				<div class="message-body">
+				<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
 					<span ng-if="::message.$firstInSeries" title="{{::message.author.email}}">
 						<div class="name">{{::message.author.nick}}</div>
 					</span>
