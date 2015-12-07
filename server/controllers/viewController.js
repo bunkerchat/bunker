@@ -24,12 +24,12 @@ module.exports.index = function (req, res) {
 				return _.includes(file, 'templates');
 			});
 
-			 //no template caching for dev
+			//no template caching for dev
 			if (!config.useJavascriptBundle) {
 				templates = null;
 			}
 
-			res.render(config.useJavascriptBundle ? 'index-prod' :'index', {
+			res.render(config.useJavascriptBundle ? 'index-prod' : 'index', {
 				templates: templates,
 				userId: userId,
 				useJavascriptBundle: config.useJavascriptBundle,
@@ -39,6 +39,13 @@ module.exports.index = function (req, res) {
 			});
 		})
 		.catch(res.serverError);
+};
+
+module.exports.mobile = function (req, res) {
+	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
+	res.render('mobile', {
+		userId: userId
+	});
 };
 
 module.exports.login = function (req, res) {

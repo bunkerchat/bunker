@@ -11,6 +11,7 @@ app.set('env', config.useJavascriptBundle ? 'production' : 'development');
 app.use(require('compression')());
 
 app.use('/assets',express.static('assets'));
+app.use('/node_modules',express.static('node_modules'));
 app.set('view engine', 'ejs');
 app.set('views', './server/views');
 app.use(bodyParser.json());

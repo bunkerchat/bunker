@@ -1,0 +1,13 @@
+<lobby-header></lobby-header>
+
+<ul class="list-group">
+	<li class="list-group-item" ui-sref="" ng-repeat="room in ::lobby.rooms">
+		<h4 class="list-group-item-heading">
+			{{::room.name}}
+		</h4>
+		<p ng-if="::room.$lastMessage">
+			<img gravatar-src-once="room.$lastMessage.author.email | lowercase" gravatar-size="20"/>
+			{{::room.$lastMessage.author.nick}}: {{::room.$lastMessage.text}}
+		</p>
+	</li>
+</ul>

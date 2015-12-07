@@ -20,6 +20,7 @@ module.exports.http = function (app) {
 
 	// Internal views
 	app.get('/', isLoggedIn, viewController.index);
+	app.get('/m', viewController.mobile);
 
 	// External Notifications
 	app.post('/externalnotifications/jenkinsBestBuy', externalNotificationsController.jenkinsBestBuy);
