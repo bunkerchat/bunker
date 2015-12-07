@@ -1,6 +1,8 @@
 body {
 	max-width: 500px;
 	margin: 0 auto;
+	margin-top: 50px;
+	margin-bottom: 40px;
 	border: solid red 1px;
 	box-sizing: content-box;
 }
@@ -14,11 +16,16 @@ a, [ng-click], [ui-sref] {
 }
 
 header {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	max-width: 500px;
 	height: 50px;
 	padding: 10px;
 	background-color: #596470;
 	color: #fff;
 	line-height: 25px;
+	z-index: 1;
 }
 
 header h3 {
@@ -97,4 +104,16 @@ header h3 {
 	margin: 0 50px;
 	padding: 10px;
 	border: solid #eee 1px;
+}
+
+footer {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	max-width: 500px;
+}
+
+footer textarea.form-control {
+	border-radius: 0;
+	resize: none;
 }
