@@ -1,6 +1,8 @@
 <room-header room="room.current"></room-header>
 
-<ol class="list-unstyled">
+<ol class="list-unstyled message-list"
+	room-scroll
+	room-id="{{::room.current._id}}">
 	<li id="{{::message._id}}"
 		class="message-container"
 		ng-switch="::!!message.author"
@@ -53,6 +55,4 @@
 	</li>
 </ol>
 
-<footer>
-	<input-box room-id="{{room.current._id}}"></input-box>
-</footer>
+<input-box room-id="{{room.current._id}}"></input-box>

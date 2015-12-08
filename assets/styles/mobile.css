@@ -1,10 +1,13 @@
+html {
+	background-color: #000;
+}
+
 body {
 	max-width: 500px;
+	height: 100%;
 	margin: 0 auto;
 	margin-top: 50px;
-	margin-bottom: 40px;
-	border: solid red 1px;
-	box-sizing: content-box;
+	background-color: #efefef;
 }
 
 a, [ng-click], [ui-sref] {
@@ -22,7 +25,7 @@ header {
 	max-width: 500px;
 	height: 50px;
 	padding: 10px;
-	background-color: #596470;
+	background-color: #3e3f3a;
 	color: #fff;
 	line-height: 25px;
 	z-index: 1;
@@ -42,6 +45,10 @@ header h3 {
 	display: inline-block;
 }
 
+.message-list {
+	padding-bottom: 35px;
+}
+
 .message-container {
 	position: relative;
 	margin: 3px 0;
@@ -50,12 +57,15 @@ header h3 {
 
 .message-author {
 	float: left;
+	width: 40px;
 	margin-left: 10px;
 }
 
 .message.local .message-author {
 	float: right;
 	margin-right: 10px;
+	margin-left: 0;
+	text-align: right;
 }
 
 .message-caret {
@@ -73,11 +83,14 @@ header h3 {
 }
 
 .message.local .message-caret {
-	border-right-color: lightblue;
+	left: initial;
+	right: 43px;
+	border-left: 8px solid #d9edf7;
+	border-right: none;
 }
 
 .message-body {
-	float: right;
+	float: left;
 	padding: 10px;
 	border: solid #ddd 1px;
 	border-radius: 3px;
@@ -88,12 +101,16 @@ header h3 {
 	margin-left: 50px;
 }
 
+.message.local .message-body {
+	float: right;
+}
+
 .message.local .message-body:not(.new-message-body) {
 	margin-right: 50px;
 }
 
 .message.local .message-body {
-	background-color: lightblue;
+	background-color: #d9edf7;
 }
 
 .message-body .name {
@@ -106,14 +123,19 @@ header h3 {
 	border: solid #eee 1px;
 }
 
-footer {
+input-box {
 	position: fixed;
 	bottom: 0;
 	width: 100%;
 	max-width: 500px;
+	z-index: 1001;
 }
 
-footer .form-control {
+input-box .form-control {
 	border-radius: 0;
 	resize: none;
+}
+
+.fixfixed input-box {
+	position: absolute;
 }
