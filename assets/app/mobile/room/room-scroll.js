@@ -1,3 +1,9 @@
+$(document).on('blur', 'input, textarea', function() {
+	setTimeout(function() {
+		window.scrollTo(document.body.scrollLeft, document.body.scrollTop);
+	}, 0);
+});
+
 app.directive('roomScroll', function ($timeout, $rootScope, bunkerData) {
 	return {
 		scope: {
