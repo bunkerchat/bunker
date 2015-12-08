@@ -26,3 +26,4 @@ config.cacheLess = true;
 config.useJavascriptBundle = true;
 
 config.showServerErrors = false;
+config.useSocketioRedis = true;
