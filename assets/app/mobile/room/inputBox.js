@@ -11,22 +11,6 @@ app.component('inputBox', {
 			delete this.text;
 		};
 
-		//atempt 3ish
-		//$(window).scroll(_.debounce(function () {
-		//	// while scrolling
-		//	$('input-box').hide();
-		//}, 150, {'leading': true, 'trailing': false}));
-		//
-		//$(window).scroll(_.debounce(function () {
-		//	// stopped scrolling
-		//	position();
-		//}, 150));
-		//
-		//$('input-box input').blur(position);
-		//$('input-box input').focus(position);
-		//position();
-
-
 		var focused = false;
 
 		function position() {
@@ -50,20 +34,15 @@ app.component('inputBox', {
 			position();
 		}, 150));
 
-		//$(window).scroll(position);
-
 		//attempt 5ish
 		$(document)
 			.on('focus', 'input', function () {
 				focused = true;
-				//$('body').addClass('fixfixed');
 				position();
-				setTimeout(function() { $(window).scroll(); }, 3000);
-				//position();
+				setTimeout(function() { $(window).scroll(); }, 100);
 			})
 			.on('blur', 'input', function () {
 				focused = false;
-				//$('body').removeClass('fixfixed');
 				unposition();
 			});
 	}

@@ -1,6 +1,6 @@
 html {
 	/*background-color: #000;*/
-	background: pink;
+	background: blue;
 }
 
 body {
@@ -135,9 +135,4 @@ input-box {
 input-box .form-control {
 	border-radius: 0;
 	resize: none;
-}
-
-.fixfixed input-box {
-	/*position: absolute;*/
-	/*top: */
 }
