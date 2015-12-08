@@ -115,6 +115,7 @@ header h3 {
 
 .message-body {
 	float: left;
+	max-width: calc(100% - 100px);
 	padding: 10px;
 	border: solid #ddd 1px;
 	border-radius: 3px;
