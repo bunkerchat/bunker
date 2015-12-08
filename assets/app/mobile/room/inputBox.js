@@ -13,6 +13,29 @@ app.component('inputBox', {
 
 		var focused = false;
 
+		$(window).scroll(_.debounce(function () {
+			// while scrolling
+			$('input-box').hide();
+		}, 150, {'leading': true, 'trailing': false}));
+
+		$(window).scroll(_.debounce(function () {
+			// stopped scrolling
+			position();
+			$('input-box').show();
+		}, 150));
+
+		//attempt 5ish
+		$(document)
+			.on('focus', 'input', function () {
+				focused = true;
+				position();
+				setTimeout(function() { $(window).scroll(); }, 0);
+			})
+			.on('blur', 'input', function () {
+				focused = false;
+				unposition();
+			});
+
 		function position() {
 			if (!focused) return;
 			$('input-box').css({
@@ -28,22 +51,5 @@ app.component('inputBox', {
 				bottom: '0'
 			});
 		}
-
-		$(window).scroll(_.debounce(function () {
-			// stopped scrolling
-			position();
-		}, 150));
-
-		//attempt 5ish
-		$(document)
-			.on('focus', 'input', function () {
-				focused = true;
-				position();
-				setTimeout(function() { $(window).scroll(); }, 100);
-			})
-			.on('blur', 'input', function () {
-				focused = false;
-				unposition();
-			});
 	}
 });
