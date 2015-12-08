@@ -406,7 +406,12 @@ function saveInMentionedInboxes(message) {
 						})
 						.then(function (inboxMessage) {
 							inboxMessage.message.author = author; // Attach populated author data
-							InboxMessage.message(roomMember.user._id, inboxMessage);
+							//InboxMessage.message(roomMember.user._id, inboxMessage);
+							socketio.io.to('inboxmessage_' + roomMember.user._id).emit('inboxmessage', {
+								_id: roomMember.user._id,
+								verb: 'messaged',
+								data: inboxMessage
+							});
 						});
 				}
 			});
