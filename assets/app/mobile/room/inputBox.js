@@ -52,7 +52,8 @@ app.component('inputBox', {
 			.on('focus', 'input', function () {
 				focused = true;
 				//$('body').addClass('fixfixed');
-				position();
+				$timeout(position, 1000);
+				//position();
 			})
 			.on('blur', 'input', function () {
 				focused = false;
