@@ -45,7 +45,12 @@ app.component('inputBox', {
 			});
 		}
 
-		$(window).scroll(position);
+		$(window).scroll(_.debounce(function () {
+			// stopped scrolling
+			position();
+		}, 150));
+
+		//$(window).scroll(position);
 
 		//attempt 5ish
 		$(document)
