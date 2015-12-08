@@ -113,7 +113,7 @@ footer {
 	max-width: 500px;
 }
 
-footer textarea.form-control {
+footer .form-control {
 	border-radius: 0;
 	resize: none;
 }
