@@ -11,7 +11,7 @@ app.component('inputBox', {
 			delete this.text;
 		};
 
-		// atempt 3ish
+		//atempt 3ish
 		//$(window).scroll(_.debounce(function () {
 		//	// while scrolling
 		//	$('input-box').hide();
@@ -25,36 +25,39 @@ app.component('inputBox', {
 		//$('input-box input').blur(position);
 		//$('input-box input').focus(position);
 		//position();
-		//
-		//function position() {
-		//	$('input-box')
-		//		.css({
-		//			position: 'absolute',
-		//			top: window.scrollY + window.innerHeight - $('input-box').height() + 'px'
-		//		})
-		//		.show();
-		//}
 
+
+		var focused = false;
+
+		function position() {
+			if (!focused) return;
+			$('input-box').css({
+				position: 'absolute',
+				top: window.scrollY + window.innerHeight - 46 + 'px'
+			});
+		}
+
+		function unposition() {
+			$('input-box').css({
+				position: 'fixed',
+				top: 'initial',
+				bottom: '0'
+			});
+		}
+
+		$(window).scroll(position);
 
 		//attempt 5ish
-		//$(document)
-		//	.on('focus', 'input', function() {
-		//		$('body').addClass('fixfixed');
-		//	})
-		//	.on('blur', 'input', function() {
-		//		$('body').removeClass('fixfixed');
-		//	});
-
-
-			var $body = $('body');
-			document.addEventListener('focusin', function() {
-				return $body.addClass('fixfixed');
-			});
-			document.addEventListener('focusout', function() {
-				$body.removeClass('fixfixed');
-				return setTimeout(function() {
-					return $(window).scrollLeft(0);
-				}, 20);
+		$(document)
+			.on('focus', 'input', function () {
+				focused = true;
+				//$('body').addClass('fixfixed');
+				position();
+			})
+			.on('blur', 'input', function () {
+				focused = false;
+				//$('body').removeClass('fixfixed');
+				unposition();
 			});
 	}
 });

@@ -137,5 +137,6 @@ input-box .form-control {
 }
 
 .fixfixed input-box {
-	position: absolute;
+	/*position: absolute;*/
+	/*top: */
 }
