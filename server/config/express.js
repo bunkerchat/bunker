@@ -8,7 +8,6 @@ var config = require('./config');
 app.set('env', config.useJavascriptBundle ? 'production' : 'development');
 
 //var bootstrapPath = path.join('bower_components', 'bootstrap');
-app.use(require('compression')());
 
 app.use('/assets',express.static('assets'));
 app.use('/node_modules',express.static('node_modules'));
