@@ -124,11 +124,18 @@ header h3 {
 }
 
 input-box {
+	position: fixed;
+	bottom: 0;
 	width: 100%;
 	max-width: 500px;
+	z-index: 1001;
 }
 
 input-box .form-control {
 	border-radius: 0;
 	resize: none;
+}
+
+.fixfixed input-box {
+	position: absolute;
 }
