@@ -11,6 +11,7 @@ app.component('inputBox', {
 			delete this.text;
 		};
 
+		// atempt 3ish
 		//$(window).scroll(_.debounce(function () {
 		//	// while scrolling
 		//	$('input-box').hide();
@@ -34,12 +35,26 @@ app.component('inputBox', {
 		//		.show();
 		//}
 
-		$(document)
-			.on('focus', 'input', function() {
-				$('body').addClass('fixfixed');
-			})
-			.on('blur', 'input', function() {
-				$('body').removeClass('fixfixed');
+
+		//attempt 5ish
+		//$(document)
+		//	.on('focus', 'input', function() {
+		//		$('body').addClass('fixfixed');
+		//	})
+		//	.on('blur', 'input', function() {
+		//		$('body').removeClass('fixfixed');
+		//	});
+
+
+			var $body = $('body');
+			document.addEventListener('focusin', function() {
+				return $body.addClass('fixfixed');
+			});
+			document.addEventListener('focusout', function() {
+				$body.removeClass('fixfixed');
+				return setTimeout(function() {
+					return $(window).scrollLeft(0);
+				}, 20);
 			});
 	}
 });
