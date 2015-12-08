@@ -1,13 +1,12 @@
 html {
-	background-color: #fbfbfb;
+	background-color: #efefef;
 }
 
 body {
 	max-width: 500px;
-	height: 100%;
 	margin: 0 auto;
-	margin-top: 50px;
-	background-color: #efefef;
+	margin-top: 53px;
+	background-color: transparent;
 }
 
 a, [ng-click], [ui-sref] {
@@ -44,6 +43,31 @@ header h3 {
 	float: left;
 	display: inline-block;
 }
+
+/* lobby */
+
+.room-list h3 {
+	font-weight: bold;
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+.room-list p {
+	text-overflow: ellipsis;
+	width: 100%;
+	height: 30px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.room-list p [am-time-ago] {
+	position: absolute;
+	top: 15px;
+	right: 5px;
+	font-size: 11px;
+}
+
+/* room */
 
 .message-list {
 	padding-bottom: 35px;

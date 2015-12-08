@@ -1,6 +1,7 @@
 window.app = angular.module('bunkerMobile', [
 		'ui.router',
 		'ui.gravatar',
+		'angularMoment',
 		'notification'
 	])
 	.config(function ($stateProvider, $urlRouterProvider) {
