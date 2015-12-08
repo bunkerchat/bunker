@@ -159,6 +159,8 @@ module.exports.activity = function (req, res) {
 module.exports.connect = function (req, res) {
 	var lastConnected, previouslyConnected;
 
+	if(!req.session.userId) return;
+
 	User.findById(req.session.userId.toObjectId())
 		.then(function (user) {
 			lastConnected = user.lastConnected;
