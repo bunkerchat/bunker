@@ -1,12 +1,12 @@
 html {
-	background-color: #eee;
+	background-color: #000;
 }
 
 body {
 	max-width: 500px;
 	margin: 0 auto;
 	margin-top: 50px;
-	background-color: white;
+	background-color: #efefef;
 }
 
 a, [ng-click], [ui-sref] {
@@ -24,7 +24,7 @@ header {
 	max-width: 500px;
 	height: 50px;
 	padding: 10px;
-	background-color: #596470;
+	background-color: #3e3f3a;
 	color: #fff;
 	line-height: 25px;
 	z-index: 1;
@@ -79,7 +79,10 @@ header h3 {
 }
 
 .message.local .message-caret {
-	border-right-color: lightblue;
+	left: initial;
+	right: 43px;
+	border-left: 8px solid #d9edf7;
+	border-right: none;
 }
 
 .message-body {
@@ -103,7 +106,7 @@ header h3 {
 }
 
 .message.local .message-body {
-	background-color: lightblue;
+	background-color: #d9edf7;
 }
 
 .message-body .name {
@@ -118,7 +121,7 @@ header h3 {
 
 footer {
 	position: fixed;
-	bottom: 0;
+	top: calc(100% - 46px);
 	width: 100%;
 	max-width: 500px;
 }
