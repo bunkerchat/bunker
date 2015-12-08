@@ -15,7 +15,7 @@ app.component('inputBox', {
 
 		$(window).scroll(_.debounce(function () {
 			// while scrolling
-			$('input-box').hide();
+			//$('input-box').hide();
 		}, 150, {'leading': true, 'trailing': false}));
 
 		$(window).scroll(_.debounce(function () {
@@ -29,7 +29,7 @@ app.component('inputBox', {
 			.on('focus', 'input', function () {
 				focused = true;
 				position();
-				setTimeout(function() { $(window).scroll(); }, 0);
+				setTimeout(function() { $(window).scroll(); }, 10);
 			})
 			.on('blur', 'input', function () {
 				focused = false;
