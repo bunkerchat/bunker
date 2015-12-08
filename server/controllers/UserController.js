@@ -25,7 +25,7 @@ module.exports.init = function (req, res) {
 
 	var localUser, localUserSettings, localMemberships, localInboxMessages;
 
-	if(!req.session.userId) return;
+	if(!req.session.userId) return res.ok();
 
 	var userId = req.session.userId.toObjectId();
 	var socket = req.socket;
