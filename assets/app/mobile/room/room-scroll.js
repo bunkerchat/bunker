@@ -57,7 +57,9 @@ app.directive('roomScroll', function ($timeout, $rootScope, bunkerData) {
 				}, waitTime || 0);
 			}
 
-			bunkerData.$promise.then(scroll);
+			bunkerData.$promise.then(function () {
+				scroll(100)
+			});
 		}
 	}
 });

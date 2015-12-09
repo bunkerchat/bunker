@@ -1,7 +1,7 @@
 <lobby-header></lobby-header>
 
 <ul class="list-group room-list">
-	<li class="list-group-item" ui-sref="room({roomId: room._id})" ng-repeat="room in ::lobby.rooms | orderBy:$lastMessage.createdAt">
+	<li class="list-group-item" ui-sref="room({roomId: room._id})" ng-repeat="room in ::lobby.rooms | orderBy:'$lastMessage.createdAt':true">
 		<h3 class="list-group-item-heading">
 			{{::room.name}}
 		</h3>

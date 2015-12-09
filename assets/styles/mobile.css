@@ -63,7 +63,7 @@ header h3 {
 .room-list p [am-time-ago] {
 	position: absolute;
 	top: 15px;
-	right: 5px;
+	right: 15px;
 	font-size: 11px;
 }
 
@@ -120,7 +120,7 @@ header h3 {
 	border: solid #ddd 1px;
 	border-radius: 3px;
 	background-color: white;
-	word-break: break-all;
+	word-break: break-word;
 	line-height: 25px;
 }
 
@@ -150,6 +150,10 @@ header h3 {
 
 .message-body img {
 	max-height: 25px;
+}
+
+.message [am-time-ago] {
+	margin-left: 5px;
 }
 
 .system-message-body {
