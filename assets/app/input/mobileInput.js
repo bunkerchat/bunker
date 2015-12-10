@@ -14,5 +14,13 @@ app.component('mobileInput', {
 
 			delete self.messageText;
 		};
+
+		$('mobile-input input').keydown(function (evt) {
+			if (evt.keyCode == 13) {
+				evt.preventDefault();
+				self.sendMessage();
+				$rootScope.$digest();
+			}
+		});
 	}
 });
