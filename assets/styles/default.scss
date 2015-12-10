@@ -376,6 +376,10 @@ mark:hover {
 	padding-left: 4px;
 	height: 30px;
 	line-height: 30px;
+
+	img {
+		height: 20px;
+	}
 }
 
 .message-author * {
@@ -749,6 +753,7 @@ img.fatality {
 		bottom: 40px;
 		left: 0;
 		right: 0;
+		background-color: #efefef;
 		-webkit-overflow-scrolling: touch;
 	}
 
@@ -756,28 +761,96 @@ img.fatality {
 		height: initial;
 	}
 
-	.message-author {
-		width: 100%;
-		height: auto;
-		background-color: #414B57;
-	}
-
-	.message-caret, .animation-box {
+	.animation-box, .topic, [bunker-media] {
 		display: none;
 	}
 
-	.message-author .status {
-		position: absolute;
-		top: 5px;
-		left: 0;
+	.message, .message.local {
+		overflow:hidden;
+		background-color: transparent;
+
+		.status {
+			display: none;
+		}
+	}
+
+	.message-author {
+		float: left;
+		width: 40px;
+		padding: 0 5px;
+		margin-right: 5px;
+
+		.name {
+			display: none;
+		}
+
+		img {
+			height: 30px;
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	.message-caret {
+		left: 38px;
 	}
 
 	.message-body {
-		border-top: solid #eee 1px;
-		margin-left: 0;
-		padding-right: 10px;
+		display: inline-block;
+		width: auto;
+		max-width: calc(100% - 100px);
+		margin: 0 0 3px 0;
+		border: solid #ddd 1px;
+		padding: 10px;
+		word-break: break-word;
+
+		.message-author-name {
+			font-weight: bold;
+		}
+
+		.message-info {
+			position: initial;
+			padding: 0;
+		}
 	}
 
+	// mods for local messages (goes to right side)
+	.message.local {
+		.message-author {
+			float: right;
+			margin-right: 0;
+			margin-left: 5px;
+		}
+		.message-caret {
+			left: initial;
+			right: 38px;
+			border-left: 8px solid #d9edf7;
+			border-right: none;
+		}
+		.message-body {
+			float: right;
+			background-color: #d9edf7;
+		}
+	}
+
+	// system message
+	.system-message-body {
+		width: auto;
+		max-width: calc(100% - 100px);
+		margin: 0 46px;
+
+		[am-time-ago] {
+			display: none;
+		}
+		.system-message {
+			margin: 0;
+			padding: 10px;
+			background-color: transparent;
+			color: black;
+		}
+	}
+
+	// input box in mobile
 	.message-input {
 		position: fixed;
 		bottom: 0;

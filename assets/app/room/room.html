@@ -24,7 +24,7 @@
 						<div ng-switch-when="true">
 							<div class="message-author">
 								<span ng-if="::message.$firstInSeries" title="{{::message.author.email}}">
-									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
+									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="30"/>
 									<div class="name">{{::message.author.nick}}</div>
 									<span class="status"
 										  ng-class="memberLookup[message.author._id].user.$present ? 'here' : 'away'"
@@ -34,6 +34,9 @@
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
+								<div class="message-author-name visible-xs" ng-if="::message.$firstInSeries">
+									{{::message.author.nick}}
+								</div>
 								<span bunker-message="::message"></span>
 								<span class="message-info text-muted">
 									<span class="fa fa-pencil" ng-if="::message.edited"></span>
@@ -48,7 +51,7 @@
 
 						<!-- system message -->
 						<div ng-switch-default>
-							<div class="new-message-body">
+							<div class="new-message-body system-message-body">
 								<div class="system-message">
 									<span bunker-message="::message"></span>
 								</div>
