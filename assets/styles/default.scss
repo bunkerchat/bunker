@@ -859,9 +859,9 @@ img.fatality {
 		width: 100vw;
 		border-top: solid #aaa 1px;
 
-		input {
+		input, textarea {
 			float: left;
-			width: calc(100vw - 46px);
+			width: calc(100vw - 60px);
 			border-radius: 0;
 			border: 0;
 
@@ -871,7 +871,7 @@ img.fatality {
 		}
 
 		button {
-			width: 46px;
+			width: 60px;
 			height: 46px;
 			background: white;
 			border: 0;
