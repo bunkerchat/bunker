@@ -1,29 +1,32 @@
 <div class="container-fluid lobby" ng-show="!$root.roomId">
 
-
-
 	<div ng-show="lobby.rooms.length > 0">
 		<div class="page-header">
 			<h3>Your Rooms</h3>
 		</div>
-		<table class="table table-condensed table-hover">
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Topic</th>
-					<th><i class="fa fa-user"></i> Online</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="room in lobby.rooms | orderBy:'name' track by room._id" ng-if="room.$resolved">
-					<td>
-						<a ui-sref="chat.room({roomId: room._id})">{{room.name}}</a>
-					</td>
-					<td ng-bind-html="room.topic"></td>
-					<td>{{room.$members | connectedUsersCount}} / {{room.$members.length}}</td>
-				</tr>
-			</tbody>
-		</table>
+
+		<ul class="list-group">
+			<li class="list-group-item"
+				ui-sref="chat.room({roomId: room._id})"
+				ng-if="room.$resolved"
+				ng-repeat="room in lobby.rooms | orderBy:'name' track by room._id">
+				<h4 class="list-group-item-heading">
+					{{::room.name}}
+					<small class="hidden-xs" ng-bind-html="room.topic"></small>
+				</h4>
+				<span class="lobby-room-users">
+					{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>
+				</span>
+
+				<p ng-if="::room.$lastMessage">
+					<span am-time-ago="room.$lastMessage.createdAt"></span>
+					<img gravatar-src-once="room.$lastMessage.author.email | lowercase" gravatar-size="30"/>
+					{{::room.$lastMessage.author.nick}}: {{::room.$lastMessage.text}}
+				</p>
+
+			</li>
+		</ul>
+
 	</div>
 	<div ng-show="lobby.rooms.length == 0">
 		<div class="page-header">
@@ -39,7 +42,7 @@
 
 		<div class="input-group">
 			<input type="text" class="form-control" placeholder="New room name"
-						 ng-model="newRoomName" ng-required="true"/>
+				   ng-model="newRoomName" ng-required="true"/>
 
 			<span class="input-group-btn">
 					<button class="btn btn-success">Create</button>
