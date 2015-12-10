@@ -1,8 +1,9 @@
 window.app = angular.module('bunkerMobile', [
-	'ui.router',
-	'ui.gravatar',
-	'notification'
-])
+		'ui.router',
+		'ui.gravatar',
+		'angularMoment',
+		'notification'
+	])
 	.config(function ($stateProvider, $urlRouterProvider) {
 
 		$urlRouterProvider.otherwise('/');
@@ -21,16 +22,6 @@ window.app = angular.module('bunkerMobile', [
 	})
 	.run(function ($rootScope, $document, bunkerListener, bunkerData, $q) {
 
-		//// html5 visibility api instead of win.focus or win.blur
-		//$document.on('visibilitychange', function () {
-		//	$rootScope.$broadcast(document.hidden ? 'visibilityHide' : 'visibilityShow');
-		//});
-		//
-		//$rootScope.$on('$stateChangeSuccess', function (event, toState, toParams) {
-		//	$rootScope.roomId = toParams.roomId || null;
-		//	$rootScope.$broadcast('roomIdChanged', $rootScope.roomId);
-		//});
-
 		var socket = io.connect();
 		socket.on('connect', function () {
 			console.log('socket connected');
@@ -42,6 +33,54 @@ window.app = angular.module('bunkerMobile', [
 		// per https://github.com/socketio/socket.io/issues/430
 		bunkerListener.init();
 		bunkerData.start();
+	})
+	.run(function () {
+
+		// bunch of hacks to make scrolling and input focus work on mobile
+
+		var focused = false;
+		var inputBoxHeight;
+
+		$(window).scroll(_.debounce(function () {
+			// while scrolling
+		}, 150, {'leading': true, 'trailing': false}));
+
+		$(window).scroll(_.debounce(function () {
+			// stopped scrolling
+			position();
+		}, 150));
+
+		$(document)
+			.on('focus', 'input', function () {
+				focused = true;
+				position();
+				setTimeout(function () {
+					$(window).scroll();
+				}, 5);
+			})
+			.on('blur', 'input', function () {
+				focused = false;
+				unposition();
+			});
+
+		function position() {
+			if (!focused) return;
+
+			inputBoxHeight = $('input-box').outerHeight() || inputBoxHeight;
+
+			$('input-box').css({
+				position: 'absolute',
+				top: (window.scrollY + window.innerHeight - inputBoxHeight) + 'px'
+			});
+		}
+
+		function unposition() {
+			$('input-box').css({
+				position: 'fixed',
+				top: 'initial',
+				bottom: '0'
+			});
+		}
 	});
 
 function sailsApiWrapper(socket, $q) {

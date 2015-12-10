@@ -43,9 +43,17 @@ module.exports.index = function (req, res) {
 
 module.exports.mobile = function (req, res) {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
-	res.render('mobile', {
-		userId: userId
-	});
+
+	Promise.join(
+		emoticonService.getEmoticonNamesFromDisk()
+	)
+		.spread((emoticons) => {
+			res.render('mobile', {
+				userId: userId,
+				emoticons: emoticons
+			});
+		})
+		.catch(res.serverError);
 };
 
 module.exports.login = function (req, res) {
