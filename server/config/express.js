@@ -2,12 +2,18 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
+var sassMiddleware = require('node-sass-middleware');
 var auth = require('./auth');
 var config = require('./config');
 
 app.set('env', config.useJavascriptBundle ? 'production' : 'development');
 
 //var bootstrapPath = path.join('bower_components', 'bootstrap');
+app.use(sassMiddleware({
+	src: path.join(__dirname, '../../'),
+	outputStyle: 'compressed',
+	force: true // TODO make this false for prod?
+}));
 
 app.use('/assets',express.static('assets'));
 app.use('/node_modules',express.static('node_modules'));
