@@ -1,15 +1,18 @@
-<div class="message-input" ng-show="$root.roomId">
-	<form>
-		<div class="input-group">
-			<input type="text" class="form-control"
-				   ng-model="mobileInput.messageText"
-				   ng-trim="false"
-				   bunker-input="mobileInput.messageText"/>
-			<span class="input-group-btn">
-				<button type="button" class="btn">
-					SEND
-				</button>
-			</span>
-		</div>
-	</form>
+<div class="container-fluid message-input" ng-show="$root.roomId">
+	<div class="row">
+		<form class="col-md-xs no-gutter" ng-submit="mobileInput.sendMessage()">
+			<div class="input-group">
+				<textarea rows="1" class="form-control"
+						  ng-model="mobileInput.messageText"
+						  ng-trim="false"
+						  bunker-input="mobileInput.messageText">
+				</textarea>
+				<span class="input-group-btn">
+					<button type="submit" class="btn btn-success">
+						<i clas="fa fa-mail-forward"></i>
+					</button>
+				</span>
+			</div>
+		</form>
+	</div>
 </div>

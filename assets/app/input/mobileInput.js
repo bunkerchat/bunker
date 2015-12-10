@@ -7,16 +7,12 @@ app.component('mobileInput', {
 
 		var self = this;
 
-		$(document).on('touchend click', 'mobile-input button', function () {
-			$rootScope.$apply(sendMessage);
-		});
-
-		function sendMessage() {
+		this.sendMessage = function () {
 			if (self.messageText && self.messageText.replace(/\s/g, '').length > 0) {
 				bunkerData.createMessage($rootScope.roomId, self.messageText);
 			}
 
 			delete self.messageText;
-		}
+		};
 	}
 });
