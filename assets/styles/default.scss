@@ -776,6 +776,22 @@ img.fatality {
 		font-size: 56px;
 	}
 
+	// lobby
+
+	.lobby {
+		padding-left: 0;
+		padding-right: 0;
+
+		.page-header {
+			display: none;
+		}
+		.list-group-item {
+			border-radius: 0;
+			border-left: 0;
+			border-right: 0;
+		}
+	}
+
 	// message list
 
 	.message-list {
