@@ -1,0 +1,10 @@
+<div class="container-fluid message-input" ng-show="$root.roomId">
+	<div class="row">
+		<form class="col-md-10 no-gutter" ng-submit="mobileInput.sendMessage()">
+			<input type="text" class="form-control"
+					  ng-model="mobileInput.messageText"
+					  ng-trim="false"
+					  bunker-input="mobileInput.messageText"/>
+		</form>
+	</div>
+</div>

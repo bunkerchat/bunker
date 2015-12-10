@@ -798,7 +798,7 @@ img.fatality {
 	.message-body {
 		display: inline-block;
 		width: auto;
-		max-width: calc(100% - 100px);
+		max-width: calc(100% - 90px);
 		margin: 0 0 3px 0;
 		border: solid #ddd 1px;
 		padding: 10px;
@@ -809,8 +809,10 @@ img.fatality {
 		}
 
 		.message-info {
+			display: inline-block;
 			position: initial;
 			padding: 0;
+			margin-left: 5px;
 		}
 	}
 
@@ -854,6 +856,11 @@ img.fatality {
 	.message-input {
 		position: fixed;
 		bottom: 0;
+
+		input {
+			width: 100vw;
+			border-radius: 0;
+		}
 	}
 }
 
