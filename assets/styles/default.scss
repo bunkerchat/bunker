@@ -856,10 +856,30 @@ img.fatality {
 	.message-input {
 		position: fixed;
 		bottom: 0;
+		width: 100vw;
+		border-top: solid #999 1px;
 
 		input {
-			width: 100vw;
+			float: left;
+			width: calc(100vw - 46px);
 			border-radius: 0;
+			border: 0;
+
+			&:hover, &:focus {
+				border: 0;
+			}
+		}
+
+		button {
+			width: 46px;
+			height: 46px;
+			background: white;
+			border: 0;
+			outline: none;
+
+			&:hover, &:focus, &:active {
+				border: 0;
+			}
 		}
 	}
 }
