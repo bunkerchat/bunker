@@ -1,13 +1,15 @@
 <div class=" message-input" ng-show="$root.roomId">
-	<div class="input-group">
-		<input type="text" class="form-control"
-			   ng-model="mobileInput.messageText"
-			   ng-trim="false"
-			   bunker-input="mobileInput.messageText"/>
+	<form>
+		<div class="input-group">
+			<input type="text" class="form-control"
+				   ng-model="mobileInput.messageText"
+				   ng-trim="false"
+				   bunker-input="mobileInput.messageText"/>
 		<span class="input-group-btn">
-			<button type="submit" class="btn btn-success" ng-click="mobileInput.sendMessage()">
+			<button type="button" class="btn btn-success" ng-click="mobileInput.sendMessage()">
 				<i class="fa fa-mail-forward"></i>
 			</button>
 		</span>
-	</div>
+		</div>
+	</form>
 </div>
