@@ -876,9 +876,13 @@ img.fatality {
 			background: white;
 			border: 0;
 			outline: none;
+			color: #333;
+			font-size: 15px;
 
 			&:hover, &:focus, &:active {
 				border: 0;
+				background: white;
+				color: #333;
 			}
 		}
 	}
