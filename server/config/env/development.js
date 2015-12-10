@@ -28,3 +28,4 @@ config.cacheLess = false;
 config.useJavascriptBundle = false;
 
 config.showServerErrors = true;
+config.useSocketioRedis = false;

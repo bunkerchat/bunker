@@ -25,6 +25,8 @@ module.exports.init = function (req, res) {
 
 	var localUser, localUserSettings, localMemberships, localInboxMessages;
 
+	if(!req.session.userId) return res.ok();
+
 	var userId = req.session.userId.toObjectId();
 	var socket = req.socket;
 
@@ -158,6 +160,8 @@ module.exports.activity = function (req, res) {
 
 module.exports.connect = function (req, res) {
 	var lastConnected, previouslyConnected;
+
+	if(!req.session.userId) return;
 
 	User.findById(req.session.userId.toObjectId())
 		.then(function (user) {

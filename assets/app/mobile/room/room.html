@@ -1,0 +1,53 @@
+<room-header room="room.current"></room-header>
+
+<ol class="list-unstyled message-list"
+	room-scroll
+	room-id="{{::room.current._id}}">
+	<li id="{{::message._id}}"
+		class="message-container"
+		ng-switch="::!!message.author"
+		ng-repeat="message in room.current.$messages track by message.$idAndEdited">
+
+
+		<div class="message message-type-{{::message.type || 'none'}}"
+			 ng-class="::{ local: message.author._id == room.user._id, 'message-mention': message.$mentionsUser }">
+
+			<!-- standard message -->
+			<div ng-switch-when="true">
+				<div class="message-author">
+					<span ng-if="::message.$firstInSeries" title="{{::message.author.email}}">
+						<img gravatar-src-once="message.author.email | lowercase" gravatar-size="30"/>
+					</span>
+				</div>
+				<div class="message-caret" ng-if="::message.$firstInSeries"></div>
+				<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
+					<span ng-if="::message.$firstInSeries" title="{{::message.author.email}}">
+						<div class="name">{{::message.author.nick}}</div>
+					</span>
+
+					<span bunker-message="::message"></span>
+					<span class="message-info text-muted">
+						<span class="fa fa-pencil" ng-if="::message.edited"></span>
+						<span class="text-muted" ng-if="::message.$firstInSeries">
+							<small am-time-ago="message.createdAt"
+								   title="{{::message.createdAt | date:'medium'}}">
+							</small>
+						</span>
+					</span>
+				</div>
+			</div>
+
+			<!-- system message -->
+			<div ng-switch-default>
+				<div class="system-message-body">
+					<div class="system-message">
+						<span bunker-message="::message"></span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</li>
+</ol>
+
+<input-box room-id="{{room.current._id}}"></input-box>

@@ -24,18 +24,33 @@ module.exports.index = function (req, res) {
 				return _.includes(file, 'templates');
 			});
 
-			 //no template caching for dev
+			//no template caching for dev
 			if (!config.useJavascriptBundle) {
 				templates = null;
 			}
 
-			res.render(config.useJavascriptBundle ? 'index-prod' :'index', {
+			res.render(config.useJavascriptBundle ? 'index-prod' : 'index', {
 				templates: templates,
 				userId: userId,
 				useJavascriptBundle: config.useJavascriptBundle,
 				emoticons: emoticons,
 				loadingEmote: emoticonService.getLoadScreenEmoticon(),
 				debugging: settings.showDebugging
+			});
+		})
+		.catch(res.serverError);
+};
+
+module.exports.mobile = function (req, res) {
+	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
+
+	Promise.join(
+		emoticonService.getEmoticonNamesFromDisk()
+	)
+		.spread((emoticons) => {
+			res.render('mobile', {
+				userId: userId,
+				emoticons: emoticons
 			});
 		})
 		.catch(res.serverError);

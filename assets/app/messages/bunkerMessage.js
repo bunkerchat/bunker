@@ -8,18 +8,12 @@ window.addTweet = function (data) {
 	element.append(data.html);
 };
 
-app.filter('trusted', ['$sce', function ($sce) {
-	return function (url) {
-		return $sce.trustAsResourceUrl(url);
-	};
-}]);
-
 // jesus fucking christ why the god damn hell does regex have state!?
 function youtubeRegexp() {
 	return /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
 }
 
-app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
+app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) {
 
 	function replaceAll(str, find, replace) {
 		return str.split(find).join(replace);
@@ -35,7 +29,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData) {
 
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
 			if (scope.bunkerMessage && scope.bunkerMessage.text) {
-				scope.formatted = parseText(scope.bunkerMessage.text);
+				scope.formatted = $sce.trustAsHtml(parseText(scope.bunkerMessage.text));
 			}
 			else {
 				scope.$watch('bunkerMessage.topic', function (topic) {
