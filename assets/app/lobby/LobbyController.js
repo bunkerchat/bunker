@@ -3,6 +3,9 @@ app.controller('LobbyController', function ($state, bunkerData) {
 
 	bunkerData.$promise.then(function () {
 		self.rooms = bunkerData.rooms;
+		_.each(self.rooms, function(room) {
+			room.$lastMessage = _(room.$messages).filter({type: 'standard'}).last();
+		});
 	});
 
 	this.joinRoom = function (roomId) {

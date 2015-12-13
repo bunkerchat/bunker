@@ -15,7 +15,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 
 			$rootScope.$on('bunkerMessaged', function (evt, message) {
 
-				if (atBottomOfPage()) {
+				if (atBottomOfPage() || message.author._id == bunkerData.user._id) {
 					// Check for images
 					var image = angular.element('#' + message._id).find('img');
 					if (image.length) {
