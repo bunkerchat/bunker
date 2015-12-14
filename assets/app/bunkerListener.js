@@ -138,7 +138,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 		// usersettings are only updated by the client and mirroring is off
 		{name: 'roomMember', type: 'socket', handler: handleMembershipEvent},
 		{name: 'inboxMessage', type: 'socket', handler: handleInboxEvent},
-		{name: 'pinnedMessage', type: 'socket', handler: handleMessagePin},
+		{name: 'pinboard', type: 'socket', handler: handleMessagePin},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
 		{name: 'disconnect', type: 'socket', handler: handleDisconnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},

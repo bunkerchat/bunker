@@ -18,6 +18,7 @@ var InboxMessage = require('./../models/InboxMessage');
 var Room = require('./../models/Room');
 var Message = require('./../models/Message');
 var RoomController = require('./RoomController');
+var PinnedMessage = require('./../models/PinnedMessage');
 
 // A connecting client will call this endpoint. It should subscribe them to all relevant data and
 // return all rooms and user data necessary to run the application.
@@ -67,8 +68,10 @@ module.exports.init = function (req, res) {
 			_.each(memberships, function (membership) {
 				socket.join('roommember_' + membership._id);
 			});
+
 			_.each(rooms, function (room) {
 				socket.join('room_' + room._id);
+				socket.join('pinnedMessage_' + room.id);
 			});
 
 			return Promise.join(
@@ -78,9 +81,10 @@ module.exports.init = function (req, res) {
 
 					return Promise.join(
 						Message.find({room: room._id}).sort('-createdAt').limit(40).populate('author'),
-						RoomMember.find({room: room._id}).populate('user')
+						RoomMember.find({room: room._id}).populate('user'),
+						PinnedMessage.find({ room: room._id }).populate('message')
 						)
-						.spread(function (messages, members) {
+						.spread(function (messages, members, pinnedMessages) {
 
 							// Setup subscriptions
 							_.each(members, function (member) {
@@ -99,6 +103,24 @@ module.exports.init = function (req, res) {
 							room.$members = [];
 							_.each(members, function (member) {
 								room.$members.push(member.toJSON());
+							});
+
+							room.$pinnedMessages = [];
+
+							var uniquePinnedMessages = _.unique(pinnedMessages, 'message.id');
+
+							_.each(uniquePinnedMessages, function(message) {
+								room.$pinnedMessages.push(message.message);
+							});
+
+							return User.find({ id: _.pluck(pinnedMessages, 'message.author') });
+						})
+						.then(function(users) {
+							// TODO: do this differently so it's more efficient
+							var lookup = _.indexBy(users, 'id');
+							room.$pinnedMessages = _.map(room.$pinnedMessages, function(pinnedMessage) {
+								pinnedMessage.author = lookup[pinnedMessage.author];
+								return pinnedMessage;
 							});
 
 							return room;

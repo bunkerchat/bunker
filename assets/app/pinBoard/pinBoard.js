@@ -21,7 +21,7 @@ app.factory('pinBoard', ['$window', '$rootScope', '$q', function ($window, $root
 			pinChangedListener = listener;
 		},
 		initialize: function (messages) {
-			pinLookup = _.indexBy(_.map(messages, 'id'));
+			pinLookup = _.indexBy(_.map(messages, '_id'));
 		},
 
 		pinChanged: pinChanged,

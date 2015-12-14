@@ -251,7 +251,11 @@ module.exports.pinMessage = function(req, res) {
 
 		function(pinnedMessage, message) {
 
-			PinnedMessage.message(req.body.roomId, { pinned: true, messageId: req.body.messageId, message: message, roomId: req.body.roomId });
+			req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
+				_id: req.body.roomId,
+				verb: 'messaged',
+				data: { pinned: true, messageId: req.body.messageId, message: message, roomId: req.body.roomId }
+			});
 
 			res.ok();
 		});
@@ -268,15 +272,18 @@ module.exports.pinMessage = function(req, res) {
 
 module.exports.unPinMessage = function(req, res) {
 
-	var roomId = req.body.roomId.toObjectId();
 	var messageId = req.body.messageId.toObjectId();
 
 	PinnedMessage
-			.destroy({ message: messageId })
+			.remove({ message: messageId })
 			.then(function() {
 				var unPinResult = { messageId: req.body.messageId, pinned: false, roomId: req.body.roomId };
 
-				PinnedMessage.message(req.body.roomId, unPinResult);
+				req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
+					_id: req.body.roomId,
+					verb: 'messaged',
+					data: unPinResult
+				});
 
 				res.ok(unPinResult);
 			})
