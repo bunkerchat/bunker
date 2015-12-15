@@ -35,9 +35,9 @@ module.exports.init = function (req, res) {
 
 	Promise.join(
 		User.findById(userId).lean(),
-		UserSettings.findOne({user: userId}),
-		RoomMember.find({user: userId}).sort('roomOrder').populate('room'),
-		InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message')
+		UserSettings.findOne({user: userId}).lean(),
+		RoomMember.find({user: userId}).sort('roomOrder').populate('room').lean(),
+		InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message').lean()
 		)
 		.spread(function (user, userSettings, memberships, inboxMessages) {
 
@@ -74,11 +74,9 @@ module.exports.init = function (req, res) {
 			return Promise.join(
 				// Get all room members and 40 initial messages for each room
 				Promise.map(rooms, function (room) {
-					room = room.toJSON();
-
 					return Promise.join(
-						Message.find({room: room._id}).sort('-createdAt').limit(40).populate('author'),
-						RoomMember.find({room: room._id}).populate('user')
+						Message.find({room: room._id}).sort('-createdAt').limit(40).populate('author').lean(),
+						RoomMember.find({room: room._id}).populate('user').lean()
 						)
 						.spread(function (messages, members) {
 
@@ -93,12 +91,12 @@ module.exports.init = function (req, res) {
 
 							room.$messages = [];
 							_.each(messages, function (message) {
-								room.$messages.push(message.toJSON());
+								room.$messages.push(message);
 							});
 
 							room.$members = [];
 							_.each(members, function (member) {
-								room.$members.push(member.toJSON());
+								room.$members.push(member);
 							});
 
 							return room;
@@ -106,13 +104,13 @@ module.exports.init = function (req, res) {
 				}),
 
 				// Populate authors for inbox messages
-				User.find(inboxUserIds)
+				User.find(inboxUserIds).lean()
 					.then(function (inboxUsers) {
 						return Promise.map(localInboxMessages, function (inboxMessage) {
 
 							var authorData = _.find(inboxUsers, {_id: inboxMessage.message.author});
 							if (authorData) {
-								inboxMessage.message.author = authorData.toJSON();
+								inboxMessage.message.author = authorData;
 							}
 
 							return inboxMessage;
