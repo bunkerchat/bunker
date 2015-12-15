@@ -25,6 +25,9 @@ module.exports.http = function (app) {
 	// External Notifications
 	app.post('/externalnotifications/jenkinsBestBuy', externalNotificationsController.jenkinsBestBuy);
 	app.post('/externalnotifications/serverStatus', externalNotificationsController.serverStatus);
+
+	// Api
+	app.get('/api/message/emoticoncounts', messageController.emoticonCounts);
 };
 
 module.exports.socketio = function (socket) {
@@ -52,7 +55,7 @@ module.exports.socketio = function (socket) {
 
 	// message
 	socket.on('/message/edit', socketToController(messageController.update));
-	socket.on('/message/emoticoncounts', socketToController(messageController.emoticonCounts));
+	//socket.on('/message/emoticoncounts', socketToController(messageController.emoticonCounts));
 
 };
 
