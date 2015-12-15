@@ -8,37 +8,35 @@ var User = require('../models/User');
 
 module.exports.emoticonCounts = function () {
 	return new Promise(function (resolve, reject) {
-			// setting the request url as as the cache key
-			cacheService.short.wrap('Message/emoticonCounts', lookup, done);
+		// setting the request url as as the cache key
+		cacheService.short.wrap('Message/emoticonCounts', lookup, done);
 
-			function lookup(cacheLoadedCb) {
-				var emoticonRegex = /:\w+:/g;
-				var countMap = {};
+		function lookup(cacheLoadedCb) {
+			var emoticonRegex = /:\w+:/g;
+			var countMap = {};
 
-				// .native gives you a callback function with a hook to the model's collection
-				Message.find({text: {$regex: emoticonRegex}}, function (err, messages) {
-					_.each(messages, function (message) {
+			Message.find({text: {$regex: emoticonRegex}})
+				.limit(10000)
+				.then(messages => {
+					_.each(messages, message => {
+						var match = message.text.match(emoticonRegex);
 
-						var matches = message.text.match(emoticonRegex);
-						if (matches) {
-							_.each(matches, function (match) {
-								// Create total count for this emoticon
-								if (!countMap[match]) {
-									countMap[match] = {count: 0};
-								}
-								countMap[match].count++;
-
-								// Create object of usedBy counts for this emoticon
-								if (message.author) {
-									if (!countMap[match][message.author]) {
-										countMap[match][message.author] = 0;
-									}
-									countMap[match][message.author]++;
-								}
-							});
+						// Create total count for this emoticon
+						if (!countMap[match]) {
+							countMap[match] = {count: 0};
 						}
-					});
+						countMap[match].count++;
 
+						// Create object of usedBy counts for this emoticon
+						if (message.author) {
+							if (!countMap[match][message.author]) {
+								countMap[match][message.author] = 0;
+							}
+							countMap[match][message.author]++;
+						}
+					})
+				})
+				.then(() => {
 					// Map into a nice sorted object
 					var emoticonCounts = _(countMap)
 						.map(function (value, key) {
@@ -54,33 +52,33 @@ module.exports.emoticonCounts = function () {
 						.value();
 
 					// Replace the id's in the userBy section with nick + id
-					User.find({}).then(function (users) {
-						var userHash = {};
+					return User.find({})
+						.then(function (users) {
+							var userHash = {};
 
-						_.each(users, function (user) {
-							userHash[user._id.toString()] = user;
-						});
-
-						_.each(emoticonCounts, function (count) {
-							_.each(count.usedBy, function (usedByCount, id) {
-								var user = userHash[id];
-								count.usedBy[user.nick + ' (' + id + ')'] = usedByCount;
-								delete count.usedBy[id];
+							_.each(users, function (user) {
+								userHash[user._id.toString()] = user;
 							});
+
+							_.each(emoticonCounts, function (count) {
+								_.each(count.usedBy, function (usedByCount, id) {
+									var user = userHash[id];
+									count.usedBy[user.nick + ' (' + id + ')'] = usedByCount;
+									delete count.usedBy[id];
+								});
+							});
+
+							return emoticonCounts;
 						});
-
-						cacheLoadedCb(err, emoticonCounts);
-					})
-						.catch(reject);
-				});
-			}
-
-			function done(err, emoticonCounts) {
-				if (err) return reject(err);
-				resolve(emoticonCounts);
-			}
+				})
+				.nodeify(cacheLoadedCb);
 		}
-	);
+
+		function done(err, emoticonCounts) {
+			if (err) return reject(err);
+			resolve(emoticonCounts);
+		}
+	});
 };
 
 module.exports.getEmoticonNamesFromDisk = function () {

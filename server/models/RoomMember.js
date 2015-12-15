@@ -7,7 +7,8 @@ var roomMemberSchema = new mongoose.Schema({
 	},
 	room: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Room'
+		ref: 'Room',
+		index: true
 	},
 	playSoundOnMessage: {
 		type: Boolean,

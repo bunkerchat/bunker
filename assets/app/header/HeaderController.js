@@ -1,45 +1,45 @@
 app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, bunkerData) {
-	var self = this;
+	var header = this;
 
 	bunkerData.$promise.then(function () {
-		self.rooms = bunkerData.rooms;
-		self.memberships = bunkerData.memberships;
-		self.settings = bunkerData.userSettings;
-		self.inbox = bunkerData.inbox;
+		header.rooms = bunkerData.rooms;
+		header.memberships = bunkerData.memberships;
+		header.settings = bunkerData.userSettings;
+		header.inbox = bunkerData.inbox;
 	});
 
-	this.showOptions = !$state.is('lobby');
+	header.showOptions = !$state.is('lobby');
 
-	this.changeSetting = function (settingName) {
+	header.changeSetting = function (settingName) {
 		bunkerData.toggleUserSetting(settingName, settingName == 'desktopMentionNotifications');
 		if (settingName == 'showDebugging' && bunkerData.userSettings.showDebugging) {
 			angular.reloadWithDebugInfo();
 		}
 	};
 
-	this.leaveRoom = function () {
+	header.leaveRoom = function () {
 		bunkerData.leaveRoom($rootScope.roomId)
 			.then(function () {
 				$state.go('lobby');
 			});
 	};
 
-	this.toggleEmoticonMenu = function () {
-		this.emoticonMenu = !this.emoticonMenu;
-		this.inboxOpened = false;
+	header.toggleEmoticonMenu = function () {
+		header.emoticonMenu = !header.emoticonMenu;
+		header.inboxOpened = false;
 	};
 
-	this.toggleInbox = function () {
-		this.emoticonMenu = false;
-		this.inboxOpened = !this.inboxOpened;
+	header.toggleInbox = function () {
+		header.emoticonMenu = false;
+		header.inboxOpened = !header.inboxOpened;
 	};
 
-	this.toggleSettings = function () {
-		this.emoticonMenu = false;
-		this.inboxOpened = false;
+	header.toggleSettings = function () {
+		header.emoticonMenu = false;
+		header.inboxOpened = false;
 	};
 
-	this.showHelp = function () {
+	header.showHelp = function () {
 		$modal.open({
 			templateUrl: '/assets/app/help/help.html',
 			controller: 'HelpController',
@@ -47,17 +47,17 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		});
 	};
 
-	this.dragRoomListeners = {
+	header.dragRoomListeners = {
 		orderChanged: function roomOrderChanged(evt) {
-			for (var i = 0; i < self.rooms.length; i++) {
-				var room = self.rooms[i];
+			for (var i = 0; i < header.rooms.length; i++) {
+				var room = header.rooms[i];
 
 				// check each membership
-				var membership = _.findWhere(self.memberships, {room: room._id});
+				var membership = _.findWhere(header.memberships, {room: room._id});
 
 				membership.roomOrder = i;
 			}
-			bunkerData.saveRoomMemberSettings(self.memberships);
+			bunkerData.saveRoomMemberSettings(header.memberships);
 		}
 	};
 
@@ -88,6 +88,6 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	});
 
 	$rootScope.$on('$stateChangeSuccess', function (evt, toState) {
-		self.showOptions = toState.name != 'lobby';
+		header.showOptions = toState.name != 'lobby';
 	});
 });
