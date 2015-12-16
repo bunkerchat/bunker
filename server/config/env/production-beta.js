@@ -22,7 +22,7 @@ config.google = {
 };
 
 config.consoleLogLevel = 'info';
-config.cacheLess = true;
+config.buildSassAtRuntime = false;
 config.useJavascriptBundle = true;
 
 config.showServerErrors = true;

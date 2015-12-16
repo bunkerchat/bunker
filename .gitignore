@@ -20,6 +20,7 @@ npm-debug.log
 
 *~
 *#
+/assets/styles/default.css
 .DS_STORE
 .netbeans
 nbproject
