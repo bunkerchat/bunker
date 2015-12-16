@@ -23,9 +23,9 @@ var RoomController = require('./RoomController');
 // return all rooms and user data necessary to run the application.
 module.exports.init = function (req, res) {
 
-	var localUser, localUserSettings, localMemberships, localInboxMessages;
+	var user, userSettings, memberships, inboxMessages;
 
-	if(!req.session.userId) return res.ok();
+	if (!req.session.userId) return res.ok();
 
 	var userId = req.session.userId.toObjectId();
 	var socket = req.socket;
@@ -38,23 +38,21 @@ module.exports.init = function (req, res) {
 		UserSettings.findOne({user: userId}).lean(),
 		RoomMember.find({user: userId}).sort('roomOrder').populate('room').lean(),
 		InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message').lean()
-		)
-		.spread(function (user, userSettings, memberships, inboxMessages) {
+	)
+		.spread((_user, _userSettings, _memberships, _inboxMessages) => {
 
-			localUser = user;
-			localUserSettings = userSettings;
-			localMemberships = memberships;
-			localInboxMessages = inboxMessages;
+			user = _user;
+			userSettings = _userSettings;
+			memberships = _memberships;
+			inboxMessages = _inboxMessages;
 			var rooms = _(memberships).pluck('room').compact().value();
 			var inboxUserIds = _(inboxMessages).pluck('message').pluck('author').unique().value();
 
 			// de-associate a room from a membership since we set rooms above
 			// and fix bad room order data
-			_(localMemberships)
-				.reject(function (membership) {
-					return !membership.room;
-				})
-				.each(function (membership, index) {
+			_(memberships)
+				.reject(membership => !membership.room)
+				.each((membership, index) => {
 					membership.room = membership.room._id;
 					membership.roomOrder = index;
 				})
@@ -64,40 +62,24 @@ module.exports.init = function (req, res) {
 			socket.join('user_' + userId);
 			socket.join('inboxmessage_' + userId);
 
-			_.each(memberships, function (membership) {
-				socket.join('roommember_' + membership._id);
-			});
-			_.each(rooms, function (room) {
-				socket.join('room_' + room._id);
-			});
+			_.each(_memberships, membership => socket.join('roommember_' + membership._id));
+			_.each(rooms, room => socket.join('room_' + room._id));
 
 			return Promise.join(
 				// Get all room members and 40 initial messages for each room
-				Promise.map(rooms, function (room) {
+				Promise.map(rooms, room => {
 					return Promise.join(
 						Message.find({room: room._id}).sort('-createdAt').limit(40).populate('author').lean(),
 						RoomMember.find({room: room._id}).populate('user').lean()
-						)
-						.spread(function (messages, members) {
+					)
+						.spread((messages, members) => {
 
 							// Setup subscriptions
-							_.each(members, function (member) {
-								socket.join('roommember_' + member._id);
-							});
+							_.each(members, member => socket.join('roommember_' + member._id));
+							_.each(_.pluck(members, 'user'), user => socket.join('user_' + user._id));
 
-							_.each(_.pluck(members, 'user'), function (user) {
-								socket.join('user_' + user._id);
-							});
-
-							room.$messages = [];
-							_.each(messages, function (message) {
-								room.$messages.push(message);
-							});
-
-							room.$members = [];
-							_.each(members, function (member) {
-								room.$members.push(member);
-							});
+							room.$messages = messages;
+							room.$members = members;
 
 							return room;
 						});
@@ -105,28 +87,19 @@ module.exports.init = function (req, res) {
 
 				// Populate authors for inbox messages
 				User.find(inboxUserIds).lean()
-					.then(function (inboxUsers) {
-						return Promise.map(localInboxMessages, function (inboxMessage) {
-
-							var authorData = _.find(inboxUsers, {_id: inboxMessage.message.author});
-							if (authorData) {
-								inboxMessage.message.author = authorData;
-							}
-
-							return inboxMessage;
-						});
-					})
-			);
+					.then(inboxUsers => Promise.map(inboxMessages, inboxMessage => {
+						inboxMessage.message.author = _.find(inboxUsers, {_id: inboxMessage.message.author});
+						return inboxMessage;
+					}))
+			)
 		})
-		.spread(function (rooms, inboxMessages) {
-			return {
-				user: localUser,
-				userSettings: localUserSettings,
-				memberships: localMemberships,
-				inbox: inboxMessages,
-				rooms: rooms
-			};
-		})
+		.spread((rooms, inboxMessages) => ({
+			user,
+			userSettings,
+			memberships,
+			inboxMessages,
+			rooms
+		}))
 		.then(res.ok)
 		.catch(res.serverError);
 };
@@ -155,7 +128,7 @@ module.exports.activity = function (req, res) {
 module.exports.connect = function (req, res) {
 	var lastConnected, previouslyConnected;
 
-	if(!req.session.userId) return;
+	if (!req.session.userId) return;
 
 	User.findById(req.session.userId.toObjectId())
 		.then(function (user) {
