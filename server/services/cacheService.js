@@ -7,10 +7,13 @@ var oneDay =
 
 var oneMinute = 60;
 
-var longCache = cache_manager.caching({store: 'memory', max: 100, ttl: oneDay});
-var shortCache = cache_manager.caching({store: 'memory', max: 100, ttl: oneMinute});
+var fourHours =
+	60 /*seconds*/
+	* 60 /*minutes*/
+	* 4 /*hours*/;
 
 module.exports = {
-	long: longCache,
-	short: shortCache
+	oneDay: cache_manager.caching({store: 'memory', max: 100, ttl: oneDay}),
+	oneMinute: cache_manager.caching({store: 'memory', max: 100, ttl: oneMinute}),
+	fourHours: cache_manager.caching({store: 'memory', max: 100, ttl: fourHours})
 };

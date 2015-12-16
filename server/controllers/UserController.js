@@ -115,20 +115,16 @@ module.exports.init = function (req, res) {
 
 							return inboxMessage;
 						});
-					}),
-
-				// fetch all emoticon counts for emoticon list
-				emoticonService.emoticonCounts()
+					})
 			);
 		})
-		.spread(function (rooms, inboxMessages, emoticonCounts) {
+		.spread(function (rooms, inboxMessages) {
 			return {
 				user: localUser,
 				userSettings: localUserSettings,
 				memberships: localMemberships,
 				inbox: inboxMessages,
-				rooms: rooms,
-				emoticonCounts: emoticonCounts
+				rooms: rooms
 			};
 		})
 		.then(res.ok)

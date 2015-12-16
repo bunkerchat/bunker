@@ -9,7 +9,7 @@ var User = require('../models/User');
 module.exports.emoticonCounts = function () {
 	return new Promise(function (resolve, reject) {
 		// setting the request url as as the cache key
-		cacheService.short.wrap('Message/emoticonCounts', lookup, done);
+		cacheService.fourHours.wrap('Message/emoticonCounts', lookup, done);
 
 		function lookup(cacheLoadedCb) {
 			var emoticonRegex = /:\w+:/g;
