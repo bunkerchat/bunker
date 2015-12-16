@@ -4,6 +4,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	var roomLookup = []; // For fast room lookup
 	var typingTimeout;
 	var resolveBunkerData$Promise;
+	var users = {};
 
 	var bunkerData = {
 		user: {},
@@ -33,6 +34,18 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				_.assign(bunkerData.userSettings, initialData.userSettings);
 				_.assign(bunkerData.inbox, initialData.inbox);
 				_.assign(bunkerData.memberships, initialData.memberships);
+
+				// instead of sending many duplicate users down, send one list
+				// then re-hydrate all the associations
+				_.assign(users, _.indexBy(initialData.users, '_id'));
+
+				_.each(bunkerData.inbox, function (inbox) {
+					inbox.message.author = users[inbox.message.author];
+				});
+
+				_.each(bunkerData.memberships, function (membership) {
+					membership.user = users[membership.user];
+				});
 
 				bunkerData.inbox.unreadMessages = _.select(bunkerData.inbox, {read: false}).length;
 
@@ -253,6 +266,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		});
 
 		_.each(room.$messages, function (message, index) {
+			message.author = users[message.author];
+
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
@@ -262,6 +277,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 	function decorateMembers(room) {
 		_.each(room.$members, function (member) {
+			member.user = users[member.user];
 			member.user.$present = true; // assumed true for now
 		});
 	}
@@ -291,6 +307,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		return emoticonCounts
 	}
+
 
 	bunkerData.$promise = $q(function (resolve) {
 		resolveBunkerData$Promise = resolve;

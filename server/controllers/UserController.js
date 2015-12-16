@@ -23,7 +23,8 @@ var RoomController = require('./RoomController');
 // return all rooms and user data necessary to run the application.
 module.exports.init = function (req, res) {
 
-	var user, userSettings, memberships, inboxMessages;
+	var user, userSettings, memberships, inbox, rooms;
+	var userIds = [];
 
 	if (!req.session.userId) return res.ok();
 
@@ -44,9 +45,12 @@ module.exports.init = function (req, res) {
 			user = _user;
 			userSettings = _userSettings;
 			memberships = _memberships;
-			inboxMessages = _inboxMessages;
+			inbox = _inboxMessages;
 			var rooms = _(memberships).pluck('room').compact().value();
-			var inboxUserIds = _(inboxMessages).pluck('message').pluck('author').unique().value();
+
+			// build up a list of userids to fetch from the database
+			userIds.pushAll(_(inbox).pluck('message').pluck('author').unique().value());
+			userIds.pushAll(_.pluck(memberships, 'user'));
 
 			// de-associate a room from a membership since we set rooms above
 			// and fix bad room order data
@@ -62,45 +66,38 @@ module.exports.init = function (req, res) {
 			socket.join('user_' + userId);
 			socket.join('inboxmessage_' + userId);
 
-			_.each(_memberships, membership => socket.join('roommember_' + membership._id));
+			_.each(memberships, membership => socket.join('roommember_' + membership._id));
 			_.each(rooms, room => socket.join('room_' + room._id));
 
-			return Promise.join(
-				// Get all room members and 40 initial messages for each room
-				Promise.map(rooms, room => {
-					return Promise.join(
-						Message.find({room: room._id}).sort('-createdAt').limit(40).populate('author').lean(),
-						RoomMember.find({room: room._id}).populate('user').lean()
-					)
-						.spread((messages, members) => {
+			return Promise.map(rooms, room => {
+				return Promise.join(
+					Message.find({room: room._id}).sort('-createdAt').limit(40).lean(),
+					RoomMember.find({room: room._id}).lean()
+				)
+					.spread((messages, members) => {
+						userIds.pushAll(_.pluck(messages, 'author'), _.pluck(members, 'user'));
 
-							// Setup subscriptions
-							_.each(members, member => socket.join('roommember_' + member._id));
-							_.each(_.pluck(members, 'user'), user => socket.join('user_' + user._id));
+						// Setup subscriptions
+						_.each(members, member => socket.join('roommember_' + member._id));
+						_.each(_.pluck(members, 'user'), user => socket.join('user_' + user));
 
-							room.$messages = messages;
-							room.$members = members;
+						room.$messages = messages;
+						room.$members = members;
 
-							return room;
-						});
-				}),
-
-				// Populate authors for inbox messages
-				User.find(inboxUserIds).lean()
-					.then(inboxUsers => Promise.map(inboxMessages, inboxMessage => {
-						inboxMessage.message.author = _.find(inboxUsers, {_id: inboxMessage.message.author});
-						return inboxMessage;
-					}))
-			)
+						return room;
+					});
+			});
 		})
-		.spread((rooms, inboxMessages) => ({
-			user,
-			userSettings,
-			memberships,
-			inboxMessages,
-			rooms
-		}))
-		.then(res.ok)
+		.then(_rooms => {
+			rooms = _rooms;
+
+			// Populate authors
+			var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
+			return User.find(userIds).lean();
+		})
+
+		// compose all the data into an object matching the original vars and return them to the client
+		.then(users => res.ok({ user, userSettings, memberships, inbox, rooms, users}))
 		.catch(res.serverError);
 };
 

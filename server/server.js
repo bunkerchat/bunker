@@ -12,6 +12,14 @@ String.prototype.toObjectId = function() {
 	return new ObjectId(this.toString());
 };
 
+// allows you to push multiple arrays onto another array
+// ex:
+// var foo = []
+// foo.pushAll([1,2,3],[4,5,6])
+Array.prototype.pushAll = function () {
+	this.push.apply(this, this.concat.apply([], arguments));
+};
+
 var config = require('./config/config');
 var app = Promise.promisifyAll(require('./config/express'));
 var server = Promise.promisifyAll(require('http').Server(app));
