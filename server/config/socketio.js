@@ -15,8 +15,6 @@ socketio.connect = function (server) {
 		io.adapter(redis({ host: 'localhost', port: 6379 }));
 	}
 
-	io.set('transports', ['polling']);
-
 	io.use(ios(session));
 	io.on('connection', function (socket) {
 		routes.socketio(socket);

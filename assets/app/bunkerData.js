@@ -37,14 +37,15 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 				// instead of sending many duplicate users down, send one list
 				// then re-hydrate all the associations
+				users.length = 0;
 				_.assign(users, _.indexBy(initialData.users, '_id'));
 
 				_.each(bunkerData.inbox, function (inbox) {
-					inbox.message.author = users[inbox.message.author];
+					inbox.message.author = users[inbox.message.author._id || inbox.message.author];
 				});
 
 				_.each(bunkerData.memberships, function (membership) {
-					membership.user = users[membership.user];
+					membership.user = users[membership.user._id || membership.user];
 				});
 
 				bunkerData.inbox.unreadMessages = _.select(bunkerData.inbox, {read: false}).length;
@@ -266,7 +267,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		});
 
 		_.each(room.$messages, function (message, index) {
-			message.author = users[message.author];
+			if(message.author){
+				message.author = users[message.author._id || message.author];				
+			}
 
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
@@ -277,7 +280,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 	function decorateMembers(room) {
 		_.each(room.$members, function (member) {
-			member.user = users[member.user];
+			member.user = users[member.user._id || member.user];
 			member.user.$present = true; // assumed true for now
 		});
 	}
