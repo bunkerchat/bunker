@@ -26,4 +26,4 @@
 //config.useJavascriptBundle = true;
 //
 //config.showServerErrors = true;
-//config.useSocketioRedis = true;
+//config.useRedis = true;

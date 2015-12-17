@@ -10,6 +10,7 @@
     "body-parser": "1.14.1",
     "bower": "1.6.8",
     "cache-manager": "1.2.2",
+    "cache-manager-mongodb": "0.1.6",
     "compression": "1.6.0",
     "connect-mongo": "0.8.2",
     "crypto": "0.0.3",

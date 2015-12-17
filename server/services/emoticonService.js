@@ -7,78 +7,77 @@ var Message = require('../models/Message');
 var User = require('../models/User');
 
 module.exports.emoticonCounts = function () {
-	return new Promise(function (resolve, reject) {
-		// setting the request url as as the cache key
-		cacheService.fourHours.wrap('Message/emoticonCounts', lookup, done);
+	var key = 'Message/emoticonCounts';
 
-		function lookup(cacheLoadedCb) {
-			var emoticonRegex = /:\w+:/g;
-			var countMap = {};
+	return cacheService.fourHours.getAsync('Message/emoticonCounts')
+		.then(result => result || lookup())
+		.then(JSON.parse);
 
-			Message.find({text: {$regex: emoticonRegex}})
-				.limit(10000)
-				.then(messages => {
-					_.each(messages, message => {
-						var match = message.text.match(emoticonRegex);
+	function lookup() {
+		var emoticonRegex = /:\w+:/g;
+		var countMap = {};
 
-						// Create total count for this emoticon
-						if (!countMap[match]) {
-							countMap[match] = {count: 0};
+		return Message.find({text: {$regex: emoticonRegex}})
+			.limit(10000)
+			.then(messages => {
+				_.each(messages, message => {
+					var match = message.text.match(emoticonRegex);
+
+					// Create total count for this emoticon
+					if (!countMap[match]) {
+						countMap[match] = {count: 0};
+					}
+					countMap[match].count++;
+
+					// Create object of usedBy counts for this emoticon
+					if (message.author) {
+						if (!countMap[match][message.author]) {
+							countMap[match][message.author] = 0;
 						}
-						countMap[match].count++;
-
-						// Create object of usedBy counts for this emoticon
-						if (message.author) {
-							if (!countMap[match][message.author]) {
-								countMap[match][message.author] = 0;
-							}
-							countMap[match][message.author]++;
-						}
+						countMap[match][message.author]++;
+					}
+				})
+			})
+			.then(() => {
+				// Map into a nice sorted object
+				var emoticonCounts = _(countMap)
+					.map(function (value, key) {
+						return {
+							count: value.count,
+							emoticon: key,
+							name: key.replace(/:/g, ''),
+							usedBy: _.omit(value, 'count')
+						};
 					})
-				})
-				.then(() => {
-					// Map into a nice sorted object
-					var emoticonCounts = _(countMap)
-						.map(function (value, key) {
-							return {
-								count: value.count,
-								emoticon: key,
-								name: key.replace(/:/g, ''),
-								usedBy: _.omit(value, 'count')
-							};
-						})
-						.sortBy('count')
-						.reverse()
-						.value();
+					.sortBy('count')
+					.reverse()
+					.value();
 
-					// Replace the id's in the userBy section with nick + id
-					return User.find({})
-						.then(function (users) {
-							var userHash = {};
+				// Replace the id's in the userBy section with nick + id
+				return User.find({})
+					.then(function (users) {
+						var userHash = {};
 
-							_.each(users, function (user) {
-								userHash[user._id.toString()] = user;
-							});
-
-							_.each(emoticonCounts, function (count) {
-								_.each(count.usedBy, function (usedByCount, id) {
-									var user = userHash[id];
-									count.usedBy[user.nick + ' (' + id + ')'] = usedByCount;
-									delete count.usedBy[id];
-								});
-							});
-
-							return emoticonCounts;
+						_.each(users, function (user) {
+							userHash[user._id.toString()] = user;
 						});
-				})
-				.nodeify(cacheLoadedCb);
-		}
 
-		function done(err, emoticonCounts) {
-			if (err) return reject(err);
-			resolve(emoticonCounts);
-		}
-	});
+						_.each(emoticonCounts, function (count) {
+							_.each(count.usedBy, function (usedByCount, id) {
+								var user = userHash[id];
+								count.usedBy[user.nick + ' (' + id + ')'] = usedByCount;
+								delete count.usedBy[id];
+							});
+						});
+
+						return emoticonCounts;
+					});
+			})
+			// stringify for mongo cache
+			.then(JSON.stringify)
+			.then(results => cacheService.fourHours.setAsync(key, results))
+	}
+
 };
 
 module.exports.getEmoticonNamesFromDisk = function () {

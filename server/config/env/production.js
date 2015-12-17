@@ -30,4 +30,4 @@ config.buildSassAtRuntime = false;
 config.useJavascriptBundle = true;
 
 config.showServerErrors = false;
-config.useSocketioRedis = true;
+config.useRedis = true;

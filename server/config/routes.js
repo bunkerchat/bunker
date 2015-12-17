@@ -55,7 +55,7 @@ module.exports.socketio = function (socket) {
 
 	// message
 	socket.on('/message/edit', socketToController(messageController.update));
-	//socket.on('/message/emoticoncounts', socketToController(messageController.emoticonCounts));
+	socket.on('/message/emoticoncounts', socketToController(messageController.emoticonCounts));
 
 };
 

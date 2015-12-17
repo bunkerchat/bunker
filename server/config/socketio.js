@@ -10,7 +10,7 @@ socketio.connect = function (server) {
 	var io = require('socket.io')(server);
 	socketio.io = io;
 
-	if(config.useSocketioRedis){
+	if(config.useRedis){
 		var redis = require('socket.io-redis');
 		io.adapter(redis({ host: 'localhost', port: 6379 }));
 	}
