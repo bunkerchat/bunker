@@ -9,7 +9,7 @@ var User = require('../models/User');
 module.exports.emoticonCounts = function () {
 	var key = 'Message/emoticonCounts';
 
-	return cacheService.fourHours.getAsync('Message/emoticonCounts')
+	return cacheService.fourHours.getAsync(key)
 		.then(result => result || lookup())
 		.then(JSON.parse);
 
