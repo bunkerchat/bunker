@@ -459,7 +459,7 @@ function image(roomMember, text) {
 				verb: 'messaged',
 				data: {
 					type: 'pick',
-					message: `[${result.provider}ed image "${searchQuery}"] `,
+					message: `[${result.provider}-ed image "${searchQuery}"] `,
 					data: result.images
 				}
 			});
