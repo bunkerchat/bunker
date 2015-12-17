@@ -10,7 +10,7 @@ var RoomMember = require('../models/RoomMember');
 var InboxMessage = require('../models/InboxMessage');
 
 var RoomService = require('../services/RoomService');
-var googleSearchService = require('../services/googleSearchService');
+var imageSearch = require('../services/imageSearch');
 var helpService = require('../services/helpService');
 var statsService = require('../services/statsService');
 var leaderboardService = require('../services/leaderboardService');
@@ -70,15 +70,15 @@ module.exports.createMessage = function (roomMember, text) {
 	else if (/^\/code /i.test(text)) {
 		return code(roomMember, text);
 	}
-	else if (/^\/imagelucky\s+/i.test(text)) {
-		return imageLucky(roomMember, text);
-	}
+	//else if (/^\/imagelucky\s+/i.test(text)) {
+	//	return imageLucky(roomMember, text);
+	//}
 	else if (/^\/image(?:pick|search)*\s+/i.test(text)) {
 		return image(roomMember, text);
 	}
-	else if (/^\/giflucky\s+/i.test(text)) {
-		return gifLucky(roomMember, text);
-	}
+	//else if (/^\/giflucky\s+/i.test(text)) {
+	//	return gifLucky(roomMember, text);
+	//}
 	else if (/^\/gif(?:pick|search)*\s+/i.test(text)) {
 		return gif(roomMember, text);
 	}
@@ -467,14 +467,14 @@ function image(roomMember, text) {
 	var match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return googleSearchService.imageSearch(searchQuery).then(function (images) {
+	return imageSearch.image(searchQuery).then(function (result) {
 		socketio.io.to('userself_' + roomMember.user._id).emit('user', {
 			_id: roomMember.user._id,
 			verb: 'messaged',
 			data: {
 				type: 'pick',
-				message: '[googled image "' + searchQuery + '"] ',
-				data: images
+				message: `[${result.provider}ed image "${searchQuery}"] `,
+				data: result.images
 			}
 		});
 	});
