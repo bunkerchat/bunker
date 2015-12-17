@@ -459,7 +459,7 @@ function image(roomMember, text) {
 				verb: 'messaged',
 				data: {
 					type: 'pick',
-					message: `[${result.provider}-ed image "${searchQuery}"] `,
+					message: `[${result.provider} image "${searchQuery}"] `,
 					data: result.images
 				}
 			});
@@ -477,7 +477,7 @@ function gif(roomMember, text) {
 				verb: 'messaged',
 				data: {
 					type: 'pick',
-					message: `[${result.provider}ed gif "${searchQuery}"] `,
+					message: `[${result.provider} gif "${searchQuery}"] `,
 					data: result.images
 				}
 			});

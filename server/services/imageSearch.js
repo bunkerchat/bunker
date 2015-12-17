@@ -8,18 +8,18 @@ var imageSearch = module.exports;
 
 imageSearch.image = function (query) {
 	return googleImageSearch(query)
-		.then(result => result || bingImageSearch(query))
-		.then(result => result || {provider: 'none'});
+		.catch(() => bingImageSearch(query, true))
+		.catch(() => ({provider: 'none'}));
 };
 
 imageSearch.gif = function (query) {
 	return googleImageSearch(query, true)
-		.then(result => result || bingImageSearch(query, true))
-		.then(result => result || {provider: 'none'});
+		.catch(() => bingImageSearch(query, true))
+		.catch(() => ({provider: 'none'}));
 };
 
 function googleImageSearch(query, animated) {
-	var key = `imageSearch/google${animated ? 'gif' : 'image'}|${query}`;
+	var key = `imageSearch/google-${animated ? 'gif' : 'image'}|${query}`;
 	return cacheService.fourMonths.getAsync(key)
 		.then(result => result || lookup())
 		.then(JSON.parse);
@@ -49,7 +49,7 @@ function googleImageSearch(query, animated) {
 			.spread((res, body) => {
 				if (res.statusCode === 403) {
 					console.log('sad face');
-					return;
+					return Promise.reject(new Error('over capacity'));
 				}
 
 				return {
@@ -65,44 +65,53 @@ function googleImageSearch(query, animated) {
 var encodedBingKey = new Buffer(config.bingApiKey + ":" + config.bingApiKey).toString("base64");
 
 function bingImageSearch(query, animated) {
-	var qs = {
-		$format: 'json',
-		Query: `'${query}'`,
-		Adult: "'Strict'"
-	};
+	var key = `imageSearch/bing-${animated ? 'gif' : 'image'}|${query}`;
+	return cacheService.fourMonths.getAsync(key)
+		.then(result => result || lookup())
+		.then(JSON.parse);
 
-	if (animated) {
-		// arg why?! no good api unfortunately
-		qs.Query = `'${query} ".gif"'`;
-	}
+	function lookup() {
+		var qs = {
+			$format: 'json',
+			Query: `'${query}'`,
+			Adult: "'Strict'"
+		};
 
-	return request.getAsync({
-		json: true,
-		url: "https://api.datamarket.azure.com/Bing/Search/Image",
-		headers: {
-			"Authorization": `Basic ${encodedBingKey}`
-		},
-		qs: qs
-	})
-		.spread((res, body) => {
-			if (res.statusCode === 403) {
-				console.log('sad face');
-				return;
-			}
+		if (animated) {
+			// arg why?! no good api unfortunately
+			qs.Query = `'${query} ".gif"'`;
+		}
 
-			if (res.statusCode == 400) {
-				console.error('bing error', body)
-				return;
-			}
-
-			// we don't need 50 results
-			body.d.results.length = 12;
-
-			return {
-				provider: 'bing',
-				images: _(body.d.results).pluck('MediaUrl').map(ensureResult).value()
-			}
+		return request.getAsync({
+			json: true,
+			url: "https://api.datamarket.azure.com/Bing/Search/Image",
+			headers: {
+				"Authorization": `Basic ${encodedBingKey}`
+			},
+			qs: qs
 		})
+			.spread((res, body) => {
+				if (res.statusCode === 403) {
+					console.log('sad face');
+					return Promise.reject(new Error('over capacity'));
+				}
+
+				if (res.statusCode == 400) {
+					console.error('bing error', body)
+					return Promise.reject(body);
+				}
+
+				// we don't need 50 results
+				body.d.results.length = 12;
+
+				return {
+					provider: 'bing',
+					images: _(body.d.results).pluck('MediaUrl').map(ensureResult).value()
+				}
+			})
+			.then(JSON.stringify)
+			.then(results => cacheService.fourMonths.setAsync(key, results));
+	}
 }
 
 function ensureResult(url, animated) {
