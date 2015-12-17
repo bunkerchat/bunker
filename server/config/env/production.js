@@ -18,8 +18,12 @@ config.express = {
 
 config.google = {
 	clientID: process.env.google_clientID,
-	clientSecret: process.env.google_clientSecret
+	clientSecret: process.env.google_clientSecret,
+	cse_id: process.env.google_cse_id,
+	cse_key: process.env.google_cse_key
 };
+
+config.bingApiKey = process.env.bing_api_key;
 
 config.consoleLogLevel = 'error';
 config.buildSassAtRuntime = false;
