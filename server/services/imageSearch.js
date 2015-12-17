@@ -6,6 +6,12 @@ var config = require('../config/config');
 var imageSearch = module.exports;
 
 imageSearch.image = function (query) {
+	return googleImageSearch(query)
+		.then(result => result || bingImageSearch(query))
+		.then(result => result || {provider: 'none'});
+};
+
+function googleImageSearch (query) {
 	return request.getAsync({
 		json: true,
 		url: 'https://www.googleapis.com/customsearch/v1',
@@ -20,21 +26,49 @@ imageSearch.image = function (query) {
 	})
 		.spread((res, body) => {
 			if (res.statusCode === 403) {
-				//msg.send("Daily image quota exceeded, using Bing search.");
-				//return bingImageSearch(msg, query, animated, faces, cb);
 				console.log('sad face');
+				return;
 			}
 
-			//log.info('body', body);
 			return {
 				provider: 'google',
 				images: _(body.items).pluck('link').map(ensureResult).value()
 			}
 		})
-};
+}
 
+var encodedBingKey = new Buffer(config.bingApiKey + ":" + config.bingApiKey).toString("base64");
 
-var bingImageSearch, deprecatedImage, ensureImageExtension, ensureResult, imageMe;
+function bingImageSearch(query) {
+	return request.getAsync({
+		json: true,
+		url: "https://api.datamarket.azure.com/Bing/Search/Image",
+		headers:{
+			"Authorization": `Basic ${encodedBingKey}`
+		},
+		qs: {
+			$format: 'json',
+			Query: `'${query}'`,
+			Adult: "'Strict'"
+		}
+	})
+		.spread((res, body) => {
+			if (res.statusCode === 403) {
+				console.log('sad face');
+				return;
+			}
+
+			// we don't need 50 results
+			body.d.results.length = 10;
+
+			return {
+				provider: 'bing',
+				images: _(body.d.results).pluck('MediaUrl').map(ensureResult).value()
+			}
+		})
+}
+
+var bingImageSearch_old, deprecatedImage, ensureImageExtension, ensureResult, imageMe;
 
 imageMe = function(msg, query, animated, faces, cb) {
 	var googleApiKey, googleCseId, q, url;
@@ -148,7 +182,7 @@ deprecatedImage = function(msg, query, animated, faces, cb) {
 	});
 };
 
-bingImageSearch = function(msg, query, animated, faces, cb) {
+bingImageSearch_old = function(msg, query, animated, faces, cb) {
 	var bingApiKey, encoded_key, q, url;
 	bingApiKey = process.env.HUBOT_BING_API_KEY;
 	if (!bingApiKey) {

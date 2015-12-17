@@ -24,6 +24,8 @@ config.google = {
 	cse_key: 'AIzaSyADOhR5rYXCoBHR5fWRw0LB5r6Myp6atME'
 };
 
+config.bingApiKey = 'WOz19RNOpvm7kP+Xwc1zhz23Oemq9Jhdcs5+xvbjxKY';
+
 config.consoleLogLevel = 'debug';
 config.buildSassAtRuntime = true;
 config.useJavascriptBundle = false;

@@ -467,17 +467,18 @@ function image(roomMember, text) {
 	var match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
 	var searchQuery = match[1];
 
-	return imageSearch.image(searchQuery).then(function (result) {
-		socketio.io.to('userself_' + roomMember.user._id).emit('user', {
-			_id: roomMember.user._id,
-			verb: 'messaged',
-			data: {
-				type: 'pick',
-				message: `[${result.provider}ed image "${searchQuery}"] `,
-				data: result.images
-			}
+	return imageSearch.image(searchQuery)
+		.then(result => {
+			socketio.io.to('userself_' + roomMember.user._id).emit('user', {
+				_id: roomMember.user._id,
+				verb: 'messaged',
+				data: {
+					type: 'pick',
+					message: `[${result.provider}ed image "${searchQuery}"] `,
+					data: result.images
+				}
+			});
 		});
-	});
 }
 
 function gifLucky(roomMember, text) {
