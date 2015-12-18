@@ -28,7 +28,7 @@ function googleImageSearch(query, animated) {
 		var qs = {
 			q: query,
 			searchType: 'image',
-			//safe: 'high',
+			safe: 'high',
 			fields: 'items(link)',
 			cx: config.google.cse_id,
 			key: config.google.cse_key
