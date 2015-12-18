@@ -75,18 +75,21 @@ RoomService.messageRoomsWithUser = function (spec) {
 };
 
 RoomService.messageUserInRoom = function (userId, roomId, messageText, type) {
-	return RoomMember.findOne({room: roomId, user: userId}).populate('user room').then(function (roomMember) {
-		socketio.io.to('roommember_' + roomMember._id).emit('roommember', {
-			_id: roomMember._id, verb: 'messaged', data: {
-				_id: uuid.v4(),
-				text: messageText,
-				type: type,
-				room: roomMember.room,
-				user: roomMember.user,
-				createdAt: new Date().toISOString()
-			}
+	return RoomMember.findOne({room: roomId, user: userId})
+		.populate('user room')
+		.then(function (roomMember) {
+			socketio.io.to('userself_' + roomMember.user._id)
+				.emit('roommember', {
+					_id: roomMember._id, verb: 'messaged', data: {
+						_id: uuid.v4(),
+						text: messageText,
+						type: type,
+						room: roomMember.room,
+						user: roomMember.user,
+						createdAt: new Date().toISOString()
+					}
+				});
 		});
-	});
 };
 
 RoomService.getRoomMemberByNickAndRoom = function (userNick, roomId) {
