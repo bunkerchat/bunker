@@ -41,21 +41,6 @@ module.exports.index = function (req, res) {
 		.catch(res.serverError);
 };
 
-module.exports.mobile = function (req, res) {
-	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
-
-	Promise.join(
-		emoticonService.getEmoticonNamesFromDisk()
-	)
-		.spread((emoticons) => {
-			res.render('mobile', {
-				userId: userId,
-				emoticons: emoticons
-			});
-		})
-		.catch(res.serverError);
-};
-
 module.exports.login = function (req, res) {
 	res.render('login', {
 		clientID: config.google.clientID
@@ -68,5 +53,4 @@ module.exports.logout = function (req, res) {
 };
 
 function empty() {
-
 }
