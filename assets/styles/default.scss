@@ -1,10 +1,28 @@
 $darkBackgroundColor: #45494D;
 $lightBackgroundColor: #Fcfcfc;
+$successColor: #93c54b;
+$navbarSuccessColor: #79a736;
+
+@font-face {
+	font-family: 'Roboto';
+	src: url('/assets/fonts/Roboto-Regular.ttf');
+}
+
+@font-face {
+	font-family: 'Roboto-Bold';
+	src: url('/assets/fonts/Roboto-Bold.ttf');
+}
+
 
 /* boostrap overrides */
 
 body {
 	padding-top: 40px;
+	font-family: 'Roboto';
+}
+
+a, a:hover {
+	color: $successColor;
 }
 
 a, [ng-click], .pointer, [ui-sref] {
@@ -27,9 +45,20 @@ pre {
 
 .splash-brand {
 	font-size: 150px;
-	text-shadow: 12px 12px 3px #79a736, 24px 24px 6px #000;
+	text-shadow: 12px 12px 3px $successColor, 24px 24px 6px #000;
 	text-transform: uppercase;
 	text-align: center;
+}
+
+.btn {
+	font-family: 'Roboto-Bold';
+}
+
+.btn-success {
+	background-color: $successColor;
+	&:hover, &:focus {
+		background-color: $successColor;
+	}
 }
 
 // navbar
@@ -44,15 +73,20 @@ nav,
 .navbar-default {
 	background-color: $darkBackgroundColor;
 	border-bottom: 0;
-}
 
-.navbar-brand {
-	height: 40px;
-	padding: 10px 20px;
-	font-size: 24px;
-	font-weight: bold;
-	text-align: center;
-	text-shadow: 3px 3px 3px rgba(0, 0, 0, .5);
+	.navbar-brand {
+		height: 40px;
+		padding: 10px 20px;
+		font-size: 24px;
+		font-weight: bold;
+		text-align: center;
+		text-shadow: 3px 3px 3px rgba(0, 0, 0, .5);
+		color: white;
+
+		&:hover, &:active, &:focus {
+			color: white;
+		}
+	}
 }
 
 .navbar-default .navbar-nav > li > a,
@@ -67,8 +101,9 @@ nav,
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
-	background-color: #79a736;
-	font-weight: 500;
+	background-color: $navbarSuccessColor;
+	font-family: 'Roboto-Bold';
+	color: white;
 }
 
 .navbar .nav > li > a,
@@ -80,9 +115,14 @@ nav,
 	min-width: 100px;
 	text-align: center;
 	line-height: 40px;
-	color: #fff;
+	color: white;
 	background-color: #616469;
 	text-spacing: 0.3px;
+
+	&:hover {
+		color: white;
+		background-color: lighten(#616469, 10);
+	}
 }
 
 .navbar .nav.navbar-right > li > a.small-width {
@@ -170,6 +210,10 @@ input:focus, .form-control:focus {
 	width: auto;
 }
 
+.input-group-btn button {
+	padding: 6.5px 15px;
+}
+
 section {
 	margin: 20px 0;
 }
@@ -232,7 +276,6 @@ mark:hover {
 }
 
 .inbox {
-
 	font-size: 14px;
 	ol {
 		overflow-y: auto;
@@ -326,12 +369,14 @@ mark:hover {
 	margin: 9px 2px 4px 12px;
 }
 
-/* bunker stuff */
+// bunker stuff
 
 .topic {
 	padding: 5px 10px;
 	border-bottom: solid #eee 1px;
+	border-right: solid 1px #eee;
 	line-height: 30px;
+	background-color: $lightBackgroundColor;
 }
 
 [fill], .fill {
@@ -458,11 +503,13 @@ mark:hover {
 	resize: none;
 	overflow: hidden;
 	border-radius: 0;
+	padding: 12px;
 }
 
 .message-input input[type=text],
 .message-input button {
 	border-radius: 0;
+	padding: 12px;
 }
 
 .message-caret {
@@ -651,26 +698,26 @@ img.fatality {
 	vertical-align: middle;
 	border-radius: 8px;
 	margin-left: 4px;
-}
 
-.status.here {
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #00FF00), color-stop(1, #00BD00));
-	background-image: -o-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
-	background-image: -moz-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
-	background-image: -webkit-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
-	background-image: -ms-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
-	background-image: linear-gradient(to bottom, #00FF00 0%, #00BD00 100%);
-	box-shadow: 0 0 2px #00BD00;
-}
+	&.here {
+		background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #00FF00), color-stop(1, #00BD00));
+		background-image: -o-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
+		background-image: -moz-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
+		background-image: -webkit-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
+		background-image: -ms-linear-gradient(bottom, #00FF00 0%, #00BD00 100%);
+		background-image: linear-gradient(to bottom, #00FF00 0%, #00BD00 100%);
+		box-shadow: 0 0 2px #00BD00;
+	}
 
-.status.away {
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFF00), color-stop(1, #D4D400));
-	background-image: -o-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
-	background-image: -moz-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
-	background-image: -webkit-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
-	background-image: -ms-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
-	background-image: linear-gradient(to bottom, #FFFF00 0%, #D4D400 100%);
-	box-shadow: 0 0 2px #D4D400;
+	&.away {
+		background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFF00), color-stop(1, #D4D400));
+		background-image: -o-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
+		background-image: -moz-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
+		background-image: -webkit-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
+		background-image: -ms-linear-gradient(bottom, #FFFF00 0%, #D4D400 100%);
+		background-image: linear-gradient(to bottom, #FFFF00 0%, #D4D400 100%);
+		box-shadow: 0 0 2px #D4D400;
+	}
 }
 
 .room-options {
@@ -683,13 +730,12 @@ img.fatality {
 	padding: 8px 0;
 	background-color: #F5D9DD;
 	color: #666;
+	dl {
+		margin-bottom: 5px;
+	}
 }
 
-.debugging dl {
-	margin-bottom: 5px;
-}
-
-/* animations */
+// animations
 
 .animation-box {
 	position: fixed;
@@ -699,14 +745,14 @@ img.fatality {
 	width: 75px;
 	z-index: 100;
 	transition: linear 1.5s;
-}
 
-.animation-box img {
-	height: 100%;
-}
+	img {
+		height: 100%;
+	}
 
-.animation-box.closed {
-	bottom: -75px;
+	&.closed {
+		bottom: -75px;
+	}
 }
 
 /*date picker*/
