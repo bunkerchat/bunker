@@ -35,7 +35,7 @@ function googleImageSearch(query, animated) {
 		};
 
 		if (animated) {
-			qs.q += ' ".gif"';
+			//qs.q += ' ".gif"';
 			qs.fileType = 'gif';
 			//qs.hq = 'animated';
 			qs.tbs = 'itp:animated';
