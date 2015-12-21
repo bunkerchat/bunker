@@ -18,7 +18,6 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		start: function () {
 			// Call start once we are finished connecting (bunker.js)
 			resolveBunkerData$Promise($q.all([
-				bunkerData.connect(),
 				bunkerData.init()
 			]));
 
@@ -90,10 +89,6 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 				return bunkerData;
 			});
-		},
-
-		connect: function () {
-			return io.socket.emit('/user/current/connect');
 		},
 
 		// Messages
@@ -268,7 +263,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		_.each(room.$messages, function (message, index) {
 			if(message.author){
-				message.author = users[message.author._id || message.author];				
+				message.author = users[message.author._id || message.author];
 			}
 
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
