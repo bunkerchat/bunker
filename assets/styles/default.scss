@@ -5,7 +5,6 @@ $lightBackgroundColor: #Fcfcfc;
 
 body {
 	padding-top: 40px;
-	background-color: $lightBackgroundColor;
 }
 
 a, [ng-click], .pointer, [ui-sref] {
@@ -410,7 +409,7 @@ mark:hover {
 	margin-left: 180px;
 	padding-left: 10px;
 	padding-right: 150px;
-	background-color: $lightBackgroundColor;
+	background-color: #fff;
 	word-break: break-word;
 }
 
@@ -512,7 +511,7 @@ img.fatality {
 // member list
 
 .right-pane {
-	background-color: darken($lightBackgroundColor, 1);
+	background-color: $lightBackgroundColor;
 }
 
 [room] .right-pane {
