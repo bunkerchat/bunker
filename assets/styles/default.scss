@@ -61,6 +61,11 @@ pre {
 	}
 }
 
+.form-control:focus {
+	border: 0;
+	box-shadow: none;
+}
+
 // navbar
 
 nav,
