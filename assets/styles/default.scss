@@ -1,7 +1,11 @@
+$darkBackgroundColor: #45494D;
+$lightBackgroundColor: #Fcfcfc;
+
 /* boostrap overrides */
 
 body {
 	padding-top: 40px;
+	background-color: $lightBackgroundColor;
 }
 
 a, [ng-click], .pointer, [ui-sref] {
@@ -13,7 +17,7 @@ a, [ng-click], .pointer, [ui-sref] {
 	text-decoration: none;
 }
 
-/* ng-sortable overrides */
+// ng-sortable overrides
 .as-sortable-item-handle {
 	cursor: pointer;
 }
@@ -29,7 +33,8 @@ pre {
 	text-align: center;
 }
 
-/* navbar */
+// navbar
+
 nav,
 .navbar {
 	min-height: 40px;
@@ -38,7 +43,7 @@ nav,
 }
 
 .navbar-default {
-	background-color: #555;
+	background-color: $darkBackgroundColor;
 	border-bottom: 0;
 }
 
@@ -54,7 +59,7 @@ nav,
 .navbar-default .navbar-nav > li > a,
 .navbar-nav > li > a {
 	padding: 6px 12px;
-	box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.5)
+	box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5)
 }
 
 .navbar-default .navbar-nav > .active > a,
@@ -64,6 +69,7 @@ nav,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
 	background-color: #79a736;
+	font-weight: 500;
 }
 
 .navbar .nav > li > a,
@@ -76,12 +82,13 @@ nav,
 	text-align: center;
 	line-height: 40px;
 	color: #fff;
-	background-color: #666;
+	background-color: #616469;
+	text-spacing: 0.3px;
 }
 
 .navbar .nav.navbar-right > li > a.small-width {
 	min-width: 50px;
-	box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.5)
+	box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 .navbar .navbar-nav li .badge {
@@ -140,25 +147,6 @@ input:focus, .form-control:focus {
 
 /* augments */
 
-[splash] {
-	position: fixed;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	background-color: #666;
-	z-index: 9001;
-	padding-top: 90px;
-	text-align: center;
-	font-family: "Cabin", Arial, sans-serif;
-	font-size: 36px;
-	font-weight: bolder;
-	color: #fff;
-}
-
-[splash] img {
-	width: 150px;
-}
-
 .no-gutter {
 	padding-left: 0;
 	padding-right: 0;
@@ -198,7 +186,28 @@ mark:hover {
 	color: white;
 }
 
-/* header dropdowns */
+// splash screen
+
+[splash] {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: $darkBackgroundColor;
+	z-index: 9001;
+	padding-top: 90px;
+	text-align: center;
+	font-family: "Cabin", Arial, sans-serif;
+	font-size: 36px;
+	font-weight: bolder;
+	color: #fff;
+
+	img {
+		width: 150px;
+	}
+}
+
+// header dropdowns
 
 .header-dropdown {
 	position: fixed;
@@ -210,33 +219,32 @@ mark:hover {
 	border: solid #ddd;
 	border-width: 0 0 3px 3px;
 	border-bottom-left-radius: 4px;
-	background: #fff;
+	background: $lightBackgroundColor;
 	overflow-x: hidden;
 	font-size: 13px;
 }
 
-/* inbox */
+// inbox
 
 .inbox-header {
 	color: #fff;
-	background-color: #555;
+	background-color: $darkBackgroundColor;
 	padding: 5px 0 3px 5px;
 	text-align: center;
 }
 
 .inbox {
+
 	font-size: 14px;
-}
-
-.inbox ol {
-	overflow-y: auto;
-	overflow-x: hidden;
-	height: 459px;
-}
-
-.inbox li {
-	background-color: #414B57;
-	border-bottom: solid #80868E 2px;
+	ol {
+		overflow-y: auto;
+		overflow-x: hidden;
+		height: 459px;
+	}
+	li {
+		background-color: #414B57;
+		border-bottom: solid #80868E 2px;
+	}
 }
 
 .inbox-author {
@@ -254,16 +262,16 @@ mark:hover {
 	margin-top: 0;
 	padding: 0 10px 5px 10px;
 	background-color: #fff;
-}
 
-.inbox-message.read {
-	background-color: #F5F5F5;
-}
+	&.read {
+		background-color: #F5F5F5;
+	}
 
-.inbox-message [bunker-message] {
-	display: inline-block;
-	width: 295px;
-	padding-right: 10px;
+	[bunker-message] {
+		display: inline-block;
+		width: 295px;
+		padding-right: 10px;
+	}
 }
 
 .inbox-time {
@@ -350,10 +358,10 @@ mark:hover {
 .message {
 	line-height: 30px;
 	background-color: #414B57;
-}
 
-.message.local {
-	background-color: #596470;
+	&.local {
+		background-color: #596470;
+	}
 }
 
 /* message type specific styles */
@@ -377,28 +385,25 @@ mark:hover {
 	height: 30px;
 	line-height: 30px;
 
+	* {
+		vertical-align: middle;
+	}
+
 	img {
 		height: 20px;
+		margin-left: 5px;
 	}
-}
 
-.message-author * {
-	vertical-align: middle;
-}
-
-.message-author .name {
-	text-overflow: ellipsis;
-	width: 108px;
-	min-width: 108px;
-	overflow: hidden;
-	display: inline-block;
-	padding-left: 4px;
-	height: 30px;
-	white-space: nowrap;
-}
-
-.message-author img {
-	margin-left: 5px;
+	.name {
+		text-overflow: ellipsis;
+		width: 108px;
+		min-width: 108px;
+		overflow: hidden;
+		display: inline-block;
+		padding-left: 4px;
+		height: 30px;
+		white-space: nowrap;
+	}
 }
 
 .message-body {
@@ -406,7 +411,7 @@ mark:hover {
 	margin-left: 180px;
 	padding-left: 10px;
 	padding-right: 150px;
-	background: #fff;
+	background-color: $lightBackgroundColor;
 	word-break: break-word;
 }
 
@@ -432,10 +437,6 @@ mark:hover {
 	tab-size: 4;
 }
 
-.message-body .default-video-height .panel-body {
-	/* height: 420px; */
-}
-
 .message-info {
 	position: absolute;
 	top: 0;
@@ -458,6 +459,7 @@ mark:hover {
 .message-input textarea {
 	resize: none;
 	overflow: hidden;
+	border-radius: 0;
 }
 
 .message-input input[type=text],
@@ -508,10 +510,18 @@ img.fatality {
 	position: relative;
 }
 
-/* member list */
+// member list
 
 .right-pane {
+	background-color: darken($lightBackgroundColor, 1);
+}
+
+[room] .right-pane {
 	height: calc(100vh - 86px);
+}
+
+.message-input .right-pane {
+	height: 46px;
 }
 
 .member-list {
@@ -524,6 +534,7 @@ img.fatality {
 	border-left: 0;
 	border-right: 0;
 	padding: 8px 12px;
+	background-color: $lightBackgroundColor;
 }
 
 .member-list li.list-group-item:first-of-type {
