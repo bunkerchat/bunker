@@ -37,8 +37,8 @@ module.exports.init = function (req, res) {
 	User.findById(userId, {sockets: 1}).then(function (user) { // find user sockets
 
 		var sockets = user.sockets || [];
-		sockets.push(req.socket.id); // add this request socket
-		sockets = _.unique(sockets); // remove duplicates
+		_.remove(sockets, {socketId: req.socket.id});
+		sockets.push({socketId: req.socket.id, updatedAt: new Date()});
 
 		return User.findByIdAndUpdate(userId, {
 			sockets: sockets,
@@ -137,7 +137,7 @@ module.exports.activity = function (req, res) {
 	var updates = {
 		typingIn: typeof typingIn !== 'undefined' ? typingIn : null,
 		present: typeof present !== 'undefined' ? present : true,
-		lastActivity: new Date().toISOString()
+		lastActivity: new Date()
 	};
 
 	req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: updates});
@@ -155,3 +155,54 @@ module.exports.clearInbox = function (req, res) {
 		.then(res.ok)
 		.catch(res.serverError);
 };
+
+module.exports.ping = function (req, res) {
+	var userId = req.session.userId.toObjectId();
+
+	// remove currently connected socket from array
+	User.update(
+		{_id: userId},
+		{
+			$pull: {
+				sockets: {socketId: req.socket.id}
+			}
+		}
+	)
+		.then(() => {
+			return User.update(
+				{_id: userId},
+				{
+					$push: {
+						sockets: {
+							socketId: req.socket.id, updatedAt: new Date()
+						}
+					}
+				}
+			)
+		})
+		.then(res.ok)
+		.catch(res.serverError);
+};
+
+// clear inactive users from list
+setInterval(function () {
+	var derp = moment().subtract(5, 'seconds').toDate()
+
+	User.find({
+		connected: true,
+		sockets: {
+			$elemMatch: {
+				updatedAt: {"$lte": derp}
+			}
+		}
+	})
+		.then(users => {
+			console.log(_.pluck(users, 'nick'));
+			return Promise.each(users, user => {
+				var socket = _.find(user.sockets, socket => (socket.updatedAt - derp) < 0);
+				if(!socket) return;
+				return userService.disconnectUser(user,socket.id);
+			});
+		})
+		.catch(console.error)
+}, 10000);

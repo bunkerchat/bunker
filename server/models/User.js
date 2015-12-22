@@ -26,6 +26,9 @@ var userSchema = new mongoose.Schema({
 	lastConnected: {
 		type: Date
 	},
+	lastActivity: {
+		type: Date
+	},
 	present: {
 		type: Boolean,
 		default: true
