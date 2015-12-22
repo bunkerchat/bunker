@@ -141,27 +141,35 @@ module.exports.activity = function (req, res) {
 	};
 
 	var activeRoom = req.body.room;
+	var lastMessageId;
+
 	if (typeof activeRoom !== 'undefined') {
 		updates.activeRoom = activeRoom;
 
 		User.findById(userId, {activeRoom: 1}).then(user => {
-			return Promise.join(
-				Message.findOne({room: user.activeRoom}, {_id: 1}, {sort: {createdAt: -1}, limit: 1}).then(lastMessage => {
-					return RoomMember.findOneAndUpdate({
-						user: userId,
-						room: user.activeRoom
-					}, {lastReadMessage: lastMessage._id})
-				}, {'new': true}),
-				User.findByIdAndUpdate(userId, {activeRoom: activeRoom})
-			);
-		})
-			.spread((roomMember) => {
-				req.io.to(`userself_${userId}`).emit('user_roommember', {
-					_id: roomMember._id,
-					verb: 'updated',
-					data: {lastReadMessage: roomMember.lastReadMessage}
-				});
-			});
+			if (user.activeRoom) {
+				Message.findOne({room: user.activeRoom}, {_id: 1}, {
+					sort: {$natural: -1},
+					limit: 1
+				}).lean()
+					.then(lastMessage => {
+						lastMessageId = lastMessage._id;
+						return RoomMember.findOneAndUpdate({
+							user: userId,
+							room: user.activeRoom
+						}, {lastReadMessage: lastMessageId});
+					})
+					.then(roomMember => {
+						req.io.to(`userself_${userId}`).emit('user_roommember', {
+							_id: roomMember._id,
+							verb: 'updated',
+							data: {lastReadMessage: lastMessageId}
+						});
+					});
+			}
+
+			User.findByIdAndUpdate(userId, {activeRoom: activeRoom}).then(_.noop);
+		});
 	}
 
 	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});

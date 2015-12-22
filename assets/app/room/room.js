@@ -24,15 +24,20 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					updateMemberList();
 				});
 
+				$scope.$watch('current.$selected', function(selected) {
+					if(selected && $scope.current.$messages.length > 0 && _.last($scope.current.$messages)._id == $scope.current.$lastReadMessage) {
+						el.find('.message.last-read').removeClass('last-read');
+					}
+				}, true);
+
 				$scope.$watch('current.$lastReadMessage', function (lastReadId) {
-					console.log('new last read id', lastReadId);
 					el.find('.message.last-read').removeClass('last-read');
 					if (lastReadId) {
 						setTimeout(function() {
 							el.find('#' + lastReadId + ' .message').addClass('last-read');
 						}, 0)
 					}
-				});
+				}, true);
 
 				updateMemberList();
 			});
