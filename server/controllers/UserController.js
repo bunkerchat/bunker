@@ -130,10 +130,6 @@ module.exports.init = function (req, res) {
 module.exports.activity = function (req, res) {
 	var userId = req.session.userId;
 
-	if (req.body.room) {
-		User.findByIdAndUpdate(userId, {activeRoom: req.body.room}).then(_.noop);
-	}
-
 	// Only allow updates for the following values
 	// There's no need for us to save these in the db, this may change in the future
 	var typingIn = req.body.typingIn;
@@ -144,7 +140,31 @@ module.exports.activity = function (req, res) {
 		lastActivity: new Date().toISOString()
 	};
 
-	req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: updates});
+	var activeRoom = req.body.room;
+	if (typeof activeRoom !== 'undefined') {
+		updates.activeRoom = activeRoom;
+
+		User.findById(userId, {activeRoom: 1}).then(user => {
+			return Promise.join(
+				Message.findOne({room: user.activeRoom}, {_id: 1}, {sort: {createdAt: -1}, limit: 1}).then(lastMessage => {
+					return RoomMember.findOneAndUpdate({
+						user: userId,
+						room: user.activeRoom
+					}, {lastReadMessage: lastMessage._id})
+				}, {'new': true}),
+				User.findByIdAndUpdate(userId, {activeRoom: activeRoom})
+			);
+		})
+			.spread((roomMember) => {
+				req.io.to(`userself_${userId}`).emit('user_roommember', {
+					_id: roomMember._id,
+					verb: 'updated',
+					data: {lastReadMessage: roomMember.lastReadMessage}
+				});
+			});
+	}
+
+	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
 	res.ok(updates);
 };
 

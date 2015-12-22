@@ -31,39 +31,17 @@ module.exports.message = function (req, res) {
 		.then(roomMember => {
 			if (!roomMember) throw new ForbiddenError('Must be a member of this room');
 			currentRoomMember = roomMember;
-			return messageService.createMessage(roomMember, req.body.text);
-		})
-		.then(message => {
 
 			// Inform clients that use is not busy and typing has ceased
 			var notTypingUpdate = {busy: false, typingIn: null, connected: true};
 			req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: notTypingUpdate});
 
-			res.ok(message);
-
-			var tasks = [];
-			tasks.push(User.findByIdAndUpdate(userId, notTypingUpdate));
-			if(message) { // Only need to do this if there's a message
-				tasks.push(
-					User.find({activeRoom: roomId}).then(activeUsers => {
-						return Promise.each(activeUsers, activeUser => {
-							return RoomMember.findOneAndUpdate({
-								room: roomId,
-								user: activeUser._id
-							}, {lastReadMessage: message._id}, {'new': true})
-								.then(updatedMember => {
-									req.io.to(`userself_${updatedMember.user}`).emit('user_roommember_updated', {
-										_id: updatedMember._id,
-										data: {lastReadMessage: updatedMember.lastReadMessage}
-									});
-								});
-						});
-					})
-				);
-			}
-
-			return Promise.all(tasks);
+			return Promise.join(
+				User.findByIdAndUpdate(userId, notTypingUpdate),
+				messageService.createMessage(roomMember, req.body.text)
+			);
 		})
+		.spread((userUpdate, message) => res.ok(message))
 		.catch(InvalidInputError, function (err) {
 			RoomService.messageUserInRoom(currentRoomMember.user._id, currentRoomMember.room, err.message);
 			res.badRequest(err);

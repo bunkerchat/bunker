@@ -6,6 +6,8 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 		templateUrl: '/assets/app/room/room.html',
 		link: function ($scope, $element) {
 
+			var el = angular.element($element);
+
 			$scope.user = bunkerData.user;
 			$scope.settings = bunkerData.userSettings;
 
@@ -20,6 +22,16 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 						return roomMember.user._id;
 					});
 					updateMemberList();
+				});
+
+				$scope.$watch('current.$lastReadMessage', function (lastReadId) {
+					console.log('new last read id', lastReadId);
+					el.find('.message.last-read').removeClass('last-read');
+					if (lastReadId) {
+						setTimeout(function() {
+							el.find('#' + lastReadId + ' .message').addClass('last-read');
+						}, 0)
+					}
 				});
 
 				updateMemberList();
@@ -66,7 +78,6 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					popupElement(message.words[i]);
 				}
 
-				var el = angular.element($element);
 				showEmoticonAnimation(el, message.emoticon);
 			});
 

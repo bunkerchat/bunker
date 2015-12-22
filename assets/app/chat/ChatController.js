@@ -19,6 +19,10 @@ app.controller('ChatController', function ($rootScope, bunkerData) {
 
 		_.each(self.rooms, function (room) {
 			room.$selected = room._id == $rootScope.roomId;
+			if(room.$selected) {
+				var membership = _.find(bunkerData.memberships, {room: room._id});
+				room.$lastReadMessage = membership.lastReadMessage;
+			}
 		});
 	}
 });
