@@ -973,6 +973,10 @@ img.fatality {
 		}
 	}
 
+	li:not(:last-child) .message.last-read:after {
+		content: '';
+	}
+
 	// system message
 	.system-message-body {
 		width: auto;

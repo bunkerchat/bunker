@@ -88,10 +88,15 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function handleVisibilityShow() {
+		var activeRoom = _.find(bunkerData.rooms, {$selected: true});
+		if (activeRoom) {
+			bunkerData.broadcastActiveRoom(activeRoom._id);
+		}
 		bunkerData.broadcastPresent(true);
 	}
 
 	function handleVisibilityHide() {
+		bunkerData.broadcastActiveRoom(null);
 		bunkerData.broadcastPresent(false);
 	}
 
@@ -105,6 +110,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function handleClose() {
+		bunkerData.broadcastActiveRoom(null);
 		io.socket.disconnect();
 	}
 
