@@ -63,8 +63,8 @@ app.controller('RoomHistoryController', function ($scope, bunkerData, $statePara
 	}
 
 	function setStartAndEnd(date) {
-		startDate = moment(date).format('YYYY-MM-DD');
-		endDate = moment(date).add(1, 'days').format('YYYY-MM-DD');
+		startDate = moment(date);
+		endDate = moment(date).add(1, 'days').toDate();
 		self.date = moment(date).toDate();
 	}
 

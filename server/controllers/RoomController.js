@@ -201,12 +201,12 @@ module.exports.messages = function (req, res) {
 // GET /room/:id/history
 // Get historical messages of a room
 module.exports.history = function (req, res) {
-	var roomId = actionUtil.requirePk(req);
-	var startDate = req.param('startDate');
-	var endDate = req.param('endDate');
+	var roomId = req.body.roomId.toObjectId();
+	var startDate = new Date(req.body.startDate);
+	var endDate = new Date(req.body.endDate);
 
-	Message.find({room: roomId, createdAt: {'>': new Date(startDate), '<': new Date(endDate)}})
-		.sort('createdAt ASC')
+	Message.find({room: roomId, createdAt: {'$gte': startDate, '$lt': endDate}})
+		.sort('createdAt')
 		.populate('author')
 		.then(res.ok)
 		.catch(res.serverError);

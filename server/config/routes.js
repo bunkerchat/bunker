@@ -48,6 +48,7 @@ module.exports.socketio = function (socket) {
 	socket.on('/room/leave', socketToController(roomController.leave));
 	socket.on('/room/message', socketToController(roomController.message));
 	socket.on('/room/messages', socketToController(roomController.messages));
+	socket.on('/room/history', socketToController(roomController.history));
 
 	// roommember
 	socket.on('/roommember/updateSettings', socketToController(userSettingsController.saveRoomMember));

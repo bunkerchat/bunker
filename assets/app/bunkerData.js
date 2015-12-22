@@ -134,15 +134,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			if (!id || !roomLookup[id] || roomLookup[id].$messages.length <= 100) return;
 			roomLookup[id].$messages.splice(0, roomLookup[id].$messages.length - 100);
 		},
-		// TODO: fix history
-		//getHistoryMessages: function (roomId, startDate, endDate) {
-		//	var url = '/room/' + roomId + '/history?startDate=' + startDate + '&endDate=' + endDate;
-		//	return $q(function (resolve) {
-		//		io.socket.emit(url, null, function (messages) {
-		//			resolve(messages);
-		//		});
-		//	});
-		//},
+		getHistoryMessages: function (roomId, startDate, endDate) {
+			return io.socket.emitAsync('/room/history', {roomId: roomId, startDate: startDate, endDate: endDate});
+		},
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
@@ -267,8 +261,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		});
 
 		_.each(room.$messages, function (message, index) {
-			if(message.author){
-				message.author = users[message.author._id || message.author];				
+			if (message.author) {
+				message.author = users[message.author._id || message.author];
 			}
 
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
