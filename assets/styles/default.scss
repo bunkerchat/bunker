@@ -1,6 +1,8 @@
 $darkBackgroundColor: #45494D;
 $lightBackgroundColor: #Fcfcfc;
 $successColor: #93c54b;
+$mentionColor: #faf2cc;
+$navbarMentionColor: #FFD300;
 $navbarSuccessColor: #79a736;
 
 @font-face {
@@ -25,7 +27,7 @@ body {
 	font-family: 'Roboto';
 }
 
-a, a:hover, a:visited {
+a, a:hover, a:visited, .btn-link, .btn-link:hover {
 	color: $successColor;
 }
 
@@ -151,7 +153,7 @@ nav,
 	}
 
 	.badge.badge-mention {
-		background-color: #FFD300;
+		background-color: $navbarMentionColor;
 		color: #000;
 		-webkit-animation: pulse 0.6s infinite;
 		animation: bounce 0.6s infinite;
@@ -502,11 +504,11 @@ mark:hover {
 }
 
 .message-mention .message-body {
-	background-color: #faf2cc;
+	background-color: $mentionColor;
 }
 
 .message-mention .message-caret {
-	border-right-color: #faf2cc;
+	border-right-color: $mentionColor;
 }
 
 .message-input.edit-mode textarea {
