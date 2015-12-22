@@ -425,19 +425,6 @@ mark:hover {
 
 li:not(:last-child) .message.last-read {
 	border-bottom: solid $successColor 2px;
-
-	&:after {
-		position: absolute;
-		content: 'Last Read';
-		margin: 0 auto;
-		left: 50%;
-		bottom: -14px;
-		font-size: 12px;
-		z-index: 1;
-		background: white;
-		padding: 0 10px;
-		color: #999;
-	}
 }
 
 // message type specific styles
@@ -971,10 +958,6 @@ img.fatality {
 			float: right;
 			background-color: #d9edf7;
 		}
-	}
-
-	li:not(:last-child) .message.last-read:after {
-		content: '';
 	}
 
 	// system message
