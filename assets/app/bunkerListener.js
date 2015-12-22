@@ -54,6 +54,10 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 		}
 	}
 
+	function handleUserRoomMemberUpdated(evt) {
+		//console.log(evt);
+	}
+
 	function handleMembershipEvent(evt) {
 		var membership = _(bunkerData.rooms).pluck('$members').flatten().filter({_id: evt._id}).value();
 		membership = membership[0];
@@ -107,6 +111,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	var listeners = [
 		{name: 'room', type: 'socket', handler: handleRoomEvent},
 		{name: 'user', type: 'socket', handler: handleUserEvent},
+		{name: 'user_roommember_updated', type: 'socket', handler: handleUserRoomMemberUpdated},
 		// usersettings are only updated by the client and mirroring is off
 		{name: 'roomMember', type: 'socket', handler: handleMembershipEvent},
 		{name: 'inboxMessage', type: 'socket', handler: handleInboxEvent},

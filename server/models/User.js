@@ -44,17 +44,11 @@ var userSchema = new mongoose.Schema({
 	settings: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'UserSettings'
+	},
+	activeRoom: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Room'
 	}
 });
 
-//userSchema.options.toObject.transform = function (doc, ret, options) {
-//
-//};
-
 module.exports = mongoose.model('User', userSchema, 'user');
-
-function removeSensitiveData(user) {
-	delete user.token;
-	delete user.sockets;
-	return user;
-}

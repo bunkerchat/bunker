@@ -46,7 +46,7 @@ module.exports.init = function (req, res) {
 			lastConnected: new Date().toISOString(),
 			typingIn: null,
 			present: true
-		}, {new: true});
+		}, {'new': true});
 	})
 		.then(function (updatedUser) {
 			req.io.to('user_' + updatedUser._id).emit('user', {
@@ -124,11 +124,15 @@ module.exports.init = function (req, res) {
 };
 
 // Activity update route. This will respond to PUT /user/current/activity
-// This route only allows updates to present and typingIn.
-// It can only be called by the current user.
-// It's sole purpose is to enable away and typing notifications.
+// This route only allows updates to present, typingIn, and room. It can only be called by the current user.
+// Its purpose is to update state changes for the current user (which room are they typing in, are they away,
+// which room is active, etc.)
 module.exports.activity = function (req, res) {
 	var userId = req.session.userId;
+
+	if (req.body.room) {
+		User.findByIdAndUpdate(userId, {activeRoom: req.body.room}).then(_.noop);
+	}
 
 	// Only allow updates for the following values
 	// There's no need for us to save these in the db, this may change in the future

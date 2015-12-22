@@ -155,6 +155,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// User
 
+		broadcastActiveRoom: function (roomId) {
+			io.socket.emit('/user/current/activity', {room: roomId});
+		},
 		broadcastTyping: function (roomId) {
 			if (!bunkerData.$resolved) return; // Not ready yet
 
@@ -256,7 +259,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		});
 
 		_.each(room.$messages, function (message, index) {
-			if(message.author){
+			if (message.author) {
 				message.author = users[message.author._id || message.author];
 			}
 
