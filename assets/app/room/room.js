@@ -24,16 +24,12 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					updateMemberList();
 				});
 
-				$scope.$watch('current.$selected', function(selected) {
-					if(selected && $scope.current.$messages.length > 0 && _.last($scope.current.$messages)._id == $scope.current.$lastReadMessage) {
-						el.find('.message.last-read').removeClass('last-read');
-					}
-				}, true);
-
 				$scope.$watch('current.$lastReadMessage', function (lastReadId) {
+					// Only set when chat controller selects a room
+
 					el.find('.message.last-read').removeClass('last-read');
-					if (lastReadId) {
-						setTimeout(function() {
+					if (lastReadId && $scope.current.$messages.length > 0 && _.last($scope.current.$messages)._id != $scope.current.$lastReadMessage) {
+						setTimeout(function () {
 							el.find('#' + lastReadId + ' .message').addClass('last-read');
 						}, 0)
 					}
@@ -88,7 +84,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 
 			$rootScope.$on('userUpdated', updateMemberList);
 
-			function showEmoticonAnimation(el, emoticon){
+			function showEmoticonAnimation(el, emoticon) {
 				var knownEmoticon = _.find(emoticons.files, function (known) {
 					return known.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticon.replace(/:/g, '').toLowerCase();
 				});
