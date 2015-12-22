@@ -8,6 +8,7 @@
     "angular": "^1.5.0-beta.2",
     "bluebird": "3.0.5",
     "body-parser": "1.14.1",
+    "bootstrap": "3.3.6",
     "bower": "1.6.8",
     "cache-manager": "1.2.2",
     "cache-manager-mongodb": "0.1.6",

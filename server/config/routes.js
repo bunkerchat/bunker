@@ -34,7 +34,6 @@ module.exports.socketio = function (socket) {
 	socket.on('/init', socketToController(userController.init));
 
 	// user
-	socket.on('/user/current/connect', socketToController(userController.connect));
 	socket.on('/user/current/activity', socketToController(userController.activity));
 	socket.on('/user/current/markInboxRead', socketToController(userController.markInboxRead));
 	socket.on('/user/current/clearInbox', socketToController(userController.clearInbox));

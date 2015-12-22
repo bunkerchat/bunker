@@ -34,12 +34,34 @@ module.exports.init = function (req, res) {
 	// allows sending async messages back to connected client from server
 	socket.join('userself_' + userId);
 
-	Promise.join(
-		User.findById(userId).lean(),
-		UserSettings.findOne({user: userId}).lean(),
-		RoomMember.find({user: userId}).sort('roomOrder').populate('room').lean(),
-		InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message').lean()
-	)
+	User.findById(userId, {sockets: 1}).then(function (user) { // find user sockets
+
+		var sockets = user.sockets || [];
+		sockets.push(req.socket.id); // add this request socket
+		sockets = _.unique(sockets); // remove duplicates
+
+		return User.findByIdAndUpdate(userId, {
+			sockets: sockets,
+			connected: true,
+			lastConnected: new Date().toISOString(),
+			typingIn: null,
+			present: true
+		}, {new: true});
+	})
+		.then(function (updatedUser) {
+			req.io.to('user_' + updatedUser._id).emit('user', {
+				_id: updatedUser._id,
+				verb: 'updated',
+				data: updatedUser
+			});
+
+			return Promise.join(
+				User.findById(userId).lean(),
+				UserSettings.findOne({user: userId}).lean(),
+				RoomMember.find({user: userId}).sort('roomOrder').populate('room').lean(),
+				InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message').lean()
+			);
+		})
 		.spread((_user, _userSettings, _memberships, _inboxMessages) => {
 
 			user = _user;
@@ -97,7 +119,7 @@ module.exports.init = function (req, res) {
 		})
 
 		// compose all the data into an object matching the original vars and return them to the client
-		.then(users => res.ok({ user, userSettings, memberships, inbox, rooms, users}))
+		.then(users => res.ok({user, userSettings, memberships, inbox, rooms, users}))
 		.catch(res.serverError);
 };
 
@@ -120,40 +142,6 @@ module.exports.activity = function (req, res) {
 
 	req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: updates});
 	res.ok(updates);
-};
-
-module.exports.connect = function (req, res) {
-	var lastConnected, previouslyConnected;
-
-	if (!req.session.userId) return;
-
-	User.findById(req.session.userId.toObjectId())
-		.then(function (user) {
-			lastConnected = user.lastConnected;
-			previouslyConnected = user.connected;
-
-			if (!user.sockets) user.sockets = [];
-			user.sockets.push(req.socket.id);
-			user.connected = true;
-			user.lastConnected = new Date().toISOString();
-			user.typingIn = null;
-			user.present = true;
-
-			return user.save();
-		})
-		.then(function (user) {
-
-			req.io.to('user_' + user._id).emit('user', {_id: user._id, verb: 'updated', data: user});
-
-			// Clear any disconnect messages that haven't gone out yet
-			if (userService.pendingTasks[user._id]) {
-				clearTimeout(userService.pendingTasks[user._id]);
-				userService.pendingTasks[user._id] = null;
-			}
-
-			res.ok({});
-		})
-		.catch(res.serverError);
 };
 
 module.exports.markInboxRead = function (req, res) {
