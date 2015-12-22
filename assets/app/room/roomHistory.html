@@ -24,7 +24,7 @@
 								<span class="message-info text-muted">
 									<i class="fa fa-pencil" ng-if="message.edited"></i>
 									<span ng-if="::message.$firstInSeries">
-										<a ui-sref="roomHistory({roomId: room.current._id, date: message.createdAt, message: message._id})"
+										<a ui-sref="roomHistory({roomId: message.room, date: message.createdAt, message: message._id})"
 											 class="text-muted">
 											<small>{{::message.createdAt | date:'h:mm:ss a'}}</small>
 										</a>
