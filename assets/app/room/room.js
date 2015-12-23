@@ -24,7 +24,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					updateMemberList();
 				});
 
-				$scope.$watch('current.$selected', updateLastRead, true);
+				$scope.$watch('current.$selected', updateLastRead);
 
 				updateMemberList();
 			});
@@ -74,6 +74,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			});
 
 			$rootScope.$on('userUpdated', updateMemberList);
+			$rootScope.$on('visibilityShow', updateLastRead);
 
 			function showEmoticonAnimation(el, emoticon) {
 				var knownEmoticon = _.find(emoticons.files, function (known) {
@@ -119,9 +120,9 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 
 				el.find('.message.last-read').removeClass('last-read');
 				if (lastReadId) {
-					setTimeout(function () {
+					_.defer(function () {
 						el.find('#' + lastReadId + ' .message').addClass('last-read');
-					}, 0);
+					});
 				}
 			}
 		}
