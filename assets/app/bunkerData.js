@@ -40,7 +40,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				_.assign(users, _.indexBy(initialData.users, '_id'));
 
 				_.each(bunkerData.inbox, function (inbox) {
-					inbox.message.author = users[inbox.message.author._id || inbox.message.author];
+					if (inbox.message.author) { // TODO causing a bug for @aSig for some reason without this
+						inbox.message.author = users[inbox.message.author._id || inbox.message.author];
+					}
 				});
 
 				_.each(bunkerData.memberships, function (membership) {

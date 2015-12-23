@@ -11,10 +11,10 @@ $navbarSuccessColor: #79a736;
 
 body {
 	padding-top: 40px;
-	font-family: 'Roboto';
+	font-family: 'Roboto', sans-serif;
 }
 
-a, a:hover, a:visited, .btn-link, .btn-link:hover {
+a, a:hover, a:visited, .btn-link, .btn-link:hover, .alert a, .alert .alert-link {
 	color: $successColor;
 }
 
@@ -23,24 +23,21 @@ a, [ng-click], .pointer, [ui-sref] {
 }
 
 .alert a, .alert .alert-link {
-	color: #93c54b;
 	text-decoration: none;
 }
 
+.dropdown-menu > li > a {
+	padding: 10px 20px;
+}
+
 // ng-sortable overrides
+
 .as-sortable-item-handle {
 	cursor: pointer;
 }
 
 pre {
 	color: #3e3f3a;
-}
-
-.splash-brand {
-	font-size: 150px;
-	text-shadow: 12px 12px 3px $successColor, 24px 24px 6px #000;
-	text-transform: uppercase;
-	text-align: center;
 }
 
 .btn {
@@ -108,7 +105,6 @@ nav,
 	padding: 0 20px;
 	text-transform: none;
 	font-size: 16px;
-	font-weight: normal;
 	min-width: 100px;
 	text-align: center;
 	line-height: 40px;
@@ -147,27 +143,7 @@ nav,
 	}
 }
 
-/* debrowning things */
-.dropdown-menu {
-	padding-top: 0;
-	padding-bottom: 0;
-}
-
-.dropdown-menu > li > a {
-	padding: 10px 20px;
-	color: #333;
-	font-size: 12px;
-}
-
-.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
-	background-color: #eee;
-	color: #333;
-}
-
-.dropdown-menu .divider {
-	margin: 0;
-	background-color: #ccc;
-}
+// debrowning things
 
 .table > thead > tr > th {
 	border-bottom: 2px solid #ccc;
@@ -250,6 +226,13 @@ mark:hover {
 	img {
 		width: 150px;
 	}
+}
+
+.splash-brand {
+	font-size: 150px;
+	text-shadow: 12px 12px 3px $successColor, 24px 24px 6px #000;
+	text-transform: uppercase;
+	text-align: center;
 }
 
 // header dropdowns
@@ -463,28 +446,28 @@ li:not(:last-child) .message.last-read {
 	padding-right: 150px;
 	background-color: #fff;
 	word-break: break-word;
+
+	img {
+		max-width: 100%;
+		max-height: 500px;
+	}
+
+	.panel {
+		margin: 0;
+	}
+
+	pre {
+		padding: 0;
+		tab-size: 4;
+	}
 }
 
 .new-message-body {
 	border-top: solid #eee 1px;
 }
 
-.message-body img {
-	max-width: 100%;
-	max-height: 500px;
-}
-
-.message-body .panel {
-	margin: 0;
-}
-
 .message .panel-body {
 	padding: 0;
-}
-
-.message-body pre {
-	padding: 0;
-	tab-size: 4;
 }
 
 .message-info {
@@ -794,7 +777,7 @@ img.fatality {
 	-o-keyframes: fadeout 1s;
 }
 
-/* lobby styling */
+// lobby styling
 
 .page-header {
 	margin-top: 0;
@@ -998,7 +981,7 @@ img.fatality {
 	}
 }
 
-/* animations */
+// animations
 
 @keyframes fadein {
 	from {
