@@ -5,22 +5,9 @@ $mentionColor: #faf2cc;
 $navbarMentionColor: #FFD300;
 $navbarSuccessColor: #79a736;
 
-@font-face {
-	font-family: 'Roboto';
-	src: url('/assets/fonts/Roboto-Regular.ttf');
-}
+@import "fonts";
 
-@font-face {
-	font-family: 'Roboto-Medium';
-	src: url('/assets/fonts/Roboto-Medium.ttf');
-}
-
-@font-face {
-	font-family: 'Roboto-Bold';
-	src: url('/assets/fonts/Roboto-Bold.ttf');
-}
-
-/* boostrap overrides */
+// boostrap overrides
 
 body {
 	padding-top: 40px;
@@ -57,7 +44,7 @@ pre {
 }
 
 .btn {
-	font-family: 'Roboto-Bold';
+	font-weight: bold;
 }
 
 .btn-success {
@@ -127,7 +114,7 @@ nav,
 	line-height: 40px;
 	color: white;
 	background-color: #616469;
-	font-family: 'Roboto-Medium';
+	font-weight: 500;
 
 	&:hover {
 		color: white;
