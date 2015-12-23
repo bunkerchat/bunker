@@ -24,16 +24,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					updateMemberList();
 				});
 
-				$scope.$watch('current.$lastReadMessage', function (lastReadId) {
-					// Only set when chat controller selects a room
-
-					el.find('.message.last-read').removeClass('last-read');
-					if (lastReadId && $scope.current.$messages.length > 0 && _.last($scope.current.$messages)._id != $scope.current.$lastReadMessage) {
-						setTimeout(function () {
-							el.find('#' + lastReadId + ' .message').addClass('last-read');
-						}, 0)
-					}
-				}, true);
+				$scope.$watch('current.$selected', updateLastRead, true);
 
 				updateMemberList();
 			});
@@ -45,7 +36,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 				$rootScope.$broadcast('inputText', '@' + userNick);
 			};
 			$scope.loadPreviousMessages = function () {
-				return bunkerData.loadMessages($scope.current, $scope.current.$messages.length);
+				return bunkerData.loadMessages($scope.current, $scope.current.$messages.length).then(updateLastRead);
 			};
 
 			$rootScope.$on('bunkerMessaged.animation', function (evt, message) {
@@ -118,6 +109,20 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 						return (user.connected ? (user.$present ? '000' : '111') : '999') + user.nick.toLowerCase();
 					})
 					.value();
+			}
+
+			function updateLastRead() {
+				if (!$scope.current.$selected || $scope.current.$messages.length == 0) return;
+
+				var membership = _.find(bunkerData.memberships, {room: $scope.current._id});
+				var lastReadId = _.last($scope.current.$messages)._id != membership.lastReadMessage ? membership.lastReadMessage : null;
+
+				el.find('.message.last-read').removeClass('last-read');
+				if (lastReadId) {
+					setTimeout(function () {
+						el.find('#' + lastReadId + ' .message').addClass('last-read');
+					}, 0);
+				}
 			}
 		}
 	}

@@ -12,15 +12,13 @@ app.controller('ChatController', function ($rootScope, bunkerData) {
 
 		if (bunkerData.$resolved && $rootScope.roomId && !_.any(self.rooms, {_id: $rootScope.roomId})) {
 			// Functionality to allow users to join a room by entering it's URL
-			bunkerData.joinRoom($rootScope.roomId).then(function() {
+			bunkerData.joinRoom($rootScope.roomId).then(function () {
 				selectRoom();
 			});
 		}
 
 		_.each(self.rooms, function (room) {
-			var membership = _.find(bunkerData.memberships, {room: room._id});
 			room.$selected = room._id == $rootScope.roomId;
-			room.$lastReadMessage = membership.lastReadMessage;
 		});
 	}
 });
