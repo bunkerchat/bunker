@@ -89,79 +89,19 @@ module.exports.init = function (req, res) {
 			socket.join('user_' + userId);
 			socket.join('inboxmessage_' + userId);
 
-<<<<<<< HEAD
-			_.each(memberships, function (membership) {
-				socket.join('roommember_' + membership._id);
-			});
-
-			_.each(rooms, function (room) {
+			_.each(memberships, membership => socket.join('roommember_' + membership._id));
+			_.each(rooms, room => {
 				socket.join('room_' + room._id);
 				socket.join('pinnedMessage_' + room.id);
 			});
 
-			return Promise.join(
-				// Get all room members and 40 initial messages for each room
-				Promise.map(rooms, function (room) {
-					room = room.toJSON();
-
-					return Promise.join(
-						Message.find({room: room._id}).sort('-createdAt').limit(40).populate('author'),
-						RoomMember.find({room: room._id}).populate('user'),
-						PinnedMessage.find({ room: room._id }).populate('message')
-						)
-						.spread(function (messages, members, pinnedMessages) {
-
-							// Setup subscriptions
-							_.each(members, function (member) {
-								socket.join('roommember_' + member._id);
-							});
-
-							_.each(_.pluck(members, 'user'), function (user) {
-								socket.join('user_' + user._id);
-							});
-
-							room.$messages = [];
-							_.each(messages, function (message) {
-								room.$messages.push(message.toJSON());
-							});
-
-							room.$members = [];
-							_.each(members, function (member) {
-								room.$members.push(member.toJSON());
-							});
-
-							room.$pinnedMessages = [];
-
-							var uniquePinnedMessages = _.unique(pinnedMessages, 'message.id');
-
-							_.each(uniquePinnedMessages, function(message) {
-								room.$pinnedMessages.push(message.message);
-							});
-
-							return User.find({ id: _.pluck(pinnedMessages, 'message.author') });
-						})
-						.then(function(users) {
-							// TODO: do this differently so it's more efficient
-							var lookup = _.indexBy(users, 'id');
-							room.$pinnedMessages = _.map(room.$pinnedMessages, function(pinnedMessage) {
-								pinnedMessage.author = lookup[pinnedMessage.author];
-								return pinnedMessage;
-							});
-
-							return room;
-						});
-				}),
-=======
-			_.each(memberships, membership => socket.join('roommember_' + membership._id));
-			_.each(rooms, room => socket.join('room_' + room._id));
->>>>>>> upstream/master
-
 			return Promise.map(rooms, room => {
 				return Promise.join(
 					Message.find({room: room._id}).sort('-createdAt').limit(40).lean(),
-					RoomMember.find({room: room._id}).lean()
+					RoomMember.find({room: room._id}).lean(),
+					PinnedMessage.find({ room: room._id }).populate('message')
 				)
-					.spread((messages, members) => {
+					.spread((messages, members, pinnedMessages) => {
 						userIds.pushAll(_.pluck(messages, 'author'), _.pluck(members, 'user'));
 
 						// Setup subscriptions
@@ -169,7 +109,14 @@ module.exports.init = function (req, res) {
 						_.each(_.pluck(members, 'user'), user => socket.join('user_' + user));
 
 						room.$messages = messages;
+						room.$pinnedMessages = [];
 						room.$members = members;
+
+						var uniquePinnedMessages = _.unique(pinnedMessages, 'message.id');
+
+						_.each(uniquePinnedMessages, function(message) {
+							room.$pinnedMessages.push(message.message);
+						});
 
 						return room;
 					});
@@ -179,7 +126,7 @@ module.exports.init = function (req, res) {
 			rooms = _rooms;
 
 			// Populate authors
-			var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
+			var userIdStrings = _(userIds).filter().map(userId => userId.toString()).unique().value();
 			return User.find(userIds).lean();
 		})
 
@@ -193,6 +140,7 @@ module.exports.init = function (req, res) {
 // Its purpose is to update state changes for the current user (which room are they typing in, are they away,
 // which room is active, etc.)
 module.exports.activity = function (req, res) {
+
 	var userId = req.session.userId;
 
 	// Only allow updates for the following values
