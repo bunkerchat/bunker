@@ -20,11 +20,13 @@ module.exports.http = function (app) {
 
 	// Internal views
 	app.get('/', isLoggedIn, viewController.index);
-	app.get('/m', isLoggedIn, viewController.mobile);
 
 	// External Notifications
 	app.post('/externalnotifications/jenkinsBestBuy', externalNotificationsController.jenkinsBestBuy);
 	app.post('/externalnotifications/serverStatus', externalNotificationsController.serverStatus);
+
+	// Api
+	app.get('/api/message/emoticoncounts', messageController.emoticonCounts);
 };
 
 module.exports.socketio = function (socket) {
@@ -32,7 +34,6 @@ module.exports.socketio = function (socket) {
 	socket.on('/init', socketToController(userController.init));
 
 	// user
-	socket.on('/user/current/connect', socketToController(userController.connect));
 	socket.on('/user/current/activity', socketToController(userController.activity));
 	socket.on('/user/current/markInboxRead', socketToController(userController.markInboxRead));
 	socket.on('/user/current/clearInbox', socketToController(userController.clearInbox));
@@ -46,6 +47,7 @@ module.exports.socketio = function (socket) {
 	socket.on('/room/leave', socketToController(roomController.leave));
 	socket.on('/room/message', socketToController(roomController.message));
 	socket.on('/room/messages', socketToController(roomController.messages));
+	socket.on('/room/history', socketToController(roomController.history));
 
 	// roommember
 	socket.on('/roommember/updateSettings', socketToController(userSettingsController.saveRoomMember));
@@ -75,10 +77,10 @@ function socketToController(controllerFn) {
 			},
 			serverError: function (err) {
 				log.error('server error', err);
-				if(_.isFunction(cb)) cb({error: err.message});
+				if(_.isFunction(cb)) cb({serverErrorMessage: err.message});
 			},
 			badRequest: function(err) {
-				if(_.isFunction(cb)) cb({error: err.message});
+				if(_.isFunction(cb)) cb({serverErrorMessage: err.message});
 			}
 		};
 		controllerFn(req, res);

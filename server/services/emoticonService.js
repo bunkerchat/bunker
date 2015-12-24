@@ -7,54 +7,55 @@ var Message = require('../models/Message');
 var User = require('../models/User');
 
 module.exports.emoticonCounts = function () {
-	return new Promise(function (resolve, reject) {
-			// setting the request url as as the cache key
-			cacheService.short.wrap('Message/emoticonCounts', lookup, done);
+	var key = 'Message/emoticonCounts';
 
-			function lookup(cacheLoadedCb) {
-				var emoticonRegex = /:\w+:/g;
-				var countMap = {};
+	return cacheService.fourHours.getAsync(key)
+		.then(result => result || lookup())
+		.then(JSON.parse);
 
-				// .native gives you a callback function with a hook to the model's collection
-				Message.find({text: {$regex: emoticonRegex}}, function (err, messages) {
-					_.each(messages, function (message) {
+	function lookup() {
+		var emoticonRegex = /:\w+:/g;
+		var countMap = {};
 
-						var matches = message.text.match(emoticonRegex);
-						if (matches) {
-							_.each(matches, function (match) {
-								// Create total count for this emoticon
-								if (!countMap[match]) {
-									countMap[match] = {count: 0};
-								}
-								countMap[match].count++;
+		return Message.find({text: {$regex: emoticonRegex}})
+			.limit(10000)
+			.then(messages => {
+				_.each(messages, message => {
+					var match = message.text.match(emoticonRegex);
 
-								// Create object of usedBy counts for this emoticon
-								if (message.author) {
-									if (!countMap[match][message.author]) {
-										countMap[match][message.author] = 0;
-									}
-									countMap[match][message.author]++;
-								}
-							});
+					// Create total count for this emoticon
+					if (!countMap[match]) {
+						countMap[match] = {count: 0};
+					}
+					countMap[match].count++;
+
+					// Create object of usedBy counts for this emoticon
+					if (message.author) {
+						if (!countMap[match][message.author]) {
+							countMap[match][message.author] = 0;
 						}
-					});
+						countMap[match][message.author]++;
+					}
+				})
+			})
+			.then(() => {
+				// Map into a nice sorted object
+				var emoticonCounts = _(countMap)
+					.map(function (value, key) {
+						return {
+							count: value.count,
+							emoticon: key,
+							name: key.replace(/:/g, ''),
+							usedBy: _.omit(value, 'count')
+						};
+					})
+					.sortBy('count')
+					.reverse()
+					.value();
 
-					// Map into a nice sorted object
-					var emoticonCounts = _(countMap)
-						.map(function (value, key) {
-							return {
-								count: value.count,
-								emoticon: key,
-								name: key.replace(/:/g, ''),
-								usedBy: _.omit(value, 'count')
-							};
-						})
-						.sortBy('count')
-						.reverse()
-						.value();
-
-					// Replace the id's in the userBy section with nick + id
-					User.find({}).then(function (users) {
+				// Replace the id's in the userBy section with nick + id
+				return User.find({})
+					.then(function (users) {
 						var userHash = {};
 
 						_.each(users, function (user) {
@@ -69,18 +70,14 @@ module.exports.emoticonCounts = function () {
 							});
 						});
 
-						cacheLoadedCb(err, emoticonCounts);
-					})
-						.catch(reject);
-				});
-			}
+						return emoticonCounts;
+					});
+			})
+			// stringify for mongo cache
+			.then(JSON.stringify)
+			.then(results => cacheService.fourHours.setAsync(key, results))
+	}
 
-			function done(err, emoticonCounts) {
-				if (err) return reject(err);
-				resolve(emoticonCounts);
-			}
-		}
-	);
 };
 
 module.exports.getEmoticonNamesFromDisk = function () {

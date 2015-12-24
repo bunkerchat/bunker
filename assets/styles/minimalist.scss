@@ -9,20 +9,16 @@
 	padding: 16px 15px;
 }
 
-.nav,
-.navbar-brand {
-	line-height: 4px;
-}
-
 .panel-heading {
 	line-height: 7px;
 }
+
 /* fix the container height for minimal */
 .message-list {
 	height: calc(100vh - 72px);
 }
 
-.message-list.has-topic{
+.message-list.has-topic {
 	height: calc(100vh - 113px);
 }
 
@@ -53,31 +49,44 @@
 }
 
 .message-history ul {
-	padding: 0px;
+	padding: 0;
 }
 
 .message-history li {
 	list-style: none;
 }
 
-.message-input input[type=text],
-.message-input button {
-	border-radius: 0;
+[room] .right-pane {
+	height: calc(100vh - 72px);
 }
 
-/* make input box smaller */
+.message-input {
 
-.message-input textarea {
-	height: 32px;
-	padding: 3px 0 0 8px;
-	resize: none;
-	overflow: hidden;
-}
-.message-input button {
-	height: 32px;
-	padding: 4px 12px;
+	input[type=text], button {
+		border-radius: 0;
+	}
+	.right-pane {
+		height: 32px;
+	}
+
+	// make input box smaller
+	textarea {
+		height: 32px;
+		padding: 3px 0 0 8px;
+		resize: none;
+		overflow: hidden;
+	}
+
+	button {
+		height: 32px;
+		padding: 4px 12px;
+	}
 }
 
 .member-list .status.pull-right {
 	margin-top: 8px;
+}
+
+.room-options {
+	bottom: -32px;
 }

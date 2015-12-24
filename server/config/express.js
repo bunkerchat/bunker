@@ -8,15 +8,16 @@ var config = require('./config');
 
 app.set('env', config.useJavascriptBundle ? 'production' : 'development');
 
-//var bootstrapPath = path.join('bower_components', 'bootstrap');
-app.use(sassMiddleware({
-	src: path.join(__dirname, '../../'),
-	outputStyle: 'compressed',
-	force: true // TODO make this false for prod?
-}));
+if (config.buildSassAtRuntime) {
+	app.use(sassMiddleware({
+		src: path.join(__dirname, '../../'),
+		outputStyle: 'compressed',
+		force: true
+	}));
+}
 
-app.use('/assets',express.static('assets'));
-app.use('/node_modules',express.static('node_modules'));
+app.use('/assets', express.static('assets'));
+app.use('/node_modules', express.static('node_modules'));
 app.set('view engine', 'ejs');
 app.set('views', './server/views');
 app.use(bodyParser.json());

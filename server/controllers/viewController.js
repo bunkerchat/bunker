@@ -5,19 +5,13 @@ var config = require('./../config/config');
 var UserSettings = require('./../models/UserSettings');
 var emoticonService = require('./../services/emoticonService');
 
-//module.exports.version = function (req, res) {
-//	versionService.version()
-//		.then(res.ok)
-//		.catch(res.serverError);
-//};
-
 module.exports.index = function (req, res) {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
 
 	Promise.join(
 		emoticonService.getEmoticonNamesFromDisk(),
 		UserSettings.findOne({user: userId}),
-		fs.readdirAsync('./assets/bundled').catch(empty)
+		fs.readdirAsync('./assets/bundled').catch(_.noop)
 	)
 		.spread(function (emoticons, settings, bundledFiles) {
 			var templates = _.find(bundledFiles, function (file) {
@@ -41,21 +35,6 @@ module.exports.index = function (req, res) {
 		.catch(res.serverError);
 };
 
-module.exports.mobile = function (req, res) {
-	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
-
-	Promise.join(
-		emoticonService.getEmoticonNamesFromDisk()
-	)
-		.spread((emoticons) => {
-			res.render('mobile', {
-				userId: userId,
-				emoticons: emoticons
-			});
-		})
-		.catch(res.serverError);
-};
-
 module.exports.login = function (req, res) {
 	res.render('login', {
 		clientID: config.google.clientID
@@ -66,7 +45,3 @@ module.exports.logout = function (req, res) {
 	req.session.destroy();
 	res.redirect('/login');
 };
-
-function empty() {
-
-}

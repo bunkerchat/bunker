@@ -11,7 +11,13 @@ var path = require('path');
 var sourcemaps = require('gulp-sourcemaps');
 var ngHtml2Js = require("gulp-ng-html2js");
 var concat = require("gulp-concat");
+var sass = require('gulp-sass');
 
+gulp.task('sass', function () {
+	gulp.src('./assets/styles/**/*.scss')
+		.pipe(sass().on('error', sass.logError))
+		.pipe(gulp.dest('./assets/styles'));
+});
 
 gulp.task('clear-build-folder', function (cb) {
 	fs.remove(path.join(__dirname, 'assets', 'bundled'), cb)
@@ -63,6 +69,6 @@ gulp.task('template-cache-html', ['clear-build-folder'], function () {
 		.pipe(gulp.dest("./assets/bundled"));
 });
 
-gulp.task('production', ['template-cache-html', 'move-index-prod']);
+gulp.task('production', ['template-cache-html', 'move-index-prod', 'sass']);
 
 gulp.task('default', ['production']);

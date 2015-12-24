@@ -7,15 +7,8 @@ var roomMemberSchema = new mongoose.Schema({
 	},
 	room: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Room'
-	},
-	playSoundOnMessage: {
-		type: Boolean,
-		default: false
-	},
-	showMessageDesktopNotification: {
-		type: Boolean,
-		default: false
+		ref: 'Room',
+		index: true
 	},
 	role: {
 		type: String,
@@ -24,6 +17,18 @@ var roomMemberSchema = new mongoose.Schema({
 	},
 	roomOrder: {
 		type: Number
+	},
+	lastReadMessage: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Message'
+	},
+	playSoundOnMessage: {
+		type: Boolean,
+		default: false
+	},
+	showMessageDesktopNotification: {
+		type: Boolean,
+		default: false
 	}
 });
 

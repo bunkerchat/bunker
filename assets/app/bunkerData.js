@@ -4,6 +4,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	var roomLookup = []; // For fast room lookup
 	var typingTimeout;
 	var resolveBunkerData$Promise;
+	var users = {};
 
 	var bunkerData = {
 		user: {},
@@ -17,9 +18,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		start: function () {
 			// Call start once we are finished connecting (bunker.js)
 			resolveBunkerData$Promise($q.all([
-				bunkerData.connect(),
 				bunkerData.init()
 			]));
+
+			$timeout(bunkerData.refreshEmoticonCounts, 2000);
 		},
 
 		// Initial data, also sets up subscriptions
@@ -27,11 +29,25 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			bunkerData.$resolved = false;
 			return io.socket.emitAsync('/init').then(function (initialData) {
 				bunkerData.$resolved = true;
-				decorateEmoticonCounts(initialData.emoticonCounts);
 				_.assign(bunkerData.user, initialData.user);
 				_.assign(bunkerData.userSettings, initialData.userSettings);
 				_.assign(bunkerData.inbox, initialData.inbox);
 				_.assign(bunkerData.memberships, initialData.memberships);
+
+				// instead of sending many duplicate users down, send one list
+				// then re-hydrate all the associations
+				users.length = 0;
+				_.assign(users, _.indexBy(initialData.users, '_id'));
+
+				_.each(bunkerData.inbox, function (inbox) {
+					if (inbox.message.author) { // TODO causing a bug for @aSig for some reason without this
+						inbox.message.author = users[inbox.message.author._id || inbox.message.author];
+					}
+				});
+
+				_.each(bunkerData.memberships, function (membership) {
+					membership.user = users[membership.user._id || membership.user];
+				});
 
 				bunkerData.inbox.unreadMessages = _.select(bunkerData.inbox, {read: false}).length;
 
@@ -69,7 +85,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					decorateMessages(room);
 					decorateMembers(room);
 				});
-				
+
 				// gather up all initial pinned messages
 				pinBoard.initialize(_.chain(initialData.rooms).map('$pinnedMessages').flatten().value());
 
@@ -78,10 +94,6 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 				return bunkerData;
 			});
-		},
-
-		connect: function () {
-			return io.socket.emit('/user/current/connect');
 		},
 
 		// Messages
@@ -122,15 +134,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			if (!id || !roomLookup[id] || roomLookup[id].$messages.length <= 100) return;
 			roomLookup[id].$messages.splice(0, roomLookup[id].$messages.length - 100);
 		},
-		// TODO: fix history
-		//getHistoryMessages: function (roomId, startDate, endDate) {
-		//	var url = '/room/' + roomId + '/history?startDate=' + startDate + '&endDate=' + endDate;
-		//	return $q(function (resolve) {
-		//		io.socket.emit(url, null, function (messages) {
-		//			resolve(messages);
-		//		});
-		//	});
-		//},
+		getHistoryMessages: function (roomId, startDate, endDate) {
+			return io.socket.emitAsync('/room/history', {roomId: roomId, startDate: startDate, endDate: endDate});
+		},
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
@@ -154,6 +160,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// User
 
+		broadcastActiveRoom: function (roomId) {
+			io.socket.emit('/user/current/activity', {room: roomId});
+		},
 		broadcastTyping: function (roomId) {
 			if (!bunkerData.$resolved) return; // Not ready yet
 
@@ -255,6 +264,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		});
 
 		var messageDecorator = function (message, index) {
+			if (message.author) {
+				message.author = users[message.author._id || message.author];
+			}
+
 			var previousMessage = index > 0 ? room.$messages[index - 1] : null;
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
@@ -267,6 +280,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 	function decorateMembers(room) {
 		_.each(room.$members, function (member) {
+			member.user = users[member.user._id || member.user];
 			member.user.$present = true; // assumed true for now
 		});
 	}
@@ -296,6 +310,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		return emoticonCounts
 	}
+
 
 	bunkerData.$promise = $q(function (resolve) {
 		resolveBunkerData$Promise = resolve;

@@ -19,13 +19,16 @@ config.express = {
 
 config.google = {
 	clientID: '744915257573-ri8suktjsu5s1b3jddkacm6k0a45vi02.apps.googleusercontent.com',
-	clientSecret: 'Gm4OujzY9YLyFUWYeaNE-o48'
+	clientSecret: 'Gm4OujzY9YLyFUWYeaNE-o48',
+	cse_id: '018153030878338156363:umvujbgdj6s',
+	cse_key: 'AIzaSyADOhR5rYXCoBHR5fWRw0LB5r6Myp6atME'
 };
 
+config.bingApiKey = 'WOz19RNOpvm7kP+Xwc1zhz23Oemq9Jhdcs5+xvbjxKY';
 
 config.consoleLogLevel = 'debug';
-config.cacheLess = false;
+config.buildSassAtRuntime = true;
 config.useJavascriptBundle = false;
 
 config.showServerErrors = true;
-config.useSocketioRedis = false;
+config.useRedis = false;

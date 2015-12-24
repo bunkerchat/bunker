@@ -24,9 +24,10 @@ var PinnedMessage = require('./../models/PinnedMessage');
 // return all rooms and user data necessary to run the application.
 module.exports.init = function (req, res) {
 
-	var localUser, localUserSettings, localMemberships, localInboxMessages;
+	var user, userSettings, memberships, inbox, rooms;
+	var userIds = [];
 
-	if(!req.session.userId) return res.ok();
+	if (!req.session.userId) return res.ok();
 
 	var userId = req.session.userId.toObjectId();
 	var socket = req.socket;
@@ -34,28 +35,51 @@ module.exports.init = function (req, res) {
 	// allows sending async messages back to connected client from server
 	socket.join('userself_' + userId);
 
-	Promise.join(
-		User.findById(userId).lean(),
-		UserSettings.findOne({user: userId}),
-		RoomMember.find({user: userId}).sort('roomOrder').populate('room'),
-		InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message')
-		)
-		.spread(function (user, userSettings, memberships, inboxMessages) {
+	User.findById(userId, {sockets: 1}).then(function (user) { // find user sockets
 
-			localUser = user;
-			localUserSettings = userSettings;
-			localMemberships = memberships;
-			localInboxMessages = inboxMessages;
+		var sockets = user.sockets || [];
+		sockets.push(req.socket.id); // add this request socket
+		sockets = _.unique(sockets); // remove duplicates
+
+		return User.findByIdAndUpdate(userId, {
+			sockets: sockets,
+			connected: true,
+			lastConnected: new Date().toISOString(),
+			typingIn: null,
+			present: true
+		}, {'new': true});
+	})
+		.then(function (updatedUser) {
+			req.io.to('user_' + updatedUser._id).emit('user', {
+				_id: updatedUser._id,
+				verb: 'updated',
+				data: updatedUser
+			});
+
+			return Promise.join(
+				User.findById(userId).lean(),
+				UserSettings.findOne({user: userId}).lean(),
+				RoomMember.find({user: userId}).sort('roomOrder').populate('room').lean(),
+				InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message').lean()
+			);
+		})
+		.spread((_user, _userSettings, _memberships, _inboxMessages) => {
+
+			user = _user;
+			userSettings = _userSettings;
+			memberships = _memberships;
+			inbox = _inboxMessages;
 			var rooms = _(memberships).pluck('room').compact().value();
-			var inboxUserIds = _(inboxMessages).pluck('message').pluck('author').unique().value();
+
+			// build up a list of userids to fetch from the database
+			userIds.pushAll(_(inbox).pluck('message').pluck('author').unique().value());
+			userIds.pushAll(_.pluck(memberships, 'user'));
 
 			// de-associate a room from a membership since we set rooms above
 			// and fix bad room order data
-			_(localMemberships)
-				.reject(function (membership) {
-					return !membership.room;
-				})
-				.each(function (membership, index) {
+			_(memberships)
+				.reject(membership => !membership.room)
+				.each((membership, index) => {
 					membership.room = membership.room._id;
 					membership.roomOrder = index;
 				})
@@ -65,6 +89,7 @@ module.exports.init = function (req, res) {
 			socket.join('user_' + userId);
 			socket.join('inboxmessage_' + userId);
 
+<<<<<<< HEAD
 			_.each(memberships, function (membership) {
 				socket.join('roommember_' + membership._id);
 			});
@@ -126,43 +151,47 @@ module.exports.init = function (req, res) {
 							return room;
 						});
 				}),
+=======
+			_.each(memberships, membership => socket.join('roommember_' + membership._id));
+			_.each(rooms, room => socket.join('room_' + room._id));
+>>>>>>> upstream/master
 
-				// Populate authors for inbox messages
-				User.find(inboxUserIds)
-					.then(function (inboxUsers) {
-						return Promise.map(localInboxMessages, function (inboxMessage) {
+			return Promise.map(rooms, room => {
+				return Promise.join(
+					Message.find({room: room._id}).sort('-createdAt').limit(40).lean(),
+					RoomMember.find({room: room._id}).lean()
+				)
+					.spread((messages, members) => {
+						userIds.pushAll(_.pluck(messages, 'author'), _.pluck(members, 'user'));
 
-							var authorData = _.find(inboxUsers, {_id: inboxMessage.message.author});
-							if (authorData) {
-								inboxMessage.message.author = authorData.toJSON();
-							}
+						// Setup subscriptions
+						_.each(members, member => socket.join('roommember_' + member._id));
+						_.each(_.pluck(members, 'user'), user => socket.join('user_' + user));
 
-							return inboxMessage;
-						});
-					}),
+						room.$messages = messages;
+						room.$members = members;
 
-				// fetch all emoticon counts for emoticon list
-				emoticonService.emoticonCounts()
-			);
+						return room;
+					});
+			});
 		})
-		.spread(function (rooms, inboxMessages, emoticonCounts) {
-			return {
-				user: localUser,
-				userSettings: localUserSettings,
-				memberships: localMemberships,
-				inbox: inboxMessages,
-				rooms: rooms,
-				emoticonCounts: emoticonCounts
-			};
+		.then(_rooms => {
+			rooms = _rooms;
+
+			// Populate authors
+			var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
+			return User.find(userIds).lean();
 		})
-		.then(res.ok)
+
+		// compose all the data into an object matching the original vars and return them to the client
+		.then(users => res.ok({user, userSettings, memberships, inbox, rooms, users}))
 		.catch(res.serverError);
 };
 
 // Activity update route. This will respond to PUT /user/current/activity
-// This route only allows updates to present and typingIn.
-// It can only be called by the current user.
-// It's sole purpose is to enable away and typing notifications.
+// This route only allows updates to present, typingIn, and room. It can only be called by the current user.
+// Its purpose is to update state changes for the current user (which room are they typing in, are they away,
+// which room is active, etc.)
 module.exports.activity = function (req, res) {
 	var userId = req.session.userId;
 
@@ -176,42 +205,40 @@ module.exports.activity = function (req, res) {
 		lastActivity: new Date().toISOString()
 	};
 
-	req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: updates});
-	res.ok(updates);
-};
+	var activeRoom = req.body.room;
+	var lastMessageId;
 
-module.exports.connect = function (req, res) {
-	var lastConnected, previouslyConnected;
+	if (typeof activeRoom !== 'undefined') {
+		updates.activeRoom = activeRoom;
 
-	if(!req.session.userId) return;
-
-	User.findById(req.session.userId.toObjectId())
-		.then(function (user) {
-			lastConnected = user.lastConnected;
-			previouslyConnected = user.connected;
-
-			if (!user.sockets) user.sockets = [];
-			user.sockets.push(req.socket.id);
-			user.connected = true;
-			user.lastConnected = new Date().toISOString();
-			user.typingIn = null;
-			user.present = true;
-
-			return user.save();
-		})
-		.then(function (user) {
-
-			req.io.to('user_' + user._id).emit('user', {_id: user._id, verb: 'updated', data: user});
-
-			// Clear any disconnect messages that haven't gone out yet
-			if (userService.pendingTasks[user._id]) {
-				clearTimeout(userService.pendingTasks[user._id]);
-				userService.pendingTasks[user._id] = null;
+		User.findById(userId, {activeRoom: 1}).then(user => {
+			if (user.activeRoom) {
+				Message.findOne({room: user.activeRoom}, {_id: 1}, {
+					sort: {$natural: -1},
+					limit: 1
+				}).lean()
+					.then(lastMessage => {
+						lastMessageId = lastMessage._id;
+						return RoomMember.findOneAndUpdate({
+							user: userId,
+							room: user.activeRoom
+						}, {lastReadMessage: lastMessageId});
+					})
+					.then(roomMember => {
+						req.io.to(`userself_${userId}`).emit('user_roommember', {
+							_id: roomMember._id,
+							verb: 'updated',
+							data: {lastReadMessage: lastMessageId}
+						});
+					});
 			}
 
-			res.ok({});
-		})
-		.catch(res.serverError);
+			User.findByIdAndUpdate(userId, {activeRoom: activeRoom}).then(_.noop);
+		});
+	}
+
+	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
+	res.ok(updates);
 };
 
 module.exports.markInboxRead = function (req, res) {

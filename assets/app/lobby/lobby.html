@@ -9,7 +9,7 @@
 			<li class="list-group-item"
 				ui-sref="chat.room({roomId: room._id})"
 				ng-if="room.$resolved"
-				ng-repeat="room in lobby.rooms | orderBy:'name' track by room._id">
+				ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
 				<h4 class="list-group-item-heading">
 					{{::room.name}}
 					<small class="hidden-xs" ng-bind-html="room.topic"></small>
