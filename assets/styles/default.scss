@@ -505,8 +505,9 @@ li:not(:last-child) .message.last-read:after {
 
 .message-input input[type=text],
 .message-input button {
-	border-radius: 0;
+	display: none;
 	padding: 12px;
+	border-radius: 0;
 }
 
 .message-caret {
@@ -973,6 +974,7 @@ img.fatality {
 		}
 
 		button {
+			display: inline-block;
 			position: absolute;
 			right: 0;
 			height: 46px;
