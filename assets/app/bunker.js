@@ -72,7 +72,7 @@ window.app = angular.module('bunker', [
 
 		var socket = io.connect();
 		socket.on('connect', function () {
-			console.log('socket connected');
+			console.log('socket connected - hello, world');
 		});
 
 		io.socket = socket;
