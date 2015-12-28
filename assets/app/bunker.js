@@ -28,6 +28,9 @@ window.app = angular.module('bunker', [
 				templateUrl: '/assets/app/chat/chat.html',
 				controller: 'ChatController as chat'
 			})
+			.state('chat.lobby', {
+				url: ''
+			})
 			.state('chat.room', {
 				// Having this be a child state stops the state from reloading view
 				// The 'chat' state/controller/view will be in use
