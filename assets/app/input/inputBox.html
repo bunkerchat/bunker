@@ -1,17 +1,14 @@
-<div class="container-fluid message-input" ng-show="$root.roomId && !$stateParams.date"
-		 ng-class="{'edit-mode' : editMode}">
+<div class="container-fluid message-input"
+	 ng-class="{'edit-mode' : editMode}"
+	 ng-show="$root.roomId && !$stateParams.date">
 	<div class="row">
 		<form class="col-md-10 no-gutter" ng-submit="sendMessage()">
-			<div class="input-group">
-				<textarea rows="1" class="form-control"
-									ng-model="messageText"
-									ng-trim="false"
-									bunker-input="messageText">
-				</textarea>
-				<span class="input-group-btn">
-					<button type="submit" class="btn btn-success">{{editMode? 'EDIT MESSAGE' : 'SEND'}}</button>
-				</span>
-			</div>
+			<textarea rows="1" class="form-control"
+					  ng-model="messageText"
+					  ng-trim="false"
+					  bunker-input="messageText">
+			</textarea>
+			<button type="submit" class="visible-xs btn btn-success" ng-click="sendMessage()">Send</button>
 		</form>
 		<div class="col-md-2 right-pane hidden-xs">
 		</div>

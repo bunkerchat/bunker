@@ -1,4 +1,4 @@
-app.directive('customStylesheet', function ($rootScope, bunkerData, $window, $timeout) {
+app.directive('customStylesheet', function ($rootScope, bunkerData, $window) {
 	return {
 		link: function ($scope) {
 
@@ -8,9 +8,9 @@ app.directive('customStylesheet', function ($rootScope, bunkerData, $window, $ti
 
 				if (oldValue != $scope.loadMinimal) {
 					// if we change stylesheets, trigger a resize
-					$timeout(function () {
+					_.defer(function () {
 						angular.element($window).resize();
-					}, 500);
+					});
 				}
 			}
 

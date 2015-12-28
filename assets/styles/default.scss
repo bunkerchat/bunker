@@ -963,6 +963,7 @@ img.fatality {
 
 		input, textarea {
 			float: left;
+			width: calc(100vw - 58px);
 			border-radius: 0;
 			border: 0;
 
@@ -972,6 +973,8 @@ img.fatality {
 		}
 
 		button {
+			position: absolute;
+			right: 0;
 			height: 46px;
 			background: white;
 			border: 0;
