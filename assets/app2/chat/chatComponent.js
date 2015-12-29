@@ -1,19 +1,15 @@
 (function (app) {
 
-	function ChatComponent() {
-
-	}
-
-	ChatComponent.annotations = [
-		new ng.ComponentAnnotation({
+	app.ChatComponent = ng.core
+		.Component({
 			selector: 'chat',
-			appInjector: [BunkerData]
-		}),
-		new ng.ViewAnnotation({
 			templateUrl: '/assets/app2/chat/chat.html',
+			viewProviders: [BunkerData]
 		})
-	];
-
-	ChatComponent.parameters = [[BunkerData]];
+		.Class({
+			constructor: [BunkerData, function (bunkerData) {
+				bunkerData.init();
+			}]
+		});
 
 })(window.app);

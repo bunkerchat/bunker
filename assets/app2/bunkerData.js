@@ -6,7 +6,11 @@ function BunkerData() {
 		return new Promise(function (resolve, reject) {
 			socket.emit(endpoint, data, function (returnData) {
 				if (returnData && returnData.serverErrorMessage) {
-					console.error(returnData.serverErrorMessage, {endpoint: endpoint, data: data, returnData: returnData});
+					console.error(returnData.serverErrorMessage, {
+						endpoint: endpoint,
+						data: data,
+						returnData: returnData
+					});
 					return reject(returnData);
 				}
 				resolve(returnData);
@@ -14,12 +18,9 @@ function BunkerData() {
 		});
 	};
 
-
-	return {
-		init: function () {
-			socket.emitAsync('/init').then(function (data) {
-				console.log('init worked!', data);
-			});
-		}
+	this.init = function () {
+		socket.emitAsync('/init').then(function (data) {
+			console.log('init worked!', data);
+		});
 	};
 }
