@@ -12,6 +12,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var ngHtml2Js = require("gulp-ng-html2js");
 var concat = require("gulp-concat");
 var sass = require('gulp-sass');
+var ts = require('gulp-typescript');
 
 gulp.task('sass', function () {
 	gulp.src('./assets/styles/**/*.scss')
@@ -67,6 +68,25 @@ gulp.task('template-cache-html', ['clear-build-folder'], function () {
 		.pipe(uglify())
 		.pipe(rev())
 		.pipe(gulp.dest("./assets/bundled"));
+});
+
+var tsProject = ts.createProject({
+	declaration: true,
+	noExternalResolve: true
+});
+
+gulp.task('scripts', function() {
+	return gulp.src('assets/app2/*.ts')
+		.pipe(ts(tsProject));
+
+	//return merge([ // Merge the two output streams, so this task is finished when the IO of both operations are done.
+	//	tsResult.dts.pipe(gulp.dest('release/definitions')),
+	//	tsResult.js.pipe(gulp.dest('release/js'))
+	//]);
+});
+
+gulp.task('watch', ['scripts'], function() {
+	gulp.watch('assets/app2/*.ts', ['scripts']);
 });
 
 gulp.task('production', ['template-cache-html', 'move-index-prod', 'sass']);

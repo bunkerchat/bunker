@@ -35,6 +35,18 @@ module.exports.index = function (req, res) {
 		.catch(res.serverError);
 };
 
+module.exports.index2 = function (req, res) {
+	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
+	emoticonService.getEmoticonNamesFromDisk()
+		.then(function (emoticons) {
+			res.render('index2', {
+				userId: userId,
+				emoticons: emoticons
+			});
+		})
+		.catch(res.serverError);
+};
+
 module.exports.login = function (req, res) {
 	res.render('login', {
 		clientID: config.google.clientID
