@@ -15,27 +15,25 @@ window.app = angular.module('bunker', [
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 
-		$urlRouterProvider.otherwise('/');
+		$urlRouterProvider.otherwise('/rooms');
 		$stateProvider
-			.state('lobby', {
-				url: '/',
-				templateUrl: '/assets/app/lobby/lobby.html',
-				controller: 'LobbyController as lobby'
-			})
 			.state('chat', {
 				abstract: true,
 				url: '/rooms',
 				templateUrl: '/assets/app/chat/chat.html',
 				controller: 'ChatController as chat'
 			})
+
+			// Having these be a child states stops the state from reloading view
+			// The 'chat' state/controller/view will be in use
+
 			.state('chat.lobby', {
 				url: ''
 			})
 			.state('chat.room', {
-				// Having this be a child state stops the state from reloading view
-				// The 'chat' state/controller/view will be in use
 				url: '/{roomId}'
 			})
+
 			.state('inbox', {
 				url: '/inbox',
 				templateUrl: '/assets/app/inbox/list.html',
