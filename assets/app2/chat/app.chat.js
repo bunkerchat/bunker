@@ -4,7 +4,8 @@
 		.Component({
 			selector: 'chat',
 			templateUrl: '/assets/app2/chat/chat.html',
-			viewProviders: [BunkerData]
+			viewProviders: [BunkerData],
+			directives: [app.LobbyComponent]
 		})
 		.Class({
 			constructor: [BunkerData, function (bunkerData) {

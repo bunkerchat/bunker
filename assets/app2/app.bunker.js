@@ -1,5 +1,7 @@
 function BunkerData() {
+	var self = this;
 	var socket = io();
+	this.rooms = [];
 
 	socket.emitAsync = function (endpoint, _data) {
 		var data = _.isObject(_data) ? _data : undefined;
@@ -20,6 +22,9 @@ function BunkerData() {
 
 	this.init = function () {
 		socket.emitAsync('/init').then(function (data) {
+			_.each(data.rooms, function(room) {
+				self.rooms.push(room);
+			});
 			console.log('init worked!', data);
 		});
 	};
