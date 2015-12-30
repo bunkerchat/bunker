@@ -1,4 +1,4 @@
-app.directive('lobby', function ($state, bunkerData) {
+app.directive('lobby', function ($rootScope, $state, bunkerData) {
 	return {
 		restrict: 'EA',
 		templateUrl: '/assets/app/lobby/lobby.html',
@@ -6,12 +6,7 @@ app.directive('lobby', function ($state, bunkerData) {
 		controller: function () {
 			var self = this;
 
-			bunkerData.$promise.then(function () {
-				self.rooms = bunkerData.rooms;
-				_.each(self.rooms, function (room) {
-					room.$lastMessage = _(room.$messages).filter({type: 'standard'}).last();
-				});
-			});
+			bunkerData.$promise.then(init);
 
 			this.joinRoom = function (roomId) {
 				bunkerData.joinRoom(roomId)
@@ -26,6 +21,21 @@ app.directive('lobby', function ($state, bunkerData) {
 						$state.go('chat.room', {roomId: room._id});
 					});
 			};
+
+			$rootScope.$on('roomIdChanged', function (evt, roomId) {
+				if (!roomId) {
+					init();
+				}
+			});
+
+			function init() {
+				bunkerData.$promise.then(function () {
+					self.rooms = bunkerData.rooms;
+					_.each(self.rooms, function (room) {
+						room.$lastMessage = _(room.$messages).filter({type: 'standard'}).last();
+					});
+				});
+			}
 		}
 	};
 });
