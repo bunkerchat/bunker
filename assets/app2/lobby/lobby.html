@@ -1,5 +1,8 @@
-<ol>
+<ol class="list-unstyled">
 	<li *ngFor="#room of rooms">
-		{{room.name}}
+		<h3>
+			{{room.name}}
+			<small>{{room.topic}}</small>
+		</h3>
 	</li>
 </ol>

@@ -1,0 +1,11 @@
+$dividerColor: #ccc;
+
+.navbar {
+	margin-bottom: 0;
+	border-radius: 0;
+}
+
+lobby li {
+	border-bottom: solid $dividerColor 1px;
+	padding: 10px 20px;
+}
