@@ -568,10 +568,10 @@ li:not(:last-child) .message.last-read:after {
 	padding: 12px;
 }
 
-.message-input input[type=text],
 .message-input button {
-	border-radius: 0;
+	display: none;
 	padding: 12px;
+	border-radius: 0;
 }
 
 .message-caret {
@@ -1028,6 +1028,7 @@ img.fatality {
 
 		input, textarea {
 			float: left;
+			width: calc(100vw - 60px);
 			border-radius: 0;
 			border: 0;
 
@@ -1037,6 +1038,8 @@ img.fatality {
 		}
 
 		button {
+			display: inline-block;
+			width: 60px;
 			height: 46px;
 			background: white;
 			border: 0;
