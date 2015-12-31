@@ -1,4 +1,3 @@
-
 var gulp = require('gulp');
 var usemin = require('gulp-usemin');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -12,6 +11,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var ngHtml2Js = require("gulp-ng-html2js");
 var concat = require("gulp-concat");
 var sass = require('gulp-sass');
+var gulpTypescript = require('gulp-typescript');
 
 gulp.task('sass', function () {
 	gulp.src('./assets/styles/**/*.scss')
@@ -29,9 +29,9 @@ gulp.task('usemin', ['clear-build-folder'], function () {
 			assetsDir: './',
 			css: ['concat'],
 			//html: [minifyHtml({empty: true})],
-			jsLib:[rev()],
+			jsLib: [rev()],
 			jsLibMin: [uglify(), rev()],
-			jsApp:[
+			jsApp: [
 				sourcemaps.init({
 					loadMaps: true
 				}),
@@ -67,6 +67,21 @@ gulp.task('template-cache-html', ['clear-build-folder'], function () {
 		.pipe(uglify())
 		.pipe(rev())
 		.pipe(gulp.dest("./assets/bundled"));
+});
+
+var tsProject = gulpTypescript.createProject({
+	target: 'es5'
+});
+
+gulp.task('ts', function () {
+	var tsResult = gulp.src([
+		'./assets/app/**/*.ts',
+		'./tools/typings/**/*.ts'
+	])
+		.pipe(gulpTypescript(tsProject));
+
+	tsResult.dts.pipe(gulp.dest('./assets/dist'));
+	return tsResult.js.pipe(gulp.dest('./assets/dist'));
 });
 
 gulp.task('production', ['template-cache-html', 'move-index-prod', 'sass']);
