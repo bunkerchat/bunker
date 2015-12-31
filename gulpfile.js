@@ -92,3 +92,7 @@ gulp.task('ts', function () {
 gulp.task('production', ['template-cache-html', 'move-index-prod', 'sass']);
 
 gulp.task('default', ['production']);
+
+gulp.task('watch', function() {
+	gulp.watch('./app/**/*.*', ['ts']);
+});
