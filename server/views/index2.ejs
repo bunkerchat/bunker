@@ -5,24 +5,29 @@
 	<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css"/>
 	<link rel="stylesheet" href="/assets/styles/style.css"/>
 
-	<script src="/node_modules/angular2/bundles/angular2-polyfills.js"></script>
-	<script src="/node_modules/rxjs/bundles/Rx.umd.js"></script>
-	<script src="/node_modules/angular2/bundles/angular2-all.umd.js"></script>
 	<script src="/node_modules/lodash/index.js"></script>
 	<script src="/node_modules/bluebird/js/browser/bluebird.js"></script>
 	<script src="/node_modules/socket.io-client/socket.io.js"></script>
+	<script src="/node_modules/systemjs/dist/system.src.js"></script>
+
+	<script src="/node_modules/angular2/bundles/angular2-polyfills.js"></script>
+	<script src="/node_modules/rxjs/bundles/Rx.js"></script>
+	<script src="/node_modules/angular2/bundles/angular2.min.js"></script>
 </head>
 <body>
 
 <chat>Loading Bunker...</chat>
 
-<!-- bunker scripts -->
-<script src="/assets/app2/boot.js"></script>
-<script src="/assets/app2/app.bunker.js"></script>
-<script src="/assets/app2/lobby/app.lobby.js"></script>
-<script src="/assets/app2/chat/app.chat.js"></script>
-
-<!-- end bunker scripts -->
+<script>
+	System.config({
+		defaultJSExtensions: true,
+		paths: {
+			'boot': '/assets/dist/boot',
+			'*': '/node_modules/*'
+		}
+	});
+	System.import('boot');
+</script>
 
 </body>
 </html>

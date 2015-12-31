@@ -5,10 +5,7 @@
   "path": "tools/typings",
   "bundle": "tools/typings/tsd.d.ts",
   "installed": {
-    "angularjs/angular.d.ts": {
-      "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
-    },
-    "jquery/jquery.d.ts": {
+    "angular2/angular2.d.ts": {
       "commit": "dc9dabe74a5be62613b17a3605309783a12ff28a"
     }
   }

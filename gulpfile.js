@@ -70,12 +70,17 @@ gulp.task('template-cache-html', ['clear-build-folder'], function () {
 });
 
 var tsProject = gulpTypescript.createProject({
-	target: 'es5'
+	target: 'es5',
+	module: 'commonjs',
+	emitDecoratorMetadata: true,
+	experimentalDecorators: true,
+	removeComments: false,
+	noImplicitAny: false
 });
 
 gulp.task('ts', function () {
 	var tsResult = gulp.src([
-		'./assets/app/**/*.ts',
+		'./app/**/*.ts',
 		'./tools/typings/**/*.ts'
 	])
 		.pipe(gulpTypescript(tsProject));
