@@ -187,3 +187,7 @@ module.exports.clearInbox = function (req, res) {
 		.then(res.ok)
 		.catch(res.serverError);
 };
+
+module.exports.test = function (req, res) {
+	console.log('yay');
+};

@@ -1,5 +1,6 @@
 var config = require('./config');
 var socketio = require('./socketio');
+var auth = require('./auth');
 
 // Controllers
 var viewController = require('../controllers/viewController');
@@ -16,6 +17,7 @@ module.exports.http = function (app) {
 
 	// Public
 	app.get('/login', viewController.login);
+	app.get('/loginBasic', viewController.loginBasic);
 	app.get('/logout', viewController.logout);
 
 	// Internal views
@@ -27,6 +29,9 @@ module.exports.http = function (app) {
 
 	// Api
 	app.get('/api/message/emoticoncounts', messageController.emoticonCounts);
+
+	// Basic Login
+	app.post('/api/user/loginbasic', auth.authenicateLocal);
 };
 
 module.exports.socketio = function (socket) {
