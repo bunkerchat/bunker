@@ -1,5 +1,5 @@
 import {bootstrap} from 'angular2/platform/browser';
 import {ROUTER_PROVIDERS} from 'angular2/router';
-import {ChatComponent} from './ChatComponent';
+import {AppComponent} from './AppComponent';
 
-bootstrap(ChatComponent, [ROUTER_PROVIDERS]);
+bootstrap(AppComponent, [ROUTER_PROVIDERS]);

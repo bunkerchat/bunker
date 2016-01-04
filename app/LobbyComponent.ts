@@ -1,13 +1,15 @@
 import {Component, View} from 'angular2/core';
+import {ROUTER_DIRECTIVES} from 'angular2/router';
 import {BunkerData} from './BunkerData';
 
 @Component({
 	selector: 'lobby'
 })
 @View({
+	directives: ROUTER_DIRECTIVES,
 	template: `
 	<ol class="list-unstyled">
-		<li (click)="selectRoom(room._id)" *ngFor="#room of rooms">
+		<li [routerLink]="['ChatRoom', {id: room._id}]" *ngFor="#room of rooms">
 			<h3>
 				{{room.name}}
 				<small>{{room.topic}}</small>
@@ -20,11 +22,8 @@ export class LobbyComponent {
 
 	public rooms;
 
-	constructor(private bunkerData:BunkerData) {
-		this.rooms = bunkerData.rooms;
-	}
-
-	public selectRoom(roomId:string) {
+	constructor(private _bunkerData:BunkerData) {
+		this.rooms = _bunkerData.rooms;
 	}
 }
 
