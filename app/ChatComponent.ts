@@ -13,7 +13,7 @@ import {RoomComponent} from './RoomComponent';
 	template: `
 	<nav class="navbar navbar-default">
 		<div class="container-fluid">
-			<a class="navbar-brand" [routerLink]="['ChatLobby']">Bunker</a>
+			<a class="navbar-brand" [routerLink]="['ChatRoom', {id: null}]">Bunker</a>
 		</div>
 	</nav>
 	<lobby [ngClass]="{hide: !!selectedRoom}"></lobby>
@@ -32,7 +32,7 @@ export class ChatComponent implements CanDeactivate {
 
 	routerCanDeactivate(next: ComponentInstruction) {
 		this.selectedRoom = next.params['id'];
-		console.log(this.selectedRoom);
+		//return true; // will allow route to change but reloads the component :[
 		return false;
 	}
 }
