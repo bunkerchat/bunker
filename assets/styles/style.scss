@@ -9,3 +9,34 @@ lobby li {
 	border-bottom: solid $dividerColor 1px;
 	padding: 10px 20px;
 }
+
+.message-list {
+
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	li {
+		overflow: hidden;
+		margin-bottom: 5px;
+		line-height: 30px;
+
+		.message-author-image {
+			float: left;
+			width: 50px;
+			height: 50px;
+			background: lightgreen;
+			border: solid #666 1px;
+		}
+
+		.message-content {
+			margin: 0 50px;
+			border: solid $dividerColor 1px;
+			padding: 10px;
+		}
+
+		.message-author {
+			font-weight: bold;
+		}
+	}
+}
