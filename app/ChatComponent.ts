@@ -17,7 +17,7 @@ import {RoomComponent} from './RoomComponent';
 		</div>
 	</nav>
 	<lobby></lobby>
-	<room *ngFor="#room of rooms"></room>
+	<room [room-data]="room" *ngFor="#room of rooms"></room>
 `
 })
 export class ChatComponent implements OnInit {

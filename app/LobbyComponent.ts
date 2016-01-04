@@ -18,7 +18,10 @@ import {BunkerData} from './BunkerData';
 })
 export class LobbyComponent {
 
+	public rooms;
+
 	constructor(private bunkerData:BunkerData) {
+		this.rooms = bunkerData.rooms;
 	}
 
 	public selectRoom(roomId:string) {
