@@ -1,5 +1,5 @@
 import {Component, View} from 'angular2/core';
-import {BunkerData} from '../BunkerData';
+import {BunkerData} from './BunkerData';
 
 @Component({
 	selector: 'lobby'
@@ -7,7 +7,7 @@ import {BunkerData} from '../BunkerData';
 @View({
 	template: `
 	<ol class="list-unstyled">
-		<li *ngFor="#room of rooms">
+		<li (click)="selectRoom(room._id)" *ngFor="#room of rooms">
 			<h3>
 				{{room.name}}
 				<small>{{room.topic}}</small>
@@ -17,10 +17,11 @@ import {BunkerData} from '../BunkerData';
 `
 })
 export class LobbyComponent {
-	public rooms:Array<any>;
 
-	constructor(bunkerData:BunkerData) {
-		this.rooms = bunkerData.rooms;
+	constructor(private bunkerData:BunkerData) {
+	}
+
+	public selectRoom(roomId:string) {
 	}
 }
 

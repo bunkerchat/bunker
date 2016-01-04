@@ -3,7 +3,6 @@ import {Injectable} from 'angular2/core';
 declare var io;
 declare var _;
 
-@Injectable()
 export class BunkerData {
 
 	private socket:any;

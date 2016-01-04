@@ -1,23 +1,37 @@
-import {Component} from 'angular2/core';
+import {Component, View, OnInit} from 'angular2/core';
+//import {Router, Route, RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
 import {BunkerData} from './BunkerData';
-import {LobbyComponent} from './lobby/LobbyComponent';
+import {LobbyComponent} from './LobbyComponent';
+import {RoomComponent} from './RoomComponent';
 
 @Component({
 	selector: 'chat',
-	viewProviders: [BunkerData],
-	directives: [LobbyComponent],
+	viewProviders: [BunkerData]
+})
+@View({
+	directives: [LobbyComponent, RoomComponent],
 	template: `
-
 	<nav class="navbar navbar-default">
 		<div class="container-fluid">
-			<a class="navbar-brand">Bunker</a>
+			<a class="navbar-brand" (click)="selectRoom('')">Bunker</a>
 		</div>
 	</nav>
 	<lobby></lobby>
-`,
+	<room *ngFor="#room of rooms"></room>
+`
 })
-export class ChatComponent {
-	constructor(bunkerData:BunkerData) {
-		bunkerData.init();
+export class ChatComponent implements OnInit {
+
+	public rooms:Array<any>;
+
+	constructor(private bunkerData:BunkerData) {
+	}
+
+	ngOnInit() {
+		this.bunkerData.init();
+		this.rooms = this.bunkerData.rooms;
+	}
+
+	selectRoom(roomId:string) {
 	}
 }
