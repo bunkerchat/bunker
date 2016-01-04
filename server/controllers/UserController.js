@@ -115,7 +115,7 @@ module.exports.init = function (req, res) {
 
 			// Populate authors
 			var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
-			return User.find(userIds).lean();
+			return User.find(userIds).select('-plaintextpassword -sockets').lean();
 		})
 
 		// compose all the data into an object matching the original vars and return them to the client
@@ -186,8 +186,4 @@ module.exports.clearInbox = function (req, res) {
 	InboxMessage.remove({user: req.session.userId.toObjectId()})
 		.then(res.ok)
 		.catch(res.serverError);
-};
-
-module.exports.test = function (req, res) {
-	console.log('yay');
 };

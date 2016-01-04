@@ -43,6 +43,9 @@ var userSchema = new mongoose.Schema({
 	activeRoom: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Room'
+	},
+	plaintextpassword: {
+		type: String
 	}
 });
 
