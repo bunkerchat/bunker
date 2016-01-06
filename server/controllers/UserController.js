@@ -169,6 +169,7 @@ module.exports.activity = function (req, res) {
 			}
 
 			User.findByIdAndUpdate(userId, {activeRoom: activeRoom}).then(_.noop);
+			return null;
 		});
 	}
 
