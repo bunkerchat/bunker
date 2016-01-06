@@ -9,11 +9,12 @@ var Room = require('../models/Room');
 var RoomMember = require('../models/RoomMember');
 var InboxMessage = require('../models/InboxMessage');
 
-var RoomService = require('../services/RoomService');
-var imageSearch = require('../services/imageSearch');
-var helpService = require('../services/helpService');
-var statsService = require('../services/statsService');
-var leaderboardService = require('../services/leaderboardService');
+var RoomService = require('./RoomService');
+var imageSearch = require('./imageSearch');
+var helpService = require('./helpService');
+var statsService = require('./statsService');
+var leaderboardService = require('./leaderboardService');
+var hangmanService = require('./hangmanService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');

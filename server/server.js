@@ -53,6 +53,7 @@ function connectToMongoose() {
 		mongoose.connect(url);
 		mongoose.connection.once('open', function (err) {
 			if (err) return reject(err);
+			log.info('mongoose ' + url);
 			resolve();
 		});
 	});
