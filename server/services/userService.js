@@ -58,30 +58,29 @@ userService.findOrCreateBunkerUser = function (profile) {
 };
 
 userService.disconnectSocket = function (socket) {
-	return User.findOne({sockets: socket.id})
-		.then(user=> userService.disconnectUser(user, socket));
+	return User.findOne({sockets: {$elemMatch: {socketId: socket.id}}})
+		.then(user=> userService.disconnectUser(user, socket.id));
 };
 
-userService.disconnectUser = function (user, socket) {
+userService.disconnectUser = function (user, socketId) {
 	if (!user) return;
-
-	var io = require('../config/socketio').io;
-
-	if(socket){
-		user.sockets = _.remove(user.sockets, {socketId:socket.id});
+	if (socketId) {
+		_.remove(user.sockets, {socketId: socketId});
 	}
 
 	user.connected = user.sockets.length > 0;
 	user.lastConnected = new Date();
 	user.typingIn = null;
 
-	return user.save()
-		.then((dbUser) => {
-			io.to('user_' + user._id).emit('user', {
-				_id: user._id,
-				verb: 'updated',
-				data: {connected: dbUser.connected}
-			});
+	user.save().then(() => {
+		if (user.connected) return;
+
+		var io = require('../config/socketio').io;
+		io.to('user_' + user._id).emit('user', {
+			_id: user._id,
+			verb: 'updated',
+			data: {connected: user.connected}
 		});
+	});
 };
 

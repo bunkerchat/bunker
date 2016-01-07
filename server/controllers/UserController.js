@@ -193,8 +193,7 @@ module.exports.ping = function (req, res) {
 	var userId = req.session.userId.toObjectId();
 
 	// remove currently connected socket from array
-	User.update(
-		{_id: userId},
+	User.findByIdAndUpdate(userId,
 		{
 			$pull: {
 				sockets: {socketId: req.socket.id}
@@ -202,13 +201,10 @@ module.exports.ping = function (req, res) {
 		}
 	)
 		.then(() => {
-			return User.update(
-				{_id: userId},
+			return User.findByIdAndUpdate(userId,
 				{
 					$push: {
-						sockets: {
-							socketId: req.socket.id, updatedAt: new Date()
-						}
+						sockets: {socketId: req.socket.id, updatedAt: new Date()}
 					}
 				}
 			)
@@ -219,7 +215,7 @@ module.exports.ping = function (req, res) {
 
 // clear inactive users from list
 setInterval(function () {
-	var disconnectedSockets = moment().subtract(30, 'seconds').toDate();
+	var expiredSocketDate = moment().subtract(30, 'seconds').toDate();
 
 	User.find({
 		connected: true,
@@ -227,7 +223,7 @@ setInterval(function () {
 			{
 				sockets: {
 					$elemMatch: {
-						updatedAt: {"$lte": disconnectedSockets}
+						updatedAt: {"$lte": expiredSocketDate}
 					}
 				}
 			},
@@ -235,14 +231,13 @@ setInterval(function () {
 				sockets: {$size: 0}
 			}
 		]
-
 	})
 		.then(users => {
 			return Promise.each(users, user => {
 				var socket = _.find(user.sockets, socket => {
-					return (socket.updatedAt - disconnectedSockets) < 0
+					return moment(socket.updatedAt).isBefore(expiredSocketDate);
 				});
-				return userService.disconnectUser(user, socket);
+				return userService.disconnectUser(user, (socket || {}).socketId);
 			});
 		})
 		.catch(log.error)
