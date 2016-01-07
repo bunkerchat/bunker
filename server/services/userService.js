@@ -72,7 +72,7 @@ userService.disconnectUser = function (user, socketId) {
 	user.lastConnected = new Date();
 	user.typingIn = null;
 
-	user.save().then(() => {
+	return user.save().then(() => {
 		if (user.connected) return;
 
 		var io = require('../config/socketio').io;

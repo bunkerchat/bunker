@@ -49,4 +49,13 @@ var userSchema = new mongoose.Schema({
 	}
 });
 
+userSchema.set('toJSON', {
+	transform: function(doc, ret, options) {
+		delete ret.sockets;
+		delete ret.plaintextpassword;
+
+		return ret;
+	}
+});
+
 module.exports = mongoose.model('User', userSchema, 'user');

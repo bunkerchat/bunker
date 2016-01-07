@@ -387,50 +387,18 @@ function saveInMentionedInboxes(message) {
 
 	// Check if this message mentions anyone
 	// Completely async process that shouldn't disrupt the normal message flow
-	return Promise.join(
-		User.findOne(message.author),
-		RoomMember.find({room: message.room}).populate('user')
-	)
-		.spread((author, roomMembers) => Promise.each(roomMembers,roomMember => {
-			var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
-			if (!regex.test(message.text)) return;
+	var regex = new RegExp(message.author.nick + '\\b|@[Aa]ll', 'i');
+	if (!regex.test(message.text)) return;
 
-			return InboxMessage.create({user: roomMember.user._id, message: message._id})
-				.then(inboxMessage => InboxMessage.findOne(inboxMessage._id).populate('user message'))
-				.then(inboxMessage => {
-					inboxMessage.message.author = author;
+	return InboxMessage.create({user: message.author._id, message: message._id})
+		.then(inboxMessage => InboxMessage.findOne(inboxMessage._id).populate('message', 'text'))
+		.then(inboxMessage => {
+			inboxMessage.message.author = message.author;
 
-					socketio.io.to('inboxmessage_' + roomMember.user._id).emit('inboxmessage', {
-						_id: roomMember.user._id,
-						verb: 'messaged',
-						data: inboxMessage
-					});
-				});
-			})
-		);
-}
-
-function saveFightInMentionedInboxes(message, author, room) {
-	if (!message || !author || !room) return;
-
-	// Check if this message mentions anyone
-	// Completely async process that shouldn't disrupt the normal message flow
-	return Promise.join(
-		RoomMember.find({room: message.room}).populate('user')
-	)
-		.spread(function (roomMembers) {
-			return Promise.each(roomMembers, function (roomMember) {
-				var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
-				if (regex.test(message.text)) {
-					return InboxMessage.create({user: roomMember.user._id, message: message._id})
-						.then(function (inboxMessage) {
-							return InboxMessage.findOne(inboxMessage._id).populate('user message');
-						})
-						.then(function (inboxMessage) {
-							inboxMessage.message.author = author; // Attach populated author data
-							InboxMessage.message(roomMember.user._id, inboxMessage);
-						});
-				}
+			socketio.io.to('inboxmessage_' + message.author._id).emit('inboxmessage', {
+				_id: message.author._id,
+				verb: 'messaged',
+				data: inboxMessage
 			});
 		});
 }
@@ -489,9 +457,10 @@ function fight(roomMember, text) {
 				return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, fightResponse.message, 'fight');
 			}
 			else {
-				return message(roomMember, fightResponse.message, 'fight').then(function (message) {
-					return saveFightInMentionedInboxes(message, roomMember.user, roomMember.room);
-				});
+				return message(roomMember, fightResponse.message, 'fight')
+					//.then(function (message) {
+					//	return saveFightInMentionedInboxes(message, roomMember.user, roomMember.room);
+					//});
 			}
 		});
 }
