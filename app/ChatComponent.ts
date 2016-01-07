@@ -1,5 +1,4 @@
 import {Component, View} from 'angular2/core';
-import {NgClass} from 'angular2/common';
 import {CanDeactivate, RouteParams, ROUTER_DIRECTIVES, ComponentInstruction} from 'angular2/router';
 import {BunkerData} from './BunkerData';
 import {LobbyComponent} from './LobbyComponent';
@@ -23,8 +22,8 @@ import {RoomComponent} from './RoomComponent';
 			 </ul>
 		</div>
 	</nav>
-	<lobby [ngClass]="{hide: !!selectedRoom}"></lobby>
-	<room [ngClass]="{hide: selectedRoom != room._id}" [room-data]="room" *ngFor="#room of rooms"></room>
+	<lobby [hidden]="!!selectedRoom"></lobby>
+	<room [hidden]="selectedRoom != room._id" [room-data]="room" *ngFor="#room of rooms"></room>
 `
 })
 export class ChatComponent implements CanDeactivate {
@@ -39,7 +38,20 @@ export class ChatComponent implements CanDeactivate {
 
 	routerCanDeactivate(next:ComponentInstruction) {
 		this.selectedRoom = next.params['id'];
-		//return true; // will allow route to change but reloads the component :[
+		console.log(this.selectedRoom);
+
+		// Is this a hack? Possibly...
+		// Lobby and all rooms are loaded and shown/hidden as the user navigates but the ChatComponent always stays loaded
+		// This function prevents it from being navigated away from while still allowing us to use Angular's router
+		// There might be better ways to accomplish this
+
+		if(this.selectedRoom) {
+			var state = {name: 'lobby', url: '/2/rooms'};
+		}
+		else {
+			var state = {name: 'chat.room', url: '/2/rooms/' + this.selectedRoom}
+		}
+		window.history.pushState(state, state.name, state.url);
 		return false;
 	}
 }
