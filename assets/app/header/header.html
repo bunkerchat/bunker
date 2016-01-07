@@ -2,7 +2,7 @@
 	 ng-controller="HeaderController as header">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<a class="navbar-brand" ui-sref="lobby">Bunker</a>
+			<a class="navbar-brand" ui-sref="chat.lobby">Bunker</a>
 		</div>
 		<ul class="nav navbar-nav hidden-xs" as-sortable="header.dragRoomListeners" ng-model="header.rooms">
 			<li ui-sref-active="active" ng-repeat="room in header.rooms track by room._id" as-sortable-item  ng-if="room.$resolved">

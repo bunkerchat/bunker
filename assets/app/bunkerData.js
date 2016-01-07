@@ -40,7 +40,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				_.assign(users, _.indexBy(initialData.users, '_id'));
 
 				_.each(bunkerData.inbox, function (inbox) {
-					inbox.message.author = users[inbox.message.author._id || inbox.message.author];
+					if (inbox.message.author) { // TODO causing a bug for @aSig for some reason without this
+						inbox.message.author = users[inbox.message.author._id || inbox.message.author];
+					}
 				});
 
 				_.each(bunkerData.memberships, function (membership) {
@@ -155,6 +157,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// User
 
+		broadcastActiveRoom: function (roomId) {
+			io.socket.emit('/user/current/activity', {room: roomId});
+		},
 		broadcastTyping: function (roomId) {
 			if (!bunkerData.$resolved) return; // Not ready yet
 
@@ -261,7 +266,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		});
 
 		_.each(room.$messages, function (message, index) {
-			if(message.author){
+			if (message.author) {
 				message.author = users[message.author._id || message.author];
 			}
 

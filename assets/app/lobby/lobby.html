@@ -9,19 +9,19 @@
 			<li class="list-group-item"
 				ui-sref="chat.room({roomId: room._id})"
 				ng-if="room.$resolved"
-				ng-repeat="room in lobby.rooms | orderBy:'name' track by room._id">
+				ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
 				<h4 class="list-group-item-heading">
-					{{::room.name}}
+					{{room.name}}
 					<small class="hidden-xs" ng-bind-html="room.topic"></small>
 				</h4>
 				<span class="lobby-room-users">
 					{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>
 				</span>
 
-				<p ng-if="::room.$lastMessage">
+				<p ng-if="room.$lastMessage">
 					<span am-time-ago="room.$lastMessage.createdAt"></span>
-					<img gravatar-src-once="room.$lastMessage.author.email | lowercase" gravatar-size="30"/>
-					{{::room.$lastMessage.author.nick}}: {{::room.$lastMessage.text}}
+					<img gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="30"/>
+					{{room.$lastMessage.author.nick}}: {{room.$lastMessage.text}}
 				</p>
 
 			</li>

@@ -9,11 +9,6 @@
 	padding: 16px 15px;
 }
 
-.nav,
-.navbar-brand {
-	line-height: 4px;
-}
-
 .panel-heading {
 	line-height: 7px;
 }
@@ -90,4 +85,8 @@
 
 .member-list .status.pull-right {
 	margin-top: 8px;
+}
+
+.room-options {
+	bottom: -32px;
 }

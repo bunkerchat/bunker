@@ -55,8 +55,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function handleMembershipEvent(evt) {
-		var membership = _(bunkerData.rooms).pluck('$members').flatten().filter({_id: evt._id}).value();
-		membership = membership[0];
+		var membership = _(bunkerData.rooms).pluck('$members').flatten().filter({_id: evt._id}).first();
 		switch (evt.verb) {
 			case 'updated':
 				_.assign(membership, evt.data);
@@ -65,6 +64,16 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 				var room = bunkerData.getRoom(evt.data.room._id);
 				bunkerData.addMessage(room, evt.data);
 				$rootScope.$broadcast('bunkerMessaged', evt.data);
+				break;
+		}
+	}
+
+	function handleUserMembershipEvent(evt) {
+		var membership = _.find(bunkerData.memberships, {_id: evt._id});
+		if (!membership) return;
+		switch (evt.verb) {
+			case 'updated':
+				_.assign(membership, evt.data);
 				break;
 		}
 	}
@@ -79,10 +88,15 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function handleVisibilityShow() {
+		var activeRoom = _.find(bunkerData.rooms, {$selected: true});
+		if (activeRoom) {
+			bunkerData.broadcastActiveRoom(activeRoom._id);
+		}
 		bunkerData.broadcastPresent(true);
 	}
 
 	function handleVisibilityHide() {
+		bunkerData.broadcastActiveRoom(null);
 		bunkerData.broadcastPresent(false);
 	}
 
@@ -96,6 +110,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function handleClose() {
+		bunkerData.broadcastActiveRoom(null);
 		io.socket.disconnect();
 	}
 
@@ -108,7 +123,8 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 		{name: 'room', type: 'socket', handler: handleRoomEvent},
 		{name: 'user', type: 'socket', handler: handleUserEvent},
 		// usersettings are only updated by the client and mirroring is off
-		{name: 'roomMember', type: 'socket', handler: handleMembershipEvent},
+		{name: 'roommember', type: 'socket', handler: handleMembershipEvent},
+		{name: 'user_roommember', type: 'socket', handler: handleUserMembershipEvent},
 		{name: 'inboxMessage', type: 'socket', handler: handleInboxEvent},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
 		{name: 'disconnect', type: 'socket', handler: handleDisconnect},

@@ -27,8 +27,7 @@ module.exports.message = function (req, res) {
 	var roomId = req.body.roomId.toObjectId();
 	var currentRoomMember;
 
-	RoomMember.findOne({user: userId, room: roomId})
-		.populate('user')
+	RoomMember.findOne({user: userId, room: roomId}).populate('user')
 		.then(roomMember => {
 			if (!roomMember) throw new ForbiddenError('Must be a member of this room');
 			currentRoomMember = roomMember;
@@ -73,7 +72,6 @@ module.exports.findOne = function (req, res) {
 module.exports.create = function (req, res) {
 	var userId = req.session.userId;
 	var name = req.body.name || 'Untitled';
-
 	var room;
 
 	// Create new instance of model using data from params
@@ -84,7 +82,7 @@ module.exports.create = function (req, res) {
 			// Make user an administrator
 			return RoomMember.create({room: room._id, user: userId, role: 'administrator'})
 		})
-		.then(function (roomMember) {
+		.then(function () {
 			res.ok(room.toObject());
 		});
 };

@@ -6,6 +6,8 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 		templateUrl: '/assets/app/room/room.html',
 		link: function ($scope, $element) {
 
+			var el = angular.element($element);
+
 			$scope.user = bunkerData.user;
 			$scope.settings = bunkerData.userSettings;
 
@@ -22,6 +24,8 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					updateMemberList();
 				});
 
+				$scope.$watch('current.$selected', updateLastRead);
+
 				updateMemberList();
 			});
 
@@ -32,7 +36,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 				$rootScope.$broadcast('inputText', '@' + userNick);
 			};
 			$scope.loadPreviousMessages = function () {
-				return bunkerData.loadMessages($scope.current, $scope.current.$messages.length);
+				return bunkerData.loadMessages($scope.current, $scope.current.$messages.length).then(updateLastRead);
 			};
 
 			$rootScope.$on('bunkerMessaged.animation', function (evt, message) {
@@ -66,13 +70,13 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					popupElement(message.words[i]);
 				}
 
-				var el = angular.element($element);
 				showEmoticonAnimation(el, message.emoticon);
 			});
 
 			$rootScope.$on('userUpdated', updateMemberList);
+			$rootScope.$on('visibilityShow', updateLastRead);
 
-			function showEmoticonAnimation(el, emoticon){
+			function showEmoticonAnimation(el, emoticon) {
 				var knownEmoticon = _.find(emoticons.files, function (known) {
 					return known.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticon.replace(/:/g, '').toLowerCase();
 				});
@@ -106,6 +110,20 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 						return (user.connected ? (user.$present ? '000' : '111') : '999') + user.nick.toLowerCase();
 					})
 					.value();
+			}
+
+			function updateLastRead() {
+				if (!$scope.current.$selected || $scope.current.$messages.length == 0) return;
+
+				var membership = _.find(bunkerData.memberships, {room: $scope.current._id});
+				var lastReadId = _.last($scope.current.$messages)._id != membership.lastReadMessage ? membership.lastReadMessage : null;
+
+				el.find('.message.last-read').removeClass('last-read');
+				if (lastReadId) {
+					_.defer(function () {
+						el.find('#' + lastReadId + ' .message').addClass('last-read');
+					});
+				}
 			}
 		}
 	}

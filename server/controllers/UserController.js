@@ -46,7 +46,7 @@ module.exports.init = function (req, res) {
 			lastConnected: new Date().toISOString(),
 			typingIn: null,
 			present: true
-		}, {new: true});
+		}, {'new': true});
 	})
 		.then(function (updatedUser) {
 			req.io.to('user_' + updatedUser._id).emit('user', {
@@ -115,7 +115,7 @@ module.exports.init = function (req, res) {
 
 			// Populate authors
 			var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
-			return User.find(userIds).lean();
+			return User.find(userIds).select('-plaintextpassword -sockets').lean();
 		})
 
 		// compose all the data into an object matching the original vars and return them to the client
@@ -124,9 +124,9 @@ module.exports.init = function (req, res) {
 };
 
 // Activity update route. This will respond to PUT /user/current/activity
-// This route only allows updates to present and typingIn.
-// It can only be called by the current user.
-// It's sole purpose is to enable away and typing notifications.
+// This route only allows updates to present, typingIn, and room. It can only be called by the current user.
+// Its purpose is to update state changes for the current user (which room are they typing in, are they away,
+// which room is active, etc.)
 module.exports.activity = function (req, res) {
 	var userId = req.session.userId;
 
@@ -140,7 +140,40 @@ module.exports.activity = function (req, res) {
 		lastActivity: new Date()
 	};
 
-	req.io.to('user_' + userId).emit('user', {_id: userId, verb: 'updated', data: updates});
+	var activeRoom = req.body.room;
+	var lastMessageId;
+
+	if (typeof activeRoom !== 'undefined') {
+		updates.activeRoom = activeRoom;
+
+		User.findById(userId, {activeRoom: 1}).then(user => {
+			if (user.activeRoom) {
+				Message.findOne({room: user.activeRoom}, {_id: 1}, {
+					sort: {$natural: -1},
+					limit: 1
+				}).lean()
+					.then(lastMessage => {
+						lastMessageId = lastMessage._id;
+						return RoomMember.findOneAndUpdate({
+							user: userId,
+							room: user.activeRoom
+						}, {lastReadMessage: lastMessageId});
+					})
+					.then(roomMember => {
+						req.io.to(`userself_${userId}`).emit('user_roommember', {
+							_id: roomMember._id,
+							verb: 'updated',
+							data: {lastReadMessage: lastMessageId}
+						});
+					});
+			}
+
+			User.findByIdAndUpdate(userId, {activeRoom: activeRoom}).then(_.noop);
+			return null;
+		});
+	}
+
+	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
 	res.ok(updates);
 };
 

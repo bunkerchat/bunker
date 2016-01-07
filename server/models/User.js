@@ -1,11 +1,6 @@
 var mongoose = require('mongoose');
 
 var userSchema = new mongoose.Schema({
-	//token: {
-	//	type: String,
-	//	required: true
-	//	//minLength: 20
-	//},
 	nick: {
 		type: String,
 		required: true,
@@ -47,17 +42,14 @@ var userSchema = new mongoose.Schema({
 	settings: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'UserSettings'
+	},
+	activeRoom: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Room'
+	},
+	plaintextpassword: {
+		type: String
 	}
 });
 
-//userSchema.options.toObject.transform = function (doc, ret, options) {
-//
-//};
-
 module.exports = mongoose.model('User', userSchema, 'user');
-
-function removeSensitiveData(user) {
-	delete user.token;
-	delete user.sockets;
-	return user;
-}

@@ -10,14 +10,6 @@ var roomMemberSchema = new mongoose.Schema({
 		ref: 'Room',
 		index: true
 	},
-	playSoundOnMessage: {
-		type: Boolean,
-		default: false
-	},
-	showMessageDesktopNotification: {
-		type: Boolean,
-		default: false
-	},
 	role: {
 		type: String,
 		enum: ['member', 'moderator', 'administrator'],
@@ -25,6 +17,18 @@ var roomMemberSchema = new mongoose.Schema({
 	},
 	roomOrder: {
 		type: Number
+	},
+	lastReadMessage: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Message'
+	},
+	playSoundOnMessage: {
+		type: Boolean,
+		default: false
+	},
+	showMessageDesktopNotification: {
+		type: Boolean,
+		default: false
 	}
 });
 
