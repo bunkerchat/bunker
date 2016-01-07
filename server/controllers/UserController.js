@@ -34,7 +34,8 @@ module.exports.init = function (req, res) {
 	// allows sending async messages back to connected client from server
 	socket.join('userself_' + userId);
 
-	User.findById(userId, {sockets: 1}).then(function (user) { // find user sockets
+	// find user sockets
+	User.findById(userId, {sockets: 1}).then(function (user) {
 
 		var sockets = user.sockets || [];
 		_.remove(sockets, {socketId: req.socket.id});
@@ -223,19 +224,27 @@ setInterval(function () {
 
 	User.find({
 		connected: true,
-		sockets: {
-			$elemMatch: {
-				updatedAt: {"$lte": derp}
+		$or: [
+			{
+				sockets: {
+					$elemMatch: {
+						updatedAt: {"$lte": derp}
+					}
+				}
+			},
+			{
+				sockets: {$size: 0}
 			}
-		}
+		]
+
 	})
 		.then(users => {
 			console.log(_.pluck(users, 'nick'));
 			return Promise.each(users, user => {
 				var socket = _.find(user.sockets, socket => (socket.updatedAt - derp) < 0);
-				if(!socket) return;
-				return userService.disconnectUser(user,socket.id);
+				//if (!socket) return;
+				return userService.disconnectUser(user, socket);
 			});
 		})
-		.catch(console.error)
+		.catch(log.error)
 }, 10000);

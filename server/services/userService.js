@@ -67,11 +67,14 @@ userService.disconnectUser = function (user, socket) {
 
 	var io = require('../config/socketio').io;
 
-	//user.sockets = _.without(user.sockets, socket.id);
-	//delete user.socketLastActivity[socket.id];
 	user.connected = _.keys(user.socketLastActivity).length > 0;
 	user.lastConnected = new Date();
 	user.typingIn = null;
+
+	if(socket){
+		user.sockets = _.without(user.sockets, socket.id);
+	}
+
 	return user.save()
 		.then((dbUser) => {
 			io.to('user_' + user._id).emit('user', {
