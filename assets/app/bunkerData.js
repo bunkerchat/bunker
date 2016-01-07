@@ -5,6 +5,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	var typingTimeout;
 	var resolveBunkerData$Promise;
 	var users = {};
+	var lastActiveRoom;
 
 	var bunkerData = {
 		user: {},
@@ -158,6 +159,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// User
 
 		broadcastActiveRoom: function (roomId) {
+			if (lastActiveRoom == roomId) return;
 			io.socket.emit('/user/current/activity', {room: roomId});
 		},
 		broadcastTyping: function (roomId) {
@@ -176,6 +178,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			}, 3000);
 		},
 		broadcastPresent: function (present) {
+			if (present == bunkerData.user.present) return;
+
 			bunkerData.user.present = present;
 			io.socket.emit('/user/current/activity', {
 				typingIn: present ? bunkerData.user.typingIn : null,
