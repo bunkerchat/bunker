@@ -2,6 +2,7 @@ var Session = require('express-session');
 var MongoStore = require('connect-mongo')(Session);
 var passport = require('passport');
 var GooglePlusStrategy = require('passport-google-plus');
+var LocalStrategy = require('passport-local').Strategy;
 
 //var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
@@ -9,8 +10,10 @@ var config = require('./config');
 var userService = require('./../services/userService');
 var User = require('./../models/User');
 
-module.exports.init = function (app) {
-	var session = module.exports.session = Session({
+var auth = module.exports;
+
+auth.init = function (app) {
+	var session = auth.session = Session({
 		secret: '64ec1dff67add7c8ff0b08e0b518e43c',
 		resave: false,
 		saveUninitialized: true,
@@ -46,6 +49,29 @@ module.exports.init = function (app) {
 	app.post('/auth/googleCallback', passport.authenticate('google'), function (req, res) {
 		req.session.googleCredentials = req.authInfo;
 		res.json({});
+	});
+
+	passport.use(new LocalStrategy(function (username, password, done) {
+		User.findOne({email: username}, function (err, user) {
+			if (err) {
+				return done(err);
+			}
+			if (!user) {
+				console.log('failed login - no user', {message: 'Incorrect username.', username, password})
+				return done(null, false, {message: 'Incorrect username.'});
+			}
+			if (user._doc.plaintextpassword != password) {
+				console.log('failed login - bad password', {message: 'Incorrect username.', username, password})
+				return done(null, false, {message: 'Incorrect password.'});
+			}
+			return done(null, user);
+		});
+		}
+	));
+
+	auth.authenicateLocal = passport.authenticate('local', {
+		successRedirect: '/',
+		failureRedirect: '/loginBasic'
 	});
 
 	return session;

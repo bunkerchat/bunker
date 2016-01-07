@@ -1,12 +1,14 @@
+var userService = module.exports;
+
 var User = require('./../models/User');
 var UserSettings = require('./../models/UserSettings');
 var RoomMember = require('./../models/RoomMember');
 var Room = require('./../models/Room');
 
-module.exports.pendingTasks = {};
-module.exports.connectionUpdateWaitSeconds = 15;
+userService.pendingTasks = {};
+userService.connectionUpdateWaitSeconds = 15;
 
-module.exports.findOrCreateBunkerUser = function (profile) {
+userService.findOrCreateBunkerUser = function (profile) {
 	var email = profile.emails[0].value;
 	var user;
 
@@ -54,3 +56,32 @@ module.exports.findOrCreateBunkerUser = function (profile) {
 			});
 	}
 };
+
+userService.disconnectSocket = function (socket) {
+	return User.findOne({sockets: socket.id})
+		.then(user=> userService.disconnectUser(user, socket));
+};
+
+userService.disconnectUser = function (user, socket) {
+	if (!user) return;
+
+	var io = require('../config/socketio').io;
+
+	if(socket){
+		user.sockets = _.remove(user.sockets, {socketId:socket.id});
+	}
+
+	user.connected = user.sockets.length > 0;
+	user.lastConnected = new Date();
+	user.typingIn = null;
+
+	return user.save()
+		.then((dbUser) => {
+			io.to('user_' + user._id).emit('user', {
+				_id: user._id,
+				verb: 'updated',
+				data: {connected: dbUser.connected}
+			});
+		});
+};
+

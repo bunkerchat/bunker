@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons) {
+app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, $interval) {
 
 	var io = $window.io;
 	var roomLookup = []; // For fast room lookup
@@ -177,7 +177,6 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 		broadcastPresent: function (present) {
 			bunkerData.user.present = present;
-			bunkerData.user.lastActivity = new Date().toISOString();
 			io.socket.emit('/user/current/activity', {
 				typingIn: present ? bunkerData.user.typingIn : null,
 				present: present
@@ -244,6 +243,11 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		clearInbox: function () {
 			bunkerData.inbox.length = 0;
 			return io.socket.emitAsync('/user/current/clearInbox');
+		},
+
+		// ping
+		ping: function () {
+			io.socket.emit('/user/current/ping');
 		}
 	};
 
@@ -309,6 +313,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	bunkerData.$promise = $q(function (resolve) {
 		resolveBunkerData$Promise = resolve;
 	});
+
+	$interval(bunkerData.ping, 10000); //ping every 10 seconds
 
 	return bunkerData;
 });

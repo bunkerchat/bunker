@@ -2,6 +2,7 @@ var ios = require('socket.io-express-session');
 var routes = require('./routes');
 var User = require('../models/User');
 var config = require('../config/config');
+var userService = require('../services/userService');
 
 var socketio = module.exports;
 
@@ -18,9 +19,7 @@ socketio.connect = function (server) {
 	io.use(ios(session));
 	io.on('connection', function (socket) {
 		routes.socketio(socket);
-		socket.on('disconnect', function () {
-			afterDisconnect(socket);
-		});
+		socket.on('disconnect', userService.disconnectSocket);
 	});
 
 	// get all the sockets connected to a room
@@ -32,15 +31,3 @@ socketio.connect = function (server) {
 
 	return io;
 };
-
-
-function afterDisconnect(socket) {
-	return User.findOne({sockets: socket.id}).then(function (user) {
-		if (!user) return;
-		user.sockets = _.without(user.sockets, socket.id);
-		user.connected = user.sockets.length > 0;
-		user.lastConnected = new Date().toISOString();
-		user.typingIn = null;
-		return user.save();
-	});
-}

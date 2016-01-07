@@ -34,11 +34,12 @@ module.exports.init = function (req, res) {
 	// allows sending async messages back to connected client from server
 	socket.join('userself_' + userId);
 
-	User.findById(userId, {sockets: 1}).then(function (user) { // find user sockets
+	// find user sockets
+	User.findById(userId, {sockets: 1}).then(function (user) {
 
 		var sockets = user.sockets || [];
-		sockets.push(req.socket.id); // add this request socket
-		sockets = _.unique(sockets); // remove duplicates
+		_.remove(sockets, {socketId: req.socket.id});
+		sockets.push({socketId: req.socket.id, updatedAt: new Date()});
 
 		return User.findByIdAndUpdate(userId, {
 			sockets: sockets,
@@ -115,7 +116,7 @@ module.exports.init = function (req, res) {
 
 			// Populate authors
 			var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
-			return User.find(userIds).lean();
+			return User.find(userIds).select('-plaintextpassword -sockets').lean();
 		})
 
 		// compose all the data into an object matching the original vars and return them to the client
@@ -136,8 +137,7 @@ module.exports.activity = function (req, res) {
 	var present = req.body.present;
 	var updates = {
 		typingIn: typeof typingIn !== 'undefined' ? typingIn : null,
-		present: typeof present !== 'undefined' ? present : true,
-		lastActivity: new Date().toISOString()
+		present: typeof present !== 'undefined' ? present : true
 	};
 
 	var activeRoom = req.body.room;
@@ -169,6 +169,7 @@ module.exports.activity = function (req, res) {
 			}
 
 			User.findByIdAndUpdate(userId, {activeRoom: activeRoom}).then(_.noop);
+			return null;
 		});
 	}
 
@@ -187,3 +188,62 @@ module.exports.clearInbox = function (req, res) {
 		.then(res.ok)
 		.catch(res.serverError);
 };
+
+module.exports.ping = function (req, res) {
+	var userId = req.session.userId.toObjectId();
+
+	// remove currently connected socket from array
+	User.update(
+		{_id: userId},
+		{
+			$pull: {
+				sockets: {socketId: req.socket.id}
+			}
+		}
+	)
+		.then(() => {
+			return User.update(
+				{_id: userId},
+				{
+					$push: {
+						sockets: {
+							socketId: req.socket.id, updatedAt: new Date()
+						}
+					}
+				}
+			)
+		})
+		.then(res.ok)
+		.catch(res.serverError);
+};
+
+// clear inactive users from list
+setInterval(function () {
+	var disconnectedSockets = moment().subtract(30, 'seconds').toDate();
+
+	User.find({
+		connected: true,
+		$or: [
+			{
+				sockets: {
+					$elemMatch: {
+						updatedAt: {"$lte": disconnectedSockets}
+					}
+				}
+			},
+			{
+				sockets: {$size: 0}
+			}
+		]
+
+	})
+		.then(users => {
+			return Promise.each(users, user => {
+				var socket = _.find(user.sockets, socket => {
+					return (socket.updatedAt - disconnectedSockets) < 0
+				});
+				return userService.disconnectUser(user, socket);
+			});
+		})
+		.catch(log.error)
+}, 10000);
