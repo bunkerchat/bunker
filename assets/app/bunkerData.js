@@ -177,7 +177,6 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 		broadcastPresent: function (present) {
 			bunkerData.user.present = present;
-			bunkerData.user.lastActivity = new Date().toISOString();
 			io.socket.emit('/user/current/activity', {
 				typingIn: present ? bunkerData.user.typingIn : null,
 				present: present
@@ -315,7 +314,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		resolveBunkerData$Promise = resolve;
 	});
 
-	$interval(bunkerData.ping, 1000); //ping every 1 seconds
+	$interval(bunkerData.ping, 10000); //ping every 10 seconds
 
 	return bunkerData;
 });

@@ -115,7 +115,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function isPresent(user) {
-		return user.connected && !user.busy && (user.present || moment().diff(moment(user.lastActivity), 'minutes') < 5);
+		return user.connected && !user.busy && user.present;
 	}
 
 	// Handle events

@@ -137,8 +137,7 @@ module.exports.activity = function (req, res) {
 	var present = req.body.present;
 	var updates = {
 		typingIn: typeof typingIn !== 'undefined' ? typingIn : null,
-		present: typeof present !== 'undefined' ? present : true,
-		lastActivity: new Date()
+		present: typeof present !== 'undefined' ? present : true
 	};
 
 	var activeRoom = req.body.room;
@@ -220,7 +219,7 @@ module.exports.ping = function (req, res) {
 
 // clear inactive users from list
 setInterval(function () {
-	var derp = moment().subtract(5, 'seconds').toDate()
+	var disconnectedSockets = moment().subtract(30, 'seconds').toDate();
 
 	User.find({
 		connected: true,
@@ -228,7 +227,7 @@ setInterval(function () {
 			{
 				sockets: {
 					$elemMatch: {
-						updatedAt: {"$lte": derp}
+						updatedAt: {"$lte": disconnectedSockets}
 					}
 				}
 			},
@@ -239,10 +238,10 @@ setInterval(function () {
 
 	})
 		.then(users => {
-			console.log(_.pluck(users, 'nick'));
 			return Promise.each(users, user => {
-				var socket = _.find(user.sockets, socket => (socket.updatedAt - derp) < 0);
-				//if (!socket) return;
+				var socket = _.find(user.sockets, socket => {
+					return (socket.updatedAt - disconnectedSockets) < 0
+				});
 				return userService.disconnectUser(user, socket);
 			});
 		})
