@@ -1,11 +1,6 @@
 var mongoose = require('mongoose');
 
 var userSchema = new mongoose.Schema({
-	//token: {
-	//	type: String,
-	//	required: true
-	//	//minLength: 20
-	//},
 	nick: {
 		type: String,
 		required: true,
@@ -48,6 +43,18 @@ var userSchema = new mongoose.Schema({
 	activeRoom: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Room'
+	},
+	plaintextpassword: {
+		type: String
+	}
+});
+
+userSchema.set('toJSON', {
+	transform: function(doc, ret, options) {
+		delete ret.sockets;
+		delete ret.plaintextpassword;
+
+		return ret;
 	}
 });
 

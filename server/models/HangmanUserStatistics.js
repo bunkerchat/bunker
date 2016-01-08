@@ -7,20 +7,24 @@ var schema = new mongoose.Schema({
 	},
 	privateGameWinCount: {
 		type: Number,
-		defaults: 0
+		defaults: zero
 	},
 	privateGameLossCount: {
 		type: Number,
-		defaults: 0
+		defaults: zero
 	},
 	guessMisses: {
 		type: Number,
-		defaults: 0
+		defaults: zero
 	},
 	guessHits: {
 		type: Number,
-		defaults: 0
+		defaults: zero
 	}
 });
 
-module.exports = mongoose.model('HangmanUserStatistics', schema, 'hangmanUserStatistics');
+module.exports = mongoose.model('HangmanUserStatistics', schema, 'hangmanuserstatistics');
+
+function zero() {
+	return 0;
+}

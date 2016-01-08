@@ -47,10 +47,7 @@ app.controller('RoomHistoryController', function ($scope, bunkerData, $statePara
 					}
 				});
 
-				if (room.message) {
-					// scroll to message
-					$timeout($anchorScroll);
-				}
+				$timeout($anchorScroll);
 			});
 	}
 

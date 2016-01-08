@@ -1,10 +1,15 @@
+<<<<<<< HEAD
 app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, pinBoard) {
+=======
+app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, $interval) {
+>>>>>>> upstream/master
 
 	var io = $window.io;
 	var roomLookup = []; // For fast room lookup
 	var typingTimeout;
 	var resolveBunkerData$Promise;
 	var users = {};
+	var lastActiveRoom;
 
 	var bunkerData = {
 		user: {},
@@ -161,6 +166,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// User
 
 		broadcastActiveRoom: function (roomId) {
+			if (lastActiveRoom == roomId) return;
 			io.socket.emit('/user/current/activity', {room: roomId});
 		},
 		broadcastTyping: function (roomId) {
@@ -179,8 +185,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			}, 3000);
 		},
 		broadcastPresent: function (present) {
+			if (present == bunkerData.user.present) return;
+
 			bunkerData.user.present = present;
-			bunkerData.user.lastActivity = new Date().toISOString();
 			io.socket.emit('/user/current/activity', {
 				typingIn: present ? bunkerData.user.typingIn : null,
 				present: present
@@ -247,6 +254,11 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		clearInbox: function () {
 			bunkerData.inbox.length = 0;
 			return io.socket.emitAsync('/user/current/clearInbox');
+		},
+
+		// ping
+		ping: function () {
+			io.socket.emit('/user/current/ping');
 		}
 	};
 
@@ -315,6 +327,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	bunkerData.$promise = $q(function (resolve) {
 		resolveBunkerData$Promise = resolve;
 	});
+
+	$interval(bunkerData.ping, 10000); //ping every 10 seconds
 
 	return bunkerData;
 });

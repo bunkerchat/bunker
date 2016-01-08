@@ -33,4 +33,4 @@ var schema = new mongoose.Schema({
 	lastGuessSuccess: Boolean
 });
 
-module.exports = mongoose.model('HangmanGame', schema, 'hangmanGame');
+module.exports = mongoose.model('HangmanGame', schema, 'hangmangame');

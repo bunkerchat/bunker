@@ -41,6 +41,10 @@ module.exports.login = function (req, res) {
 	});
 };
 
+module.exports.loginBasic = function (req, res) {
+	res.render('LoginBasic');
+};
+
 module.exports.logout = function (req, res) {
 	req.session.destroy();
 	res.redirect('/login');

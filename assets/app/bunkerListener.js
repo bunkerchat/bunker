@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerData, $state, notifications, pinBoard) {
+=======
+app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications) {
+>>>>>>> upstream/master
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt._id);
@@ -143,7 +147,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 	}
 
 	function isPresent(user) {
-		return user.connected && !user.busy && (user.present || moment().diff(moment(user.lastActivity), 'minutes') < 5);
+		return user.connected && !user.busy && user.present;
 	}
 
 	// Handle events
@@ -159,8 +163,19 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 		{name: 'disconnect', type: 'socket', handler: handleDisconnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},
 		{name: 'visibilityHide', type: 'rootScope', handler: handleVisibilityHide},
-		{name: 'onbeforeunload', type: 'window', handler: handleClose}
+		{name: 'onbeforeunload', type: 'window', handler: handleClose},
+		{name: 'onload', type: 'window', handler: _.throttle(resetTimer, 5000)},
+		{name: 'onmousemove', type: 'document', handler: _.throttle(resetTimer, 5000)},
+		{name: 'onkeypress', type: 'document', handler: _.throttle(resetTimer, 5000)}
 	];
+
+	var awayTimeout;
+
+	function resetTimer() {
+		clearTimeout(awayTimeout);
+		awayTimeout = setTimeout(handleVisibilityHide, 1000 * 60 * 10 /* 10 min */);
+		handleVisibilityShow();
+	}
 
 	return {
 		init: function () {
@@ -182,6 +197,9 @@ app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerDa
 				}
 				else if (listener.type == 'window') {
 					$window[listener.name] = listener.handler;
+				}
+				else if (listener.type == 'document') {
+					$document[0][listener.name] = listener.handler;
 				}
 			});
 
