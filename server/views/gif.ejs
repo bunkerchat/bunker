@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+	<style>
+		.image-search {
+			height: 165px;
+			padding: 5px;
+		}
+	</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<meta charset="UTF-8">
+	<title>Gif Search</title>
+</head>
+<body>
+<div class="container">
+	<div class="row">
+		<form class="navbar-form navbar-left" role="search">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="gif search..." name="search" value="<%- search %>">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Go!</button>
+      </span>
+			</div>
+		</form>
+	</div>
+
+	<% results.images.forEach(function (el, index) { %>
+	<img src="<%- el %>" class="image-search"/>
+	<% }) %>
+
+</div>
+
+</body>
+</html>
