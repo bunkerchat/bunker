@@ -109,11 +109,6 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		console.log('socket disconnected');
 	}
 
-	function handleClose() {
-		bunkerData.broadcastActiveRoom(null);
-		io.socket.disconnect();
-	}
-
 	function isPresent(user) {
 		return user.connected && !user.busy && user.present;
 	}
@@ -130,7 +125,6 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		{name: 'disconnect', type: 'socket', handler: handleDisconnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},
 		{name: 'visibilityHide', type: 'rootScope', handler: handleVisibilityHide},
-		{name: 'onbeforeunload', type: 'window', handler: handleClose},
 		{name: 'onload', type: 'window', handler: _.throttle(resetTimer, 5000)},
 		{name: 'onmousemove', type: 'document', handler: _.throttle(resetTimer, 5000)},
 		{name: 'onkeypress', type: 'document', handler: _.throttle(resetTimer, 5000)}
