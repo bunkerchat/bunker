@@ -11,7 +11,9 @@ app.directive('emoticonMenu', function ($rootScope, bunkerData, emoticons, fuzzy
 
 			$(document)
 				.on('click.bunker.emoticon-menu', $scope.menu.close)
-				.on('click.bunker.emoticon-menu', elementsToSkip, function (e) { e.stopPropagation() });
+				.on('click.bunker.emoticon-menu', elementsToSkip, function (e) {
+					e.stopPropagation()
+				});
 
 			$scope.$on('$destroy', function () {
 				$(document).off('click.bunker.emoticon-menu');
@@ -55,7 +57,7 @@ app.directive('emoticonMenu', function ($rootScope, bunkerData, emoticons, fuzzy
 
 			$scope.$on('$destroy', function () {
 				bunkerData.refreshEmoticonCounts();
-			})
+			});
 		}
 	};
 });

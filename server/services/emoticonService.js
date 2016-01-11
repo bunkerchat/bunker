@@ -82,7 +82,9 @@ module.exports.emoticonCounts = function () {
 
 module.exports.getEmoticonNamesFromDisk = function () {
 	return Promise.join(
+		// Image emoticons
 		fs.readdirAsync('./assets/images/emoticons'),
+		// Font-Awesome icons (read from the .css file)
 		fs.readFileAsync('./node_modules/font-awesome/css/font-awesome.css', {encoding: 'utf8'}).then(data => {
 			return data.match(/\.fa-([a-z\-]+):before/g).map(icon => {
 				return icon.replace(':before', '').replace('.fa', 'icon').replace(/-/g, '_');

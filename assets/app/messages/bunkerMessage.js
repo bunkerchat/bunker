@@ -141,13 +141,13 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						return known.file.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticonText.replace(/:/g, '').toLowerCase();
 					});
 					if (knownEmoticon && !replacedEmotes[knownEmoticon]) {
-						if(knownEmoticon.isIcon) {
-							text = replaceAll(text, emoticonText,
-								'<i class="fa ' + knownEmoticon.file.replace('icon_', 'fa-').replace(/_/g, '-') + '"></i>');
-						}
-						else {
+						if (!knownEmoticon.isIcon) { // if an image emoticon (more common)
 							text = replaceAll(text, emoticonText,
 								'<img class="emoticon" title="' + emoticonText + '" src="/assets/images/emoticons/' + knownEmoticon.file + '"/>');
+						}
+						else { // font-awesome icon emoticon
+							text = replaceAll(text, emoticonText,
+								'<i class="fa ' + knownEmoticon.file.replace('icon_', 'fa-').replace(/_/g, '-') + '"></i>');
 						}
 						replacedEmotes[knownEmoticon] = true;
 					}
@@ -242,7 +242,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 						attachedMedia = angular.element('' +
 							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-							'<div gfycat class="gfyitem" data-title=true data-autoplay=true data-controls=true data-expand=true data-id="' + match[1] +'" ></div> ', +
+							'<div gfycat class="gfyitem" data-title=true data-autoplay=true data-controls=true data-expand=true data-id="' + match[1] + '" ></div> ', +
 							'</div>');
 					}
 					// run this one last since it conflicts with the gifv check above
