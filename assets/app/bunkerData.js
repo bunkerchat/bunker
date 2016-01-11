@@ -306,7 +306,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 	function decorateEmoticonCounts(emoticonCounts) {
 		var emoteCountsHash = _.indexBy(emoticonCounts, 'name');
-		_.each(emoticons.list, function (emoticon) {
+		_.each(emoticons.imageEmoticons, function (emoticon) {
 			emoticon.$count = emoteCountsHash[emoticon.name] ? emoteCountsHash[emoticon.name].count : 0;
 		});
 

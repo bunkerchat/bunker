@@ -81,7 +81,17 @@ module.exports.emoticonCounts = function () {
 };
 
 module.exports.getEmoticonNamesFromDisk = function () {
-	return fs.readdirAsync('./assets/images/emoticons');
+	return Promise.join(
+		fs.readdirAsync('./assets/images/emoticons'),
+		fs.readFileAsync('./node_modules/font-awesome/css/font-awesome.css', {encoding: 'utf8'}).then(data => {
+			return data.match(/\.fa-([a-z\-]+):before/g).map(icon => {
+				return icon.replace(':before', '').replace('.fa', 'icon').replace(/-/g, '_');
+			});
+		})
+	)
+		.spread((emoticons, icons) => {
+			return emoticons.concat(icons);
+		});
 };
 
 module.exports.getLoadScreenEmoticon = function () {
