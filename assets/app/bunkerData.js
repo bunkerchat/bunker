@@ -180,11 +180,15 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		broadcastPresent: function (present) {
 			if (present == bunkerData.user.present) return;
 
-			bunkerData.user.present = present;
-			io.socket.emit('/user/current/activity', {
-				typingIn: present ? bunkerData.user.typingIn : null,
-				present: present
-			});
+			$timeout(function () {
+				if (present == bunkerData.user.present) return;
+
+				bunkerData.user.present = present;
+				io.socket.emit('/user/current/activity', {
+					typingIn: present ? bunkerData.user.typingIn : null,
+					present: present
+				});
+			}, 5000);
 		},
 		cancelBroadcastTyping: function () {
 			if (typingTimeout) $timeout.cancel(typingTimeout);
