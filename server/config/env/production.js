@@ -25,7 +25,7 @@ config.google = {
 
 config.bingApiKey = process.env.bing_api_key;
 
-config.consoleLogLevel = 'error';
+config.consoleLogLevel = 'info';
 config.buildSassAtRuntime = false;
 config.useJavascriptBundle = true;
 
