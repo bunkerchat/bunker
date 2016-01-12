@@ -6,6 +6,7 @@ var UserSettings = require('./../models/UserSettings');
 var emoticonService = require('./../services/emoticonService');
 
 module.exports.index = function (req, res) {
+	console.log('index')
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
 
 	Promise.join(
@@ -23,6 +24,7 @@ module.exports.index = function (req, res) {
 				templates = null;
 			}
 
+			console.log('before render')
 			res.render(config.useJavascriptBundle ? 'index-prod' : 'index', {
 				templates: templates,
 				userId: userId,
@@ -31,6 +33,7 @@ module.exports.index = function (req, res) {
 				loadingEmote: emoticonService.getLoadScreenEmoticon(),
 				debugging: settings.showDebugging
 			});
+			console.log('after render')
 		})
 		.catch(res.serverError);
 };
