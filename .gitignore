@@ -1,4 +1,4 @@
-assets/styles/*.css
+#assets/styles/*.css
 config/local.js
 
 node_modules
@@ -21,7 +21,7 @@ npm-debug.log
 
 *~
 *#
-/assets/styles/default.css
+#/assets/styles/default.css
 .DS_STORE
 .netbeans
 nbproject
