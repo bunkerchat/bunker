@@ -4,7 +4,6 @@ var config = require('./../config/config');
 
 module.exports = function (req, res, next) {
 	res.serverError = function (err) {
-		console.log('serverError', err);
 		return serverError(err, req, res);
 	};
 	next();
