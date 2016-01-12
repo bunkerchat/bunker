@@ -69,6 +69,6 @@ gulp.task('template-cache-html', ['clear-build-folder'], function () {
 		.pipe(gulp.dest("./assets/bundled"));
 });
 
-gulp.task('production', ['template-cache-html', 'move-index-prod', 'sass']);
+gulp.task('production', ['template-cache-html', 'move-index-prod']);
 
 gulp.task('default', ['production']);

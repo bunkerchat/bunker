@@ -9,6 +9,7 @@
 var moment = require('moment');
 var Promise = require('bluebird');
 
+var log = require('../config/log');
 var emoticonService = require('./../services/emoticonService');
 var userService = require('../services/userService');
 var User = require('./../models/User');
@@ -165,7 +166,8 @@ module.exports.activity = function (req, res) {
 							verb: 'updated',
 							data: {lastReadMessage: lastMessageId}
 						});
-					});
+					})
+					.catch(log.error)
 			}
 
 			User.findByIdAndUpdate(userId, {activeRoom: activeRoom}).then(_.noop);

@@ -1,6 +1,7 @@
 var config = require('./../config/config');
 
 module.exports = function serverError(err, req, res) {
+	log.warn('server error', err);
 
 	// if environment is defined (aka production), strip error information
 	if (!config.showServerErrors) {
