@@ -7,15 +7,6 @@ var auth = require('./auth');
 var config = require('./config');
 
 app.set('env', config.useJavascriptBundle ? 'production' : 'development');
-
-if (config.buildSassAtRuntime) {
-	app.use(sassMiddleware({
-		src: path.join(__dirname, '../../'),
-		outputStyle: 'compressed',
-		force: true
-	}));
-}
-
 app.use('/assets', express.static('assets'));
 app.use('/node_modules', express.static('node_modules'));
 app.set('view engine', 'ejs');

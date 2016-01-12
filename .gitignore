@@ -1,4 +1,4 @@
-#assets/styles/*.css
+assets/styles/*.css
 config/local.js
 
 node_modules

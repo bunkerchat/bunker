@@ -1,4 +1,3 @@
-
 var gulp = require('gulp');
 var usemin = require('gulp-usemin');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -16,7 +15,7 @@ var sass = require('gulp-sass');
 gulp.task('sass', function () {
 	gulp.src('./assets/styles/**/*.scss')
 		.pipe(sass().on('error', sass.logError))
-		.pipe(gulp.dest('./assets/styles'));
+		.pipe(gulp.dest('./assets/bundled'));
 });
 
 gulp.task('clear-build-folder', function (cb) {
@@ -29,9 +28,9 @@ gulp.task('usemin', ['clear-build-folder'], function () {
 			assetsDir: './',
 			css: ['concat'],
 			//html: [minifyHtml({empty: true})],
-			jsLib:[rev()],
+			jsLib: [rev()],
 			jsLibMin: [uglify(), rev()],
-			jsApp:[
+			jsApp: [
 				sourcemaps.init({
 					loadMaps: true
 				}),
@@ -69,6 +68,10 @@ gulp.task('template-cache-html', ['clear-build-folder'], function () {
 		.pipe(gulp.dest("./assets/bundled"));
 });
 
-gulp.task('production', ['template-cache-html', 'move-index-prod']);
+gulp.task('production', ['template-cache-html', 'move-index-prod', 'sass']);
 
 gulp.task('default', ['production']);
+
+gulp.task('watch', function () {
+	gulp.watch('./assets/styles/**/*.scss', ['sass']);
+});
