@@ -40,6 +40,7 @@ module.exports.run = function (cb) {
 		})
 		.then(function () {
 			log.info('server - hosted - http://' + config.express.ip + ':' + config.express.port);
+			log.info('config file', config);
 		})
 		.then(cb)
 		.catch(function (error) {
