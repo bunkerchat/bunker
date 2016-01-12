@@ -147,7 +147,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						}
 						else { // font-awesome icon emoticon
 							text = replaceAll(text, emoticonText,
-								'<i class="fa ' + knownEmoticon.file.replace('icon_', 'fa-').replace(/_/g, '-') + '"></i>');
+								'<i class="fa ' + knownEmoticon.file.replace('icon_', 'fa-').replace(/_/g, '-') + '" title=":' + knownEmoticon.name + ':"></i>');
 						}
 						replacedEmotes[knownEmoticon.file] = true;
 					}
