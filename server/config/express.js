@@ -2,7 +2,6 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
-var sassMiddleware = require('node-sass-middleware');
 var auth = require('./auth');
 var config = require('./config');
 
