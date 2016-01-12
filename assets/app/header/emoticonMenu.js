@@ -6,14 +6,16 @@ app.directive('emoticonMenu', function ($rootScope, bunkerData, emoticons, fuzzy
 		},
 		controllerAs: 'menu',
 		bindToController: true,
-		link: function (scope) {
+		link: function ($scope) {
 			var elementsToSkip = 'li[ng-class="{active: header.emoticonMenu}"], [emoticon-menu]';
 
 			$(document)
-				.on('click.bunker.emoticon-menu', scope.menu.close)
-				.on('click.bunker.emoticon-menu', elementsToSkip, function (e) { e.stopPropagation() })
+				.on('click.bunker.emoticon-menu', $scope.menu.close)
+				.on('click.bunker.emoticon-menu', elementsToSkip, function (e) {
+					e.stopPropagation()
+				});
 
-			scope.$on('$destroy', function () {
+			$scope.$on('$destroy', function () {
 				$(document).off('click.bunker.emoticon-menu');
 			});
 		},
@@ -44,7 +46,7 @@ app.directive('emoticonMenu', function ($rootScope, bunkerData, emoticons, fuzzy
 			};
 
 			function prepareList() {
-				var list = bunkerData.userSettings.sortEmoticonsByPopularity ? _(emoticons.list).sortBy('$count').reverse().value() : emoticons.list;
+				var list = bunkerData.userSettings.sortEmoticonsByPopularity ? _(emoticons.imageEmoticons).sortBy('$count').reverse().value() : emoticons.imageEmoticons;
 
 				if (self.search) {
 					list = fuzzyByFilter(list, 'name', self.search);
@@ -55,7 +57,7 @@ app.directive('emoticonMenu', function ($rootScope, bunkerData, emoticons, fuzzy
 
 			$scope.$on('$destroy', function () {
 				bunkerData.refreshEmoticonCounts();
-			})
+			});
 		}
 	};
 });

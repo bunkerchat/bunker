@@ -1,7 +1,5 @@
 app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerData) {
 
-	var messageEditWindowSeconds = 60;
-
 	var searchStates = {
 		NONE: 'none',
 		EMOTE: 'emote',
@@ -164,7 +162,6 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 				else if (evt.keyCode == 27) { // 'escape'
 					// Reset all the things
 					scope.selectedMessageIndex = -1;
-					scope.messageText = '';
 					scope.editMode = false;
 					previousText = null;
 					emoticonSearch = '';
@@ -191,11 +188,6 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 						searchState = searchStates.NONE;
 					}
 				}
-			}
-
-			function datesWithinSeconds(date1, seconds) {
-				var elapsed = Math.abs(date1 - Date.now()) / 1000;
-				return elapsed < seconds;
 			}
 		}
 	};
