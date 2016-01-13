@@ -236,10 +236,12 @@ setInterval(function () {
 	})
 		.then(users => {
 			return Promise.each(users, user => {
-				var socket = _.find(user.sockets, socket => {
-					return moment(socket.updatedAt).isBefore(expiredSocketDate);
-				});
-				return userService.disconnectUser(user, (socket || {}).socketId);
+				var sockets =  _(user.sockets)
+					.filter(socket => moment(socket.updatedAt).isBefore(expiredSocketDate))
+					.map('socketId')
+					.value();
+
+				userService.disconnectUser(user, sockets);
 			});
 		})
 		.catch(log.error)

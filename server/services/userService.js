@@ -62,11 +62,16 @@ userService.disconnectSocket = function (socket) {
 		.then(user=> userService.disconnectUser(user, socket.id));
 };
 
-userService.disconnectUser = function (user, socketId) {
-	if (!user) return;
-	if (socketId) {
-		_.remove(user.sockets, {socketId: socketId});
+userService.disconnectUser = function (user, socketIds) {
+	if(!_.isArray(socketIds)){
+		socketIds = [socketIds];
 	}
+
+	if (!user) return;
+
+	_.each(socketIds, socketId => {
+		_.remove(user.sockets, {socketId: socketId});
+	});
 
 	user.connected = user.sockets.length > 0;
 	user.lastConnected = new Date();

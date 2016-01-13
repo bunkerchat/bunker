@@ -62,7 +62,7 @@ function connectToMongoose() {
 
 function startup(){
 	return Promise.join(
-		User.update({}, {sockets: [], typingIn: null}, { multi: true }),
+		User.update({}, {typingIn: null}, { multi: true }),
 		ensureFirstRoom()
 	)
 }
