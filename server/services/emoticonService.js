@@ -92,7 +92,7 @@ module.exports.getEmoticonNamesFromDisk = function () {
 		})
 	)
 		.spread((emoticons, icons) => {
-			return emoticons.concat(icons);
+			return _.sortBy(emoticons.concat(icons));
 		});
 };
 

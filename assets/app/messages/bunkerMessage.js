@@ -140,16 +140,16 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					var knownEmoticon = _.find(emoticons.all, function (known) {
 						return known.file.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticonText.replace(/:/g, '').toLowerCase();
 					});
-					if (knownEmoticon && !replacedEmotes[knownEmoticon]) {
+					if (knownEmoticon && !replacedEmotes[knownEmoticon.file]) {
 						if (!knownEmoticon.isIcon) { // if an image emoticon (more common)
 							text = replaceAll(text, emoticonText,
 								'<img class="emoticon" title="' + emoticonText + '" src="/assets/images/emoticons/' + knownEmoticon.file + '"/>');
 						}
 						else { // font-awesome icon emoticon
 							text = replaceAll(text, emoticonText,
-								'<i class="fa ' + knownEmoticon.file.replace('icon_', 'fa-').replace(/_/g, '-') + '"></i>');
+								'<i class="fa ' + knownEmoticon.file.replace('icon_', 'fa-').replace(/_/g, '-') + '" title=":' + knownEmoticon.name + ':"></i>');
 						}
-						replacedEmotes[knownEmoticon] = true;
+						replacedEmotes[knownEmoticon.file] = true;
 					}
 				});
 				return text;
