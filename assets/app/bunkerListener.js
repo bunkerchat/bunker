@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-app.factory('bunkerListener', function ($rootScope, $window, $interval, bunkerData, $state, notifications, pinBoard) {
-=======
-app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications) {
->>>>>>> upstream/master
+app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications, pinBoard) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt._id);

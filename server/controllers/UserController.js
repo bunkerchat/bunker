@@ -93,7 +93,7 @@ module.exports.init = function (req, res) {
 			_.each(memberships, membership => socket.join('roommember_' + membership._id));
 			_.each(rooms, room => {
 				socket.join('room_' + room._id);
-				socket.join('pinnedMessage_' + room.id);
+				socket.join('pinnedMessage_' + room._id);
 			});
 
 			return Promise.map(rooms, room => {
@@ -127,13 +127,8 @@ module.exports.init = function (req, res) {
 			rooms = _rooms;
 
 			// Populate authors
-<<<<<<< HEAD
-			var userIdStrings = _(userIds).filter().map(userId => userId.toString()).unique().value();
-			return User.find(userIds).lean();
-=======
 			var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
 			return User.find(userIds).select('-plaintextpassword -sockets').lean();
->>>>>>> upstream/master
 		})
 
 		// compose all the data into an object matching the original vars and return them to the client

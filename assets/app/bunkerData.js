@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, pinBoard) {
-=======
-app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, $interval) {
->>>>>>> upstream/master
+app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, $interval, pinBoard) {
 
 	var io = $window.io;
 	var roomLookup = []; // For fast room lookup
