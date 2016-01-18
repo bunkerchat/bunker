@@ -1,6 +1,8 @@
 app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, bunkerData) {
 	var header = this;
 
+	header.bunkerData = bunkerData;
+
 	bunkerData.$promise.then(function () {
 		header.rooms = bunkerData.rooms;
 		header.memberships = bunkerData.memberships;

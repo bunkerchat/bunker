@@ -100,6 +100,11 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		bunkerData.broadcastPresent(false);
 	}
 
+	function handleConnect(){
+		console.log('socket connected - hello, world');
+		bunkerData.connected = true;
+	}
+
 	function handleReconnect() {
 		console.log('socket reconnected');
 		bunkerData.init();
@@ -107,6 +112,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 
 	function handleDisconnect() {
 		console.log('socket disconnected');
+		bunkerData.connected = false;
 	}
 
 	function isPresent(user) {
@@ -121,6 +127,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		{name: 'roommember', type: 'socket', handler: handleMembershipEvent},
 		{name: 'user_roommember', type: 'socket', handler: handleUserMembershipEvent},
 		{name: 'inboxMessage', type: 'socket', handler: handleInboxEvent},
+		{name: 'connect', type: 'socket', handler: handleConnect},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
 		{name: 'disconnect', type: 'socket', handler: handleDisconnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},

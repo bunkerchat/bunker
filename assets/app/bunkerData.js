@@ -8,6 +8,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	var lastActiveRoom;
 
 	var bunkerData = {
+		connected: false,
 		user: {},
 		userSettings: {},
 		rooms: [],
