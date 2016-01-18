@@ -287,8 +287,11 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	function decorateMembers(room) {
 		_.each(room.$members, function (member) {
 			member.user = users[member.user._id || member.user];
+			if (!member.user) return;
 			member.user.$present = true; // assumed true for now
 		});
+
+		_.remove(room.$members, member => !member.user);
 	}
 
 	function isFirstInSeries(lastMessage, message) {

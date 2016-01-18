@@ -121,7 +121,11 @@ module.exports.init = function (req, res) {
 		})
 
 		// compose all the data into an object matching the original vars and return them to the client
-		.then(users => res.ok({user, userSettings, memberships, inbox, rooms, users}))
+		.then(users => {
+			// don't return users who have not connected in the last 45 days
+			users = _.filter(users, user => moment().diff(user.lastConnected, 'days') < 45);
+			res.ok({user, userSettings, memberships, inbox, rooms, users})
+		})
 		.catch(res.serverError);
 };
 
