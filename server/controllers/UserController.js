@@ -25,7 +25,7 @@ var RoomController = require('./RoomController');
 // return all rooms and user data necessary to run the application.
 module.exports.init = function (req, res) {
 
-	var user, userSettings, memberships, inbox, rooms, bundledFiles;
+	var user, userSettings, memberships, inbox, rooms, version;
 	var userIds = [];
 
 	if (!req.session.userId) return res.ok();
@@ -66,13 +66,13 @@ module.exports.init = function (req, res) {
 				versionService.version()
 			);
 		})
-		.spread((_user, _userSettings, _memberships, _inboxMessages, _bundledFiles) => {
+		.spread((_user, _userSettings, _memberships, _inboxMessages, _version) => {
 
 			user = _user;
 			userSettings = _userSettings;
 			memberships = _memberships;
 			inbox = _inboxMessages;
-			bundledFiles = _bundledFiles;
+			version = _version;
 
 			var rooms = _(memberships).pluck('room').compact().value();
 
@@ -128,7 +128,7 @@ module.exports.init = function (req, res) {
 		.then(users => {
 			// don't return users who have not connected in the last 45 days
 			users = _.filter(users, user => moment().diff(user.lastConnected, 'days') < 45);
-			res.ok({user, userSettings, memberships, inbox, rooms, users})
+			res.ok({user, userSettings, memberships, inbox, rooms, version, users})
 		})
 		.catch(res.serverError);
 };

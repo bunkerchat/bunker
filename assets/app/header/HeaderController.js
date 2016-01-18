@@ -8,6 +8,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		header.memberships = bunkerData.memberships;
 		header.settings = bunkerData.userSettings;
 		header.inbox = bunkerData.inbox;
+		header.version = bunkerData.version;
 	});
 
 	header.showOptions = !$state.is('lobby');

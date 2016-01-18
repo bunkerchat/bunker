@@ -1,11 +1,12 @@
 <nav class="navbar navbar-default navbar-fixed-top navbar-background" role="navigation"
-	 ng-controller="HeaderController as header">
+		 ng-controller="HeaderController as header">
 	<div class="container-fluid">
 		<div class="navbar-header">
 			<a class="navbar-brand" ui-sref="chat.lobby">Bunker</a>
 		</div>
 		<ul class="nav navbar-nav hidden-xs" as-sortable="header.dragRoomListeners" ng-model="header.rooms">
-			<li ui-sref-active="active" ng-repeat="room in header.rooms track by room._id" as-sortable-item  ng-if="room.$resolved">
+			<li ui-sref-active="active" ng-repeat="room in header.rooms track by room._id" as-sortable-item
+					ng-if="room.$resolved">
 				<a as-sortable-item-handle ui-sref="chat.room({roomId: room._id})" title="{{room.topic}}">{{room.name}}</a>
 				<span class="badge" ng-class="{'badge-mention': room.$unreadMention}" ng-show="room.$unreadMessages > 0">
 					{{room.$unreadMessages}}
@@ -21,14 +22,14 @@
 						<img src="/assets/images/emoticons/allthethings.png"/>
 					</a>
 				</li>
-				<li ng-class="{active: header.inboxOpened}" >
+				<li ng-class="{active: header.inboxOpened}">
 					<a ng-click="header.toggleInbox()" class="small-width">
 						<i class="fa fa-inbox fa-lg"></i>
 					</a>
 					<span class="badge" ng-show="header.inbox.unreadMessages > 0">{{header.inbox.unreadMessages}}</span>
 				</li>
 				<li class="dropdown">
-					<a href data-toggle="dropdown" class="small-width" ng-click="header.toggleSettings()" >
+					<a href data-toggle="dropdown" class="small-width" ng-click="header.toggleSettings()">
 						<i class="fa fa-cog fa-lg" ng-class="{'fa-spin':!header.bunkerData.connected}"></i>
 					</a>
 					<ul class="dropdown-menu" role="menu">
@@ -71,7 +72,7 @@
 						<li role="presentation" class="divider"></li>
 						<li role="presentation">
 							<a role="menuitem" tabindex="-1"
-							   ng-click="header.changeSetting('desktopMentionNotifications')">
+								 ng-click="header.changeSetting('desktopMentionNotifications')">
 								<i class="fa {{header.settings.desktopMentionNotifications ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
 								Show Notifications (@Nick)
 							</a>
@@ -93,6 +94,9 @@
 							<a role="menuitem" tabindex="-1" ng-click="header.reloadPage()">
 								<i class="fa {{header.bunkerData.connected ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
 								Connected
+								<small class="text-muted">
+									Client({{header.version.clientVersion}}) Server({{header.version.serverVersion}})
+								</small>
 							</a>
 						</li>
 						<li role="presentation">

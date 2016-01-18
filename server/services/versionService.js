@@ -6,33 +6,32 @@ var config = require('../config/config');
 
 var versionService = module.exports;
 
-var versionCache;
-
 versionService.version = function version() {
-	// cache version lookup info
-	if (versionCache) return Promise.resolve(versionCache);
-
-	var empty = function () {
-	};
-
 	return Promise.join(
-		getGitBranchVersion(),
-		fs.readFileAsync('./githash', {encoding: 'utf8'}).catch(empty)
+		getGitHash(),
+		getClientCode()
 	)
-		.spread(function (gitBranchVersion, githash) {
-			if (!githash) {
-				githash = gitBranchVersion;
+		.spread((serverVersion, clientJavascriptFile) => {
+			var clientVersion;
+			if(clientJavascriptFile) {
+				clientVersion = /bundle-(.+?)\.js/gi.exec(clientJavascriptFile)[1];
 			}
-			versionCache = {gitBranchVersion: gitBranchVersion, githash: githash};
-			return versionCache;
-		})
+
+			return {serverVersion, clientJavascriptFile, clientVersion}
+		});
 };
 
 versionService.templates = function () {
 	return getBundle()
+		// find the client side template
 		.then(bundledFiles => _.find(bundledFiles, file => _.includes(file, 'templates')));
 };
 
+function getClientCode() {
+	return getBundle()
+		// find the client side bundle file
+		.then(bundledFiles => _.find(bundledFiles, file => /bundle-.+?\.js/gi.test(file)));
+}
 
 var bundleCache;
 function getBundle() {
@@ -41,17 +40,11 @@ function getBundle() {
 
 	return fs.readdirAsync('./assets/bundled')
 		.then(bundledFiles => bundleCache = bundledFiles)
-		// return empty when errors
 		.catch(() => []);
 }
 
-function getGitBranchVersion() {
-	return new Promise(function (resolve, reject) {
-		git.branch(function (branch) {
-			git.short(function (hash) {
-				if (!hash) return resolve();
-				resolve(branch + '/' + hash);
-			});
-		});
-	});
+var gitHashCache;
+function getGitHash() {
+	if (gitHashCache) return Promise.resolve(gitHashCache);
+	return new Promise(resolve => git.short(hash => resolve(gitHashCache = hash)));
 }

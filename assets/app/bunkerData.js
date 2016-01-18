@@ -9,6 +9,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 	var bunkerData = {
 		connected: false,
+		version: {},
 		user: {},
 		userSettings: {},
 		rooms: [],
@@ -31,6 +32,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			bunkerData.$resolved = false;
 			return io.socket.emitAsync('/init').then(function (initialData) {
 				bunkerData.$resolved = true;
+				_.assign(bunkerData.version, initialData.version);
 				_.assign(bunkerData.user, initialData.user);
 				_.assign(bunkerData.userSettings, initialData.userSettings);
 				_.assign(bunkerData.inbox, initialData.inbox);
