@@ -242,12 +242,27 @@ module.exports.pinMessage = function(req, res) {
 
 	var roomId = req.body.roomId.toObjectId();
 	var messageId = req.body.messageId.toObjectId();
+	var userId = req.session.userId.toObjectId();
 
-	Promise.join(
-		PinnedMessage.create({ message: messageId, room: roomId }),
-		Message.findOne(messageId).populate('author'),
+	RoomMember.count({room: roomId, user: userId})
+		.then(function(count) {
 
-		function(pinnedMessage, message) {
+			if (count === 0) {
+				throw new ForbiddenError('Must be a member of this room');
+			}
+
+			return [PinnedMessage.create({ message: messageId, room: roomId }),
+					Message.findOne(messageId).populate('author').populate('room')];
+		})
+		.spread(function(pinnedMessage, message) {
+
+			if (message.room.id === req.body.roomId) {
+				throw new InvalidInputError('Can only pin message to the room it belongs to.');
+			}
+
+			if (message.type !== 'standard' && message.type !== 'code') {
+				throw new InvalidInputError('Can only pin standard and code messages.');
+			}
 
 			req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
 				_id: req.body.roomId,
@@ -256,12 +271,15 @@ module.exports.pinMessage = function(req, res) {
 			});
 
 			res.ok();
-		});
+		})
+		.catch(ForbiddenError, res.serverError)
+		.catch(InvalidInputError, res.badRequest)
+		.catch(res.serverError);
 
 	// TODO: ensure user is member of room
-	// get room/room user?
-	// get message?
-	// only allow certain message types?
+	// x get room/roommember
+	// x get message?
+	// x only allow certain message types?
 	// get room pins?
 	// prune pins?
 	// save pinBoard?
@@ -271,21 +289,30 @@ module.exports.pinMessage = function(req, res) {
 module.exports.unPinMessage = function(req, res) {
 
 	var messageId = req.body.messageId.toObjectId();
+	var userId = req.session.userId.toObjectId();
+	var roomId = req.body.roomId.toObjectId();
 
-	PinnedMessage
-			.remove({ message: messageId })
-			.then(function() {
-				var unPinResult = { messageId: req.body.messageId, pinned: false, roomId: req.body.roomId };
+	RoomMember.count({room: roomId, user: userId})
+		.then(function(count) {
 
-				req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
-					_id: req.body.roomId,
-					verb: 'messaged',
-					data: unPinResult
-				});
+			if (count === 0) {
+				throw new ForbiddenError('Must be a member of this room');
+			}
 
-				res.ok(unPinResult);
-			})
-			.catch(res.serverError);
+			return PinnedMessage.remove({ message: messageId });
+		})
+		.then(function() {
+			var unPinResult = { messageId: req.body.messageId, pinned: false, roomId: req.body.roomId };
+
+			req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
+				_id: req.body.roomId,
+				verb: 'messaged',
+				data: unPinResult
+			});
+
+			res.ok(unPinResult);
+		})
+		.catch(res.serverError);
 };
 
 // GET /room/:id/pins
