@@ -102,6 +102,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		if (room) {
 			room.$unreadMessages = 0;
 			room.$unreadMention = false;
+			// testing to make sure the auto code stuff works
 		}
 	});
 
