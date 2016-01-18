@@ -1,14 +1,14 @@
-app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, bunkerData) {
+app.controller('HeaderController', function ($rootScope, $stateParams, $state, $modal, bunkerData, $window) {
 	var header = this;
 
 	header.bunkerData = bunkerData;
+	header.currentVersion = true;
 
 	bunkerData.$promise.then(function () {
 		header.rooms = bunkerData.rooms;
 		header.memberships = bunkerData.memberships;
 		header.settings = bunkerData.userSettings;
 		header.inbox = bunkerData.inbox;
-		header.version = bunkerData.version;
 	});
 
 	header.showOptions = !$state.is('lobby');
@@ -64,6 +64,10 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		}
 	};
 
+	header.reloadPage = function () {
+		$window.location.reload();
+	};
+
 	$rootScope.$on('bunkerMessaged', function (evt, message) {
 		if (!bunkerData.$resolved || message.room._id == $rootScope.roomId || (message.type == 'standard' && message.author._id == bunkerData.user._id)) {
 			return;
@@ -82,12 +86,36 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 		}
 	});
 
+	$rootScope.$on('bunkerDataLoaded', function (evt) {
+		header.version = bunkerData.version;
+
+		// hack
+		var scripts = _($('script'))
+			.map(file => file.attributes.src)
+			.remove();
+
+		var clientFile = scripts.find(src => /bundle-.+?\.js/gi.test(src.value));
+		var templateFile = scripts.find(src => /templates-.+?\.js/gi.test(src.value));
+
+		if (clientFile && templateFile) {
+			header.localClientVersion = /bundle-(.+?)\.js/gi.exec(clientFile.value)[1];
+			header.localClientVersion += /templates-(.+?)\.js/gi.exec(templateFile.value)[1];
+		}
+
+		header.currentVersion = header.localClientVersion == header.version.clientVersion;
+		console.log('duh')
+	});
+
 	$rootScope.$on('roomIdChanged', function (evt, roomId) {
 		var room = bunkerData.getRoom(roomId);
 		if (room) {
 			room.$unreadMessages = 0;
 			room.$unreadMention = false;
 		}
+	});
+
+	$rootScope.$on('$stateChangeSuccess', function (evt, toState) {
+		header.showOptions = toState.name != 'lobby';
 	});
 
 	$rootScope.$on('$stateChangeSuccess', function (evt, toState) {

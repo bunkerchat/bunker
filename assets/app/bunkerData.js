@@ -93,6 +93,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				// creates a hashmap of rooms by its id
 				roomLookup = _.indexBy(bunkerData.rooms, '_id');
 
+				$rootScope.$broadcast('bunkerDataLoaded');
 				return bunkerData;
 			});
 		},

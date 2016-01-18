@@ -90,13 +90,17 @@
 						<!--</a>-->
 						<!--</li>-->
 						<li role="presentation" class="divider"></li>
-						<li role="presentation">
-							<a role="menuitem" tabindex="-1" ng-click="header.reloadPage()">
+						<li ng-if="header.currentVersion" role="presentation">
+							<a role="menuitem" tabindex="-1">
 								<i class="fa {{header.bunkerData.connected ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
 								Connected
-								<small class="text-muted">
-									Client({{header.version.clientVersion}}) Server({{header.version.serverVersion}})
-								</small>
+								<small class="text-muted">{{header.version.serverVersion}}</small>
+							</a>
+						</li>
+						<li ng-if="!header.currentVersion" role="presentation">
+							<a class="bg-warning" role="menuitem" tabindex="-1" ng-click="header.reloadPage()">
+								<i class="fa fa-exclamation-triangle text-warning"></i>
+								Bunker Update Available!
 							</a>
 						</li>
 						<li role="presentation">

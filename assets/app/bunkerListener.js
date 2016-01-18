@@ -103,6 +103,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 	function handleConnect(){
 		console.log('socket connected - hello, world');
 		bunkerData.connected = true;
+		$rootScope.$broadcast('socketConnected');
 	}
 
 	function handleReconnect() {
@@ -113,6 +114,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 	function handleDisconnect() {
 		console.log('socket disconnected');
 		bunkerData.connected = false;
+		$rootScope.$broadcast('socketDisconnected');
 	}
 
 	function isPresent(user) {

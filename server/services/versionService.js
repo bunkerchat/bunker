@@ -9,15 +9,20 @@ var versionService = module.exports;
 versionService.version = function version() {
 	return Promise.join(
 		getGitHash(),
-		getClientCode()
+		getClientCode(),
+		getTemplate()
 	)
-		.spread((serverVersion, clientJavascriptFile) => {
+		.spread((serverVersion, clientJavascriptFile, templateFile) => {
 			var clientVersion;
 			if(clientJavascriptFile) {
 				clientVersion = /bundle-(.+?)\.js/gi.exec(clientJavascriptFile)[1];
 			}
 
-			return {serverVersion, clientJavascriptFile, clientVersion}
+			if(templateFile) {
+				clientVersion += /templates-(.+?)\.js/gi.exec(templateFile)[1];
+			}
+
+			return {serverVersion, clientVersion}
 		});
 };
 
@@ -33,10 +38,16 @@ function getClientCode() {
 		.then(bundledFiles => _.find(bundledFiles, file => /bundle-.+?\.js/gi.test(file)));
 }
 
+function getTemplate(){
+	return getBundle()
+		// find the client side bundle file
+		.then(bundledFiles => _.find(bundledFiles, file => /templates-.+?\.js/gi.test(file)));
+}
+
 var bundleCache;
 function getBundle() {
 	if (!config.useJavascriptBundle) return Promise.resolve([]);
-	if (bundleCache) return Promise.resolve(bundleCache);
+	//if (bundleCache) return Promise.resolve(bundleCache);
 
 	return fs.readdirAsync('./assets/bundled')
 		.then(bundledFiles => bundleCache = bundledFiles)

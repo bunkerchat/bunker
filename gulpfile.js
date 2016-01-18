@@ -38,7 +38,7 @@ gulp.task('usemin', ['clear-build-folder'], function () {
 				ngAnnotate(),
 				'concat',
 				babel({presets: ['es2015']}),
-				uglify(),
+				//uglify(),
 				rev(),
 				sourcemaps.write('./')
 			]
@@ -76,4 +76,8 @@ gulp.task('default', ['production']);
 
 gulp.task('watch', function () {
 	gulp.watch('./assets/styles/**/*.scss', ['sass']);
+});
+
+gulp.task('watchjs', ['production'], function () {
+	gulp.watch('./assets/app/**/*.*', ['production']);
 });
