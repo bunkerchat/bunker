@@ -12,6 +12,7 @@ var Promise = require('bluebird');
 var log = require('../config/log');
 var emoticonService = require('./../services/emoticonService');
 var userService = require('../services/userService');
+var versionService = require('../services/versionService');
 var User = require('./../models/User');
 var UserSettings = require('./../models/UserSettings');
 var RoomMember = require('./../models/RoomMember');
@@ -24,7 +25,7 @@ var RoomController = require('./RoomController');
 // return all rooms and user data necessary to run the application.
 module.exports.init = function (req, res) {
 
-	var user, userSettings, memberships, inbox, rooms;
+	var user, userSettings, memberships, inbox, rooms, bundledFiles;
 	var userIds = [];
 
 	if (!req.session.userId) return res.ok();
@@ -61,15 +62,18 @@ module.exports.init = function (req, res) {
 				User.findById(userId).lean(),
 				UserSettings.findOne({user: userId}).lean(),
 				RoomMember.find({user: userId}).sort('roomOrder').populate('room').lean(),
-				InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message').lean()
+				InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message').lean(),
+				versionService.version()
 			);
 		})
-		.spread((_user, _userSettings, _memberships, _inboxMessages) => {
+		.spread((_user, _userSettings, _memberships, _inboxMessages, _bundledFiles) => {
 
 			user = _user;
 			userSettings = _userSettings;
 			memberships = _memberships;
 			inbox = _inboxMessages;
+			bundledFiles = _bundledFiles;
+
 			var rooms = _(memberships).pluck('room').compact().value();
 
 			// build up a list of userids to fetch from the database
@@ -128,6 +132,14 @@ module.exports.init = function (req, res) {
 		})
 		.catch(res.serverError);
 };
+
+var version;
+function codeVersion(){
+	if(version) return Promise.resolve(version);
+
+	fs.readdirAsync('./assets/bundled')
+		.then.catch(_.noop)
+}
 
 // Activity update route. This will respond to PUT /user/current/activity
 // This route only allows updates to present, typingIn, and room. It can only be called by the current user.

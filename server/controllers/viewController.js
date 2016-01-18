@@ -1,9 +1,10 @@
 var Promise = require('bluebird');
-var fs = Promise.promisifyAll(require('fs'));
+//var fs = Promise.promisifyAll(require('fs'));
 
-var config = require('./../config/config');
-var UserSettings = require('./../models/UserSettings');
-var emoticonService = require('./../services/emoticonService');
+var config = require('../config/config');
+var UserSettings = require('../models/UserSettings');
+var emoticonService = require('../services/emoticonService');
+var versionService = require('../services/versionService');
 
 var viewController = module.exports;
 
@@ -13,18 +14,9 @@ viewController.index = function (req, res) {
 	Promise.join(
 		emoticonService.getEmoticonNamesFromDisk(),
 		UserSettings.findOne({user: userId}),
-		fs.readdirAsync('./assets/bundled').catch(_.noop)
+		versionService.templates()
 	)
-		.spread(function (emoticons, settings, bundledFiles) {
-			var templates = _.find(bundledFiles, function (file) {
-				return _.includes(file, 'templates');
-			});
-
-			//no template caching for dev
-			if (!config.useJavascriptBundle) {
-				templates = null;
-			}
-
+		.spread(function (emoticons, settings, templates) {
 			res.render(config.useJavascriptBundle ? 'index-prod' : 'index', {
 				templates: templates,
 				userId: userId,
