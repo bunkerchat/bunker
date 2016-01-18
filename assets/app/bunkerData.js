@@ -291,9 +291,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			member.user.$present = true; // assumed true for now
 		});
 
-		_.remove(room.$members, function (member) {
-			return !member.user
-		});
+		_.remove(room.$members, member => !member.user);
 	}
 
 	function isFirstInSeries(lastMessage, message) {

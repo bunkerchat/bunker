@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var usemin = require('gulp-usemin');
 var ngAnnotate = require('gulp-ng-annotate');
+var babel = require('gulp-babel');
 var uglify = require('gulp-uglify');
 var minifyHtml = require('gulp-minify-html');
 var minifyCss = require('gulp-minify-css');
@@ -36,6 +37,7 @@ gulp.task('usemin', ['clear-build-folder'], function () {
 				}),
 				ngAnnotate(),
 				'concat',
+				babel({presets: ['es2015']}),
 				uglify(),
 				rev(),
 				sourcemaps.write('./')
