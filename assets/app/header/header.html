@@ -30,7 +30,8 @@
 				</li>
 				<li class="dropdown">
 					<a href data-toggle="dropdown" class="small-width" ng-click="header.toggleSettings()">
-						<i class="fa fa-cog fa-lg" ng-class="{'fa-spin':!header.bunkerData.connected}"></i>
+						<i class="fa fa-cog fa-lg"
+							 ng-class="{'fa-spin':!header.bunkerData.connected, 'warning': !header.currentVersion}"></i>
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li role="presentation">
@@ -92,7 +93,7 @@
 						<li role="presentation" class="divider"></li>
 						<li ng-if="header.currentVersion" role="presentation">
 							<a role="menuitem" tabindex="-1">
-								<i class="fa {{header.bunkerData.connected ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+								<i class="fa {{header.bunkerData.connected ? 'fa-circle' : 'fa-circle-o'}}"></i>
 								Connected
 								<small class="text-muted">{{header.version.serverVersion}}</small>
 							</a>
