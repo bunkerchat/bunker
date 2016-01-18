@@ -241,7 +241,7 @@ setInterval(function () {
 					.map('socketId')
 					.value();
 
-				userService.disconnectUser(user, sockets);
+				return userService.disconnectUser(user, sockets);
 			});
 		})
 		.catch(log.error)
