@@ -89,21 +89,12 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	$rootScope.$on('bunkerDataLoaded', function (evt) {
 		header.version = bunkerData.version;
 
-		// hack
-		var scripts = _($('script'))
-			.map(file => file.attributes.src)
-			.remove();
-
-		var clientFile = scripts.find(src => /bundle-.+?\.js/gi.test(src.value));
-		var templateFile = scripts.find(src => /templates-.+?\.js/gi.test(src.value));
-
-		if (clientFile && templateFile) {
-			header.localClientVersion = /bundle-(.+?)\.js/gi.exec(clientFile.value)[1];
-			header.localClientVersion += /templates-(.+?)\.js/gi.exec(templateFile.value)[1];
+		if(!header.version.old.clientVersion) {
+			header.currentVersion = true;
+			return;
 		}
 
-		header.currentVersion = header.localClientVersion == header.version.clientVersion;
-		console.log('duh')
+		header.currentVersion = header.version.old.clientVersion == header.version.clientVersion;
 	});
 
 	$rootScope.$on('roomIdChanged', function (evt, roomId) {
