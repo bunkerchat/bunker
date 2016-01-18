@@ -62,25 +62,40 @@ userService.disconnectSocket = function (socket) {
 		.then(user=> userService.disconnectUser(user, socket.id));
 };
 
-userService.disconnectUser = function (user, socketId) {
-	if (!user) return;
-	if (socketId) {
-		_.remove(user.sockets, {socketId: socketId});
+userService.disconnectUser = function (user, socketIds) {
+	if (!_.isArray(socketIds)) {
+		socketIds = [socketIds];
 	}
 
-	user.connected = user.sockets.length > 0;
-	user.lastConnected = new Date();
-	user.typingIn = null;
+	if (!user) return;
 
-	return user.save().then(() => {
-		if (user.connected) return;
-
-		var io = require('../config/socketio').io;
-		io.to('user_' + user._id).emit('user', {
-			_id: user._id,
-			verb: 'updated',
-			data: {connected: user.connected}
-		});
+	_.each(socketIds, socketId => {
+		_.remove(user.sockets, {socketId: socketId});
 	});
+
+	var connected = user.sockets.length > 0;
+
+	// This code looks strange because:
+	// 1: findByIdAndUpdate was not returning a promise
+	// 2: doing a user.save() was not updating the user.sockets collection properly
+	// and I didn't know how to fix it :-(
+	return Promise.fromCallback(callback => {
+		User.findByIdAndUpdate(user._id, {
+			sockets: user.sockets,
+			connected: connected,
+			lastConnected: new Date(),
+			typingIn: null
+		}, callback)
+	})
+		.then(() => {
+			if (user.connected) return;
+
+			var io = require('../config/socketio').io;
+			io.to('user_' + user._id).emit('user', {
+				_id: user._id,
+				verb: 'updated',
+				data: {connected: connected}
+			});
+		});
 };
 

@@ -1,21 +1,22 @@
 app.factory('emoticons', function ($window) {
-	var files = $window.emoticons;
+	var emoticons = $window.emoticons;
 
-	var list = _.map(files, function (file) {
-		return {name: emoticonName(file), file: file, $count: 0};
+	var list = _.map(emoticons, function (emoticon) {
+		return {name: emoticonName(emoticon), file: emoticon, isIcon: /^icon_/.test(emoticon), $count: 0};
 	});
 
 	return {
-		list: list,
+		all: list,
+		imageEmoticons: _.filter(list, {isIcon: false}),
 		names: _.pluck(list, 'name'),
 		files: _.pluck(list, 'file')
 	};
 });
 
-app.filter("emoticonName", function () {
+app.filter('emoticonName', function () {
 	return emoticonName;
 });
 
 function emoticonName(input) {
-	return input.replace(/.\w+$/, '');
+	return input.replace(/\.\w+$/, '');
 }

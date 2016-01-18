@@ -6,12 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
 	<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
-	<link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css"/>
 	<link rel="stylesheet" href="/assets/vendor/highlightjs/styles/github.css"/>
 	<link rel="stylesheet" href="/assets/vendor/ng-sortable/dist/ng-sortable.min.css"/>
-	<link rel="stylesheet" href="/assets/styles/default.css" />
+	<link rel="stylesheet" href="/assets/bundled/default.css" />
 
-	<link rel="stylesheet" ng-href="{{ loadMinimal ? '/assets/styles/minimalist.css' : '' }}" custom-stylesheet/>
+	<link rel="stylesheet" ng-href="{{ loadMinimal ? '/assets/bundled/minimalist.css' : '' }}" custom-stylesheet/>
 	<link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -36,11 +36,11 @@
 
 <!-- build:jsLib /assets/bundled/vendor.js -->
 <script src="/assets/vendor/youtube-iframe-api/youtube.iframe-api.js"></script>
-<script src="/assets/vendor/lodash/lodash.min.js"></script>
-<script src="/assets/vendor/moment/min/moment.min.js"></script>
-<script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/lodash/index.js"></script>
+<script src="/node_modules/moment/min/moment.min.js"></script>
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
 <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="/node_modules/angular/angular.js"></script>
+<script src="/node_modules/angular/angular.min.js"></script>
 <script src="/assets/vendor/angular-touch/angular-touch.min.js"></script>
 <script src="/assets/vendor/angular-sanitize/angular-sanitize.min.js"></script>
 <script src="/assets/vendor/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>

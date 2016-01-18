@@ -9,6 +9,7 @@
 var moment = require('moment');
 var Promise = require('bluebird');
 
+var log = require('../config/log');
 var emoticonService = require('./../services/emoticonService');
 var userService = require('../services/userService');
 var User = require('./../models/User');
@@ -178,7 +179,8 @@ module.exports.activity = function (req, res) {
 							verb: 'updated',
 							data: {lastReadMessage: lastMessageId}
 						});
-					});
+					})
+					.catch(log.error)
 			}
 
 			User.findByIdAndUpdate(userId, {activeRoom: activeRoom}).then(_.noop);
@@ -247,10 +249,12 @@ setInterval(function () {
 	})
 		.then(users => {
 			return Promise.each(users, user => {
-				var socket = _.find(user.sockets, socket => {
-					return moment(socket.updatedAt).isBefore(expiredSocketDate);
-				});
-				return userService.disconnectUser(user, (socket || {}).socketId);
+				var sockets =  _(user.sockets)
+					.filter(socket => moment(socket.updatedAt).isBefore(expiredSocketDate))
+					.map('socketId')
+					.value();
+
+				userService.disconnectUser(user, sockets);
 			});
 		})
 		.catch(log.error)

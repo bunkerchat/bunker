@@ -40,6 +40,7 @@ module.exports.run = function (cb) {
 		})
 		.then(function () {
 			log.info('server - hosted - http://' + config.express.ip + ':' + config.express.port);
+			log.info('config file', config);
 		})
 		.then(cb)
 		.catch(function (error) {
@@ -61,7 +62,7 @@ function connectToMongoose() {
 
 function startup(){
 	return Promise.join(
-		User.update({}, {sockets: [], typingIn: null}, { multi: true }),
+		User.update({}, {typingIn: null}, { multi: true }),
 		ensureFirstRoom()
 	)
 }

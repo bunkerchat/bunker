@@ -276,10 +276,17 @@ mark:hover {
 
 .inbox-author {
 	float: left;
-	width: 100px;
+	width: 68px;
 	padding-left: 5px;
 	padding-top: 2px;
 	color: #fff;
+	margin-left: 23px;
+	overflow: hidden;
+
+	img {
+		position: absolute;
+		left: 3px;
+	}
 }
 
 .inbox-message {

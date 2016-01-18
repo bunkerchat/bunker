@@ -9,13 +9,13 @@ var imageSearch = module.exports;
 imageSearch.image = function (query) {
 	return googleImageSearch(query)
 		.catch(() => bingImageSearch(query, true))
-		.catch(() => ({provider: 'none'}));
+		.catch(() => ({provider: 'none', images:[]}));
 };
 
 imageSearch.gif = function (query) {
 	return googleImageSearch(query, true)
 		.catch(() => bingImageSearch(query, true))
-		.catch(() => ({provider: 'none'}));
+		.catch(() => ({provider: 'none', images:[]}));
 };
 
 function googleImageSearch(query, animated) {
@@ -25,6 +25,8 @@ function googleImageSearch(query, animated) {
 		.then(JSON.parse);
 
 	function lookup() {
+		if(!query) return Promise.reject('no query');
+
 		var qs = {
 			q: query,
 			searchType: 'image',
@@ -71,6 +73,8 @@ function bingImageSearch(query, animated) {
 		.then(JSON.parse);
 
 	function lookup() {
+		if(!query) return Promise.reject('no query');
+
 		var qs = {
 			$format: 'json',
 			Query: `'${query}'`,

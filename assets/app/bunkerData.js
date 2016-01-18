@@ -183,11 +183,15 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		broadcastPresent: function (present) {
 			if (present == bunkerData.user.present) return;
 
-			bunkerData.user.present = present;
-			io.socket.emit('/user/current/activity', {
-				typingIn: present ? bunkerData.user.typingIn : null,
-				present: present
-			});
+			$timeout(function () {
+				if (present == bunkerData.user.present) return;
+
+				bunkerData.user.present = present;
+				io.socket.emit('/user/current/activity', {
+					typingIn: present ? bunkerData.user.typingIn : null,
+					present: present
+				});
+			}, 5000);
 		},
 		cancelBroadcastTyping: function () {
 			if (typingTimeout) $timeout.cancel(typingTimeout);
@@ -312,13 +316,12 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 	function decorateEmoticonCounts(emoticonCounts) {
 		var emoteCountsHash = _.indexBy(emoticonCounts, 'name');
-		_.each(emoticons.list, function (emoticon) {
+		_.each(emoticons.imageEmoticons, function (emoticon) {
 			emoticon.$count = emoteCountsHash[emoticon.name] ? emoteCountsHash[emoticon.name].count : 0;
 		});
 
 		return emoticonCounts
 	}
-
 
 	bunkerData.$promise = $q(function (resolve) {
 		resolveBunkerData$Promise = resolve;

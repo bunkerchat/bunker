@@ -385,6 +385,25 @@ function populateMessage(message) {
 function saveInMentionedInboxes(message) {
 	if (!message.author) return;
 
+	RoomMember.find({room: message.room}).populate('user')
+		.then(roomMembers => roomMembers)
+		.each(roomMember => {
+			var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
+			if (!regex.test(message.text)) return;
+
+			return InboxMessage.create({user: roomMember.user._id, message: message._id})
+				.then(inboxMessage => InboxMessage.findOne(inboxMessage._id).populate('message', 'text'))
+				.then(inboxMessage => {
+					inboxMessage.message.author = message.author;
+
+					socketio.io.to('inboxmessage_' + roomMember.user._id).emit('inboxmessage', {
+						_id: message.author._id,
+						verb: 'messaged',
+						data: inboxMessage
+					});
+				});
+		});
+
 	// Check if this message mentions anyone
 	// Completely async process that shouldn't disrupt the normal message flow
 	var regex = new RegExp(message.author.nick + '\\b|@[Aa]ll', 'i');
@@ -458,9 +477,9 @@ function fight(roomMember, text) {
 			}
 			else {
 				return message(roomMember, fightResponse.message, 'fight')
-					//.then(function (message) {
-					//	return saveFightInMentionedInboxes(message, roomMember.user, roomMember.room);
-					//});
+				//.then(function (message) {
+				//	return saveFightInMentionedInboxes(message, roomMember.user, roomMember.room);
+				//});
 			}
 		});
 }

@@ -4,6 +4,7 @@ var auth = require('./auth');
 
 // Controllers
 var viewController = require('../controllers/viewController');
+var GifController = require('../controllers/GifController');
 var userController = require('../controllers/UserController');
 var roomController = require('../controllers/RoomController');
 var userSettingsController = require('../controllers/UserSettingsController');
@@ -19,6 +20,7 @@ module.exports.http = function (app) {
 	app.get('/login', viewController.login);
 	app.get('/loginBasic', viewController.loginBasic);
 	app.get('/logout', viewController.logout);
+	app.get('/gif/:search?', GifController.index);
 
 	// Internal views
 	app.get('/', isLoggedIn, viewController.index);
