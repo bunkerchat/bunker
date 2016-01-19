@@ -8,6 +8,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	var lastActiveRoom;
 
 	var bunkerData = {
+		connected: false,
+		version: {},
 		user: {},
 		userSettings: {},
 		rooms: [],
@@ -30,6 +32,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			bunkerData.$resolved = false;
 			return io.socket.emitAsync('/init').then(function (initialData) {
 				bunkerData.$resolved = true;
+				delete bunkerData.version.old;
+				bunkerData.version.old = _.clone(bunkerData.version);
+				_.assign(bunkerData.version, initialData.version);
 				_.assign(bunkerData.user, initialData.user);
 				_.assign(bunkerData.userSettings, initialData.userSettings);
 				_.assign(bunkerData.inbox, initialData.inbox);
@@ -95,6 +100,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				// creates a hashmap of rooms by its id
 				roomLookup = _.indexBy(bunkerData.rooms, '_id');
 
+				$rootScope.$broadcast('bunkerDataLoaded');
 				return bunkerData;
 			});
 		},
@@ -295,8 +301,11 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	function decorateMembers(room) {
 		_.each(room.$members, function (member) {
 			member.user = users[member.user._id || member.user];
+			if (!member.user) return;
 			member.user.$present = true; // assumed true for now
 		});
+
+		_.remove(room.$members, member => !member.user);
 	}
 
 	function isFirstInSeries(lastMessage, message) {

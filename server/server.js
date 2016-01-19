@@ -1,5 +1,4 @@
 // set globals
-//global.log = require('./config/log');
 global.log = require('./config/log');
 global._ = require('lodash');
 global.Promise = require('bluebird');

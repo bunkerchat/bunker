@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var usemin = require('gulp-usemin');
 var ngAnnotate = require('gulp-ng-annotate');
+var babel = require('gulp-babel');
 var uglify = require('gulp-uglify');
 var minifyHtml = require('gulp-minify-html');
 var minifyCss = require('gulp-minify-css');
@@ -36,7 +37,8 @@ gulp.task('usemin', ['clear-build-folder'], function () {
 				}),
 				ngAnnotate(),
 				'concat',
-				uglify(),
+				babel({presets: ['es2015']}),
+				//uglify(),
 				rev(),
 				sourcemaps.write('./')
 			]
@@ -74,4 +76,8 @@ gulp.task('default', ['production']);
 
 gulp.task('watch', function () {
 	gulp.watch('./assets/styles/**/*.scss', ['sass']);
+});
+
+gulp.task('watchjs', ['production'], function () {
+	gulp.watch('./assets/app/**/*.*', ['production']);
 });
