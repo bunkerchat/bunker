@@ -321,14 +321,14 @@ mark:hover {
 	overflow: scroll;
 	bottom: 34px;
 	background: white;
-	top: 28px;
+	top: 48px;
 	/*right: 16.666%;*/
 	right: 10%;
 	left: 80px;
 	/*border: 3px solid #ddd;*/
 	border: 1px solid #DFD7CA;
 	box-shadow: 0 6px 12px rgba(0,0,0, .5);
-	padding: 10px;
+	padding: 8px;
 	border-radius: 4px;
 	z-index: 1040;
 }
@@ -339,16 +339,24 @@ mark:hover {
 
 .pin-board-message {
 	float: left;
+	padding: 12px;
 	max-width: 100%;
-	border: 1px solid #ddd;
-	margin-bottom: 10px;
-	box-shadow: 0 2px 3px 0 #aaa;
+}
+
+.pin-board-message > div {
 	padding: 16px 16px 14px 14px;
+	border: 1px solid #ddd;
+	box-shadow: 0 2px 3px 0 #aaa;
 	position: relative;
 }
 
-.pin-board-message > img {
+.pin-board-message .pin-message-author {
 	margin-right: 8px;
+	display: inline-block;
+}
+
+.pin-board-message .panel {
+	margin-top: 8px;
 }
 
 .pin-board-message:hover .pin-board-unpin {

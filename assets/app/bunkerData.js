@@ -80,6 +80,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 							if (existingMessagesLookup[message._id]) return;
 							room.$messages.push(message);
 						});
+
+						// TODO: I think I need to overwrite the room's pinned messages with init data here D:
 					}
 
 					room.$resolved = true;

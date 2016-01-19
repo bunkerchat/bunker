@@ -101,7 +101,7 @@ module.exports.init = function (req, res) {
 				return Promise.join(
 					Message.find({room: room._id}).sort('-createdAt').limit(40).lean(),
 					RoomMember.find({room: room._id}).lean(),
-					PinnedMessage.find({ room: room._id }).populate('message')
+					PinnedMessage.find({ room: room._id }).sort('-createdAt').populate('message')
 				)
 					.spread((messages, members, pinnedMessages) => {
 						userIds.pushAll(_.pluck(messages, 'author'), _.pluck(members, 'user'));

@@ -256,7 +256,7 @@ module.exports.pinMessage = function(req, res) {
 		})
 		.spread(function(pinnedMessage, message) {
 
-			if (message.room.id === req.body.roomId) {
+			if (message.room.id !== req.body.roomId) {
 				throw new InvalidInputError('Can only pin message to the room it belongs to.');
 			}
 

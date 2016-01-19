@@ -49,7 +49,7 @@ app.directive('pins', ['pinBoard', function (pinBoard) {
 		link: function (scope, element, attrs) {
 
 			scope.removePin = function(message) {
-				console.log(message);
+				pinBoard.unPin(message._id);
 			};
 
 			scope.boardOpen = false;

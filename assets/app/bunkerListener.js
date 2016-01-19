@@ -105,7 +105,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 				}
 				else if (!event.data.pinned) {
 					_.remove(room.$pinnedMessages, function(item) {
-						return item.id === event.data.messageId;
+						return item._id === event.data.messageId;
 					});
 
 					pinBoard.pinChanged(event.data);
