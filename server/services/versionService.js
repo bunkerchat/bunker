@@ -1,29 +1,38 @@
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 var git = require('git-rev');
+var crypto = require('crypto');
 
 var config = require('../config/config');
 var emoticonService = require('./emoticonService');
 
 var versionService = module.exports;
 
+var versionCache;
 versionService.version = function version() {
+	if(versionCache) return Promise.resolve(versionCache);
+
 	return Promise.join(
 		getGitHash(),
 		getClientCode(),
-		getClientStyles()
+		getClientStyles(),
+		emoticonService.getEmoticonNamesFromDisk()
 	)
-		.spread((serverVersion, clientJavascriptFile, clientStyles) => {
+		.spread((serverVersion, clientJavascriptFile, clientStyles, emoticons) => {
 			var clientVersion;
-			if(clientJavascriptFile) {
+			if (clientJavascriptFile) {
 				clientVersion = /bundle-(.+?)\.js/gi.exec(clientJavascriptFile)[1];
 			}
 
-			if(clientStyles) {
+			if (clientStyles) {
 				clientVersion += /default-(.+?)\.css/gi.exec(clientStyles)[1];
 			}
 
-			return {serverVersion, clientVersion}
+			// hash emoticon names onto list as well
+			clientVersion += crypto.createHash('md5').update(emoticons.join()).digest("hex");
+
+			versionCache = {serverVersion, clientVersion};
+			return versionCache;
 		});
 };
 
