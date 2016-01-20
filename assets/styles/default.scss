@@ -322,14 +322,13 @@ mark:hover {
 .pin-board {
 	position: fixed;
 	display: none;
-	overflow: scroll;
+	overflow-y: scroll;
+	overflow-x: hidden;
 	bottom: 34px;
 	background: white;
 	top: 48px;
-	/*right: 16.666%;*/
 	right: 10%;
 	left: 80px;
-	/*border: 3px solid #ddd;*/
 	border: 1px solid #DFD7CA;
 	box-shadow: 0 6px 12px rgba(0,0,0, .5);
 	padding: 8px;
@@ -357,10 +356,6 @@ mark:hover {
 .pin-board-message .pin-message-author {
 	margin-right: 8px;
 	display: inline-block;
-}
-
-.pin-board-message .panel {
-	margin-top: 8px;
 }
 
 .pin-board-message:hover .pin-board-unpin {
@@ -530,14 +525,7 @@ li:not(:last-child) .message.last-read:after {
 	}
 }
 
-.message-body {
-	min-height: 30px;
-	margin-left: 180px;
-	padding-left: 10px;
-	padding-right: 150px;
-	background-color: #fff;
-	word-break: break-word;
-
+@mixin message-formatting {
 	img {
 		max-width: 100%;
 		max-height: 500px;
@@ -550,6 +538,25 @@ li:not(:last-child) .message.last-read:after {
 	pre {
 		padding: 0;
 		tab-size: 4;
+	}
+}
+
+.message-body {
+	min-height: 30px;
+	margin-left: 180px;
+	padding-left: 10px;
+	padding-right: 150px;
+	background-color: #fff;
+	word-break: break-word;
+
+	@include message-formatting
+}
+
+.pin-board-message {
+	@include message-formatting;
+
+	.panel {
+		margin-top: 8px;
 	}
 }
 

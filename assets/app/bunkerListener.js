@@ -157,11 +157,8 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		{name: 'roommember', type: 'socket', handler: handleMembershipEvent},
 		{name: 'user_roommember', type: 'socket', handler: handleUserMembershipEvent},
 		{name: 'inboxMessage', type: 'socket', handler: handleInboxEvent},
-<<<<<<< HEAD
 		{name: 'pinboard', type: 'socket', handler: handleMessagePin},
-=======
 		{name: 'connect', type: 'socket', handler: handleConnect},
->>>>>>> upstream/master
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
 		{name: 'disconnect', type: 'socket', handler: handleDisconnect},
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},

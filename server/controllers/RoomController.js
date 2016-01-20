@@ -244,6 +244,7 @@ module.exports.pinMessage = function(req, res) {
 	var messageId = req.body.messageId.toObjectId();
 	var userId = req.session.userId.toObjectId();
 
+	// Ensure user is admin or mod: use find instead of count or something 
 	RoomMember.count({room: roomId, user: userId})
 		.then(function(count) {
 
@@ -280,6 +281,7 @@ module.exports.pinMessage = function(req, res) {
 	// x get room/roommember
 	// x get message?
 	// x only allow certain message types?
+	// Ensure user is admin or mod:
 	// get room pins?
 	// prune pins?
 	// save pinBoard?
@@ -313,34 +315,4 @@ module.exports.unPinMessage = function(req, res) {
 			res.ok(unPinResult);
 		})
 		.catch(res.serverError);
-};
-
-// GET /room/:id/pins
-module.exports.getPins = function(req, res) {
-	var roomId = actionUtil.requirePk(req);
-
-	var pinnedMessages = null;
-
-	// TODO: this isn't used except for testing :P
-	PinnedMessage
-		.find({ room: roomId })
-		.populate('message')
-		.then(function(pins) {
-
-			pinnedMessages = pins;
-
-			return User.find({ id: _.pluck(pins, 'message.author') });
-		})
-		.then(function(users) {
-
-			var lookup = _.indexBy(users, 'id');
-
-			pinnedMessages = _.map(pinnedMessages, function(item) {
-				item.message.author = lookup[item.message.author];
-				return item;
-			});
-
-			return { pins: pinnedMessages };
-		})
-		.then(res.ok);
 };
