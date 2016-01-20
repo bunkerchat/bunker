@@ -29,6 +29,12 @@ gulp.task('usemin', ['clear-build-folder'], function () {
 		.pipe(usemin({
 			assetsDir: './',
 			css: ['concat'],
+			sass: [
+				sass({
+					includePaths: [ './assets/styles' ]
+				}),
+				rev()
+			],
 			//html: [minifyHtml({empty: true})],
 			jsLib: [rev()],
 			jsLibMin: [uglify(), rev()],
