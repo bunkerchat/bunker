@@ -80,7 +80,11 @@ module.exports.emoticonCounts = function () {
 
 };
 
+var emoticonCache;
+
 module.exports.getEmoticonNamesFromDisk = function () {
+	if(emoticonCache) return Promise.resolve(emoticonCache);
+
 	return Promise.join(
 		// Image emoticons
 		fs.readdirAsync('./assets/images/emoticons'),
@@ -92,7 +96,8 @@ module.exports.getEmoticonNamesFromDisk = function () {
 		})
 	)
 		.spread((emoticons, icons) => {
-			return _.sortBy(emoticons.concat(icons));
+			emoticonCache =  _.sortBy(emoticons.concat(icons));
+			return emoticonCache;
 		});
 };
 

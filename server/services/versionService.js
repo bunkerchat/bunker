@@ -3,6 +3,7 @@ var fs = Promise.promisifyAll(require('fs'));
 var git = require('git-rev');
 
 var config = require('../config/config');
+var emoticonService = require('./emoticonService');
 
 var versionService = module.exports;
 
