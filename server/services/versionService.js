@@ -9,12 +9,17 @@ var versionService = module.exports;
 versionService.version = function version() {
 	return Promise.join(
 		getGitHash(),
-		getClientCode()
+		getClientCode(),
+		getClientStyles()
 	)
-		.spread((serverVersion, clientJavascriptFile) => {
+		.spread((serverVersion, clientJavascriptFile, clientStyles) => {
 			var clientVersion;
 			if(clientJavascriptFile) {
 				clientVersion = /bundle-(.+?)\.js/gi.exec(clientJavascriptFile)[1];
+			}
+
+			if(clientStyles) {
+				clientVersion += /default-(.+?)\.css/gi.exec(clientStyles)[1];
 			}
 
 			return {serverVersion, clientVersion}
@@ -25,6 +30,12 @@ function getClientCode() {
 	return getBundle()
 		// find the client side bundle file
 		.then(bundledFiles => _.find(bundledFiles, file => /bundle-.+?\.js/gi.test(file)));
+}
+
+function getClientStyles() {
+	return getBundle()
+		// find the client side bundle file
+		.then(bundledFiles => _.find(bundledFiles, file => /default-.+?\.css/gi.test(file)));
 }
 
 var bundleCache;

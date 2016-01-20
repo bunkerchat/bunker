@@ -96,5 +96,5 @@ gulp.task('watch', function () {
 });
 
 gulp.task('watchjs', ['production'], function () {
-	gulp.watch('./assets/app/**/*.*', ['production']);
+	gulp.watch(['./assets/app/**/*.*', './assets/styles/**/*.*'], ['production']);
 });
