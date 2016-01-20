@@ -9,39 +9,22 @@ var versionService = module.exports;
 versionService.version = function version() {
 	return Promise.join(
 		getGitHash(),
-		getClientCode(),
-		getTemplate()
+		getClientCode()
 	)
-		.spread((serverVersion, clientJavascriptFile, templateFile) => {
+		.spread((serverVersion, clientJavascriptFile) => {
 			var clientVersion;
 			if(clientJavascriptFile) {
 				clientVersion = /bundle-(.+?)\.js/gi.exec(clientJavascriptFile)[1];
-			}
-
-			if(templateFile) {
-				clientVersion += /templates-(.+?)\.js/gi.exec(templateFile)[1];
 			}
 
 			return {serverVersion, clientVersion}
 		});
 };
 
-versionService.templates = function () {
-	return getBundle()
-		// find the client side template
-		.then(bundledFiles => _.find(bundledFiles, file => _.includes(file, 'templates')));
-};
-
 function getClientCode() {
 	return getBundle()
 		// find the client side bundle file
 		.then(bundledFiles => _.find(bundledFiles, file => /bundle-.+?\.js/gi.test(file)));
-}
-
-function getTemplate(){
-	return getBundle()
-		// find the client side bundle file
-		.then(bundledFiles => _.find(bundledFiles, file => /templates-.+?\.js/gi.test(file)));
 }
 
 var bundleCache;

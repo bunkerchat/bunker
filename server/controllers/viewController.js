@@ -13,12 +13,10 @@ viewController.index = function (req, res) {
 
 	Promise.join(
 		emoticonService.getEmoticonNamesFromDisk(),
-		UserSettings.findOne({user: userId}),
-		versionService.templates()
+		UserSettings.findOne({user: userId})
 	)
-		.spread(function (emoticons, settings, templates) {
+		.spread(function (emoticons, settings) {
 			res.render(config.useJavascriptBundle ? 'index-prod' : 'index', {
-				templates: templates,
 				userId: userId,
 				useJavascriptBundle: config.useJavascriptBundle,
 				emoticons: emoticons,
@@ -38,7 +36,6 @@ viewController.debug = function (req, res) {
 	)
 		.spread(function (emoticons, settings) {
 			res.render('index', {
-				templates: [],
 				userId: userId,
 				useJavascriptBundle: false,
 				emoticons: emoticons,
