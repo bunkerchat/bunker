@@ -90,9 +90,8 @@ messageService.createMessage = function (roomMember, text) {
 messageService.broadcastMessage = broadcastMessage;
 
 function getHelp(roomMember, text) {
-	return helpService.getHelp(text).then(function (helpMessage) {
-		return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, helpMessage, 'help');
-	});
+	return helpService.getHelp(text)
+		.then(helpMessage => RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, helpMessage, 'help'));
 }
 
 function stats(roomMember, text) {

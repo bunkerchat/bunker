@@ -1,0 +1,11 @@
+PROMOTE
+Use this and give someone more power within a room
+
+NAME
+	/promote - changes user role to next level up Member -> Moderator -> Administrator
+
+SYNOPSIS
+	/promote [username]
+
+COMMANDS
+	/promote Jason
