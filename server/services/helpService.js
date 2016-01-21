@@ -13,11 +13,9 @@ helpService.getHelp = function (input) {
 	}
 	return readHelpFile('basic.txt');
 };
-
+var count = 0;
 function readHelpFile(fileName) {
 	return fs.readFileAsync(helpDir + fileName, 'utf-8')
 		.then(data => `<pre>${data}</pre>`)
-		.catch(function (err) {
-			return helpService.readHelpFile('basic.txt');
-		});
+		.catch(() => readHelpFile('basic.txt'));
 };
