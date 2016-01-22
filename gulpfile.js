@@ -4,7 +4,6 @@ var ngAnnotate = require('gulp-ng-annotate');
 var babel = require('gulp-babel');
 var uglify = require('gulp-uglify');
 var minifyHtml = require('gulp-minify-html');
-var minifyCss = require('gulp-minify-css');
 var rev = require('gulp-rev');
 var fs = require('fs-extra');
 var path = require('path');
@@ -31,7 +30,7 @@ gulp.task('usemin', ['clear-build-folder'], function () {
 			css: ['concat'],
 			sass: [
 				sass({
-					includePaths: [ './assets/styles' ]
+					includePaths: ['./assets/styles']
 				}),
 				rev()
 			],
