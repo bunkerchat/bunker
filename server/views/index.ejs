@@ -9,7 +9,14 @@
 	<link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css"/>
 	<link rel="stylesheet" href="/assets/vendor/highlightjs/styles/github.css"/>
 	<link rel="stylesheet" href="/assets/vendor/ng-sortable/dist/ng-sortable.min.css"/>
+
+	<!-- build:sass /assets/bundled/default.css -->
+	<link rel="stylesheet" href="/assets/styles/default.scss" />
+	<!-- endbuild -->
+
+	<!-- build:remove -->
 	<link rel="stylesheet" href="/assets/bundled/default.css" />
+	<!-- endbuild -->
 
 	<link rel="stylesheet" ng-href="{{ loadMinimal ? '/assets/bundled/minimalist.css' : '' }}" custom-stylesheet/>
 	<link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
@@ -100,10 +107,6 @@
 <script src="/assets/app/inbox/InboxController.js"></script>
 <script src="/assets/app/pinBoard/pinBoard.js"></script>
 <!-- endbuild -->
-
-<% if (templates) { %>
-<script src="/assets/bundled/<%- templates %>"></script>
-<% }%>
 
 </body>
 </html>

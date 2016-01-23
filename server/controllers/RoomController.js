@@ -244,7 +244,7 @@ module.exports.pinMessage = function(req, res) {
 	var messageId = req.body.messageId.toObjectId();
 	var userId = req.session.userId.toObjectId();
 
-	// Ensure user is admin or mod: use find instead of count or something 
+	// Ensure user is admin or mod: use find instead of count or something
 	RoomMember.count({room: roomId, user: userId})
 		.then(function(count) {
 

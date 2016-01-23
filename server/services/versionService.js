@@ -1,35 +1,39 @@
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 var git = require('git-rev');
+var crypto = require('crypto');
 
 var config = require('../config/config');
+var emoticonService = require('./emoticonService');
 
 var versionService = module.exports;
 
+var versionCache;
 versionService.version = function version() {
+	if(versionCache) return Promise.resolve(versionCache);
+
 	return Promise.join(
 		getGitHash(),
 		getClientCode(),
-		getTemplate()
+		getClientStyles(),
+		emoticonService.getEmoticonNamesFromDisk()
 	)
-		.spread((serverVersion, clientJavascriptFile, templateFile) => {
+		.spread((serverVersion, clientJavascriptFile, clientStyles, emoticons) => {
 			var clientVersion;
-			if(clientJavascriptFile) {
+			if (clientJavascriptFile) {
 				clientVersion = /bundle-(.+?)\.js/gi.exec(clientJavascriptFile)[1];
 			}
 
-			if(templateFile) {
-				clientVersion += /templates-(.+?)\.js/gi.exec(templateFile)[1];
+			if (clientStyles) {
+				clientVersion += /default-(.+?)\.css/gi.exec(clientStyles)[1];
 			}
 
-			return {serverVersion, clientVersion}
-		});
-};
+			// hash emoticon names onto list as well
+			clientVersion += crypto.createHash('md5').update(emoticons.join()).digest("hex");
 
-versionService.templates = function () {
-	return getBundle()
-		// find the client side template
-		.then(bundledFiles => _.find(bundledFiles, file => _.includes(file, 'templates')));
+			versionCache = {serverVersion, clientVersion};
+			return versionCache;
+		});
 };
 
 function getClientCode() {
@@ -38,10 +42,10 @@ function getClientCode() {
 		.then(bundledFiles => _.find(bundledFiles, file => /bundle-.+?\.js/gi.test(file)));
 }
 
-function getTemplate(){
+function getClientStyles() {
 	return getBundle()
 		// find the client side bundle file
-		.then(bundledFiles => _.find(bundledFiles, file => /templates-.+?\.js/gi.test(file)));
+		.then(bundledFiles => _.find(bundledFiles, file => /default-.+?\.css/gi.test(file)));
 }
 
 var bundleCache;

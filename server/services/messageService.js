@@ -19,7 +19,9 @@ var hangmanService = require('./hangmanService');
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
 
-module.exports.createMessage = function (roomMember, text) {
+var messageService = module.exports;
+
+messageService.createMessage = function (roomMember, text) {
 
 	text = ent.encode(text);
 
@@ -85,12 +87,11 @@ module.exports.createMessage = function (roomMember, text) {
 	}
 };
 
-module.exports.broadcastMessage = broadcastMessage;
+messageService.broadcastMessage = broadcastMessage;
 
 function getHelp(roomMember, text) {
-	return helpService.getHelp(text).then(function (helpMessage) {
-		return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, helpMessage, 'help');
-	});
+	return helpService.getHelp(text)
+		.then(helpMessage => RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, helpMessage, 'help'));
 }
 
 function stats(roomMember, text) {
@@ -392,7 +393,7 @@ function saveInMentionedInboxes(message) {
 			if (!regex.test(message.text)) return;
 
 			return InboxMessage.create({user: roomMember.user._id, message: message._id})
-				.then(inboxMessage => InboxMessage.findOne(inboxMessage._id).populate('message', 'text'))
+				.then(inboxMessage => InboxMessage.findOne(inboxMessage._id).populate('message', 'text createdAt'))
 				.then(inboxMessage => {
 					inboxMessage.message.author = message.author;
 
@@ -402,23 +403,6 @@ function saveInMentionedInboxes(message) {
 						data: inboxMessage
 					});
 				});
-		});
-
-	// Check if this message mentions anyone
-	// Completely async process that shouldn't disrupt the normal message flow
-	var regex = new RegExp(message.author.nick + '\\b|@[Aa]ll', 'i');
-	if (!regex.test(message.text)) return;
-
-	return InboxMessage.create({user: message.author._id, message: message._id})
-		.then(inboxMessage => InboxMessage.findOne(inboxMessage._id).populate('message', 'text'))
-		.then(inboxMessage => {
-			inboxMessage.message.author = message.author;
-
-			socketio.io.to('inboxmessage_' + message.author._id).emit('inboxmessage', {
-				_id: message.author._id,
-				verb: 'messaged',
-				data: inboxMessage
-			});
 		});
 }
 
