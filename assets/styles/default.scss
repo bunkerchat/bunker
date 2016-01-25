@@ -364,8 +364,16 @@ mark:hover {
 	display: none;
 }
 
+.message-pin-icon .disabled {
+	cursor: default;
+}
+
 .message:hover .fa-bookmark-o, .message-pin-icon.fa-bookmark {
 	display: inline;
+}
+
+.message:hover .fa-bookmark-o.disabled {
+	display: none;
 }
 
 /* emoticon */

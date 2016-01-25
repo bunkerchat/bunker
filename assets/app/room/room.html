@@ -38,7 +38,6 @@
 									{{::message.author.nick}}
 								</div>
 								<span bunker-message="::message"></span>
-								{{currentMembership.role}}
 								<span ng-if="::((currentMembership.role === 'moderator' || currentMembership.role === 'administrator') && (message.type == 'standard' || message.type == 'code'))" message-pin="{{::message._id}}" class="message-info">
 
 								</span>
