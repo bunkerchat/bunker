@@ -165,7 +165,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// User
 
 		broadcastActiveRoom: function (roomId) {
-			if (lastActiveRoom == roomId) return;
+			// don't set active room when bunker is reloaded by code
+			if (lastActiveRoom == roomId || localStorage.bunkerReloaded) return;
 			io.socket.emitAsync('/user/current/activity', {room: roomId});
 		},
 		broadcastTyping: function (roomId) {
@@ -341,9 +342,15 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	$interval(function () {
 		//  if code is out of date and user is not present, reload the page
 		if(!bunkerData.isClientCodeCurrent() && !bunkerData.user.present) {
+			localStorage.bunkerReloaded = true;
 			$window.location.reload();
 		}
 	}, 30000);
+
+	// delete bunkerReloaded flag 10 seconds after app starts
+	$timeout(function () {
+		delete localStorage.bunkerReloaded;
+	}, 10000);
 
 	return bunkerData;
 });
