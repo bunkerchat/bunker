@@ -166,20 +166,20 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		broadcastActiveRoom: function (roomId) {
 			if (lastActiveRoom == roomId) return;
-			io.socket.emit('/user/current/activity', {room: roomId});
+			io.socket.emitAsync('/user/current/activity', {room: roomId});
 		},
 		broadcastTyping: function (roomId) {
 			if (!bunkerData.$resolved) return; // Not ready yet
 
 			if (bunkerData.user.typingIn != roomId) { // Only need to do anything if it's not already set
 				bunkerData.user.typingIn = roomId;
-				io.socket.emit('/user/current/activity', {typingIn: roomId});
+				io.socket.emitAsync('/user/current/activity', {typingIn: roomId});
 			}
 
 			bunkerData.cancelBroadcastTyping();
 			typingTimeout = $timeout(function () {
 				bunkerData.user.typingIn = null;
-				io.socket.emit('/user/current/activity', {typingIn: null});
+				io.socket.emitAsync('/user/current/activity', {typingIn: null});
 				typingTimeout = null;
 			}, 3000);
 		},
@@ -190,7 +190,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				if (present == bunkerData.user.present) return;
 
 				bunkerData.user.present = present;
-				io.socket.emit('/user/current/activity', {
+				io.socket.emitAsync('/user/current/activity', {
 					typingIn: present ? bunkerData.user.typingIn : null,
 					present: present
 				});
@@ -208,7 +208,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// UserSettings
 
 		saveUserSettings: function () {
-			io.socket.emit('/usersettings/save', {
+			io.socket.emitAsync('/usersettings/save', {
 				userSettingsId: bunkerData.userSettings._id,
 				settings: bunkerData.userSettings
 			});
@@ -231,7 +231,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// RoomMember
 		saveRoomMemberSettings: function (roomMembers) {
-			io.socket.emit('/roommember/updateSettings', {roomMembers: roomMembers});
+			io.socket.emitAsync('/roommember/updateSettings', {roomMembers: roomMembers});
 		},
 
 		// Emoticons
@@ -261,7 +261,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// ping
 		ping: function () {
-			io.socket.emit('/user/current/ping');
+			io.socket.emitAsync('/user/current/ping');
 		},
 
 		// version
