@@ -262,6 +262,12 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// ping
 		ping: function () {
 			io.socket.emit('/user/current/ping');
+		},
+
+		// version
+		isClientCodeCurrent: function () {
+			if(!bunkerData.version.old.clientVersion) return true;
+			return bunkerData.version.old.clientVersion == bunkerData.version.clientVersion;
 		}
 	};
 
@@ -331,6 +337,13 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	});
 
 	$interval(bunkerData.ping, 10000); //ping every 10 seconds
+
+	$interval(function () {
+		//  if code is out of date and user is not present, reload the page
+		if(!bunkerData.isClientCodeCurrent() && !bunkerData.user.present) {
+			$window.location.reload();
+		}
+	}, 30000);
 
 	return bunkerData;
 });
