@@ -41,13 +41,13 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 
 			// Watch scrolling to top, execute given function
 			angular.element(el).bind('scroll', _.throttle(function () {
-				if (el.scrollTop == 0 && angular.isFunction($scope.onScrollTop)) { // We're at the top
+				// We're at the top
+				if (el.scrollTop == 0 && angular.isFunction($scope.onScrollTop)) {
 					var originalHeight = el.scrollHeight;
-					$scope.onScrollTop().then(function () {
-						$timeout(function () {
-							el.scrollTop = el.scrollHeight - originalHeight;
-						});
-					});
+					$scope.onScrollTop()
+						.then(() => $timeout(() => {
+							el.scrollTop = el.scrollHeight - originalHeight
+						}));
 				}
 			}, 50));
 
@@ -78,8 +78,13 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 				scroll();
 			});
 
+			bunkerData.$promise.then(() => {
+				if (!atBottomOfPage()) return;
+				scroll(1000);
+			});
+
 			function scroll(waitTime) {
-				$timeout(function () {
+				$timeout(() => {
 					elem.scrollTop(el.scrollHeight);
 				}, waitTime || 0);
 			}
