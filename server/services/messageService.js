@@ -393,7 +393,7 @@ function saveInMentionedInboxes(message) {
 			if (!regex.test(message.text)) return;
 
 			return InboxMessage.create({user: roomMember.user._id, message: message._id})
-				.then(inboxMessage => InboxMessage.findOne(inboxMessage._id).populate('message', 'text createdAt'))
+				.then(inboxMessage => InboxMessage.findOne(inboxMessage._id).populate('message', 'text createdAt room'))
 				.then(inboxMessage => {
 					inboxMessage.message.author = message.author;
 

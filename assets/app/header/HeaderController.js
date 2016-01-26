@@ -87,14 +87,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	});
 
 	$rootScope.$on('bunkerDataLoaded', function (evt) {
-		header.version = bunkerData.version;
-
-		if(!header.version.old.clientVersion) {
-			header.currentVersion = true;
-			return;
-		}
-
-		header.currentVersion = header.version.old.clientVersion == header.version.clientVersion;
+		header.currentVersion = bunkerData.isClientCodeCurrent();
 	});
 
 	$rootScope.$on('roomIdChanged', function (evt, roomId) {

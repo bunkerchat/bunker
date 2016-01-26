@@ -56,7 +56,7 @@ window.app = angular.module('bunker', [
 			'default': 'identicon'
 		}
 	})
-	.run(function ($rootScope, $document, bunkerListener, bunkerData, $q, $log) {
+	.run(function ($rootScope, $document, bunkerListener, bunkerData, $q, $log, $timeout) {
 
 		// html5 visibility api instead of win.focus or win.blur
 		$document.on('visibilitychange', function () {
@@ -74,14 +74,16 @@ window.app = angular.module('bunker', [
 		io.socket.emitAsync = function (endpoint, _data) {
 			var data = _.isObject(_data) ? _data : undefined;
 			return $q(function (resolve, reject) {
-				socket.emit(endpoint, data, function (returnData) {
-					if (returnData && returnData.serverErrorMessage) {
-						$log.error(returnData.serverErrorMessage, {endpoint: endpoint, data: data, returnData: returnData});
-						return reject(returnData);
-					}
-					resolve(returnData);
-				});
-			})
+				$timeout(function () {
+					socket.emit(endpoint, data, function (returnData) {
+						if (returnData && returnData.serverErrorMessage) {
+							$log.error(returnData.serverErrorMessage, {endpoint: endpoint, data: data, returnData: returnData});
+							return reject(returnData);
+						}
+						resolve(returnData);
+					});
+				}, 50);
+			});
 		};
 
 		// Can't put this bunkerListener init in the `connect` closure or it causes duplication of messages

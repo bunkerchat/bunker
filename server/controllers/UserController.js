@@ -146,8 +146,8 @@ module.exports.init = function (req, res) {
 };
 
 var version;
-function codeVersion(){
-	if(version) return Promise.resolve(version);
+function codeVersion() {
+	if (version) return Promise.resolve(version);
 
 	fs.readdirAsync('./assets/bundled')
 		.then.catch(_.noop)
@@ -170,43 +170,45 @@ module.exports.activity = function (req, res) {
 		present: typeof present !== 'undefined' ? present : true
 	};
 
-	var activeRoom = req.body.room;
-	var lastMessageId;
-
-	if (typeof activeRoom !== 'undefined') {
-		updates.activeRoom = activeRoom;
-
-		User.findById(userId, {activeRoom: 1}).then(user => {
-			if (user.activeRoom) {
-				Message.findOne({room: user.activeRoom}, {_id: 1}, {
-					sort: {$natural: -1},
-					limit: 1
-				}).lean()
-					.then(lastMessage => {
-						lastMessageId = lastMessage._id;
-						return RoomMember.findOneAndUpdate({
-							user: userId,
-							room: user.activeRoom
-						}, {lastReadMessage: lastMessageId});
-					})
-					.then(roomMember => {
-						req.io.to(`userself_${userId}`).emit('user_roommember', {
-							_id: roomMember._id,
-							verb: 'updated',
-							data: {lastReadMessage: lastMessageId}
-						});
-					})
-					.catch(log.error)
-			}
-
-			User.findByIdAndUpdate(userId, {activeRoom: activeRoom}).then(_.noop);
-			return null;
-		});
-	}
+	markLastReadMessage(req, updates);
 
 	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
 	res.ok(updates);
 };
+
+function markLastReadMessage(req, updates) {
+	var activeRoom = req.body.room;
+	var userId = req.session.userId;
+
+	if (!activeRoom) return;
+
+	var lastMessageId;
+
+	updates.activeRoom = activeRoom;
+
+	User.findByIdAndUpdate(userId, {activeRoom: activeRoom})
+		.then(user => {
+			return Message.findOne({room: user.activeRoom}, {_id: 1}, {
+				sort: {$natural: -1},
+				limit: 1
+			}).lean()
+		})
+		.then(lastMessage => {
+			lastMessageId = lastMessage._id;
+
+			return RoomMember.findOneAndUpdate(
+				{user: userId, room: activeRoom},
+				{lastReadMessage: lastMessageId});
+		})
+		.then(roomMember => {
+			req.io.to(`userself_${userId}`).emit('user_roommember', {
+				_id: roomMember._id,
+				verb: 'updated',
+				data: {lastReadMessage: lastMessageId}
+			});
+		})
+		.catch(log.error);
+}
 
 module.exports.markInboxRead = function (req, res) {
 	InboxMessage.update({user: req.session.userId.toObjectId()}, {read: true})
@@ -265,7 +267,7 @@ setInterval(function () {
 	})
 		.then(users => {
 			return Promise.each(users, user => {
-				var sockets =  _(user.sockets)
+				var sockets = _(user.sockets)
 					.filter(socket => moment(socket.updatedAt).isBefore(expiredSocketDate))
 					.map('socketId')
 					.value();

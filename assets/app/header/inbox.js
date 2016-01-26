@@ -18,22 +18,22 @@ app.directive('inbox', function (bunkerData, $state, $location, $anchorScroll) {
 			});
 		},
 		controller: function () {
-			var self = this;
+			var inbox = this;
 
-			this.messages = bunkerData.inbox;
+			inbox.messages = bunkerData.inbox;
 			bunkerData.markInboxRead();
 
-			this.clearInbox = function () {
+			inbox.clearInbox = function () {
 				bunkerData.clearInbox();
-				self.visible = false;
+				inbox.visible = false;
 			};
 
-			this.close = function () {
-				self.visible = false;
+			inbox.close = function () {
+				inbox.visible = false;
 			};
 
-			this.goToRoom = function (message) {
-				self.visible = false;
+			inbox.goToRoom = function (message) {
+				inbox.visible = false;
 
 				//check if room still has message loaded
 				var room = _.find(bunkerData.rooms, {_id: message.room});
