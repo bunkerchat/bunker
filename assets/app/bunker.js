@@ -11,7 +11,7 @@ window.app = angular.module('bunker', [
 	'plangular', /* soundcloud embed */
 	'notification',
 	'angularStats',
-	'ui.sortable'
+	'as.sortable'
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 
@@ -47,10 +47,7 @@ window.app = angular.module('bunker', [
 	})
 	.config(function ($compileProvider, gravatarServiceProvider) {
 		// disable debug info
-		//$compileProvider.debugInfoEnabled(window.debugging || !window.isProduction);
-
-		// to reenable in prod, use
-		// angular.reloadWithDebugInfo()
+		$compileProvider.debugInfoEnabled(window.debugging || !window.useJavascriptBundle);
 
 		gravatarServiceProvider.defaults = {
 			'default': 'identicon'
