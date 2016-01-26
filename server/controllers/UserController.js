@@ -37,7 +37,7 @@ module.exports.init = function (req, res) {
 	socket.join('userself_' + userId);
 
 	// find user sockets
-	User.findById(userId, {sockets: 1}).then(function (user) {
+	User.findById(userId, {sockets: 1}).then(user => {
 
 		var sockets = user.sockets || [];
 		_.remove(sockets, {socketId: req.socket.id});
@@ -51,7 +51,7 @@ module.exports.init = function (req, res) {
 			present: true
 		}, {'new': true});
 	})
-		.then(function (updatedUser) {
+		.then(updatedUser => {
 			req.io.to('user_' + updatedUser._id).emit('user', {
 				_id: updatedUser._id,
 				verb: 'updated',
@@ -118,17 +118,19 @@ module.exports.init = function (req, res) {
 		})
 		.then(_rooms => {
 			rooms = _rooms;
-
 			// Populate authors
-			var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
-			return User.find(userIds).select('-plaintextpassword -sockets').lean();
+			//var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
+			return Promise.join(
+				User.find(userIds).select('-plaintextpassword -sockets').lean(),
+				Room.find({_id: {$nin: _.pluck(memberships, 'room')}}).lean()
+			);
 		})
 
 		// compose all the data into an object matching the original vars and return them to the client
-		.then(users => {
+		.spread((users, publicRooms) => {
 			// don't return users who have not connected in the last 45 days
 			users = _.filter(users, user => moment().diff(user.lastConnected, 'days') < 45);
-			res.ok({user, userSettings, memberships, inbox, rooms, version, users})
+			res.ok({user, userSettings, memberships, publicRooms, inbox, rooms, version, users})
 		})
 		.catch(res.serverError);
 };
@@ -181,7 +183,7 @@ function markLastReadMessage(req, updates) {
 			}).lean()
 		})
 		.then(lastMessage => {
-			lastMessageId = lastMessage._id;
+			lastMessageId = (lastMessage || {})._id;
 
 			return RoomMember.findOneAndUpdate(
 				{user: userId, room: activeRoom},

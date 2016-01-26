@@ -787,8 +787,10 @@ img.fatality {
 }
 
 .lobby {
-	.list-group-item {
-		padding-bottom: 40px;
+	.lobby-joined-rooms {
+		.list-group-item {
+			padding-bottom: 40px;
+		}
 	}
 	.list-group-item-heading {
 		font-weight: 500;

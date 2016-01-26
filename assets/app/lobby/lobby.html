@@ -1,33 +1,56 @@
 <div class="container-fluid lobby" ng-show="!$root.roomId">
 
-	<div ng-show="lobby.rooms.length > 0">
-		<div class="page-header">
-			<h3>Your Rooms</h3>
+	<div class="row">
+		<div class="col-md-6 lobby-joined-rooms" ng-if="lobby.rooms.length > 0">
+			<div class="page-header">
+				<h3>Joined Rooms</h3>
+			</div>
+
+			<ul class="list-group">
+				<li class="list-group-item"
+					ui-sref="chat.room({roomId: room._id})"
+					ng-if="room.$resolved"
+					ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
+					<h4 class="list-group-item-heading">
+						{{room.name}}
+						<small class="hidden-xs" ng-bind-html="room.topic"></small>
+					</h4>
+					<span class="lobby-room-users">
+						{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>
+					</span>
+
+					<p ng-if="room.$lastMessage">
+						<span am-time-ago="room.$lastMessage.createdAt"></span>
+						<img gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="30"/>
+						{{room.$lastMessage.author.nick}}: {{room.$lastMessage.text}}
+					</p>
+
+				</li>
+			</ul>
+
 		</div>
+		<div class="col-md-6" ng-if="lobby.publicRooms.length > 0">
+			<div class="page-header">
+				<h3>Public Rooms</h3>
+			</div>
 
-		<ul class="list-group">
-			<li class="list-group-item"
-				ui-sref="chat.room({roomId: room._id})"
-				ng-if="room.$resolved"
-				ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
-				<h4 class="list-group-item-heading">
-					{{room.name}}
-					<small class="hidden-xs" ng-bind-html="room.topic"></small>
-				</h4>
-				<span class="lobby-room-users">
-					{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>
-				</span>
+			<ul class="list-group">
+				<li class="list-group-item"
+					ui-sref="chat.room({roomId: room._id})"
+					ng-repeat="room in lobby.publicRooms track by room._id">
+					<h4 class="list-group-item-heading">
+						{{room.name}}
 
-				<p ng-if="room.$lastMessage">
-					<span am-time-ago="room.$lastMessage.createdAt"></span>
-					<img gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="30"/>
-					{{room.$lastMessage.author.nick}}: {{room.$lastMessage.text}}
-				</p>
+					</h4>
+					<p ng-if="room.topic">
+						{{room.topic}}
+					</p>
+				</li>
+			</ul>
 
-			</li>
-		</ul>
-
+		</div>
 	</div>
+
 	<div ng-show="lobby.rooms.length == 0">
 		<div class="page-header">
 			<h3>No Rooms Found</h3>

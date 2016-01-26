@@ -28,7 +28,7 @@ config.bingApiKey = 'WOz19RNOpvm7kP+Xwc1zhz23Oemq9Jhdcs5+xvbjxKY';
 
 config.consoleLogLevel = 'debug';
 config.buildSassAtRuntime = true;
-config.useJavascriptBundle = true;
+config.useJavascriptBundle = false;
 
 config.showServerErrors = true;
 config.useRedis = false;
