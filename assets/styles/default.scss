@@ -360,20 +360,23 @@ mark:hover {
 
 .message-pin-icon {
 	cursor: pointer;
-	font-size: 1.5em;
 	display: none;
+
+	&.fa-bookmark {
+		display: inline;
+
+		&.disabled {
+			cursor: default;
+		}
+	}
 }
 
-.message-pin-icon .disabled {
-	cursor: default;
-}
-
-.message:hover .fa-bookmark-o, .message-pin-icon.fa-bookmark {
+.message:hover .fa-bookmark-o:not(.disabled) {
 	display: inline;
 }
 
-.message:hover .fa-bookmark-o.disabled {
-	display: none;
+.message-info .text-muted {
+	margin-left: 5px;
 }
 
 /* emoticon */
@@ -564,6 +567,10 @@ li:not(:last-child) .message.last-read:after {
 	top: 0;
 	right: 3px;
 	padding-right: 5px;
+
+	&>span {
+		display: inline-block;
+	}
 }
 
 .message-mention .message-body {

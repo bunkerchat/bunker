@@ -5,17 +5,6 @@ app.factory('pinBoard', ['$window', '$rootScope', '$q', function ($window, $root
 
 	var pinChangedListener = null;
 
-	function pinChanged(state) {
-		if (state.pinned) {
-			pinLookup[state.messageId] = state.messageId;
-		}
-		else {
-			delete pinLookup[state.messageId];
-		}
-
-		pinChangedListener(state);
-	}
-
 	return {
 		setPinChangedListener: function (listener) {
 			pinChangedListener = listener;
@@ -24,7 +13,16 @@ app.factory('pinBoard', ['$window', '$rootScope', '$q', function ($window, $root
 			pinLookup = _.indexBy(_.map(messages, '_id'));
 		},
 
-		pinChanged: pinChanged,
+		pinChanged: function pinChanged(state) {
+			if (state.pinned) {
+				pinLookup[state.messageId] = state.messageId;
+			}
+			else {
+				delete pinLookup[state.messageId];
+			}
+
+			pinChangedListener(state);
+		},
 
 		savePin: function (messageId) {
 			return io.socket.emitAsync('/room/pinMessage', {messageId: messageId, roomId: $rootScope.roomId})
@@ -44,7 +42,8 @@ app.directive('pins', ['pinBoard', function (pinBoard) {
 		restrict: 'A',
 		templateUrl: '/assets/app/pinBoard/pinBoard.html',
 		scope: {
-			pinnedMessages: '=pins'
+			pinnedMessages: '=pins',
+			userRole: '='
 		},
 		link: function (scope, element, attrs) {
 
@@ -67,7 +66,7 @@ app.directive('pins', ['pinBoard', function (pinBoard) {
 
 			$(document)
 					.on('click.pinBoard', closeClickListener)
-					.on('click.pinBoard', '[pins]', function () {
+					.on('click.pinBoard', '.pin-board-holder', function () {
 						return false;
 					});
 
@@ -83,7 +82,7 @@ app.directive('messagePin', ['pinBoard', function (pinBoard) {
 
 	function updateIcon(pinResult) {
 
-		var $pinIconForMessage = $('[message-pin=' + pinResult.messageId + '] .message-pin-icon');
+		var $pinIconForMessage = $('.message-info [message-pin=' + pinResult.messageId + '] .message-pin-icon');
 
 		if (pinResult.pinned) {
 			$pinIconForMessage.removeClass('fa-bookmark-o').addClass('fa-bookmark');
@@ -116,10 +115,18 @@ app.directive('messagePin', ['pinBoard', function (pinBoard) {
 		templateUrl: '/assets/app/pinBoard/messagePin.html',
 		link: function (scope, element, attrs) {
 
-			element.click(handlePinClick);
+			var $messagePinIcon = element.find('.message-pin-icon');
+
+			if (attrs.userRole === 'moderator' || attrs.userRole === 'administrator') {
+				$messagePinIcon = $messagePinIcon.removeClass('disabled');
+				element.click(handlePinClick);
+			}
+			else {
+				$messagePinIcon[0].title = '';
+			}
 
 			if (pinBoard.isPinned(attrs.messagePin)) {
-				element.find('.message-pin-icon').removeClass('fa-bookmark-o').addClass('fa-bookmark');
+				$messagePinIcon.removeClass('fa-bookmark-o').addClass('fa-bookmark');
 			}
 		}
 	};

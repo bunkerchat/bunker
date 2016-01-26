@@ -237,6 +237,10 @@ module.exports.media = function (req, res) {
 	});
 };
 
+// TODO for pins:
+// - fix init endpoint
+// - final testing
+
 // POST /room/:id/pins
 module.exports.pinMessage = function(req, res) {
 
@@ -244,15 +248,19 @@ module.exports.pinMessage = function(req, res) {
 	var messageId = req.body.messageId.toObjectId();
 	var userId = req.session.userId.toObjectId();
 
-	// Ensure user is admin or mod: use find instead of count or something
-	RoomMember.count({room: roomId, user: userId})
-		.then(function(count) {
+	// TODO: maybe do these things?
+	// get room pins?
+	// prune pins?
+	// save pinBoard?
 
-			if (count === 0) {
-				throw new ForbiddenError('Must be a member of this room');
+	RoomMember.findOne({room: roomId, user: userId})
+		.then(function(roomMember) {
+
+			if (!roomMember || (roomMember.role !== 'administrator' && roomMember.role !== 'moderator')) {
+				throw new ForbiddenError('Must be a member of this room with admin or mod privileges!');
 			}
 
-			return [PinnedMessage.create({ message: messageId, room: roomId }),
+			return [PinnedMessage.create({ message: messageId, room: roomId, user: userId }),
 					Message.findOne(messageId).populate('author').populate('room')];
 		})
 		.spread(function(pinnedMessage, message) {
@@ -276,16 +284,6 @@ module.exports.pinMessage = function(req, res) {
 		.catch(ForbiddenError, res.serverError)
 		.catch(InvalidInputError, res.badRequest)
 		.catch(res.serverError);
-
-	// TODO: ensure user is member of room
-	// x get room/roommember
-	// x get message?
-	// x only allow certain message types?
-	// Ensure user is admin or mod:
-	// get room pins?
-	// prune pins?
-	// save pinBoard?
-	// x send update/notify?
 };
 
 module.exports.unPinMessage = function(req, res) {
@@ -294,11 +292,11 @@ module.exports.unPinMessage = function(req, res) {
 	var userId = req.session.userId.toObjectId();
 	var roomId = req.body.roomId.toObjectId();
 
-	RoomMember.count({room: roomId, user: userId})
-		.then(function(count) {
+	RoomMember.findOne({room: roomId, user: userId})
+		.then(function(roomMember) {
 
-			if (count === 0) {
-				throw new ForbiddenError('Must be a member of this room');
+			if (!roomMember || (roomMember.role !== 'administrator' && roomMember.role !== 'moderator')) {
+				throw new ForbiddenError('Must be a member of this room with admin or mod privileges!');
 			}
 
 			return PinnedMessage.remove({ message: messageId });
