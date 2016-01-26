@@ -190,6 +190,7 @@ function markLastReadMessage(req, updates) {
 				{lastReadMessage: lastMessageId});
 		})
 		.then(roomMember => {
+			if (!roomMember) return;
 			req.io.to(`userself_${userId}`).emit('user_roommember', {
 				_id: roomMember._id,
 				verb: 'updated',
