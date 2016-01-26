@@ -781,16 +781,10 @@ img.fatality {
 
 // lobby styling
 
-.page-header {
-	margin-top: 0;
-	border-color: #ddd;
-}
-
 .lobby {
-	.lobby-joined-rooms {
-		.list-group-item {
-			padding-bottom: 40px;
-		}
+
+	.list-group-item {
+		padding-bottom: 40px;
 	}
 	.list-group-item-heading {
 		font-weight: 500;

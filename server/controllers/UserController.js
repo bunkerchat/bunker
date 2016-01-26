@@ -123,6 +123,15 @@ module.exports.init = function (req, res) {
 			return Promise.join(
 				User.find(userIds).select('-plaintextpassword -sockets').lean(),
 				Room.find({_id: {$nin: _.pluck(memberships, 'room')}, isPrivate: false}).lean()
+					.then(rooms => {
+						return Promise.map(rooms, room => {
+							return RoomMember.count({room: room._id})
+								.then(memberCount => {
+									room.$memberCount = memberCount;
+									return room;
+								});
+						});
+					})
 			);
 		})
 
