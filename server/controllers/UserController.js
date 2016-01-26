@@ -122,7 +122,7 @@ module.exports.init = function (req, res) {
 			//var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
 			return Promise.join(
 				User.find(userIds).select('-plaintextpassword -sockets').lean(),
-				Room.find({_id: {$nin: _.pluck(memberships, 'room')}}).lean()
+				Room.find({_id: {$nin: _.pluck(memberships, 'room')}, isPrivate: false}).lean()
 			);
 		})
 
