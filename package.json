@@ -22,7 +22,7 @@
     "express": "4.13.3",
     "express-session": "1.12.1",
     "font-awesome": "4.5.0",
-    "fs-extra": "0.26.2",
+    "fs-extra": "0.26.5",
     "git-rev": "0.2.1",
     "gulp": "3.9.0",
     "gulp-babel": "6.1.1",
