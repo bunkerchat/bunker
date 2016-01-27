@@ -375,7 +375,7 @@ mark:hover {
 	display: inline;
 }
 
-.message-info .text-muted {
+.message-info > .text-muted {
 	margin-left: 5px;
 }
 
@@ -1038,6 +1038,10 @@ img.fatality {
 			background-color: transparent;
 			color: black;
 		}
+	}
+
+	.message:hover .fa-bookmark-o:not(.disabled) {
+		display: none;
 	}
 
 	// input box in mobile

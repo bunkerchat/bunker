@@ -87,7 +87,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 							room.$messages.push(message);
 						});
 
-						// TODO: I think I need to overwrite the room's pinned messages with init data here D:
+						// overwrite known room with messages from init response in event of reconnect
+						room.$pinnedMessages = roomData.$pinnedMessages;
 					}
 
 					room.$resolved = true;
@@ -95,8 +96,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					decorateMembers(room);
 				});
 
-				// gather up all initial pinned messages
-				pinBoard.initialize(_.chain(initialData.rooms).map('$pinnedMessages').flatten().value());
+				// gather up all initial pinned messages once rooms have been set up
+				pinBoard.initialize(_.chain(bunkerData.rooms).map('$pinnedMessages').flatten().value());
 
 				// creates a hashmap of rooms by its id
 				roomLookup = _.indexBy(bunkerData.rooms, '_id');
