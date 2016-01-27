@@ -48,7 +48,6 @@ module.exports.routes = {
 	'/room/:id/history': 'RoomController.history',
 	'/room/:id/media': 'RoomController.media',
 	'post /room/:id/pins': 'RoomController.pinMessage',
-	'get /room/:id/pins': 'RoomController.getPins',
 	'delete /room/:roomId/pins/:messageId': 'RoomController.unPinMessage',
 	'/message/emoticons': 'MessageController.emoticonCounts',
 

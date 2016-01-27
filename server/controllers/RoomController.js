@@ -237,10 +237,6 @@ module.exports.media = function (req, res) {
 	});
 };
 
-// TODO for pins:
-// - fix init endpoint
-// - final testing
-
 // POST /room/:id/pins
 module.exports.pinMessage = function(req, res) {
 

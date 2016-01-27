@@ -62,7 +62,6 @@ module.exports.policies = {
 		'messages': 'isLoggedIn',
 		'history': 'isLoggedIn',
 		'media': 'isLoggedIn',
-		'getPins': 'isLoggedIn',
 		'pinMessage': 'isLoggedIn',
 		'unPinMessage': 'isLoggedIn'
 	},

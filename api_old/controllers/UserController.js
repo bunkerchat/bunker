@@ -48,7 +48,6 @@ module.exports.init = function (req, res) {
 			RoomMember.subscribe(req, memberships, ['update', 'destroy', 'message']);
 			Room.subscribe(req, rooms, ['update', 'destroy', 'message']);
 			InboxMessage.subscribe(req, user._id, 'message');
-			PinnedMessage.subscribe(req, rooms, ['message']);
 
 			return Promise.join(
 
@@ -56,10 +55,9 @@ module.exports.init = function (req, res) {
 				Promise.map(rooms, function (room) {
 					return Promise.join(
 						Message.find({room: room._id}).sort('createdAt DESC').limit(40).populate('author'),
-						RoomMember.find({room: room._id}).populate('user'),
-						PinnedMessage.find({ room: room.id }).populate('message')
+						RoomMember.find({room: room._id}).populate('user')
 					)
-						.spread(function (messages, members, pinnedMessages) {
+						.spread(function (messages, members) {
 							RoomMember.subscribe(req, members, ['update', 'destroy']);
 							User.subscribe(req, _.pluck(members, 'user'), 'update');
 
@@ -73,26 +71,8 @@ module.exports.init = function (req, res) {
 								room.$members.push(member.toJSON());
 							});
 
-							room.$pinnedMessages = [];
-
-							var uniquePinnedMessages = _.unique(pinnedMessages, 'message.id');
-
-							_.each(uniquePinnedMessages, function(message) {
-								room.$pinnedMessages.push(message.message);
-							});
-
-							return User.find({ id: _.pluck(pinnedMessages, 'message.author') });
+							return room;
 						})
-						.then(function(users) {
-								// TODO: do this differently so it's more efficient
-								var lookup = _.indexBy(users, 'id');
-								room.$pinnedMessages = _.map(room.$pinnedMessages, function(pinnedMessage) {
-									pinnedMessage.author = lookup[pinnedMessage.author];
-									return pinnedMessage;
-								});
-
-								return room;
-						});
 				}),
 
 				// Populate authors for inbox messages
