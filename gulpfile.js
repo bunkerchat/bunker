@@ -14,8 +14,11 @@ var sass = require('gulp-sass');
 var filenames = require("gulp-filenames");
 
 gulp.task('sass', function () {
-	gulp.src('./assets/styles/**/*.scss')
-		.pipe(sass().on('error', sass.logError))
+	return gulp.src('./assets/styles/**/*.scss')
+		.pipe(sass().on('error', err => {
+			sass.logError.bind(this,err);
+			throw err;
+		}))
 		.pipe(gulp.dest('./assets/bundled'));
 });
 
