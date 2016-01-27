@@ -111,6 +111,6 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	});
 
 	function roomName(){
-		return (bunkerData.getRoom(roomId) || {}).name || 'Bunker';
+		return (bunkerData.getRoom($rootScope.roomId) || {}).name || 'Bunker';
 	}
 });
