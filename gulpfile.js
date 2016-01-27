@@ -90,7 +90,7 @@ gulp.task('production', ['template-cache-html', 'move-index-prod', 'sass']);
 
 gulp.task('default', ['production']);
 
-gulp.task('watch', function () {
+gulp.task('watch', ['sass'], function () {
 	gulp.watch('./assets/styles/**/*.scss', ['sass']);
 });
 

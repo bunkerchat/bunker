@@ -60,7 +60,7 @@
   "scripts": {
     "start": "node app.js",
     "debug": "node debug app.js",
-    "postinstall": "node node_modules/bower/bin/bower install",
+    "postinstall": "node node_modules/bower/bin/bower install && node node_modules/gulp/bin/gulp.js sass",
     "deploy": "npm prune && npm install && node node_modules/gulp/bin/gulp.js && forever restart app.js"
   },
   "main": "app.js",
