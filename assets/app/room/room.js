@@ -14,6 +14,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			bunkerData.$promise.then(function () {
 				$scope.current = bunkerData.getRoom($scope.roomId);
 
+				$scope.currentMembership = _.find(bunkerData.memberships, { room: $scope.current._id });
 				// Setup watches once we have data
 
 				$scope.$watchCollection('current.$members', function (members) {

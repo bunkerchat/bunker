@@ -65,6 +65,10 @@ module.exports.socketio = function (socket) {
 	socket.on('/message/edit', socketToController(messageController.update));
 	socket.on('/message/emoticoncounts', socketToController(messageController.emoticonCounts));
 
+	// pins
+	socket.on('/room/pinMessage', socketToController(roomController.pinMessage));
+	socket.on('/room/unPinMessage', socketToController(roomController.unPinMessage));
+
 };
 
 function socketToController(controllerFn) {

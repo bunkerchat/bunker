@@ -1,4 +1,4 @@
-app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications) {
+app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications, pinBoard) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt._id);
@@ -87,6 +87,34 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		}
 	}
 
+	function handleMessagePin(event) {
+
+		var room = bunkerData.getRoom(event.data.roomId);
+
+		switch (event.verb) {
+			case 'messaged':
+
+				// If we are trying to pin the message, but it's already on the
+				// pinboard, don't add it again.
+				if (event.data.pinned && !pinBoard.isPinned(event.data.messageId)) {
+					bunkerData.decorateMessage(room, event.data.message);
+
+					room.$pinnedMessages.unshift(event.data.message);
+
+					pinBoard.pinChanged(event.data);
+				}
+				else if (!event.data.pinned) {
+					_.remove(room.$pinnedMessages, function(item) {
+						return item._id === event.data.messageId;
+					});
+
+					pinBoard.pinChanged(event.data);
+				}
+
+				break;
+		}
+	}
+
 	function handleVisibilityShow() {
 		var activeRoom = _.find(bunkerData.rooms, {$selected: true});
 		if (activeRoom) {
@@ -129,6 +157,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		{name: 'roommember', type: 'socket', handler: handleMembershipEvent},
 		{name: 'user_roommember', type: 'socket', handler: handleUserMembershipEvent},
 		{name: 'inboxMessage', type: 'socket', handler: handleInboxEvent},
+		{name: 'pinboard', type: 'socket', handler: handleMessagePin},
 		{name: 'connect', type: 'socket', handler: handleConnect},
 		{name: 'reconnect', type: 'socket', handler: handleReconnect},
 		{name: 'disconnect', type: 'socket', handler: handleDisconnect},

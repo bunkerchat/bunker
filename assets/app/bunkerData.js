@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, $interval) {
+app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, $interval, pinBoard) {
 
 	var io = $window.io;
 	var roomLookup = []; // For fast room lookup
@@ -86,12 +86,18 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 							if (existingMessagesLookup[message._id]) return;
 							room.$messages.push(message);
 						});
+
+						// overwrite known room with messages from init response in event of reconnect
+						room.$pinnedMessages = roomData.$pinnedMessages;
 					}
 
 					room.$resolved = true;
 					decorateMessages(room);
 					decorateMembers(room);
 				});
+
+				// gather up all initial pinned messages once rooms have been set up
+				pinBoard.initialize(_.chain(bunkerData.rooms).map('$pinnedMessages').flatten().value());
 
 				// creates a hashmap of rooms by its id
 				roomLookup = _.indexBy(bunkerData.rooms, '_id');
@@ -289,7 +295,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			return moment(message.createdAt).unix();
 		});
 
-		_.each(room.$messages, function (message, index) {
+		var messageDecorator = function (message, index) {
 			if (message.author) {
 				message.author = users[message.author._id || message.author];
 			}
@@ -298,7 +304,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			message.$firstInSeries = isFirstInSeries(previousMessage, message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 			message.$idAndEdited = message._id + '_' + message.editCount;
-		});
+		};
+
+		_.each(room.$messages, messageDecorator);
+		_.each(room.$pinnedMessages, messageDecorator);
 	}
 
 	function decorateMembers(room) {

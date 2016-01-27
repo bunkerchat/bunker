@@ -38,14 +38,25 @@
 									{{::message.author.nick}}
 								</div>
 								<span bunker-message="::message"></span>
-								<span class="message-info text-muted">
-									<span class="fa fa-pencil" ng-if="::message.edited"></span>
-									<span class="text-muted" ng-if="::message.$firstInSeries">
-										<small am-time-ago="message.createdAt"
-													 title="{{::message.createdAt | date:'medium'}}">
-										</small>
+
+								<span class="message-info">
+									<span ng-if="::(message.type == 'standard' || message.type == 'code')"
+										  data-user-role="{{::currentMembership.role}}"
+										  message-pin="{{::message._id}}"
+										  class="text-muted">
+
+									</span>
+
+									<span class="text-muted">
+										<span class="fa fa-pencil" ng-if="::message.edited"></span>
+										<span class="text-muted" ng-if="::message.$firstInSeries">
+											<small am-time-ago="message.createdAt"
+												   title="{{::message.createdAt | date:'medium'}}">
+											</small>
+										</span>
 									</span>
 								</span>
+
 							</div>
 						</div>
 
@@ -140,6 +151,10 @@
 
 					</dl>
 				</div>
+
+				<span class="pin-board-holder" pins="current.$pinnedMessages" data-user-role="::currentMembership.role">
+
+				</span>
 
 				<a class="btn btn-link" ng-click="openHistory()">
 					History

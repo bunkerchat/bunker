@@ -301,6 +301,84 @@ mark:hover {
 	}
 }
 
+/* pin board */
+.pin-board {
+	position: fixed;
+	display: none;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	bottom: 34px;
+	background: white;
+	top: 48px;
+	right: 10%;
+	left: 80px;
+	border: 1px solid #DFD7CA;
+	box-shadow: 0 6px 12px rgba(0,0,0, .5);
+	padding: 8px;
+	border-radius: 4px;
+	z-index: 1040;
+}
+
+.pin-board-active {
+	display: block;
+}
+
+.pin-board-message {
+	float: left;
+	padding: 12px;
+	max-width: 100%;
+}
+
+.pin-board-message > div {
+	padding: 16px 16px 14px 14px;
+	border: 1px solid #ddd;
+	box-shadow: 0 2px 3px 0 #aaa;
+	position: relative;
+}
+
+.pin-board-message .pin-message-author {
+	margin-right: 8px;
+	display: inline-block;
+}
+
+.pin-board-message:hover .pin-board-unpin {
+	display: block;
+}
+
+.pin-board-unpin {
+	display: none;
+	color: #888;
+	cursor: pointer;
+	position: absolute;
+	top: 4px;
+	right: 4px;
+}
+
+.pin-board-unpin:hover {
+	color: #000;
+}
+
+.message-pin-icon {
+	cursor: pointer;
+	display: none;
+
+	&.fa-bookmark {
+		display: inline;
+
+		&.disabled {
+			cursor: default;
+		}
+	}
+}
+
+.message:hover .fa-bookmark-o:not(.disabled) {
+	display: inline;
+}
+
+.message-info > .text-muted {
+	margin-left: 5px;
+}
+
 /* emoticon */
 
 [emoticon-menu] .row {
@@ -441,14 +519,7 @@ li:not(:last-child) .message.last-read:after {
 	}
 }
 
-.message-body {
-	min-height: 30px;
-	margin-left: 180px;
-	padding-left: 10px;
-	padding-right: 150px;
-	background-color: #fff;
-	word-break: break-word;
-
+@mixin message-formatting {
 	img {
 		max-width: 100%;
 		max-height: 500px;
@@ -461,6 +532,25 @@ li:not(:last-child) .message.last-read:after {
 	pre {
 		padding: 0;
 		tab-size: 4;
+	}
+}
+
+.message-body {
+	min-height: 30px;
+	margin-left: 180px;
+	padding-left: 10px;
+	padding-right: 150px;
+	background-color: #fff;
+	word-break: break-word;
+
+	@include message-formatting
+}
+
+.pin-board-message {
+	@include message-formatting;
+
+	.panel {
+		margin-top: 8px;
 	}
 }
 
@@ -477,6 +567,10 @@ li:not(:last-child) .message.last-read:after {
 	top: 0;
 	right: 3px;
 	padding-right: 5px;
+
+	&>span {
+		display: inline-block;
+	}
 }
 
 .message-mention .message-body {
@@ -944,6 +1038,10 @@ img.fatality {
 			background-color: transparent;
 			color: black;
 		}
+	}
+
+	.message:hover .fa-bookmark-o:not(.disabled) {
+		display: none;
 	}
 
 	// input box in mobile

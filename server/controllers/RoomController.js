@@ -13,6 +13,7 @@ var RoomMember = require('../models/RoomMember');
 var User = require('../models/User');
 var Room = require('../models/Room');
 var Message = require('../models/Message');
+var PinnedMessage = require('../models/PinnedMessage');
 
 var RoomService = require('../services/RoomService');
 var messageService = require('../services/messageService');
@@ -234,4 +235,78 @@ module.exports.media = function (req, res) {
 			}));
 		});
 	});
+};
+
+// POST /room/:id/pins
+module.exports.pinMessage = function(req, res) {
+
+	var roomId = req.body.roomId.toObjectId();
+	var messageId = req.body.messageId.toObjectId();
+	var userId = req.session.userId.toObjectId();
+
+	// TODO: maybe do these things?
+	// get room pins?
+	// prune pins?
+	// save pinBoard?
+
+	RoomMember.findOne({room: roomId, user: userId})
+		.then(function(roomMember) {
+
+			if (!roomMember || (roomMember.role !== 'administrator' && roomMember.role !== 'moderator')) {
+				throw new ForbiddenError('Must be a member of this room with admin or mod privileges!');
+			}
+
+			return [PinnedMessage.create({ message: messageId, room: roomId, user: userId }),
+					Message.findOne(messageId).populate('author').populate('room')];
+		})
+		.spread(function(pinnedMessage, message) {
+
+			if (message.room.id !== req.body.roomId) {
+				throw new InvalidInputError('Can only pin message to the room it belongs to.');
+			}
+
+			if (message.type !== 'standard' && message.type !== 'code') {
+				throw new InvalidInputError('Can only pin standard and code messages.');
+			}
+
+			req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
+				_id: req.body.roomId,
+				verb: 'messaged',
+				data: { pinned: true, messageId: req.body.messageId, message: message, roomId: req.body.roomId }
+			});
+
+			res.ok();
+		})
+		.catch(ForbiddenError, res.serverError)
+		.catch(InvalidInputError, res.badRequest)
+		.catch(res.serverError);
+};
+
+module.exports.unPinMessage = function(req, res) {
+
+	var messageId = req.body.messageId.toObjectId();
+	var userId = req.session.userId.toObjectId();
+	var roomId = req.body.roomId.toObjectId();
+
+	RoomMember.findOne({room: roomId, user: userId})
+		.then(function(roomMember) {
+
+			if (!roomMember || (roomMember.role !== 'administrator' && roomMember.role !== 'moderator')) {
+				throw new ForbiddenError('Must be a member of this room with admin or mod privileges!');
+			}
+
+			return PinnedMessage.remove({ message: messageId });
+		})
+		.then(function() {
+			var unPinResult = { messageId: req.body.messageId, pinned: false, roomId: req.body.roomId };
+
+			req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
+				_id: req.body.roomId,
+				verb: 'messaged',
+				data: unPinResult
+			});
+
+			res.ok(unPinResult);
+		})
+		.catch(res.serverError);
 };

@@ -20,6 +20,7 @@ var InboxMessage = require('./../models/InboxMessage');
 var Room = require('./../models/Room');
 var Message = require('./../models/Message');
 var RoomController = require('./RoomController');
+var PinnedMessage = require('./../models/PinnedMessage');
 
 // A connecting client will call this endpoint. It should subscribe them to all relevant data and
 // return all rooms and user data necessary to run the application.
@@ -95,14 +96,18 @@ module.exports.init = function (req, res) {
 			socket.join('inboxmessage_' + userId);
 
 			_.each(memberships, membership => socket.join('roommember_' + membership._id));
-			_.each(rooms, room => socket.join('room_' + room._id));
+			_.each(rooms, room => {
+				socket.join('room_' + room._id);
+				socket.join('pinnedMessage_' + room._id);
+			});
 
 			return Promise.map(rooms, room => {
 				return Promise.join(
 					Message.find({room: room._id}).sort('-createdAt').limit(40).lean(),
-					RoomMember.find({room: room._id}).lean()
+					RoomMember.find({room: room._id}).lean(),
+					PinnedMessage.find({ room: room._id }).sort('-createdAt').populate('message')
 				)
-					.spread((messages, members) => {
+					.spread((messages, members, pinnedMessages) => {
 						userIds.pushAll(_.pluck(messages, 'author'), _.pluck(members, 'user'));
 
 						// Setup subscriptions
@@ -110,7 +115,14 @@ module.exports.init = function (req, res) {
 						_.each(_.pluck(members, 'user'), user => socket.join('user_' + user));
 
 						room.$messages = messages;
+						room.$pinnedMessages = [];
 						room.$members = members;
+
+						var uniquePinnedMessages = _.unique(pinnedMessages, 'message.id');
+
+						_.each(uniquePinnedMessages, function(message) {
+							room.$pinnedMessages.push(message.message);
+						});
 
 						return room;
 					});
@@ -157,6 +169,7 @@ function codeVersion() {
 // Its purpose is to update state changes for the current user (which room are they typing in, are they away,
 // which room is active, etc.)
 module.exports.activity = function (req, res) {
+
 	var userId = req.session.userId;
 
 	// Only allow updates for the following values
