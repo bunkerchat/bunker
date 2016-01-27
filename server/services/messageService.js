@@ -52,6 +52,9 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/room\s+name\s+\w/i.test(text)) {
 		return setRoomName(roomMember, text)
 	}
+	else if (/^\/room\s+privacy\s+\w/i.test(text)) {
+		return setRoomPrivacy(roomMember, text)
+	}
 	else if (/^\/magic8ball/i.test(text)) {
 		return magic8ball(roomMember, text); // Jordan's Magic 8 Ball, Bitches
 	}
@@ -258,7 +261,7 @@ function setRoomTopic(roomMember, text) {
 
 function setRoomName(roomMember, text) {
 
-	if (roomMember.role != 'administrator') {
+	if (roomMember.role !== 'administrator') {
 		throw new ForbiddenError('Must be an administrator to change room name');
 	}
 
@@ -278,7 +281,32 @@ function setRoomName(roomMember, text) {
 			data: {name: room.name}
 		});
 
-		RoomService.messageRoom(roomId, user.nick + ' changed the room name to "' + room.name + '"');
+		RoomService.messageRoom(roomId, `${user.nick} changed the room name to '${room.name}'`);
+	});
+}
+
+function setRoomPrivacy(roomMember, text) {
+	if (roomMember.role !== 'administrator') {
+		throw new ForbiddenError('Must be an administrator to change room privacy');
+	}
+
+	var user = roomMember.user;
+	var roomId = roomMember.room;
+
+	var privacyMatches = text.match(/\/room\s+privacy\s+(public|private)/i);
+	if (!privacyMatches) throw new InvalidInputError(`Invalid room privacy — options are 'public' and 'private'`);
+
+	var isPrivate = privacyMatches[1] == 'private';
+
+	return Room.findByIdAndUpdate(roomId, {isPrivate: isPrivate}, {new: true}).then(room => {
+
+		socketio.io.to('room_' + room._id).emit('room', {
+			_id: room._id,
+			verb: 'updated',
+			data: {isPrivate: room.isPrivate}
+		});
+
+		RoomService.messageRoom(roomId, `${user.nick} changed the room to ${room.isPrivate ? 'private' : 'public'}`);
 	});
 }
 
