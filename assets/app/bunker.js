@@ -33,12 +33,6 @@ window.app = angular.module('bunker', [
 			.state('chat.room', {
 				url: '/{roomId}'
 			})
-
-			.state('inbox', {
-				url: '/inbox',
-				templateUrl: '/assets/app/inbox/list.html',
-				controller: 'InboxController as inbox'
-			})
 			.state('roomHistory', {
 				url: '/rooms/{roomId}/history?date&message',
 				templateUrl: '/assets/app/room/roomHistory.html',

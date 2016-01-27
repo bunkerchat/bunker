@@ -1,40 +1,42 @@
 app.component('lobby', {
 	templateUrl: '/assets/app/lobby/lobby.html',
 	controllerAs: 'lobby',
-	controller: function ($rootScope, $state, bunkerData) {
-		var self = this;
+	controller: 'lobbyController'
+});
 
-		bunkerData.$promise.then(init);
+app.controller('lobbyController', function ($rootScope, $state, bunkerData) {
+	var self = this;
 
-		this.joinRoom = function (roomId) {
-			bunkerData.joinRoom(roomId)
-				.then(function (room) {
-					$state.go('chat.room', {roomId: room._id});
-				});
-		};
+	bunkerData.$promise.then(init);
 
-		this.createRoom = function (roomName) {
-			bunkerData.createRoom(roomName)
-				.then(function (room) {
-					$state.go('chat.room', {roomId: room._id});
-				});
-		};
-
-		$rootScope.$on('roomIdChanged', function (evt, roomId) {
-			if (!roomId) {
-				init();
-			}
-		});
-
-		function init() {
-			bunkerData.$promise.then(function () {
-				self.rooms = bunkerData.rooms;
-				self.publicRooms = bunkerData.publicRooms;
-				_.each(self.rooms, room => {
-					room.$lastMessage = _(room.$messages).filter({type: 'standard'}).last();
-				});
+	this.joinRoom = function (roomId) {
+		bunkerData.joinRoom(roomId)
+			.then(function (room) {
+				$state.go('chat.room', {roomId: room._id});
 			});
+	};
+
+	this.createRoom = function (roomName) {
+		bunkerData.createRoom(roomName)
+			.then(function (room) {
+				$state.go('chat.room', {roomId: room._id});
+			});
+	};
+
+	$rootScope.$on('roomIdChanged', function (evt, roomId) {
+		if (!roomId) {
+			init();
 		}
+	});
+
+	function init() {
+		bunkerData.$promise.then(function () {
+			self.rooms = bunkerData.rooms;
+			self.publicRooms = bunkerData.publicRooms;
+			_.each(self.rooms, room => {
+				room.$lastMessage = _(room.$messages).filter({type: 'standard'}).last();
+			});
+		});
 	}
 });
 
