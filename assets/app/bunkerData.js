@@ -13,6 +13,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		user: {},
 		userSettings: {},
 		rooms: [],
+		publicRooms: [],
 		inbox: [],
 		memberships: [],
 		$resolved: false,
@@ -99,6 +100,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 				// creates a hashmap of rooms by its id
 				roomLookup = _.indexBy(bunkerData.rooms, '_id');
+
+				while (bunkerData.publicRooms.length) bunkerData.publicRooms.pop();
+				_.each(initialData.publicRooms, room => bunkerData.publicRooms.push(room));
 
 				$rootScope.$broadcast('bunkerDataLoaded');
 				return bunkerData;
@@ -272,7 +276,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// version
 		isClientCodeCurrent: function () {
-			if(!bunkerData.version.old.clientVersion) return true;
+			if (!bunkerData.version.old.clientVersion) return true;
 			return bunkerData.version.old.clientVersion == bunkerData.version.clientVersion;
 		}
 	};
@@ -349,7 +353,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 	$interval(function () {
 		//  if code is out of date and user is not present, reload the page
-		if(!bunkerData.isClientCodeCurrent() && !bunkerData.user.present) {
+		if (!bunkerData.isClientCodeCurrent() && !bunkerData.user.present) {
 			localStorage.bunkerReloaded = true;
 			$window.location.reload();
 		}

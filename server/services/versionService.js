@@ -15,13 +15,18 @@ versionService.version = function version() {
 	return Promise.join(
 		getGitHash(),
 		getClientCode(),
+		getVendorCode(),
 		getClientStyles(),
 		emoticonService.getEmoticonNamesFromDisk()
 	)
-		.spread((serverVersion, clientJavascriptFile, clientStyles, emoticons) => {
+		.spread((serverVersion, clientFile, vendorFile, clientStyles, emoticons) => {
 			var clientVersion;
-			if (clientJavascriptFile) {
-				clientVersion = /bundle-(.+?)\.js/gi.exec(clientJavascriptFile)[1];
+			if (clientFile) {
+				clientVersion = /bundle-(.+?)\.js/gi.exec(clientFile)[1];
+			}
+
+			if(vendorFile){
+				clientVersion += /vendor-(.+?)\.js/gi.exec(vendorFile)[1];
 			}
 
 			if (clientStyles) {
@@ -42,6 +47,12 @@ function getClientCode() {
 		.then(bundledFiles => _.find(bundledFiles, file => /bundle-.+?\.js/gi.test(file)));
 }
 
+function getVendorCode() {
+	return getBundle()
+		// find the client side bundle file
+		.then(bundledFiles => _.find(bundledFiles, file => /vendor-.+?\.js/gi.test(file)));
+}
+
 function getClientStyles() {
 	return getBundle()
 		// find the client side bundle file
@@ -51,7 +62,7 @@ function getClientStyles() {
 var bundleCache;
 function getBundle() {
 	if (!config.useJavascriptBundle) return Promise.resolve([]);
-	//if (bundleCache) return Promise.resolve(bundleCache);
+	if (bundleCache) return Promise.resolve(bundleCache);
 
 	return fs.readdirAsync('./assets/bundled')
 		.then(bundledFiles => bundleCache = bundledFiles)

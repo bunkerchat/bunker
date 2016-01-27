@@ -875,13 +875,10 @@ img.fatality {
 
 // lobby styling
 
-.page-header {
-	margin-top: 0;
-	border-color: #ddd;
-}
-
 .lobby {
+
 	.list-group-item {
+		height: 130px;
 		padding-bottom: 40px;
 	}
 	.list-group-item-heading {

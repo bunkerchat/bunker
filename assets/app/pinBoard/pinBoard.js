@@ -1,4 +1,4 @@
-app.factory('pinBoard', ['$window', '$rootScope', '$q', function ($window, $rootScope, $q) {
+app.factory('pinBoard', ['$window', '$rootScope', function ($window, $rootScope) {
 	var io = $window.io;
 
 	var pinLookup = {};
