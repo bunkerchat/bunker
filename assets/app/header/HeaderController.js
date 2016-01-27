@@ -3,18 +3,14 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 
 	header.bunkerData = bunkerData;
 	header.currentVersion = true;
+	header.currentRoomName = 'Bunker';
 
 	bunkerData.$promise.then(function () {
 		header.rooms = bunkerData.rooms;
 		header.memberships = bunkerData.memberships;
 		header.settings = bunkerData.userSettings;
 		header.inbox = bunkerData.inbox;
-
-		header.currentRoomName = 'Bunker';
-		var room = bunkerData.getRoom($rootScope.roomId);
-		if(room){
-			header.currentRoomName = room.name;
-		}
+		header.currentRoomName = roomName();
 	});
 
 	header.showOptions = !$state.is('lobby');
@@ -97,12 +93,12 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	});
 
 	$rootScope.$on('roomIdChanged', function (evt, roomId) {
-		header.currentRoomName = 'Bunker';
+		header.currentRoomName = roomName();
+
 		var room = bunkerData.getRoom(roomId);
 		if (room) {
 			room.$unreadMessages = 0;
 			room.$unreadMention = false;
-			header.currentRoomName = room.name;
 		}
 	});
 
@@ -113,4 +109,8 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	$rootScope.$on('$stateChangeSuccess', function (evt, toState) {
 		header.showOptions = toState.name != 'lobby';
 	});
+
+	function roomName(){
+		return (bunkerData.getRoom($rootScope.roomId) || {}).name || 'Bunker';
+	}
 });
