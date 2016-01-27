@@ -72,7 +72,7 @@ module.exports.init = function (req, res) {
 							});
 
 							return room;
-						})
+						});
 				}),
 
 				// Populate authors for inbox messages
