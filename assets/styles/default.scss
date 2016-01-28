@@ -83,12 +83,33 @@ nav,
 		}
 	}
 
+	.navbar-rooms {
+
+		width: calc(100% - 300px);
+
+		// CSS only solution to styling any number of rooms on top
+		// If someone is in more than 100 rooms... I don't even know
+		@for $i from 1 through 100 {
+			li:first-child:nth-last-child(#{$i}),
+			li:first-child:nth-last-child(#{$i}) ~ li {
+				width: (100/$i)*1%;
+				max-width: 150px;
+				height: 40px;
+				overflow: hidden;
+			}
+		}
+
+		.navbar .nav > li > a,
+		.navbar-nav > li > a {
+			padding: 0 5px;
+		}
+	}
+
 	.navbar .nav > li > a,
 	.navbar-nav > li > a {
 		padding: 0 20px;
 		text-transform: none;
 		font-size: 16px;
-		min-width: 100px;
 		text-align: center;
 		line-height: 40px;
 		color: white;
@@ -308,7 +329,7 @@ mark:hover {
 	right: 10%;
 	left: 80px;
 	border: 1px solid #DFD7CA;
-	box-shadow: 0 6px 12px rgba(0,0,0, .5);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .5);
 	padding: 8px;
 	border-radius: 4px;
 	z-index: 1040;
@@ -563,7 +584,7 @@ li:not(:last-child) .message.last-read:after {
 	right: 3px;
 	padding-right: 5px;
 
-	&>span {
+	& > span {
 		display: inline-block;
 	}
 }
