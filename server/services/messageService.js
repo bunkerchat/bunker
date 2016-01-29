@@ -18,6 +18,7 @@ var hangmanService = require('./hangmanService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
+var ValidationError = require('mongoose').Error.ValidationError;
 
 var messageService = module.exports;
 
@@ -46,14 +47,8 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/topic/i.test(text)) { // Change room topic
 		return setRoomTopic(roomMember, text);
 	}
-	else if (/^\/room\s+topic/i.test(text)) {
-		return setRoomTopic(roomMember, text)
-	}
-	else if (/^\/room\s+name\s+\w/i.test(text)) {
-		return setRoomName(roomMember, text)
-	}
-	else if (/^\/room\s+privacy\s+\w/i.test(text)) {
-		return setRoomPrivacy(roomMember, text)
+	else if (/^\/room\s+/i.test(text)) {
+		return setRoomAttribute(roomMember, text);
 	}
 	else if (/^\/magic8ball/i.test(text)) {
 		return magic8ball(roomMember, text); // Jordan's Magic 8 Ball, Bitches
@@ -105,18 +100,19 @@ function stats(roomMember, text) {
 		return statsService.getStatsForUser(userNick, roomMember.room)
 			.then(function (stats) {
 				return Message.create({
-					room: roomMember.room,
-					type: 'stats',
-					author: roomMember.user._id,
-					text: stats
-				})
+						room: roomMember.room,
+						type: 'stats',
+						author: roomMember.user._id,
+						text: stats
+					})
 					.then(broadcastMessage);
 			});
 	}
 
-	return statsService.getStats(roomMember).then(function (message) {
-		RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, message, 'stats');
-	});
+	return statsService.getStats(roomMember)
+		.then(function (message) {
+			RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, message, 'stats');
+		});
 }
 
 function animation(roomMember, text) {
@@ -196,13 +192,14 @@ function setUserNick(roomMember, text) {
 	return Promise.join(
 		User.findByIdAndUpdate(user._id, {nick: newNick}, {new: true}),
 		RoomMember.find({user: user._id})
-	)
+		)
 		.spread(function (updatedUser, memberships) {
-			socketio.io.to('user_' + updatedUser._id).emit('user', {
-				_id: updatedUser._id,
-				verb: 'updated',
-				data: {nick: updatedUser.nick}
-			});
+			socketio.io.to('user_' + updatedUser._id)
+				.emit('user', {
+					_id: updatedUser._id,
+					verb: 'updated',
+					data: {nick: updatedUser.nick}
+				});
 			RoomService.messageRooms(_.pluck(memberships, 'room'), user.nick + ' changed their handle to ' + updatedUser.nick);
 		});
 }
@@ -228,11 +225,12 @@ function setUserBusy(roomMember, text) {
 
 			RoomService.messageRooms(_.pluck(memberships, 'room'), message.join(' '));
 
-			socketio.io.to('user_' + user._id).emit('user', {
-				_id: user._id,
-				verb: 'updated',
-				data: {busy: user.busy, busyMessage: user.busyMessage}
-			});
+			socketio.io.to('user_' + user._id)
+				.emit('user', {
+					_id: user._id,
+					verb: 'updated',
+					data: {busy: user.busy, busyMessage: user.busyMessage}
+				});
 		});
 }
 
@@ -247,67 +245,99 @@ function setRoomTopic(roomMember, text) {
 	var topicMatches = text.match(/topic\s+(.+)/i);
 	var topic = topicMatches ? topicMatches[1].substr(0, 200) : null;
 
-	return Room.findByIdAndUpdate(roomId, {topic: topic}, {new: true}).then(function (room) {
+	return Room.findByIdAndUpdate(roomId, {topic: topic}, {new: true})
+		.then(function (room) {
 
-		socketio.io.to('room_' + room._id).emit('room', {
-			_id: room._id,
-			verb: 'updated',
-			data: {topic: room.topic}
+			socketio.io.to('room_' + room._id)
+				.emit('room', {
+					_id: room._id,
+					verb: 'updated',
+					data: {topic: room.topic}
+				});
+
+			var message;
+			if (topic) {
+				message = `${user.nick} changed the topic to '${topic}'`;
+			}
+			else {
+				message = `${user.nick} cleared the topic`;
+			}
+
+			RoomService.messageRoom(roomId, message);
 		});
-
-		RoomService.messageRoom(roomId, user.nick + (room.topic ? ' changed the topic to "' + room.topic + '"' : ' cleared the topic'));
-	});
 }
 
-function setRoomName(roomMember, text) {
+function setRoomAttribute(roomMember, text) {
 
 	if (roomMember.role !== 'administrator') {
 		throw new ForbiddenError('Must be an administrator to change room name');
 	}
 
 	var user = roomMember.user;
-	var roomId = roomMember.room;
+	var matches = text.match(/\/room\s+(\w+)\s*(.*)/i);
+	var commands = ['name', 'topic', 'privacy', 'icon'];
+	var command = matches[1].toLowerCase();
 
-	var nameMatches = text.match(/\/room\s+name\s+([\w\s]+)/i);
-	if (!nameMatches) throw new InvalidInputError('Invalid room name');
-
-	var name = nameMatches[1].substr(0, 50);
-
-	return Room.findByIdAndUpdate(roomId, {name: name}, {new: true}).then(function (room) {
-
-		socketio.io.to('room_' + room._id).emit('room', {
-			_id: room._id,
-			verb: 'updated',
-			data: {name: room.name}
-		});
-
-		RoomService.messageRoom(roomId, `${user.nick} changed the room name to '${room.name}'`);
-	});
-}
-
-function setRoomPrivacy(roomMember, text) {
-	if (roomMember.role !== 'administrator') {
-		throw new ForbiddenError('Must be an administrator to change room privacy');
+	if (!matches || _.intersection(commands, [command]).length == 0) {
+		throw new InvalidInputError(`Invalid room command — options are ${commands.join(', ')}`);
 	}
 
-	var user = roomMember.user;
-	var roomId = roomMember.room;
+	if (command == 'topic') { // legacy command
+		return setRoomTopic(roomMember, text);
+	}
 
-	var privacyMatches = text.match(/\/room\s+privacy\s+(public|private)/i);
-	if (!privacyMatches) throw new InvalidInputError(`Invalid room privacy — options are 'public' and 'private'`);
+	return Room.findById(roomMember.room)
+		.then(room => {
+			var message;
 
-	var isPrivate = privacyMatches[1] == 'private';
+			if (command == 'name') {
+				var name = matches[2].substr(0, 50)
+					.trim();
+				room.name = name;
+				message = `${user.nick} changed the room name to '${name}'`;
+			}
+			else if (command == 'privacy') {
+				var privacy = matches[2].toLowerCase()
+					.trim();
+				if (privacy != 'public' && privacy != 'private') {
+					throw new InvalidInputError('Invalid privacy — options are public, private');
+				}
 
-	return Room.findByIdAndUpdate(roomId, {isPrivate: isPrivate}, {new: true}).then(room => {
+				room.isPrivate = privacy == 'private';
+				message = `${user.nick} changed the room to ${room.isPrivate ? 'private' : 'public'}`;
+			}
+			else if (command == 'icon') {
+				var icon = matches[2].toLowerCase()
+					.trim();
 
-		socketio.io.to('room_' + room._id).emit('room', {
-			_id: room._id,
-			verb: 'updated',
-			data: {isPrivate: room.isPrivate}
+				if (!icon || icon.length == 0) {
+					room.icon = null;
+					message = `${user.nick} cleared the room icon`;
+				}
+				else {
+					if (!icon.startsWith(':icon_')) throw new InvalidInputError('Invalid icon — use icon emoticons (they start with icon_)');
+					icon = icon.replace(/:|icon_/g, '')
+						.replace(/_/g, '-');
+					room.icon = icon;
+					message = `${user.nick} changed the room icon to '${icon}'`;
+				}
+			}
+
+			return Promise.join(room.save(), message);
+		})
+		.spread((room, message) => {
+			socketio.io.to('room_' + room._id)
+				.emit('room', {
+					_id: room._id,
+					verb: 'updated',
+					data: room
+				});
+			RoomService.messageRoom(room._id, message);
+		})
+		.catch(ValidationError, err => {
+			var message = _.sample(err.errors).message;
+			throw new InvalidInputError(`Invalid room ${command} input — ${message}`);
 		});
-
-		RoomService.messageRoom(roomId, `${user.nick} changed the room to ${room.isPrivate ? 'private' : 'public'}`);
-	});
 }
 
 function magic8ball(roomMember, text) {
@@ -323,11 +353,12 @@ function magic8ball(roomMember, text) {
 
 	setTimeout(function () {
 		return Message.create({
-			room: roomMember.room,
-			author: null,
-			type: '8ball',
-			text: ':magic8ball: ' + ballResponse
-		}).then(broadcastMessage);
+				room: roomMember.room,
+				author: null,
+				type: '8ball',
+				text: ':magic8ball: ' + ballResponse
+			})
+			.then(broadcastMessage);
 	}, 3000);
 
 	var question = ' shakes the magic 8 ball...';
@@ -384,25 +415,29 @@ function message(roomMember, text, type) {
 	type = type || 'standard';
 
 	return Message.create({
-		room: roomMember.room,
-		type: type,
-		author: type == 'standard' ? roomMember.user : null,
-		text: text
-	}).then(function (message) {
-		broadcastMessage(message);
-		saveInMentionedInboxes(message);
-		return populateMessage(message);
-	});
+			room: roomMember.room,
+			type: type,
+			author: type == 'standard' ? roomMember.user : null,
+			text: text
+		})
+		.then(function (message) {
+			broadcastMessage(message);
+			saveInMentionedInboxes(message);
+			return populateMessage(message);
+		});
 }
 
 function broadcastMessage(message) {
-	return Message.findById(message._id).populate('room author').then(function (message) {
-		socketio.io.to('room_' + message.room._id).emit('room', {
-			_id: message.room._id,
-			verb: 'messaged',
-			data: message
+	return Message.findById(message._id)
+		.populate('room author')
+		.then(function (message) {
+			socketio.io.to('room_' + message.room._id)
+				.emit('room', {
+					_id: message.room._id,
+					verb: 'messaged',
+					data: message
+				});
 		});
-	});
 }
 
 function populateMessage(message) {
@@ -414,22 +449,25 @@ function populateMessage(message) {
 function saveInMentionedInboxes(message) {
 	if (!message.author) return;
 
-	RoomMember.find({room: message.room}).populate('user')
+	RoomMember.find({room: message.room})
+		.populate('user')
 		.then(roomMembers => roomMembers)
 		.each(roomMember => {
 			var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
 			if (!regex.test(message.text)) return;
 
 			return InboxMessage.create({user: roomMember.user._id, message: message._id})
-				.then(inboxMessage => InboxMessage.findOne(inboxMessage._id).populate('message', 'text createdAt room'))
+				.then(inboxMessage => InboxMessage.findOne(inboxMessage._id)
+					.populate('message', 'text createdAt room'))
 				.then(inboxMessage => {
 					inboxMessage.message.author = message.author;
 
-					socketio.io.to('inboxmessage_' + roomMember.user._id).emit('inboxmessage', {
-						_id: message.author._id,
-						verb: 'messaged',
-						data: inboxMessage
-					});
+					socketio.io.to('inboxmessage_' + roomMember.user._id)
+						.emit('inboxmessage', {
+							_id: message.author._id,
+							verb: 'messaged',
+							data: inboxMessage
+						});
 				});
 		});
 }
@@ -438,11 +476,12 @@ function code(roomMember, text) {
 	// strip out /code
 	text = text.substr(6);
 	return Message.create({
-		room: roomMember.room,
-		type: 'code',
-		author: roomMember.user,
-		text: text
-	}).then(broadcastMessage)
+			room: roomMember.room,
+			type: 'code',
+			author: roomMember.user,
+			text: text
+		})
+		.then(broadcastMessage)
 }
 
 function image(roomMember, text) {
@@ -451,15 +490,16 @@ function image(roomMember, text) {
 
 	return imageSearch.image(searchQuery)
 		.then(result => {
-			socketio.io.to('userself_' + roomMember.user._id).emit('user', {
-				_id: roomMember.user._id,
-				verb: 'messaged',
-				data: {
-					type: 'pick',
-					message: `[${result.provider} image "${searchQuery}"] `,
-					data: result.images
-				}
-			});
+			socketio.io.to('userself_' + roomMember.user._id)
+				.emit('user', {
+					_id: roomMember.user._id,
+					verb: 'messaged',
+					data: {
+						type: 'pick',
+						message: `[${result.provider} image "${searchQuery}"] `,
+						data: result.images
+					}
+				});
 		});
 }
 
@@ -469,15 +509,16 @@ function gif(roomMember, text) {
 
 	return imageSearch.gif(searchQuery)
 		.then(result => {
-			socketio.io.to('userself_' + roomMember.user._id).emit('user', {
-				_id: roomMember.user._id,
-				verb: 'messaged',
-				data: {
-					type: 'pick',
-					message: `[${result.provider} gif "${searchQuery}"] `,
-					data: result.images
-				}
-			});
+			socketio.io.to('userself_' + roomMember.user._id)
+				.emit('user', {
+					_id: roomMember.user._id,
+					verb: 'messaged',
+					data: {
+						type: 'pick',
+						message: `[${result.provider} gif "${searchQuery}"] `,
+						data: result.images
+					}
+				});
 		});
 }
 
@@ -535,11 +576,12 @@ function changeUserRole(roomMember, text) {
 		})
 		.then(function (promotedMember) {
 
-			socketio.io.to('roommember_' + promotedMember._id).emit('roommember', {
-				_id: promotedMember._id,
-				verb: 'updated',
-				data: {role: newRole}
-			});
+			socketio.io.to('roommember_' + promotedMember._id)
+				.emit('roommember', {
+					_id: promotedMember._id,
+					verb: 'updated',
+					data: {role: newRole}
+				});
 
 			var message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
 			RoomService.messageRoom(roomId, message);
@@ -553,11 +595,11 @@ function leaderboard(roomMember, text) {
 		return leaderboardService.getLoserboard()
 			.then(function (loserboard) {
 				return Message.create({
-					room: roomMember.room,
-					type: 'stats',
-					author: roomMember.user,
-					text: loserboard
-				})
+						room: roomMember.room,
+						type: 'stats',
+						author: roomMember.user,
+						text: loserboard
+					})
 					.then(broadcastMessage);
 			})
 	}
@@ -565,11 +607,11 @@ function leaderboard(roomMember, text) {
 	return leaderboardService.getLeaderboard()
 		.then(function (leaderboard) {
 			return Message.create({
-				room: roomMember.room,
-				type: 'stats',
-				author: roomMember.user,
-				text: leaderboard
-			})
+					room: roomMember.room,
+					type: 'stats',
+					author: roomMember.user,
+					text: leaderboard
+				})
 				.then(broadcastMessage);
 		})
 }
