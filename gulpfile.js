@@ -15,10 +15,12 @@ var filenames = require("gulp-filenames");
 
 gulp.task('sass', function () {
 	return gulp.src('./assets/styles/**/*.scss')
+		.pipe(sourcemaps.init())
 		.pipe(sass().on('error', err => {
 			sass.logError.bind(this,err);
 			throw err;
 		}))
+		.pipe(sourcemaps.write())
 		.pipe(gulp.dest('./assets/bundled'));
 });
 
