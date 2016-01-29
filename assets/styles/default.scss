@@ -813,13 +813,11 @@ img.fatality {
 	border-radius: 8px;
 
 	&.here {
-		background-color: #0CE70C;
-		border: solid white 2px;
+		background-image: linear-gradient(to bottom, #00FF00 0%, #00BD00 100%);
 	}
 
 	&.away {
-		background-color: #FFFF00;
-		border: solid #D2D507 2px;
+		background-image: linear-gradient(to bottom, #FFFF00 0%, #D4D400 100%);
 	}
 }
 
