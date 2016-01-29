@@ -237,7 +237,7 @@ function setUserBusy(roomMember, text) {
 function setRoomTopic(roomMember, text) {
 
 	if (roomMember.role == 'member') {
-		throw new ForbiddenError('Must be an administrator to change topic');
+		throw new ForbiddenError('Must be an administrator or moderator to change topic');
 	}
 
 	var user = roomMember.user;
@@ -269,10 +269,6 @@ function setRoomTopic(roomMember, text) {
 
 function setRoomAttribute(roomMember, text) {
 
-	if (roomMember.role !== 'administrator') {
-		throw new ForbiddenError('Must be an administrator to change room name');
-	}
-
 	var user = roomMember.user;
 	var matches = text.match(/\/room\s+(\w+)\s*(.*)/i);
 	var commands = ['name', 'topic', 'privacy', 'icon'];
@@ -284,6 +280,10 @@ function setRoomAttribute(roomMember, text) {
 
 	if (command == 'topic') { // legacy command
 		return setRoomTopic(roomMember, text);
+	}
+
+	if (roomMember.role !== 'administrator') {
+		throw new ForbiddenError('Must be an administrator to set room attributes');
 	}
 
 	return Room.findById(roomMember.room)
