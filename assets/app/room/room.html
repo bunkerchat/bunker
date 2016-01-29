@@ -23,14 +23,14 @@
 						<!-- standard message -->
 						<div ng-switch-when="true">
 							<div class="message-author">
-								<span ng-if="::message.$firstInSeries" title="{{::message.author.email}}">
+								<div ng-if="::message.$firstInSeries" title="{{::message.author.email}}">
 									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="30"/>
 									<div class="name">{{::message.author.nick}}</div>
-									<span class="status"
+									<div class="status"
 												ng-class="memberLookup[message.author._id].user.$present ? 'here' : 'away'"
 												ng-if="memberLookup[message.author._id].user.connected">
-									</span>
-								</span>
+									</div>
+								</div>
 							</div>
 							<div class="message-caret" ng-if="::message.$firstInSeries"></div>
 							<div class="message-body" ng-class="::{ 'new-message-body': message.$firstInSeries }">
@@ -110,6 +110,8 @@
 								<span ng-switch-when="false">
 									<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"
 											 title="{{::member.user.email}}"/>
+									<div class="status" ng-class="member.user.$present ? 'here' : 'away'">
+									</div>
 								</span>
 								<span ng-switch-default>
 									<i class="fa fa-ellipsis-h" title="{{::member.user.email}}"></i>
@@ -129,8 +131,6 @@
 							<span ng-if="member.role != 'member'" ng-switch="member.role" title="{{member.role}}">
 								<i class="fa fa-gavel" ng-switch-when="administrator"></i>
 								<i class="fa fa-comments" ng-switch-when="moderator"></i>
-							</span>
-							<span class="status" ng-class="member.user.$present ? 'here' : 'away'">
 							</span>
 						</div>
 					</span>
