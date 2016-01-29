@@ -974,9 +974,9 @@ img.fatality {
 
 	.message-author {
 		float: left;
-		width: 40px;
-		padding: 0 5px;
-		margin-right: 5px;
+		width: 34px; // image 30px + online bar 4px
+		padding: 0;
+		margin-left: 6px;
 
 		.name {
 			display: none;
@@ -984,7 +984,8 @@ img.fatality {
 
 		img {
 			height: 30px;
-			margin: 0 0 0 5px;
+			margin: 0;
+			margin-left: 4px; // makes room for bar
 			padding: 0;
 		}
 
@@ -997,14 +998,14 @@ img.fatality {
 	}
 
 	.message-caret {
-		left: 40px;
+		left: 42px;
 	}
 
 	.message-body {
 		display: inline-block;
 		width: auto;
-		max-width: calc(100% - 90px);
-		margin: 0 0 3px 0;
+		max-width: calc(100% - 98px);
+		margin: 0 9px 4px 9px;
 		border: solid #ddd 1px;
 		padding: 10px;
 		word-break: break-word;
@@ -1025,18 +1026,18 @@ img.fatality {
 	.message.local {
 		.message-author {
 			float: right;
-			margin-right: 5px;
 			margin-left: 0;
+			margin-right: 6px;
 
 			.status {
-				top: 0px;
+				top: 0;
 				left: initial;
 				right: 35px;
 			}
 		}
 		.message-caret {
 			left: initial;
-			right: 39px;
+			right: 42px;
 			border-left: 8px solid #d9edf7;
 			border-right: none;
 		}
