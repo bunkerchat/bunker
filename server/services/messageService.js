@@ -44,10 +44,7 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/leaderboard/i.test(text)) {
 		return leaderboard(roomMember, text);
 	}
-	else if (/^\/topic/i.test(text)) { // Change room topic
-		return setRoomTopic(roomMember, text);
-	}
-	else if (/^\/room\s+/i.test(text)) {
+	else if (/^\/topic|name|privacy|icon/i.test(text)) {
 		return setRoomAttribute(roomMember, text);
 	}
 	else if (/^\/magic8ball/i.test(text)) {
@@ -234,43 +231,12 @@ function setUserBusy(roomMember, text) {
 		});
 }
 
-function setRoomTopic(roomMember, text) {
-
-	if (roomMember.role == 'member') {
-		throw new ForbiddenError('Must be an administrator or moderator to change topic');
-	}
-
-	var user = roomMember.user;
-	var roomId = roomMember.room;
-	var topicMatches = text.match(/topic\s+(.+)/i);
-	var topic = topicMatches ? topicMatches[1].substr(0, 200) : null;
-
-	return Room.findByIdAndUpdate(roomId, {topic: topic}, {new: true})
-		.then(function (room) {
-
-			socketio.io.to('room_' + room._id)
-				.emit('room', {
-					_id: room._id,
-					verb: 'updated',
-					data: {topic: room.topic}
-				});
-
-			var message;
-			if (topic) {
-				message = `${user.nick} changed the topic to '${topic}'`;
-			}
-			else {
-				message = `${user.nick} cleared the topic`;
-			}
-
-			RoomService.messageRoom(roomId, message);
-		});
-}
-
 function setRoomAttribute(roomMember, text) {
 
+	if (roomMember.role === 'member') throw new ForbiddenError('Must be an administrator or moderator to change room attributes');
+
 	var user = roomMember.user;
-	var matches = text.match(/\/room\s+(\w+)\s*(.*)/i);
+	var matches = text.match(/\/(\w+)\s*(.*)/i);
 	var commands = ['name', 'topic', 'privacy', 'icon'];
 	var command = matches[1].toLowerCase();
 
@@ -278,27 +244,32 @@ function setRoomAttribute(roomMember, text) {
 		throw new InvalidInputError(`Invalid room command — options are ${commands.join(', ')}`);
 	}
 
-	if (command == 'topic') { // legacy command
-		return setRoomTopic(roomMember, text);
-	}
-
-	if (roomMember.role !== 'administrator') {
-		throw new ForbiddenError('Must be an administrator to set room attributes');
-	}
-
 	return Room.findById(roomMember.room)
 		.then(room => {
 			var message;
 
+			if (command == 'topic') {
+				var topic = matches[2].substr(0, 200).trim();
+				room.topic = topic;
+
+				if (topic && topic.length > 0) {
+					message = `${user.nick} changed the topic to '${topic}'`;
+				}
+				else {
+					message = `${user.nick} cleared the topic`;
+				}
+			}
 			if (command == 'name') {
-				var name = matches[2].substr(0, 50)
-					.trim();
+				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room name');
+
+				var name = matches[2].substr(0, 50).trim();
 				room.name = name;
 				message = `${user.nick} changed the room name to '${name}'`;
 			}
 			else if (command == 'privacy') {
-				var privacy = matches[2].toLowerCase()
-					.trim();
+				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room privacy');
+
+				var privacy = matches[2].toLowerCase().trim();
 				if (privacy != 'public' && privacy != 'private') {
 					throw new InvalidInputError('Invalid privacy — options are public, private');
 				}
@@ -307,17 +278,16 @@ function setRoomAttribute(roomMember, text) {
 				message = `${user.nick} changed the room to ${room.isPrivate ? 'private' : 'public'}`;
 			}
 			else if (command == 'icon') {
-				var icon = matches[2].toLowerCase()
-					.trim();
+				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room icon');
 
+				var icon = matches[2].toLowerCase().trim();
 				if (!icon || icon.length == 0) {
 					room.icon = null;
 					message = `${user.nick} cleared the room icon`;
 				}
 				else {
-					if (!icon.startsWith(':icon_')) throw new InvalidInputError('Invalid icon — use icon emoticons (they start with icon_)');
-					icon = icon.replace(/:|icon_/g, '')
-						.replace(/_/g, '-');
+					if (!icon.startsWith(':icon_')) throw new InvalidInputError('Invalid icon — use icon emoticons (they start with :icon_)');
+					icon = icon.replace(/:|icon_/g, '').replace(/_/g, '-');
 					room.icon = icon;
 					message = `${user.nick} changed the room icon to '${icon}'`;
 				}
