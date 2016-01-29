@@ -44,7 +44,7 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/leaderboard/i.test(text)) {
 		return leaderboard(roomMember, text);
 	}
-	else if (/^\/topic|name|privacy|icon/i.test(text)) {
+	else if (/^\/(topic|name|privacy|icon)/i.test(text)) {
 		return setRoomAttribute(roomMember, text);
 	}
 	else if (/^\/magic8ball/i.test(text)) {
