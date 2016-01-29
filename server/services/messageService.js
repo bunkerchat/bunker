@@ -447,7 +447,7 @@ function code(roomMember, text) {
 
 function image(roomMember, text) {
 	var match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
-	var searchQuery = match[1];
+	var searchQuery = ent.decode(match[1]);
 
 	return imageSearch.image(searchQuery)
 		.then(result => {
@@ -465,7 +465,7 @@ function image(roomMember, text) {
 
 function gif(roomMember, text) {
 	var match = /^\/gif(?:pick|search)*\s+(.*)$/i.exec(text);
-	var searchQuery = match[1];
+	var searchQuery = ent.decode(match[1]);
 
 	return imageSearch.gif(searchQuery)
 		.then(result => {
