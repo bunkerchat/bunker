@@ -3,6 +3,7 @@
 </a>
 
 <div class="pin-board" ng-class="{'pin-board-active': boardOpen }" ng-switch="!!pinnedMessages.length">
+	<span class="pin-board-close" ng-click="boardOpen = !boardOpen"><i class="fa fa-close" title="Close"></i></span>
 
 	<div ng-switch-when="true" ng-repeat="message in pinnedMessages" class="pin-board-message">
 		<div>

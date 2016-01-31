@@ -341,9 +341,22 @@ mark:hover {
 	left: 80px;
 	border: 1px solid #DFD7CA;
 	box-shadow: 0 6px 12px rgba(0, 0, 0, .5);
-	padding: 8px;
+	padding: 14px 12px 12px 12px;
 	border-radius: 4px;
 	z-index: 1040;
+}
+
+.pin-board-close {
+	color: #888;
+	font-size: 1.5em;
+	position: absolute;
+	right: 10px;
+	top: 4px;
+	cursor: pointer;
+}
+
+.pin-board-close:hover {
+	color: $darkBackgroundColor;
 }
 
 .pin-board-active {
@@ -382,7 +395,7 @@ mark:hover {
 }
 
 .pin-board-unpin:hover {
-	color: #000;
+	color: $darkBackgroundColor;
 }
 
 .message-pin-icon {
