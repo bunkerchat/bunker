@@ -76,7 +76,7 @@ googleSearchService.gifSearch = function (query) {
 			.then(function (images) {
 				// push all
 				goodImageUrls.push.apply(goodImageUrls, images);
-				goodImageUrls = _.unique(goodImageUrls);
+				goodImageUrls = _.uniq(goodImageUrls);
 
 				if (goodImageUrls.length < 8) {
 					// next page

@@ -56,7 +56,7 @@ function googleImageSearch(query, animated) {
 
 				return {
 					provider: 'google',
-					images: _(body.items).pluck('link').map(ensureResult).value()
+					images: _(body.items).map('link').map(ensureResult).value()
 				}
 			})
 			.then(JSON.stringify)
@@ -110,7 +110,7 @@ function bingImageSearch(query, animated) {
 
 				return {
 					provider: 'bing',
-					images: _(body.d.results).pluck('MediaUrl').map(ensureResult).value()
+					images: _(body.d.results).map('MediaUrl').map(ensureResult).value()
 				}
 			})
 			.then(JSON.stringify)

@@ -61,7 +61,7 @@ function generateStats(roomMember, template) {
 						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
 						activeDays: activeDays.length,
 						firstMessage: firstMessage ? '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')' : '',
-						emotes: ent.decode(_.pluck(emoticonCounts, 'emoticon').join(' ')),
+						emotes: ent.decode(_.map(emoticonCounts, 'emoticon').join(' ')),
 						randomMessage: randomMessage ? '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')' : '',
 						hangmanGuessCount: hangmanStats.count,
 						hangmanGuessAccuracy: hangmanStats.guessAccuracy ? hangmanStats.guessAccuracy + '%' : 'N/A',
@@ -145,7 +145,7 @@ function getEmoticonCounts(roomMember) {
 
 		_.each(messages, function (message) {
 
-			var matches = _.unique(message.text.match(emoticonRegex));
+			var matches = _.uniq(message.text.match(emoticonRegex));
 			if (matches) {
 				_.each(matches, function (match) {
 					countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
@@ -280,7 +280,7 @@ function getFightStatistics(userId) {
 				fightResults.fightWinPercentage = userStats.winPercentage + '% (' + userStats.wins + '-' + userStats.losses + '-' + userStats.ties + ')';
 				fightResults.topVictims = _.take(_.sortByOrder(victims, ['beatings'], [false]), 5);
 
-				userIds = _.unique(userIds);
+				userIds = _.uniq(userIds);
 
 				return User.find({"_id": {$in: userIds}}).then(function (users) {
 

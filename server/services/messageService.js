@@ -197,7 +197,7 @@ function setUserNick(roomMember, text) {
 					verb: 'updated',
 					data: {nick: updatedUser.nick}
 				});
-			RoomService.messageRooms(_.pluck(memberships, 'room'), user.nick + ' changed their handle to ' + updatedUser.nick);
+			RoomService.messageRooms(_.map(memberships, 'room'), user.nick + ' changed their handle to ' + updatedUser.nick);
 		});
 }
 
@@ -220,7 +220,7 @@ function setUserBusy(roomMember, text) {
 				message.push(': ' + user.busyMessage);
 			}
 
-			RoomService.messageRooms(_.pluck(memberships, 'room'), message.join(' '));
+			RoomService.messageRooms(_.map(memberships, 'room'), message.join(' '));
 
 			socketio.io.to('user_' + user._id)
 				.emit('user', {

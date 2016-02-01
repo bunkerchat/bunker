@@ -112,7 +112,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 					}
 					else if (searchState === searchStates.NICK) {
 						var currentRoom = bunkerData.getRoom($rootScope.roomId);
-						var users = _.pluck(currentRoom.$members, 'user');
+						var users = _.map(currentRoom.$members, 'user');
 						var activeUsers = _.filter(users, function (item) {
 							return moment().diff(item.lastConnected, 'days') < 45;
 						});
