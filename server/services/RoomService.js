@@ -56,7 +56,7 @@ RoomService.messageRoomsWithUser = function (spec) {
 		if (error) return false;
 		if (!roomMembers) return true;
 
-		_(roomMembers).pluck('room').each(function (room) {
+		_(roomMembers).map('room').each(function (room) {
 			if (!room) return;
 			// If we were provided a message, send it down to affected rooms
 			if (spec.systemMessage) {

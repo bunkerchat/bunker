@@ -68,7 +68,7 @@ function generateResults(template, fightData, fightRoundData, hangmanPrivateGame
 		userIds.push(hangmanGuessAccuracyDataElement.userId);
 	});
 
-	userIds = _.unique(userIds);
+	userIds = _.uniq(userIds);
 
 	return User.find({"_id": {$in: userIds}}).then(function (users) {
 		var data;

@@ -19,7 +19,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 
 				$scope.$watchCollection('current.$members', function (members) {
 					if (!members) return;
-					$scope.memberLookup = _.indexBy(members, function (roomMember) {
+					$scope.memberLookup = _.keyBy(members, function (roomMember) {
 						return roomMember.user._id;
 					});
 					updateMemberList();

@@ -8,8 +8,8 @@ app.factory('emoticons', function ($window) {
 	return {
 		all: list,
 		imageEmoticons: _.filter(list, {isIcon: false}),
-		names: _.pluck(list, 'name'),
-		files: _.pluck(list, 'file')
+		names: _.map(list, 'name'),
+		files: _.map(list, 'file')
 	};
 });
 

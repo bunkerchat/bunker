@@ -85,8 +85,8 @@ function makeGuess(roomMember, game, guess, userStats, publicStats) {
 		userStats.guessMisses++;
 	}
 
-	game.hits = _.unique(game.hits);
-	game.misses = _.unique(game.misses);
+	game.hits = _.uniq(game.hits);
+	game.misses = _.uniq(game.misses);
 
 	// if the game is over, remove it from the database. Otherwise update it
 	var action = checkForEndGame(game, guess) ? completeHangmanGame(game, guess, userStats, publicStats) : game.save();
@@ -131,7 +131,7 @@ function checkForEndGame(game, guess) {
 }
 
 function allLettersMatched(game) {
-	return game.hits.length >= _.unique(game.word).length
+	return game.hits.length >= _.uniq(game.word).length
 }
 
 function wordGuessed(game, guess) {

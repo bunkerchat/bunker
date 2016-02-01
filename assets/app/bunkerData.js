@@ -41,7 +41,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				// instead of sending many duplicate users down, send one list
 				// then re-hydrate all the associations
 				users.length = 0;
-				_.assign(users, _.indexBy(initialData.users, '_id'));
+				_.assign(users, _.keyBy(initialData.users, '_id'));
 
 				_.each(bunkerData.inbox, function (inbox) {
 					if (inbox.message.author) { // TODO causing a bug for @aSig for some reason without this
@@ -53,12 +53,12 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					membership.user = users[membership.user._id || membership.user];
 				});
 
-				bunkerData.inbox.unreadMessages = _.select(bunkerData.inbox, {read: false}).length;
+				bunkerData.inbox.unreadMessages = _.filter(bunkerData.inbox, {read: false}).length;
 
 				// Set $resolved on all rooms (those not in the data set to false)
 				// TODO ideally we could remove the rooms from the array entirely
 				_.each(bunkerData.rooms, function (room) {
-					room.$resolved = _.any(initialData.rooms, {_id: room._id});
+					room.$resolved = _.some(initialData.rooms, {_id: room._id});
 				});
 
 				// Go through data and sync messages
@@ -70,13 +70,13 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 						room = roomData;
 
 						// Set the room tab order
-						var membership = _.findWhere(bunkerData.memberships, {room: room._id});
+						var membership = _.find(bunkerData.memberships, {room: room._id});
 						var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : index;
 						setRoomOrder(roomIndex, room);
 					}
 					else {
 
-						var existingMessagesLookup = _.indexBy(room.$messages, '_id');
+						var existingMessagesLookup = _.keyBy(room.$messages, '_id');
 
 						// Add on messages that were previously not in the list
 						_.each(roomData.$messages, function (message) {
@@ -97,7 +97,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				pinBoard.initialize(_.chain(bunkerData.rooms).map('$pinnedMessages').flatten().value());
 
 				// creates a hashmap of rooms by its id
-				roomLookup = _.indexBy(bunkerData.rooms, '_id');
+				roomLookup = _.keyBy(bunkerData.rooms, '_id');
 
 				while (bunkerData.publicRooms.length) bunkerData.publicRooms.pop();
 				_.each(initialData.publicRooms, room => bunkerData.publicRooms.push(room));
@@ -114,7 +114,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			if (!bunkerData.userSettings.showNotifications && !message.author) return;
 
 			// we already have this message, please skip
-			if (_.any(room.$messages, '_id', message._id)) return false;
+			if (_.some(room.$messages, {'_id': message._id})) return false;
 
 			bunkerData.decorateMessage(room, message);
 
@@ -130,7 +130,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		loadMessages: function (room, skip) {
 			return io.socket.emitAsync('/room/messages', {roomId: room._id, skip: skip || 0})
 				.then(function (messages) {
-					var existingMessagesLookup = _.indexBy(room.$messages, '_id');
+					var existingMessagesLookup = _.keyBy(room.$messages, '_id');
 
 					_.eachRight(messages, function (message) {
 						if (existingMessagesLookup[message._id]) return;
@@ -227,7 +227,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			bunkerData.saveUserSettings();
 
 			if (checkForNotifications) {
-				var hasRoomNotifications = _.any(bunkerData.memberships, function (membership) {
+				var hasRoomNotifications = _.some(bunkerData.memberships, function (membership) {
 					return membership.showMessageDesktopNotification;
 				});
 
@@ -256,7 +256,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					_.each(bunkerData.inbox, function (inboxMessage) {
 						inboxMessage.read = true;
 					});
-					bunkerData.inbox.unreadMessages = _.select(bunkerData.inbox, {read: false}).length;
+					bunkerData.inbox.unreadMessages = _.filter(bunkerData.inbox, {read: false}).length;
 
 					return data;
 				});
@@ -335,7 +335,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	}
 
 	function decorateEmoticonCounts(emoticonCounts) {
-		var emoteCountsHash = _.indexBy(emoticonCounts, 'name');
+		var emoteCountsHash = _.keyBy(emoticonCounts, 'name');
 		_.each(emoticons.imageEmoticons, function (emoticon) {
 			emoticon.$count = emoteCountsHash[emoticon.name] ? emoteCountsHash[emoticon.name].count : 0;
 		});

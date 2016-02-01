@@ -39,7 +39,7 @@ app.directive('inbox', function (bunkerData, $state, $location, $anchorScroll) {
 				var room = _.find(bunkerData.rooms, {_id: message.room});
 
 				// go to loaded room's message
-				if(_.any(room.$messages, {_id: message._id})){
+				if(_.some(room.$messages, {_id: message._id})){
 					return $state.go('chat.room', {roomId: message.room})
 						.then(function () {
 							// scroll to message

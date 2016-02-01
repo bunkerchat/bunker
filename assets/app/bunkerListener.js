@@ -32,7 +32,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 
 	function handleUserEvent(evt) {
 		var userData = evt.data;
-		var users = _(bunkerData.rooms).pluck('$members').flatten().pluck('user').filter({_id: evt._id}).value();
+		var users = _(bunkerData.rooms).map('$members').flatten().map('user').filter({_id: evt._id}).value();
 
 		switch (evt.verb) {
 			case 'updated':
@@ -55,7 +55,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 	}
 
 	function handleMembershipEvent(evt) {
-		var membership = _(bunkerData.rooms).pluck('$members').flatten().filter({_id: evt._id}).first();
+		var membership = _(bunkerData.rooms).map('$members').flatten().filter({_id: evt._id}).first();
 		switch (evt.verb) {
 			case 'updated':
 				_.assign(membership, evt.data);
@@ -197,9 +197,9 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 
 			// Every 10 seconds, set user statuses
 			$interval(function () {
-				_(bunkerData.rooms).pluck('$members').flatten().pluck('user').each(user => {
+				_(bunkerData.rooms).map('$members').flatten().map('user').each(user => {
 					user.$present = isPresent(user);
-				}).value();
+				});
 			}, 10000);
 		}
 	};

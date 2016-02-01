@@ -10,7 +10,7 @@ app.factory('pinBoard', ['$window', '$rootScope', function ($window, $rootScope)
 			pinChangedListener = listener;
 		},
 		initialize: function (messages) {
-			pinLookup = _.indexBy(_.map(messages, '_id'));
+			pinLookup = _.keyBy(_.map(messages, '_id'));
 		},
 
 		pinChanged: function pinChanged(state) {

@@ -58,7 +58,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 				var room = header.rooms[i];
 
 				// check each membership
-				var membership = _.findWhere(header.memberships, {room: room._id});
+				var membership = _.find(header.memberships, {room: room._id});
 
 				membership.roomOrder = i;
 			}

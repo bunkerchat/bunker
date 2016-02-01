@@ -75,11 +75,11 @@ module.exports.init = function (req, res) {
 			inbox = _inboxMessages;
 			version = _version;
 
-			var rooms = _(memberships).pluck('room').compact().value();
+			var rooms = _(memberships).map('room').compact().value();
 
 			// build up a list of userids to fetch from the database
-			userIds.pushAll(_(inbox).pluck('message').pluck('author').unique().value());
-			userIds.pushAll(_.pluck(memberships, 'user'));
+			userIds.pushAll(_(inbox).map('message').map('author').uniq().value());
+			userIds.pushAll(_.map(memberships, 'user'));
 
 			// de-associate a room from a membership since we set rooms above
 			// and fix bad room order data
@@ -89,7 +89,6 @@ module.exports.init = function (req, res) {
 					membership.room = membership.room._id;
 					membership.roomOrder = index;
 				})
-				.value();
 
 			// Setup subscriptions
 			socket.join('user_' + userId);
@@ -108,17 +107,17 @@ module.exports.init = function (req, res) {
 					PinnedMessage.find({ room: room._id }).sort('-createdAt').populate('message')
 				)
 					.spread((messages, members, pinnedMessages) => {
-						userIds.pushAll(_.pluck(messages, 'author'), _.pluck(members, 'user'));
+						userIds.pushAll(_.map(messages, 'author'), _.map(members, 'user'));
 
 						// Setup subscriptions
 						_.each(members, member => socket.join('roommember_' + member._id));
-						_.each(_.pluck(members, 'user'), user => socket.join('user_' + user));
+						_.each(_.map(members, 'user'), user => socket.join('user_' + user));
 
 						room.$messages = messages;
 						room.$pinnedMessages = [];
 						room.$members = members;
 
-						var uniquePinnedMessages = _.unique(pinnedMessages, 'message.id');
+						var uniquePinnedMessages = _.uniq(pinnedMessages, 'message.id');
 
 						_.each(uniquePinnedMessages, function(message) {
 							room.$pinnedMessages.push(message.message);
@@ -134,7 +133,7 @@ module.exports.init = function (req, res) {
 			//var userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
 			return Promise.join(
 				User.find(userIds).select('-plaintextpassword -sockets').lean(),
-				Room.find({_id: {$nin: _.pluck(memberships, 'room')}, isPrivate: false}).lean()
+				Room.find({_id: {$nin: _.map(memberships, 'room')}, isPrivate: false}).lean()
 					.then(rooms => {
 						return Promise.map(rooms, room => {
 							return RoomMember.count({room: room._id})
