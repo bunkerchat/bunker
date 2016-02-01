@@ -114,7 +114,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			if (!bunkerData.userSettings.showNotifications && !message.author) return;
 
 			// we already have this message, please skip
-			if (_.some(room.$messages, '_id', message._id)) return false;
+			if (_.some(room.$messages, {'_id': message._id})) return false;
 
 			bunkerData.decorateMessage(room, message);
 
