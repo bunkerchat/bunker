@@ -21,10 +21,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		start: function () {
 			// Call start once we are finished connecting (bunker.js)
-			resolveBunkerData$Promise($q.all([
-				bunkerData.init()
-			]));
-
+			resolveBunkerData$Promise(bunkerData.init());
 			$timeout(bunkerData.refreshEmoticonCounts, 2000);
 		},
 

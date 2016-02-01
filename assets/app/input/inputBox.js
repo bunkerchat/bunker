@@ -29,6 +29,9 @@ app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerD
 				.keydown(keyDown)
 				.keyup(keyUp);
 
+			$rootScope.$on('roomIdChanged', () => elem.find('textarea').focus());
+			$rootScope.$on('bunkerDataLoaded', () => elem.find('textarea').focus());
+
 			scope.sendMessage = function () {
 				if (!scope.messageText) return;
 

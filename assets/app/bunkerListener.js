@@ -104,10 +104,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 					pinBoard.pinChanged(event.data);
 				}
 				else if (!event.data.pinned) {
-					_.remove(room.$pinnedMessages, function(item) {
-						return item._id === event.data.messageId;
-					});
-
+					_.remove(room.$pinnedMessages, item => item._id === event.data.messageId);
 					pinBoard.pinChanged(event.data);
 				}
 
@@ -182,16 +179,12 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 				if (listener.type == 'socket') {
 					io.socket.on(listener.name.toLowerCase(), function (evt) {
 						// Ensure we have data back before responding to events
-						bunkerData.$promise.then(function () {
-							listener.handler(evt);
-						});
+						bunkerData.$promise.then(() => listener.handler(evt));
 					});
 				}
 				else if (listener.type == 'rootScope') {
 					$rootScope.$on(listener.name, function (evt) {
-						bunkerData.$promise.then(function () {
-							listener.handler(evt);
-						});
+						bunkerData.$promise.then(() => listener.handler(evt));
 					});
 				}
 				else if (listener.type == 'window') {
@@ -204,7 +197,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 
 			// Every 10 seconds, set user statuses
 			$interval(function () {
-				_(bunkerData.rooms).pluck('$members').flatten().pluck('user').each(function (user) {
+				_(bunkerData.rooms).pluck('$members').flatten().pluck('user').each(user => {
 					user.$present = isPresent(user);
 				}).value();
 			}, 10000);
