@@ -194,6 +194,7 @@ input:focus, .form-control:focus {
 .no-gutter {
 	padding-left: 0;
 	padding-right: 0;
+	background: #ffffff;
 }
 
 .col-center {
@@ -1090,7 +1091,7 @@ img.fatality {
 
 		input, textarea {
 			float: left;
-			width: calc(100vw - 60px);
+			width: calc(100vw - 124px);
 			border-radius: 0;
 			border: 0;
 
@@ -1099,7 +1100,7 @@ img.fatality {
 			}
 		}
 
-		button {
+		button, span.btn {
 			display: inline-block;
 			width: 60px;
 			height: 46px;
@@ -1115,6 +1116,31 @@ img.fatality {
 				color: #333;
 			}
 		}
+	}
+}
+
+.btn-file {
+	position: relative;
+	overflow: hidden;
+
+	input[type=file] {
+		position: absolute;
+		top: 0;
+		right: 0;
+		min-width: 100%;
+		min-height: 100%;
+		font-size: 100px;
+		text-align: right;
+		filter: alpha(opacity=0);
+		opacity: 0;
+		outline: none;
+		background: white;
+		cursor: inherit;
+		display: block;
+	}
+
+	.fa {
+		padding-top:9px;
 	}
 }
 

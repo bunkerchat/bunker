@@ -1,13 +1,14 @@
 <div class="container-fluid message-input"
-	 ng-class="{'edit-mode' : editMode}"
-	 ng-show="$root.roomId && !$stateParams.date">
+		 ng-class="{'edit-mode' : editMode}"
+		 ng-show="$root.roomId && !$stateParams.date">
 	<div class="row">
 		<form class="col-md-10 no-gutter" ng-submit="sendMessage()">
 			<textarea rows="1" class="form-control"
-					  ng-model="messageText"
-					  ng-trim="false"
-					  bunker-input="messageText">
+								ng-model="messageText"
+								ng-trim="false"
+								bunker-input="messageText">
 			</textarea>
+			<upload-button></upload-button>
 			<button type="submit" class="btn btn-success" ng-click="sendMessage()">Send</button>
 		</form>
 		<div class="col-md-2 right-pane hidden-xs">
