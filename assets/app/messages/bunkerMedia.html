@@ -1,6 +1,7 @@
 <div class="panel panel-default">
 	<div class="panel-heading" ng-click="message.$visible = !message.$visible">
-		{{::(link || 'quote')}}
+		<i class="fa" ng-class="::link ? 'fa-image' : (message.type == 'code' ? 'fa-code' : 'fa-comment-o')"></i>
+		{{::(link || (message.type == 'code' ? 'code' : 'quote'))}}
 		<div class="pull-right">
 			Click to {{message.$visible ? 'close' : 'open'}}
 		</div>
