@@ -634,7 +634,7 @@ li:not(:last-child) .message.last-read:after {
 	padding: 12px;
 }
 
-.message-input button {
+.message-input button, span.btn {
 	display: none;
 	padding: 12px;
 	border-radius: 0;
