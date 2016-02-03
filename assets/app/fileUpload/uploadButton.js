@@ -2,8 +2,9 @@ app.directive('uploadButton', function ($timeout, imageUpload, DroppableItem, $r
 	return {
 		template: `
 		<span class="btn btn-file btn-success">
-				<i class="fa fa-cloud-upload"></i>
-				<input type="file" name="pic" accept="image/*">
+			<i ng-if="uploading" class="fa fa-spinner fa-spin fa-align-center"></i>
+			<i ng-if="!uploading" class="fa fa-cloud-upload fa-align-center"></i>
+			<input type="file" name="pic" accept="image/*">
 			</span>
 		`,
 		link: function ($scope, $elem) {
@@ -16,8 +17,14 @@ app.directive('uploadButton', function ($timeout, imageUpload, DroppableItem, $r
 				var droppable = new DroppableItem(file);
 
 				droppable.loadData()
-					.then(loadedData => imageUpload.doSingleImageUpload(loadedData.data.split(',')[1]))
-					.then(url  => $rootScope.$broadcast('inputText', url))
+					.then(loadedData => {
+						$scope.uploading = true;
+						return imageUpload.doSingleImageUpload(loadedData.data.split(',')[1])
+					})
+					.then(url  => {
+						$scope.uploading = false;
+						$rootScope.$broadcast('inputText', url)
+					})
 			}
 		}
 	}
