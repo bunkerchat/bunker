@@ -649,10 +649,20 @@ li:not(:last-child) .message.last-read:after {
 	padding: 12px;
 }
 
-.message-input button, span.btn {
-	display: none;
-	padding: 12px;
-	border-radius: 0;
+.message-input button,span.btn{
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 50px;
+		height: 100%;
+		display: none;
+		padding: 12px;
+		border-radius: 0;
+}
+
+.message-input span.btn {
+	display: inline-block;
+	padding-top: 13px;
 }
 
 .message-caret {
@@ -1132,6 +1142,10 @@ img.fatality {
 				color: #333;
 			}
 		}
+	}
+
+	.message-input span.btn{
+		right: 60px;
 	}
 }
 

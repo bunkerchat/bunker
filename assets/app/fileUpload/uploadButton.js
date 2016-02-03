@@ -1,12 +1,13 @@
 app.directive('uploadButton', function ($timeout, imageUpload, DroppableItem, $rootScope) {
 	return {
 		template: `
-		<span class="btn btn-file btn-success">
+		<span class="btn btn-file btn-default">
 			<i ng-if="uploading" class="fa fa-spinner fa-spin fa-align-center"></i>
 			<i ng-if="!uploading" class="fa fa-cloud-upload fa-align-center"></i>
 			<input type="file" name="pic" accept="image/*">
 			</span>
 		`,
+		replace: true,
 		link: function ($scope, $elem) {
 			$timeout(function () {
 				$('span.btn-file input[type="file"]').on('change', handleFileSelect);
