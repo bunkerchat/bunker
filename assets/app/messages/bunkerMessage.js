@@ -54,11 +54,22 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					text = createQuotedBlock(text);
 				}
 				else {
-					text = parseFormatting(text);
-					if (bunkerData.userSettings.showEmoticons) {
-						text = parseEmoticons(text);
-					}
-					text = parseMedia(text);
+					var tokensSplitOnUrls = text.split(/(https?:\/\/\S+)/i); // split on urls
+					var parsedTokens = _.map(tokensSplitOnUrls, token => {
+						// Parse urls as media
+						if (token.match(/https?:\/\/\S+/i)) {
+							token = parseMedia(token);
+						}
+						else {
+							token = parseFormatting(token);
+							if (bunkerData.userSettings.showEmoticons) {
+								token = parseEmoticons(token);
+							}
+						}
+						return token;
+					});
+
+					text = parsedTokens.join(' ');
 				}
 
 				return text;
