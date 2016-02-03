@@ -165,7 +165,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				];
 
 				_.each(types, function (type) {
-					var lookup = new RegExp('(?:[^A-z0-9]|^)(\\' + type.marker + '[^\\' + type.marker + ']+\\' + type.marker + ')(?:[^A-z0-9]|$)', 'g');
+					var lookup = new RegExp('(\\' + type.marker + '[^\\' + type.marker + ']+\\' + type.marker + ')', 'g');
 
 					var match;
 					while ((match = lookup.exec(text)) !== null) {
