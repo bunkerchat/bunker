@@ -2,7 +2,7 @@
   "name": "bunker",
   "version": "0.0.0",
   "homepage": "https://github.com/angular-resource-sails/bunker",
-  "description": "Reatime chat application built MEAN stack",
+  "description": "socket.io chat application built on the MEAN stack",
   "main": "app.js",
   "license": "MIT",
   "ignore": [

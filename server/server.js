@@ -1,7 +1,6 @@
 // set globals
 global.log = require('./config/log');
 global._ = require('lodash');
-//require('lodash-migrate');
 global.Promise = require('bluebird');
 
 var mongoose = require('mongoose');

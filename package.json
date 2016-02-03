@@ -2,7 +2,7 @@
   "name": "bunker",
   "private": true,
   "version": "0.0.0",
-  "description": "socket.io angular chat",
+  "description": "socket.io chat application built on the MEAN stack",
   "keywords": [],
   "dependencies": {
     "angular": "1.5.0-rc.1",
@@ -40,7 +40,6 @@
     "hookshot": "0.1.0",
     "jquery": "2.2.0",
     "lodash": "4.1.0",
-    "lodash-migrate": "0.2.3",
     "moment": "2.10.6",
     "mongodb": "2.0.49",
     "mongoose": "4.3.7",

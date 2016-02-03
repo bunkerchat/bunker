@@ -30,6 +30,10 @@ a, [ng-click], .pointer, [ui-sref] {
 	padding: 10px 20px;
 }
 
+.panel {
+	border-radius: 2px;
+}
+
 // ng-sortable overrides
 
 .as-sortable-item-handle {
@@ -600,8 +604,19 @@ li:not(:last-child) .message.last-read:after {
 	border-top: solid #eee 1px;
 }
 
-.message .panel-body {
-	padding: 0;
+.message {
+	.panel-heading {
+		padding: 5px 15px;
+	}
+	.panel-body {
+		padding: 0;
+
+		pre {
+			margin-bottom: 0;
+			border-width: 0;
+			background-color: transparent;
+		}
+	}
 }
 
 .message-info {
@@ -719,6 +734,7 @@ img.fatality {
 
 	li .offline {
 		opacity: 0.25;
+		color: #ddd;
 	}
 
 	.user-icon {
@@ -1137,6 +1153,10 @@ img.fatality {
 		background: white;
 		cursor: inherit;
 		display: block;
+	}
+
+	.fa {
+		padding-top:9px;
 	}
 }
 
