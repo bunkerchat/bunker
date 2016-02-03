@@ -253,7 +253,7 @@ function setRoomAttribute(roomMember, text) {
 				room.topic = topic;
 
 				if (topic && topic.length > 0) {
-					message = `${user.nick} changed the topic to '${topic}'`;
+					message = `${user.nick} changed the topic to ${topic}`;
 				}
 				else {
 					message = `${user.nick} cleared the topic`;
@@ -264,7 +264,7 @@ function setRoomAttribute(roomMember, text) {
 
 				var name = matches[2].substr(0, 50).trim();
 				room.name = name;
-				message = `${user.nick} changed the room name to '${name}'`;
+				message = `${user.nick} changed the room name to ${name}`;
 			}
 			else if (command == 'privacy') {
 				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room privacy');
