@@ -8,9 +8,9 @@ app.directive('uploadButton', function ($timeout, imageUpload, DroppableItem, $r
 		</button>
 		`,
 		replace: false,
-		link: function ($scope) {
+		link: function (scope, elem) {
 			$timeout(function () {
-				$('span.btn-file input[type="file"]').on('change', handleFileSelect);
+				elem.find('input[type="file"]').on('change', handleFileSelect);
 			});
 
 			function handleFileSelect(evt) {
@@ -19,11 +19,11 @@ app.directive('uploadButton', function ($timeout, imageUpload, DroppableItem, $r
 
 				droppable.loadData()
 					.then(loadedData => {
-						$scope.uploading = true;
+						scope.uploading = true;
 						return imageUpload.doSingleImageUpload(loadedData.data.split(',')[1])
 					})
 					.then(url  => {
-						$scope.uploading = false;
+						scope.uploading = false;
 						$rootScope.$broadcast('inputText', url)
 					})
 			}
