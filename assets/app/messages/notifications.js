@@ -23,7 +23,7 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 		if (bunkerData.userSettings.playSoundOnMention) {
 			if (bunkerIsVisible || !bunkerData.mentionsUser(message.text)) return;
 
-			if (bunkerData.user.nick === 'amann') {
+			if (bunkerData.user.nick === 'Glen') {
 				mentionSoundAlt.play();
 			}
 			else {
