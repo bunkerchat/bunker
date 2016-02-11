@@ -82,3 +82,11 @@ window.app = angular.module('bunker', [
 		bunkerListener.init();
 		bunkerData.start();
 	});
+
+
+$("body").on("click", "img.emoticon", function (evt) {
+	var emoticon = $(evt.target);
+	var original = emoticon.attr('title');
+	emoticon.after(`<span>${original}</span>`);
+	emoticon.remove();
+});
