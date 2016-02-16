@@ -66,6 +66,7 @@ app.factory('notifications', function ($rootScope, bunkerData, $notification, $t
 
 			// close timeout in 10 seconds
 			$timeout(function () {
+				if(!mention) return;
 				mention.close();
 			}, 5000)
 		}
