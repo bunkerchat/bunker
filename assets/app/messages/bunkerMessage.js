@@ -20,7 +20,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 	}
 
 	return {
-		template: '<span ng-bind-html="::formatted"></span>',
+		template: `<span></span>`,
 		scope: {
 			bunkerMessage: '=',
 			media: '@'
@@ -29,7 +29,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
 			if (scope.bunkerMessage && scope.bunkerMessage.text) {
-				scope.formatted = $sce.trustAsHtml(parseText(scope.bunkerMessage.text));
+				elem.find('span').html(parseText(scope.bunkerMessage.text));
+				$compile(elem.contents())(scope);
 			}
 			else {
 				scope.$watch('bunkerMessage.topic', function (topic) {
@@ -93,12 +94,12 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					text = parseEmoticons(text);
 				}
 
-				var attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
+				text = '<div message="::bunkerMessage" bunker-media><pre>' + text + '</pre></div>';
 
-				angular.element(elem).append(attachedMedia);
-				$compile(attachedMedia)(scope.$new());
+				//angular.element(elem).append(attachedMedia);
+				//$compile(attachedMedia)(scope.$new());
 
-				return '';
+				return text;
 			}
 
 			function parseHangman(text) {
@@ -127,20 +128,20 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
 				}
 				if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
-					var attachedMedia = angular.element('<div message="::bunkerMessage" ><pre>' + text + '</pre></div>');
-					angular.element(elem).append(attachedMedia);
-					$compile(attachedMedia)(scope.$new());
-					return '';
+					text += '<div message="::bunkerMessage" ><pre>' + text + '</pre></div>'
+					//angular.element(elem).append(attachedMedia);
+					//$compile(attachedMedia)(scope.$new());
+					return text
 				}
 
 				return text;
 			}
 
 			function parseCode(text) {
-				var attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>');
-				angular.element(elem).append(attachedMedia);
-				$compile(attachedMedia)(scope.$new());
-				return '';
+				text = '<div message="::bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>'
+				//angular.element(elem).append(attachedMedia);
+				//$compile(attachedMedia)(scope.$new());
+				return text;
 			}
 
 			function parseEmoticons(text) {
@@ -196,7 +197,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				var attachedMedia;
 				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
 					if (!replacedLinks[link]) {
-						text = replaceAll(text, link, '<a href="' + link + '" target="_blank">' + link + '</a>');
+						text = replaceAll(text, link, `<a href="" target="_blank">${link}</a>`);
 						replacedLinks[link] = true;
 					}
 
@@ -206,71 +207,108 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
 						var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
 						var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
-						attachedMedia = angular.element('' +
+						toggleButton(link);
+						attachedMedia = '' +
 							'<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
-							'</a></div>');
+							'</a></div>'
 					}
 					else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
-						attachedMedia = angular.element('' +
+
+						toggleButton(link);
+						attachedMedia = '' +
 							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
 							'<a target="_blank" href="' + link + '"><video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video></a>' +
-							'</div>');
+							'</div>'
 					}
 					else if (youtubeRegexp().test(link) && !attachedMedia) {
-						attachedMedia = angular.element('' +
+
+						toggleButton(link);
+						attachedMedia = '' +
 							'<div class="default-video-height" message="::bunkerMessage" bunker-media="' + link + '">' +
 							'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
-							'</div>');
+							'</div>'
 					}
 					else if (/(www\.)?(twitter\.com\/)/i.test(link) && !attachedMedia) {
 						var id = link.substr(link.lastIndexOf('/') + 1);
 						if (id) { /* don't embed tweet if we can't get the id from the link */
-							attachedMedia = angular.element('' +
+
+							toggleButton(link);
+							attachedMedia = '' +
 								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
 								'<div class="tweet_' + id + '">' +
 								'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp">' +
-								'</script></div></div>');
+								'</script></div></div>'
 						}
 					}
 					else if (/vimeo\.com(?:.*)?\/([A-z0-9]*)$/i.test(link) && !attachedMedia) {
 						var match = /vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.exec(link);
-						attachedMedia = angular.element('' +
+
+						toggleButton(link);
+						attachedMedia = '' +
 							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
 							'<iframe src="https://player.vimeo.com/video/' + match[1] + '?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
-							'</div>');
+							'</div>'
 					}
 					else if (/^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.test(link) && !attachedMedia) {
 						var match = /^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.exec(link);
 						var uri = "spotify%3A" + replaceAll(match[1], '/', '%3A');
 
-						attachedMedia = angular.element('' +
+						toggleButton(link);
+						attachedMedia = '' +
 							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
 							'<iframe src="https://embed.spotify.com/?uri=' + uri + '" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>' +
-							'</div>');
+							'</div>'
 					}
 					else if (/gfycat\.com\/(.*)/gi.test(link) && !attachedMedia) {
 						var match = /gfycat\.com\/(.*)/gi.exec(link);
 
-						attachedMedia = angular.element('' +
+						toggleButton(link);
+						attachedMedia = '' +
 							'<div message="::bunkerMessage" bunker-media="' + link + '">' +
 							'<div gfycat class="gfyitem" data-title=true data-autoplay=true data-controls=true data-expand=true data-id="' + match[1] + '" ></div> ', +
-							'</div>');
+							'</div>'
 					}
 					// run this one last since it conflicts with the gifv check above
 					else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
 						// Image link
-						attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><img src="' + link + '"/></a></div>');
+						//				text = text.replace(`${link}</a>`, `
+						//
+						//				${link}</a>
+						//<a ng-click="bunkerMessage.$visible = !bunkerMessage.$visible">
+						//	<i class="fa fa-lg" ng-class="{'fa-caret-down': bunkerMessage.$visible, 'fa-caret-left': !bunkerMessage.$visible}"></i>
+						//</a>`);
+
+						toggleButton(link);
+						//attachedMedia = angular.element(`<img src="${link}"/>`);
+						//					`
+						//
+						//
+						//</a>` +
+						//					'<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><img src="' + link + '"/></a></div>');
+
+						attachedMedia = '<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link + '"><img src="' + link + '"/></a></div>'
 					}
 				});
 
 				// If we made an image, attach it now
 				if (attachedMedia) {
-					angular.element(elem).append(attachedMedia);
-					$compile(attachedMedia)(scope.$new());
+					//text += attachedMedia;
+					elem.append(angular.element(attachedMedia));
+					//$compile(attachedMedia)(scope.$new());
 				}
 
 				return text;
+
+				function toggleButton(link) {
+					text = text.replace(`${link}</a>`, `
+						${link}</a>
+						<a ng-click="bunkerMessage.$visible = !bunkerMessage.$visible">
+							<i class="fa fa-lg" ng-class="{'fa-caret-square-o-down': bunkerMessage.$visible, 'fa-caret-square-o-left': !bunkerMessage.$visible}"></i>
+						</a>`)
+				}
 			}
 		}
 	};
+
+
 });

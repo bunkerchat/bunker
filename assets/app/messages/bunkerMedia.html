@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div ng-if="message.type == 'code'" class="panel panel-default">
 	<div class="panel-heading" ng-click="message.$visible = !message.$visible">
 		<i class="fa" ng-class="::link ? 'fa-image' : (message.type == 'code' ? 'fa-code' : 'fa-comment-o')"></i>
 		{{::(link || (message.type == 'code' ? 'code' : 'quote'))}}
@@ -9,4 +9,8 @@
 	<div class="panel-body" ng-if="message.$visible" ng-transclude>
 		<!--ng-transcluded here-->
 	</div>
+</div>
+
+<div ng-if="message.$visible && message.type != 'code'" ng-transclude>
+
 </div>
