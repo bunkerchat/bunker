@@ -270,7 +270,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						toggleLink(link);
 						attachedMedia = `
 							<div message="::bunkerMessage" bunker-media="${link}">
-								<div gfycat class="gfyitem" data-title=true data-autoplay=true data-controls=true data-expand=true data-id="${match[1]}" ></div> '
+								<div gfycat class="gfyitem" data-title=true data-autoplay=true data-controls=true data-expand=true data-id="${match[1]}" ></div>
 							</div>`;
 					}
 					// run this one last since it conflicts with the gifv check above
