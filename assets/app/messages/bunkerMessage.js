@@ -277,7 +277,10 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
 						// Image link
 						toggleLink(link);
-						attachedMedia = `<div message="::bunkerMessage" bunker-media="${link}"><img src="${link}"/></div>`
+						attachedMedia = `
+						<div ng-click="bunkerMessage.$visible = !bunkerMessage.$visible" message="::bunkerMessage" bunker-media="${link}">
+							<img src="${link}"/>
+						</div>`
 					}
 				});
 
