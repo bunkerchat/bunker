@@ -1,11 +1,10 @@
-app.directive('bunkerMedia', function (bunkerData) {
+app.directive('bunkerQuote', function (bunkerData) {
 	'use strict';
 
 	return {
-		template: '<div ng-if="message.$visible" ng-transclude></div>',
+		templateUrl: '/assets/app/messages/bunkerQuote.html',
 		transclude: true,
 		scope: {
-			link: '@bunkerMedia',
 			message: '='
 		},
 		link: function (scope) {
