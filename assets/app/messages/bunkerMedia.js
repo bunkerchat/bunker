@@ -2,7 +2,7 @@ app.directive('bunkerMedia', function (bunkerData) {
 	'use strict';
 
 	return {
-		template: '<div ng-if="message.$visible" ng-transclude></div>',
+		template: '<div class="bunker-media" ng-if="message.$visible" ng-transclude></div>',
 		transclude: true,
 		scope: {
 			link: '@bunkerMedia',
