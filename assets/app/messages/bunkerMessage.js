@@ -195,7 +195,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				var attachedMedia;
 				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
 					if (!replacedLinks[link]) {
-						text = replaceAll(text, link, `<a href="" target="_blank">${link}</a>`);
+						text = replaceAll(text, link, `<a href="${link}" target="_blank">${link}</a>`);
 						replacedLinks[link] = true;
 					}
 
@@ -240,7 +240,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 							toggleLink(link);
 							attachedMedia = `
 								<div message="::bunkerMessage" bunker-media="${link}">
-									<div class="tweet_${id}">
+									<div class="stupid-twitter tweet_${id}">
 										<script src="https://api.twitter.com/1/statuses/oembed.json?id=${id}&amp;callback=addTweet&amp"></script>
 									</div>
 								</div>`;
@@ -300,5 +300,4 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 			}
 		}
 	};
-
 });
