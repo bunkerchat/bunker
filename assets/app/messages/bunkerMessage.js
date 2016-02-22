@@ -278,7 +278,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						// Image link
 						toggleLink(link);
 						attachedMedia = `
-						<div ng-click="bunkerMessage.$visible = !bunkerMessage.$visible" message="::bunkerMessage" bunker-media="${link}">
+						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
 							<img src="${link}"/>
 						</div>`
 					}
