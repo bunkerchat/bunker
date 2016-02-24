@@ -207,24 +207,20 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
 						toggleLink(link);
 						attachedMedia = `
-							<div message="::bunkerMessage" bunker-media="${link}">
-								<a target="_blank" href="${link}">
-									<video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop>
-										<source type="video/webm" src="${imgurLinkWebm}">
-										<source type="video/mp4" src="${imgurLinkMpeg}">
-									</video>
-								</a>
+							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
+								<video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop>
+									<source type="video/webm" src="${imgurLinkWebm}">
+									<source type="video/mp4" src="${imgurLinkMpeg}">
+								</video>
 							</div>`;
 					}
 					else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
 						toggleLink(link);
 						attachedMedia = `
-							<div message="::bunkerMessage" bunker-media="${link}">
-								<a target="_blank" href="${link}">
-									<video autoplay loop muted>
-										<source type="video/mp4" src="${link.toLowerCase().replace('gifv', 'mp4')}">
-									</video>
-								</a>
+							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
+								<video autoplay loop muted>
+									<source type="video/mp4" src="${link.toLowerCase().replace('gifv', 'mp4')}">
+								</video>
 							</div>`;
 					}
 					else if (youtubeRegexp().test(link) && !attachedMedia) {
