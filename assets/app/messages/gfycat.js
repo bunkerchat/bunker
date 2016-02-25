@@ -53,6 +53,7 @@ var gfyObject = function (gfyElem) {
 	var gfyFrameRate;
 	var source;
 	var source2;
+	var ctrlRow;
 
 	// Helper function -- only required because some browsers do not have get by class name
 	function byClass(className, obj) {
