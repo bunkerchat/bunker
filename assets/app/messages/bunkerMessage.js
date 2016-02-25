@@ -260,8 +260,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 								<iframe src="https://embed.spotify.com/?uri=${uri}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
 							</div>`;
 					}
-					else if (/gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?)/gi.test(link) && !attachedMedia) {
-						var match = /gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?)/gi.exec(link);
+					else if (/gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?|.gif)/gi.test(link) && !attachedMedia) {
+						var match = /gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?|.gif)/gi.exec(link);
 
 						toggleLink(link);
 						attachedMedia = `
