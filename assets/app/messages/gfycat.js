@@ -46,7 +46,13 @@ var gfyObject = function (gfyElem) {
 	var gfyItem;
 	var gfyWidth;
 	var gfyHeight;
-
+	var attrib_src;
+	var attrib_dest;
+	var gfyMp4Url;
+	var gfyWebmUrl;
+	var gfyFrameRate;
+	var source;
+	var source2;
 
 	// Helper function -- only required because some browsers do not have get by class name
 	function byClass(className, obj) {
