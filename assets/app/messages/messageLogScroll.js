@@ -1,4 +1,4 @@
-app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
+app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, animationControl) {
 	return {
 		scope: {
 			roomId: '@',
@@ -53,23 +53,19 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData) {
 
 			$scope.$on('roomIdChanged', function () {
 				$timeout(function () {
-					$('img[src$=".gif"]:visible').css('visibility', '');
-					$('img[src$=".gif"]:hidden').css('visibility', 'hidden');
-
-					$('video:visible')
-						.css('visibility', '')
-						.each(function (index, el) {
-							el.play();
-						});
-
-					$('video:hidden')
-						.css('visibility', 'hidden')
-						.each(function (index, el) {
-							el.pause();
-						});
+					animationControl.stop();
+					animationControl.start();
 				});
 
 				scroll();
+			});
+
+			$scope.$on('visibilityHide', function () {
+				$timeout(() => animationControl.stop({all:true}));
+			});
+
+			$scope.$on('visibilityShow', function () {
+				$timeout(() => animationControl.start());
 			});
 
 			// Scroll after state changes and when youtubes have loaded
