@@ -129,7 +129,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
 				}
 				if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
-					text += '<div message="::bunkerMessage" ><pre>' + text + '</pre></div>'
+					text += '<div message="::bunkerMessage" ><pre>' + text + '</pre></div>';
 					return text
 				}
 
@@ -260,8 +260,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 								<iframe src="https://embed.spotify.com/?uri=${uri}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
 							</div>`;
 					}
-					else if (/gfycat\.com\/(.*)/gi.test(link) && !attachedMedia) {
-						var match = /gfycat\.com\/(.*)/gi.exec(link);
+					else if (/gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?)/gi.test(link) && !attachedMedia) {
+						var match = /gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?)/gi.exec(link);
 
 						toggleLink(link);
 						attachedMedia = `
