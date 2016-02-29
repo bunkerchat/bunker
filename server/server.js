@@ -38,7 +38,7 @@ module.exports.run = function (cb) {
 			return server.listenAsync(config.express.port);
 		})
 		.then(function () {
-			log.info('server - hosted - http://' + config.express.ip + ':' + config.express.port);
+			log.info('server - hosted - http://' + config.express.hostName + ':' + config.express.port);
 			//log.info('config file', config);
 		})
 		.then(cb)
