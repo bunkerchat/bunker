@@ -178,6 +178,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		broadcastActiveRoom: function (roomId) {
 			// don't set active room when bunker is reloaded by code
 			if (lastActiveRoom == roomId || localStorage.bunkerReloaded) return;
+			lastActiveRoom = roomId;
 			io.socket.emitAsync('/user/current/activity', {room: roomId});
 		},
 		broadcastTyping: function (roomId) {
