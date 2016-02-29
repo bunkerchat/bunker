@@ -43,6 +43,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				users.length = 0;
 				_.assign(users, _.keyBy(initialData.users, '_id'));
 
+				_.each(users, user => {
+					user.$present = bunkerData.isPresent(user);
+				});
+
 				_.each(bunkerData.inbox, function (inbox) {
 					if (inbox.message.author) { // TODO causing a bug for @aSig for some reason without this
 						inbox.message.author = users[inbox.message.author._id || inbox.message.author];
@@ -213,6 +217,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			return regex.test(text);
 		},
 
+		isPresent: user => user.connected && !user.busy && user.present,
+
 		// UserSettings
 
 		saveUserSettings: function () {
@@ -310,8 +316,6 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	function decorateMembers(room) {
 		_.each(room.$members, function (member) {
 			member.user = users[member.user._id || member.user];
-			if (!member.user) return;
-			member.user.$present = true; // assumed true for now
 		});
 
 		_.remove(room.$members, member => !member.user);

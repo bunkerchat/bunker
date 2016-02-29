@@ -38,7 +38,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 			case 'updated':
 				_.each(users, function (user) {
 					_.assign(user, userData);
-					user.$present = isPresent(user);
+					user.$present = bunkerData.isPresent(user);
 				});
 				if (evt._id == bunkerData.user._id) {
 					_.assign(bunkerData.user, userData);
@@ -142,10 +142,6 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		$rootScope.$broadcast('socketDisconnected');
 	}
 
-	function isPresent(user) {
-		return user.connected && !user.busy && user.present;
-	}
-
 	// Handle events
 	var listeners = [
 		{name: 'room', type: 'socket', handler: handleRoomEvent},
@@ -198,7 +194,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 			// Every 10 seconds, set user statuses
 			$interval(function () {
 				_(bunkerData.rooms).map('$members').flatten().map('user').each(user => {
-					user.$present = isPresent(user);
+					user.$present = bunkerData.isPresent(user);
 				});
 			}, 10000);
 		}
