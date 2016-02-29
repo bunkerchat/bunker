@@ -40,17 +40,17 @@ module.exports.init = function (req, res) {
 	// find user sockets
 	User.findById(userId, {sockets: 1}).then(user => {
 
-		var sockets = user.sockets || [];
-		_.remove(sockets, {socketId: req.socket.id});
-		sockets.push({socketId: req.socket.id, updatedAt: new Date()});
+			var sockets = user.sockets || [];
+			_.remove(sockets, {socketId: req.socket.id});
+			sockets.push({socketId: req.socket.id, updatedAt: new Date()});
 
-		return User.findByIdAndUpdate(userId, {
-			sockets: sockets,
-			connected: true,
-			lastConnected: new Date().toISOString(),
-			typingIn: null
-		}, {'new': true});
-	})
+			return User.findByIdAndUpdate(userId, {
+				sockets: sockets,
+				connected: true,
+				lastConnected: new Date().toISOString(),
+				typingIn: null
+			}, {'new': true});
+		})
 		.then(updatedUser => {
 			req.io.to('user_' + updatedUser._id).emit('user', {
 				_id: updatedUser._id,
@@ -103,8 +103,8 @@ module.exports.init = function (req, res) {
 				return Promise.join(
 					Message.find({room: room._id}).sort('-createdAt').limit(40).lean(),
 					RoomMember.find({room: room._id}).lean(),
-					PinnedMessage.find({ room: room._id }).sort('-createdAt').populate('message')
-				)
+					PinnedMessage.find({room: room._id}).sort('-createdAt').populate('message')
+					)
 					.spread((messages, members, pinnedMessages) => {
 						userIds.pushAll(_.map(messages, 'author'), _.map(members, 'user'));
 
@@ -118,7 +118,7 @@ module.exports.init = function (req, res) {
 
 						var uniquePinnedMessages = _.uniq(pinnedMessages, 'message.id');
 
-						_.each(uniquePinnedMessages, function(message) {
+						_.each(uniquePinnedMessages, function (message) {
 							room.$pinnedMessages.push(message.message);
 						});
 
@@ -170,9 +170,7 @@ module.exports.activity = function (req, res) {
 
 	var lastMessageId;
 
-	var updates = {activeRoom};
-
-	User.findByIdAndUpdate(userId, updates)
+	userActivity(req, res, {activeRoom})
 		.then(user => {
 			return Message.findOne({room: user.activeRoom}, {_id: 1}, {
 				sort: {$natural: -1},
@@ -194,29 +192,30 @@ module.exports.activity = function (req, res) {
 				data: {lastReadMessage: lastMessageId}
 			});
 		})
-		.then(() => res.ok())
 		.catch(log.error);
 };
 
 module.exports.typing = function (req, res) {
-
-	var userId = req.session.userId;
-
-	var typingIn = req.body.typingIn;
-	var updates = { typingIn: typingIn = req.body.typingIn};
-
-	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
-	res.ok();
+	userActivity(req, res, {typingIn: req.body.typingIn})
+		.then(() => res.ok())
+		.catch(res.serverError)
 };
 
 module.exports.present = function (req, res) {
-
-	var userId = req.session.userId;
-	var updates = { present: req.body.present };
-
-	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
-	res.ok();
+	userActivity(req, res, {present: req.body.present})
+		.then(res.ok)
+		.catch(res.serverError)
 };
+
+function userActivity(req, res, updates) {
+	var userId = req.session.userId;
+
+	return User.findByIdAndUpdate(userId, updates)
+		.then((user) => {
+			req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
+			return user;
+		});
+}
 
 module.exports.markInboxRead = function (req, res) {
 	InboxMessage.update({user: req.session.userId.toObjectId()}, {read: true})
@@ -240,7 +239,7 @@ module.exports.ping = function (req, res) {
 				sockets: {socketId: req.socket.id}
 			}
 		}
-	)
+		)
 		.then(() => {
 			return User.findByIdAndUpdate(userId,
 				{
@@ -259,20 +258,20 @@ setInterval(function () {
 	var expiredSocketDate = moment().subtract(30, 'seconds').toDate();
 
 	User.find({
-		connected: true,
-		$or: [
-			{
-				sockets: {
-					$elemMatch: {
-						updatedAt: {"$lte": expiredSocketDate}
+			connected: true,
+			$or: [
+				{
+					sockets: {
+						$elemMatch: {
+							updatedAt: {"$lte": expiredSocketDate}
+						}
 					}
+				},
+				{
+					sockets: {$size: 0}
 				}
-			},
-			{
-				sockets: {$size: 0}
-			}
-		]
-	})
+			]
+		})
 		.then(users => {
 			return Promise.each(users, user => {
 				var sockets = _(user.sockets)
