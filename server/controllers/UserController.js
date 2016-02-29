@@ -48,8 +48,7 @@ module.exports.init = function (req, res) {
 			sockets: sockets,
 			connected: true,
 			lastConnected: new Date().toISOString(),
-			typingIn: null,
-			present: true
+			typingIn: null
 		}, {'new': true});
 	})
 		.then(updatedUser => {
