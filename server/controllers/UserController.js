@@ -162,30 +162,7 @@ function codeVersion() {
 		.then.catch(_.noop)
 }
 
-// Activity update route. This will respond to PUT /user/current/activity
-// This route only allows updates to present, typingIn, and room. It can only be called by the current user.
-// Its purpose is to update state changes for the current user (which room are they typing in, are they away,
-// which room is active, etc.)
 module.exports.activity = function (req, res) {
-
-	var userId = req.session.userId;
-
-	// Only allow updates for the following values
-	// There's no need for us to save these in the db, this may change in the future
-	var typingIn = req.body.typingIn;
-	var present = req.body.present;
-	var updates = {
-		typingIn: typeof typingIn !== 'undefined' ? typingIn : null,
-		present: typeof present !== 'undefined' ? present : true
-	};
-
-	markLastReadMessage(req, updates);
-
-	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
-	res.ok(updates);
-};
-
-function markLastReadMessage(req, updates) {
 	var activeRoom = req.body.room;
 	var userId = req.session.userId;
 
@@ -193,9 +170,9 @@ function markLastReadMessage(req, updates) {
 
 	var lastMessageId;
 
-	updates.activeRoom = activeRoom;
+	var updates = {activeRoom};
 
-	User.findByIdAndUpdate(userId, {activeRoom: activeRoom})
+	User.findByIdAndUpdate(userId, updates)
 		.then(user => {
 			return Message.findOne({room: user.activeRoom}, {_id: 1}, {
 				sort: {$natural: -1},
@@ -217,8 +194,29 @@ function markLastReadMessage(req, updates) {
 				data: {lastReadMessage: lastMessageId}
 			});
 		})
+		.then(() => res.ok())
 		.catch(log.error);
-}
+};
+
+module.exports.typing = function (req, res) {
+
+	var userId = req.session.userId;
+
+	var typingIn = req.body.typingIn;
+	var updates = { typingIn: typingIn = req.body.typingIn};
+
+	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
+	res.ok();
+};
+
+module.exports.present = function (req, res) {
+
+	var userId = req.session.userId;
+	var updates = { present: req.body.present };
+
+	req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
+	res.ok();
+};
 
 module.exports.markInboxRead = function (req, res) {
 	InboxMessage.update({user: req.session.userId.toObjectId()}, {read: true})

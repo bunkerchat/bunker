@@ -43,6 +43,9 @@ module.exports.socketio = function (socket) {
 
 	// user
 	socket.on('/user/current/activity', socketToController(userController.activity));
+	socket.on('/user/current/typing', socketToController(userController.typing));
+	socket.on('/user/current/present', socketToController(userController.present));
+
 	socket.on('/user/current/markInboxRead', socketToController(userController.markInboxRead));
 	socket.on('/user/current/clearInbox', socketToController(userController.clearInbox));
 	socket.on('/user/current/ping', socketToController(userController.ping));
