@@ -252,7 +252,7 @@ module.exports.ping = function (req, res) {
 				}
 			)
 		})
-		.then(res.ok)
+		.then(() => res.ok())
 		.catch(res.serverError);
 };
 
