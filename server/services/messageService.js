@@ -399,11 +399,11 @@ function message(roomMember, text, type) {
 
 function broadcastMessage(message) {
 	return Message.findById(message._id)
-		.populate('room author')
+		.populate('author')
 		.then(function (message) {
-			socketio.io.to('room_' + message.room._id)
+			socketio.io.to('room_' + message.room)
 				.emit('room', {
-					_id: message.room._id,
+					_id: message.room,
 					verb: 'messaged',
 					data: message
 				});
