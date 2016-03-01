@@ -71,7 +71,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	};
 
 	$rootScope.$on('bunkerMessaged', function (evt, message) {
-		if (!bunkerData.$resolved || message.room._id == $rootScope.roomId || (message.type == 'standard' && message.author._id == bunkerData.user._id)) {
+		if (!bunkerData.$resolved || message.room == $rootScope.roomId || (message.type == 'standard' && message.author._id == bunkerData.user._id)) {
 			return;
 		}
 
@@ -79,7 +79,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 			return;
 		}
 
-		var otherRoom = bunkerData.getRoom(message.room._id);
+		var otherRoom = bunkerData.getRoom(message.room);
 		if (otherRoom) {
 			otherRoom.$unreadMessages = otherRoom.$unreadMessages ? otherRoom.$unreadMessages + 1 : 1;
 			if (bunkerData.mentionsUser(message.text)) {
