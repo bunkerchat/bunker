@@ -42,7 +42,10 @@ module.exports.message = function (req, res) {
 				messageService.createMessage(roomMember, req.body.text)
 			);
 		})
-		.spread((userUpdate, message) => res.ok(message))
+		.spread((userUpdate, message) => {
+			message.author = message.author._id;
+			res.ok(message)
+		})
 		.catch(InvalidInputError, function (err) {
 			RoomService.messageUserInRoom(currentRoomMember.user._id, currentRoomMember.room, err.message);
 			res.badRequest(err);
