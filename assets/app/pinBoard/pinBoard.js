@@ -53,27 +53,38 @@ app.directive('pins', ['pinBoard', function (pinBoard) {
 
 			scope.boardOpen = false;
 
-			// Using 'handler' option for on/off because of race condition with
-			// scope create/destroy with this directive.
-			var closeClickListener = function () {
-				if (!scope.boardOpen) {
-					return true;
+			var pinBoardCloseHandler = function(event) {
+				var holder = $(event.target).closest('.pin-board-holder');
+
+				if (!holder.length) {
+					scope.closeBoard(true);
 				}
 
-				scope.boardOpen = false;
-				scope.$digest();
+				return true;
 			};
 
-			$(document)
-					.on('click.pinBoard', closeClickListener)
-					.on('click.pinBoard', '.pin-board-holder', function () {
-						return false;
-					});
+			scope.closeBoard = function(digest) {
 
-			scope.$on('$destroy', function () {
-				$(document).off('click.pinBoard', closeClickListener);
-			});
+				scope.boardOpen = false;
 
+				$(document).off('click.pinBoard');
+
+				if (digest) {
+					scope.$digest();
+				}
+			};
+
+			scope.toggleBoard = function() {
+
+				scope.boardOpen = !scope.boardOpen;
+
+				if (scope.boardOpen) {
+					$(document).off('click.pinBoard').on('click.pinBoard', pinBoardCloseHandler);
+				}
+				else {
+					$(document).off('click.pinBoard');
+				}
+			};
 		}
 	};
 }]);

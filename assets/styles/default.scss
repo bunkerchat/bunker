@@ -247,7 +247,7 @@ mark:hover {
 	width: 100%;
 	height: 100%;
 	background-color: $darkBackgroundColor;
-	z-index: 9001;
+	z-index: 1040; /* bootstrap sets z-index of navbar to 1030, so we need to be above that */
 	padding-top: 90px;
 	text-align: center;
 	font-family: "Cabin", Arial, sans-serif;
@@ -337,7 +337,6 @@ mark:hover {
 .pin-board {
 	position: fixed;
 	display: none;
-	overflow-y: scroll;
 	overflow-x: hidden;
 	bottom: 34px;
 	background: white;
@@ -348,7 +347,6 @@ mark:hover {
 	box-shadow: 0 6px 12px rgba(0, 0, 0, .5);
 	padding: 14px 12px 12px 12px;
 	border-radius: 4px;
-	z-index: 1040;
 }
 
 .pin-board-close {
@@ -518,7 +516,7 @@ li:not(:last-child) .message.last-read:after {
 	left: 0;
 	width: 100%;
 	height: 2px;
-	z-index: 1000;
+	z-index: 10;
 	background-color: $successColor;
 }
 
@@ -892,7 +890,7 @@ img.fatality {
 	position: absolute;
 	width: 100%;
 	bottom: -40px;
-	z-index: 1;
+	z-index: 11;
 }
 
 .debugging {

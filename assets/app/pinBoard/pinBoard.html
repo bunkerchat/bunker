@@ -1,9 +1,9 @@
-<a class="btn btn-link" href="javascript:void(0);" ng-click="boardOpen = !boardOpen" title="Pinned messages">
+<a class="btn btn-link" href="javascript:void(0);" ng-click="toggleBoard();" title="Pinned messages">
 	<i class="fa fa-lg" ng-class="{'fa-bookmark': boardOpen, 'fa-bookmark-o': !boardOpen}"></i>
 </a>
 
 <div class="pin-board" ng-class="{'pin-board-active': boardOpen }" ng-switch="!!pinnedMessages.length">
-	<span class="pin-board-close" ng-click="boardOpen = !boardOpen"><i class="fa fa-close" title="Close"></i></span>
+	<span class="pin-board-close" ng-click="closeBoard();"><i class="fa fa-close" title="Close"></i></span>
 
 	<div ng-switch-when="true" ng-repeat="message in pinnedMessages" class="pin-board-message">
 		<div>
