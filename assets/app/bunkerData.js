@@ -308,7 +308,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		};
 
 		_.each(room.$messages, messageDecorator);
-		_.each(room.$pinnedMessages, messageDecorator);
+		_.each(_.map(room.$pinnedMessages, 'message'), messageDecorator);
 	}
 
 	function decorateMembers(room) {

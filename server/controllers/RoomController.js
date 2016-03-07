@@ -253,6 +253,7 @@ module.exports.pinMessage = function(req, res) {
 	// save pinBoard?
 
 	RoomMember.findOne({room: roomId, user: userId})
+		.populate('user')
 		.then(function(roomMember) {
 
 			if (!roomMember || (roomMember.role !== 'administrator' && roomMember.role !== 'moderator')) {
@@ -260,22 +261,26 @@ module.exports.pinMessage = function(req, res) {
 			}
 
 			return [PinnedMessage.create({ message: messageId, room: roomId, user: userId }),
-					Message.findOne(messageId).populate('author').populate('room')];
+					Message.findOne(messageId).populate('author').populate('room'),
+					roomMember.user];
 		})
-		.spread(function(pinnedMessage, message) {
+		.spread(function(pinnedMessage, message, user) {
 
 			if (message.room.id !== req.body.roomId) {
 				throw new InvalidInputError('Can only pin message to the room it belongs to.');
 			}
 
-			if (message.type !== 'standard' && message.type !== 'code') {
-				throw new InvalidInputError('Can only pin standard and code messages.');
+			if (message.type !== 'standard' && message.type !== 'code' && message.type !== 'quote') {
+				throw new InvalidInputError('Can only pin standard, code, and quote messages.');
 			}
+
+			pinnedMessage.user = user;
+			pinnedMessage.message = message;
 
 			req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
 				_id: req.body.roomId,
 				verb: 'messaged',
-				data: { pinned: true, messageId: req.body.messageId, message: message, roomId: req.body.roomId }
+				data: { pinnedMessage: pinnedMessage, pinned: true }
 			});
 
 			res.ok();
@@ -301,7 +306,7 @@ module.exports.unPinMessage = function(req, res) {
 			return PinnedMessage.remove({ message: messageId });
 		})
 		.then(function() {
-			var unPinResult = { messageId: req.body.messageId, pinned: false, roomId: req.body.roomId };
+			var unPinResult = { pinnedMessage: { message: { _id: req.body.messageId }, room: req.body.roomId }, pinned: false };
 
 			req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
 				_id: req.body.roomId,
