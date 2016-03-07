@@ -180,7 +180,7 @@ function animation(roomMember, text) {
 
 function setUserNick(roomMember, text) {
 	var nickMatches = text.match(/^\/nick\s+([\w\s\-\.]{0,19})/i);
-	if (!nickMatches) throw new InvalidInputError('Invalid nick');
+	if (!nickMatches || !nickMatches[1]) throw new InvalidInputError('Invalid nick');
 
 	var user = roomMember.user;
 	var newNick = nickMatches[1];
