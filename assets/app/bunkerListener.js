@@ -157,7 +157,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		{name: 'visibilityShow', type: 'rootScope', handler: handleVisibilityShow},
 		{name: 'visibilityHide', type: 'rootScope', handler: handleVisibilityHide},
 		{name: 'onload', type: 'window', handler: _.throttle(resetTimer, 5000)},
-		{name: 'onmousemove', type: 'document', handler: _.throttle(resetTimer, 5000)},
+		{name: 'onmousedown', type: 'document', handler: _.throttle(resetTimer, 5000)},
 		{name: 'onkeypress', type: 'document', handler: _.throttle(resetTimer, 5000)}
 	];
 
