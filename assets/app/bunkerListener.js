@@ -89,22 +89,22 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 
 	function handleMessagePin(event) {
 
-		var room = bunkerData.getRoom(event.data.roomId);
+		var room = bunkerData.getRoom(event.data.pinnedMessage.room);
 
 		switch (event.verb) {
 			case 'messaged':
 
 				// If we are trying to pin the message, but it's already on the
 				// pinboard, don't add it again.
-				if (event.data.pinned && !pinBoard.isPinned(event.data.messageId)) {
-					bunkerData.decorateMessage(room, event.data.message);
+				if (event.data.pinned && !pinBoard.isPinned(event.data.pinnedMessage.message._id)) {
+					bunkerData.decorateMessage(room, event.data.pinnedMessage.message);
 
-					room.$pinnedMessages.unshift(event.data.message);
+					room.$pinnedMessages.unshift(event.data.pinnedMessage);
 
 					pinBoard.pinChanged(event.data);
 				}
 				else if (!event.data.pinned) {
-					_.remove(room.$pinnedMessages, item => item._id === event.data.messageId);
+					_.remove(room.$pinnedMessages, item => item.message._id === event.data.pinnedMessage.message._id);
 					pinBoard.pinChanged(event.data);
 				}
 

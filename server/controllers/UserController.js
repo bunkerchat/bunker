@@ -119,7 +119,7 @@ module.exports.init = function (req, res) {
 						var uniquePinnedMessages = _.uniq(pinnedMessages, 'message.id');
 
 						_.each(uniquePinnedMessages, function (message) {
-							room.$pinnedMessages.push(message.message);
+							room.$pinnedMessages.push(message);
 						});
 
 						return room;

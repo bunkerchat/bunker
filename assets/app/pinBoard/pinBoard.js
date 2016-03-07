@@ -10,15 +10,15 @@ app.factory('pinBoard', ['$window', '$rootScope', function ($window, $rootScope)
 			pinChangedListener = listener;
 		},
 		initialize: function (messages) {
-			pinLookup = _.keyBy(_.map(messages, '_id'));
+			pinLookup = _.keyBy(_.map(messages, 'message._id'));
 		},
 
 		pinChanged: function pinChanged(state) {
 			if (state.pinned) {
-				pinLookup[state.messageId] = state.messageId;
+				pinLookup[state.pinnedMessage.message._id] = state.pinnedMessage.message._id;
 			}
 			else {
-				delete pinLookup[state.messageId];
+				delete pinLookup[state.pinnedMessage.message._id];
 			}
 
 			pinChangedListener(state);
@@ -48,7 +48,7 @@ app.directive('pins', ['pinBoard', function (pinBoard) {
 		link: function (scope, element, attrs) {
 
 			scope.removePin = function(message) {
-				pinBoard.unPin(message._id);
+				pinBoard.unPin(message.message._id);
 			};
 
 			scope.boardOpen = false;
@@ -93,7 +93,7 @@ app.directive('messagePin', ['pinBoard', function (pinBoard) {
 
 	function updateIcon(pinResult) {
 
-		var $pinIconForMessage = $('.message-info [message-pin=' + pinResult.messageId + '] .message-pin-icon');
+		var $pinIconForMessage = $('.message-info [message-pin=' + pinResult.pinnedMessage.message._id + '] .message-pin-icon');
 
 		if (pinResult.pinned) {
 			$pinIconForMessage.removeClass('fa-bookmark-o').addClass('fa-bookmark');

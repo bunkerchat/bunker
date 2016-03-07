@@ -5,11 +5,11 @@
 <div class="pin-board" ng-class="{'pin-board-active': boardOpen }" ng-switch="!!pinnedMessages.length">
 	<span class="pin-board-close" ng-click="closeBoard();"><i class="fa fa-close" title="Close"></i></span>
 
-	<div ng-switch-when="true" ng-repeat="message in pinnedMessages" class="pin-board-message">
+	<div ng-switch-when="true" ng-repeat="pinnedMessage in pinnedMessages" class="pin-board-message">
 		<div>
-			<img class="pin-message-author" title="{{::message.author.nick}}" gravatar-src-once="message.author.email | lowercase" gravatar-size="20"/>
-			<span bunker-message="::message"></span>
-			<i title="Remove from pin board" class="fa fa-times pin-board-unpin" ng-if="userRole !== 'member'" ng-click="removePin(message)"></i>
+			<img class="pin-message-author" title="{{::pinnedMessage.message.author.nick}}" gravatar-src-once="pinnedMessage.message.author.email | lowercase" gravatar-size="20"/>
+			<span bunker-message="::pinnedMessage.message"></span>
+			<i title="Remove from pin board" class="fa fa-times pin-board-unpin" ng-if="userRole !== 'member'" ng-click="removePin(pinnedMessage)"></i>
 		</div>
 	</div>
 
