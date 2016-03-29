@@ -12,7 +12,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 		`,
 		link: function (scope, elem) {
 			var searching;
-			var searchTerm ="";
+			var searchTerm = "";
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 
@@ -36,7 +36,12 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				// console.log(key);
 
 				var handler = handlers[key];
-				if (handler) return handler(e);
+				if (handler) {
+					var allDone = handler(e);
+					if (allDone) return;
+				}
+
+				console.log(searching, key)
 
 				if (!searching) return;
 				searchers[searching](key);
@@ -44,6 +49,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 			var handlers = {
 				'enter': enterHandler,
+				'backspace': backspaceHandler,
 				';': emoticonHandler
 			};
 
@@ -58,37 +64,40 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 				searching = 'emoticons';
 				tooltip.toggle(true);
+
+				return true;
 			}
 
 			function enterHandler(e) {
 				e.preventDefault();
 
-				bunkerData.createMessage($stateParams.roomId, inputBox.val())
+				return bunkerData.createMessage($stateParams.roomId, inputBox.val())
 					.then(() => inputBox.val(''));
 			}
 
 			function backspaceHandler() {
-				if (!searchTerm.length) return;
-				return searchTerm.slice(0, -1);
+				if (!searchTerm.length) {
+					searching = null;
+				}
+
+				searchTerm = searchTerm.slice(0, -1);
 			}
 
 			var searchers = {
 				'emoticons': searchForEmoticons,
 				null: _.noop
-			}
+			};
 
 			function searchForEmoticons(key) {
-				if(key == 'backspace'){
-					searchTerm = backspaceHandler()
-				}
-				else {
+				// only allow single letters/numbers on search term
+				var singleLetterNumber = /^[\w\d\._]{1}$/g;
+				if(singleLetterNumber.test(key)){
 					searchTerm += key;
 				}
 
-				console.log(searchTerm);
+				var matchingEmoticons = _.filter(emoticons.names, name => name.indexOf(searchTerm) == 0);
 
-				var matchingEmoticons = _.filter(emoticons.names, name => name.includes(searchTerm))
-				console.log(matchingEmoticons);
+				console.log(searchTerm, matchingEmoticons)
 			}
 		}
 	}
