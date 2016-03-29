@@ -82,20 +82,14 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 			function tabHandler(e) {
 				e.preventDefault();
-				if(!searching) return;
+				if (!searching) return;
 
 				var anchor = anchors[searching];
 				var oldSuggestion = suggestion || `${anchor}${searchTerm}${anchor}`;
 
-				matchIndex++;
+				suggestion = anchor + getNextMatch(e.shiftKey);
 
-				if(matchIndex >= matches.length) {
-					matchIndex = 0;
-				}
-
-				suggestion = anchor + matches[matchIndex];
-
-				if(searching == 'emoticons'){
+				if (searching == 'emoticons') {
 					suggestion += anchor;
 				}
 
@@ -103,8 +97,21 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				var currentSearch = new RegExp(`${oldSuggestion}*$`);
 				currentText = currentText.replace(currentSearch, suggestion);
 
-
 				inputBox.val(currentText);
+			}
+
+			function getNextMatch(shiftKey) {
+				matchIndex += shiftKey ? -1 : 1;
+
+				if (matchIndex >= matches.length) {
+					matchIndex = 0;
+				}
+
+				if(matchIndex < 0) {
+					matchIndex = matches.length - 1;
+				}
+
+				return matches[matchIndex]
 			}
 
 			function emoticonHandler(e) {
