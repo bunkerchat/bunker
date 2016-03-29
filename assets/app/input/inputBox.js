@@ -1,13 +1,15 @@
 app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode) {
 	return {
 		template: `
-		<div class="container-fluid message-input" 
-			ng-show="$root.roomId">
-			<div class="row">
-				<form class="col-md-10 no-gutter">
-					<textarea rows="1" class="form-control"></textarea>
-				</form>
+		<div>
+			<div class="container-fluid message-input" ng-show="$root.roomId">
+				<div class="row">
+					<form class="col-md-10 no-gutter">
+						<textarea rows="1" class="form-control"></textarea>
+					</form>
+				</div>
 			</div>
+			<div class="message-popup"></div>
 		</div>
 		`,
 		link: function (scope, elem) {
@@ -16,21 +18,22 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 			var html;
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
+			var popup = $('.message-popup', elem);
 
-			container.qtip({
-				content: {
-					text: 'Open at the mouse position!'
-				},
-				position: {
-					my: 'bottom left',
-					at: 'top left'
-				},
-				show: {
-					event: false
-				}
-			});
+			// container.qtip({
+			// 	content: {
+			// 		text: 'Open at the mouse position!'
+			// 	},
+			// 	position: {
+			// 		my: 'bottom left',
+			// 		at: 'top left'
+			// 	},
+			// 	show: {
+			// 		event: false
+			// 	}
+			// });
 
-			var tooltip = container.qtip('api');
+			// var tooltip = container.qtip('api');
 
 			inputBox.keydown(e => {
 				var key = keycode(e);
@@ -47,11 +50,14 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				}
 
 				if (searchTerm) {
-					tooltip.set('content.text', html);
-					tooltip.toggle(true);
+					// tooltip.set('content.text', html);
+					// tooltip.toggle(true);
+					popup.html(html);
+					popup.show();
 				}
 				else {
-					tooltip.toggle(false);
+					popup.hide();
+					// tooltip.toggle(false);
 				}
 			});
 
@@ -113,18 +119,20 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 			function renderEmoticons(emoticons) {
 				return `
-					<ol class="row list-unstyled ng-scope">
+					<div class="">
 						${_.map(emoticons, emoticon => `
-							<li class="col-xs-3 emoticonListItem">
+							<!--<li class="col-xs-3 emoticonListItem">-->
+							<span class="popup-item">
 								<a>
 									<div class="emoticon-container">
 										<img class="emoticon" src="/assets/images/emoticons/${emoticon.file}">
 									</div>
 									:${emoticon.name}:
 								</a>
-							</li>
-						`).join()}
-					</ol>
+								</span>
+							<!--</li>-->
+						`).join('')}
+					</div>
 				`
 			}
 		}
