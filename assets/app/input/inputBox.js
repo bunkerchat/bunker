@@ -13,13 +13,30 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 		</div>
 		`,
 		link: function (scope, elem) {
-			var html, searching, searchTerm, matches, suggestion;
-			var matchIndex = -1;
+			var html, searching, searchTerm, matches, suggestion, matchingEmoticons, matchIndex;
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 			var popup = $('.message-popup', elem);
 			popup.hide();
-			escHandler();
+			reset();
+
+			var anchors = {
+				'emoticons': ':',
+				'user': '@'
+			};
+
+			var handlers = {
+				'enter': enter,
+				'backspace': backspace,
+				'esc': reset,
+				'tab': tab,
+				';': emoticon
+			};
+
+			var searchers = {
+				'emoticons': searchForEmoticons,
+				null: _.noop
+			};
 
 			inputBox.keydown(e => {
 				var key = keycode(e);
@@ -28,8 +45,6 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				if (handler) {
 					handler(e);
 				}
-
-				console.log(searching, key);
 
 				if (searching) {
 					searchers[searching](key);
@@ -44,58 +59,62 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				}
 			});
 
-			var anchors = {
-				'emoticons': ':',
-				'user': '@'
-			};
-
-			var handlers = {
-				'enter': enterHandler,
-				'backspace': backspaceHandler,
-				'esc': escHandler,
-				'tab': tabHandler,
-				';': emoticonHandler
-			};
-
-			function enterHandler(e) {
+			function enter(e) {
 				e.preventDefault();
+				reset();
 
 				return bunkerData.createMessage($stateParams.roomId, inputBox.val())
 					.then(() => inputBox.val(''));
 			}
 
-			function backspaceHandler() {
+			function backspace() {
 				if (!searchTerm.length) {
 					searching = null;
+				}
+
+				if (suggestion){
+					replaceText(suggestion, searchTerm);
+					suggestion = null;
+					return;
 				}
 
 				searchTerm = searchTerm.slice(0, -1);
 			}
 
-			function escHandler() {
+			function reset() {
+				html = null;
 				searching = null;
 				searchTerm = "";
-				html = null;
 				matches = null;
+				suggestion = null;
+				matchingEmoticons = null;
 				matchIndex = -1;
 			}
 
-			function tabHandler(e) {
+			function tab(e) {
 				e.preventDefault();
 				if (!searching) return;
 
-				var anchor = anchors[searching];
-				var oldSuggestion = suggestion || `${anchor}${searchTerm}${anchor}`;
+				var oldSuggestion = suggestion || searchTerm;
+				suggestion = getNextMatch(e.shiftKey);
 
-				suggestion = anchor + getNextMatch(e.shiftKey);
+				replaceText(oldSuggestion, suggestion);
+				renderEmoticons();
+			}
+
+			function replaceText(oldText, newText) {
+				var anchor = anchors[searching];
+				var oldSuggestion = `${anchor}${oldText}${anchor}`;
+
+				var suggestionSearch = anchor + newText;
 
 				if (searching == 'emoticons') {
-					suggestion += anchor;
+					suggestionSearch += anchor;
 				}
 
 				var currentText = inputBox.val();
 				var currentSearch = new RegExp(`${oldSuggestion}*$`);
-				currentText = currentText.replace(currentSearch, suggestion);
+				currentText = currentText.replace(currentSearch, suggestionSearch);
 
 				inputBox.val(currentText);
 			}
@@ -107,27 +126,22 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 					matchIndex = 0;
 				}
 
-				if(matchIndex < 0) {
+				if (matchIndex < 0) {
 					matchIndex = matches.length - 1;
 				}
 
 				return matches[matchIndex]
 			}
 
-			function emoticonHandler(e) {
+			function emoticon(e) {
 				if (!e.shiftKey) return;
 
 				if (searching == 'emoticons') {
-					return escHandler();
+					return reset();
 				}
 
 				searching = 'emoticons';
 			}
-
-			var searchers = {
-				'emoticons': searchForEmoticons,
-				null: _.noop
-			};
 
 			function searchForEmoticons(key) {
 				// only allow single letters/numbers/underscores on search term
@@ -136,16 +150,17 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 					searchTerm += key;
 				}
 
-				var matchingEmoticons = _.filter(emoticons.all, emoticon => emoticon.name.indexOf(searchTerm) == 0);
-				html = renderEmoticons(matchingEmoticons);
+				matchingEmoticons = _.filter(emoticons.all, emoticon => emoticon.name.indexOf(searchTerm) == 0);
 				matches = _.map(matchingEmoticons, 'name');
+
+				renderEmoticons();
 			}
 
-			function renderEmoticons(emoticons) {
-				return `
+			function renderEmoticons() {
+				html = `
 					<ol class="row list-unstyled ng-scope">
-						${_.map(emoticons, emoticon => `
-							<li class="col-xs-3 emoticonListItem">
+						${_.map(matchingEmoticons, emoticon => `
+							<li class="col-xs-3 emoticonListItem ${emoticon.name == suggestion ? 'emoticon-selected' : ''}">
 								<a>
 									<div class="emoticon-container">
 										<img class="emoticon" src="/assets/images/emoticons/${emoticon.file}">
