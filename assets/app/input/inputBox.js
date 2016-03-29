@@ -37,39 +37,33 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 				var handler = handlers[key];
 				if (handler) {
-					var allDone = handler(e);
-					if (allDone) return;
+					handler(e);
 				}
 
-				console.log(searching, key)
+				console.log(searching, key);
 
-				if (!searching) return;
-				searchers[searching](key);
+				if (searching) {
+					searchers[searching](key);
+				}
+
+				if (searchTerm) {
+					tooltip.toggle(true);
+				}
+				else {
+					tooltip.toggle(false);
+				}
 			});
 
 			var handlers = {
 				'enter': enterHandler,
 				'backspace': backspaceHandler,
+				'esc': escHandler,
 				';': emoticonHandler
 			};
 
-			function emoticonHandler(e) {
-				if (!e.shiftKey) return;
-
-				if (searching == 'emoticons') {
-					searching = null;
-					tooltip.toggle(false);
-					return;
-				}
-
-				searching = 'emoticons';
-				tooltip.toggle(true);
-
-				return true;
-			}
-
 			function enterHandler(e) {
 				e.preventDefault();
+				;
 
 				return bunkerData.createMessage($stateParams.roomId, inputBox.val())
 					.then(() => inputBox.val(''));
@@ -83,6 +77,21 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				searchTerm = searchTerm.slice(0, -1);
 			}
 
+			function escHandler() {
+				searching = null;
+				searchTerm = "";
+			}
+
+			function emoticonHandler(e) {
+				if (!e.shiftKey) return;
+
+				if (searching == 'emoticons') {
+					return escHandler();
+				}
+				
+				searching = 'emoticons';
+			}
+
 			var searchers = {
 				'emoticons': searchForEmoticons,
 				null: _.noop
@@ -91,7 +100,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 			function searchForEmoticons(key) {
 				// only allow single letters/numbers on search term
 				var singleLetterNumber = /^[\w\d\._]{1}$/g;
-				if(singleLetterNumber.test(key)){
+				if (singleLetterNumber.test(key)) {
 					searchTerm += key;
 				}
 
