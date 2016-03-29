@@ -13,6 +13,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 		link: function (scope, elem) {
 			var searching;
 			var searchTerm = "";
+			var html;
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 
@@ -33,7 +34,6 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 			inputBox.keydown(e => {
 				var key = keycode(e);
-				// console.log(key);
 
 				var handler = handlers[key];
 				if (handler) {
@@ -47,6 +47,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				}
 
 				if (searchTerm) {
+					tooltip.set('content.text', html);
 					tooltip.toggle(true);
 				}
 				else {
@@ -63,7 +64,6 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 			function enterHandler(e) {
 				e.preventDefault();
-				;
 
 				return bunkerData.createMessage($stateParams.roomId, inputBox.val())
 					.then(() => inputBox.val(''));
@@ -88,7 +88,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				if (searching == 'emoticons') {
 					return escHandler();
 				}
-				
+
 				searching = 'emoticons';
 			}
 
@@ -98,15 +98,34 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 			};
 
 			function searchForEmoticons(key) {
-				// only allow single letters/numbers on search term
-				var singleLetterNumber = /^[\w\d\._]{1}$/g;
+				// only allow single letters/numbers/underscores on search term
+				var singleLetterNumber = /^[\w\d\_]{1}$/g;
 				if (singleLetterNumber.test(key)) {
 					searchTerm += key;
 				}
 
-				var matchingEmoticons = _.filter(emoticons.names, name => name.indexOf(searchTerm) == 0);
+				var matchingEmoticons = _.filter(emoticons.all, emoticon => emoticon.name.indexOf(searchTerm) == 0);
 
-				console.log(searchTerm, matchingEmoticons)
+				// console.log(searchTerm, matchingEmoticons)
+
+				html = renderEmoticons(matchingEmoticons);
+			}
+
+			function renderEmoticons(emoticons) {
+				return `
+					<ol class="row list-unstyled ng-scope">
+						${_.map(emoticons, emoticon => `
+							<li class="col-xs-3 emoticonListItem">
+								<a>
+									<div class="emoticon-container">
+										<img class="emoticon" src="/assets/images/emoticons/${emoticon.file}">
+									</div>
+									:${emoticon.name}:
+								</a>
+							</li>
+						`).join()}
+					</ol>
+				`
 			}
 		}
 	}
