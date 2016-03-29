@@ -13,11 +13,13 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 		</div>
 		`,
 		link: function (scope, elem) {
-			var html, searching, searchTerm;
+			var html, searching, searchTerm, matches, suggestion;
+			var matchIndex = -1;
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 			var popup = $('.message-popup', elem);
 			popup.hide();
+			escHandler();
 
 			inputBox.keydown(e => {
 				var key = keycode(e);
@@ -42,10 +44,16 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				}
 			});
 
+			var anchors = {
+				'emoticons': ':',
+				'user': '@'
+			};
+
 			var handlers = {
 				'enter': enterHandler,
 				'backspace': backspaceHandler,
 				'esc': escHandler,
+				'tab': tabHandler,
 				';': emoticonHandler
 			};
 
@@ -68,6 +76,35 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				searching = null;
 				searchTerm = "";
 				html = null;
+				matches = null;
+				matchIndex = -1;
+			}
+
+			function tabHandler(e) {
+				e.preventDefault();
+				if(!searching) return;
+
+				var anchor = anchors[searching];
+				var oldSuggestion = suggestion || `${anchor}${searchTerm}${anchor}`;
+
+				matchIndex++;
+
+				if(matchIndex >= matches.length) {
+					matchIndex = 0;
+				}
+
+				suggestion = anchor + matches[matchIndex];
+
+				if(searching == 'emoticons'){
+					suggestion += anchor;
+				}
+
+				var currentText = inputBox.val();
+				var currentSearch = new RegExp(`${oldSuggestion}*$`);
+				currentText = currentText.replace(currentSearch, suggestion);
+
+
+				inputBox.val(currentText);
 			}
 
 			function emoticonHandler(e) {
@@ -93,10 +130,8 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				}
 
 				var matchingEmoticons = _.filter(emoticons.all, emoticon => emoticon.name.indexOf(searchTerm) == 0);
-
-				// console.log(searchTerm, matchingEmoticons)
-
 				html = renderEmoticons(matchingEmoticons);
+				matches = _.map(matchingEmoticons, 'name');
 			}
 
 			function renderEmoticons(emoticons) {
