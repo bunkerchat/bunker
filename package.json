@@ -50,7 +50,6 @@
     "passport-google-plus": "0.5.1",
     "passport-local": "1.0.0",
     "password-hash": "1.2.2",
-    "qtip2": "3.0.2",
     "request": "2.69.0",
     "require-dir": "0.3.0",
     "socket.io": "1.4.5",

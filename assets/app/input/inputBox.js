@@ -9,31 +9,15 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 					</form>
 				</div>
 			</div>
-			<div class="message-popup"></div>
+			<div emoticon-menu class="message-popup container"></div>
 		</div>
 		`,
 		link: function (scope, elem) {
-			var searching;
-			var searchTerm = "";
-			var html;
+			var html, searching, searchTerm;
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 			var popup = $('.message-popup', elem);
-
-			// container.qtip({
-			// 	content: {
-			// 		text: 'Open at the mouse position!'
-			// 	},
-			// 	position: {
-			// 		my: 'bottom left',
-			// 		at: 'top left'
-			// 	},
-			// 	show: {
-			// 		event: false
-			// 	}
-			// });
-
-			// var tooltip = container.qtip('api');
+			popup.hide();
 
 			inputBox.keydown(e => {
 				var key = keycode(e);
@@ -50,14 +34,11 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				}
 
 				if (searchTerm) {
-					// tooltip.set('content.text', html);
-					// tooltip.toggle(true);
 					popup.html(html);
 					popup.show();
 				}
 				else {
 					popup.hide();
-					// tooltip.toggle(false);
 				}
 			});
 
@@ -86,6 +67,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 			function escHandler() {
 				searching = null;
 				searchTerm = "";
+				html = null;
 			}
 
 			function emoticonHandler(e) {
@@ -119,20 +101,18 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 			function renderEmoticons(emoticons) {
 				return `
-					<div class="">
+					<ol class="row list-unstyled ng-scope">
 						${_.map(emoticons, emoticon => `
-							<!--<li class="col-xs-3 emoticonListItem">-->
-							<span class="popup-item">
+							<li class="col-xs-3 emoticonListItem">
 								<a>
 									<div class="emoticon-container">
 										<img class="emoticon" src="/assets/images/emoticons/${emoticon.file}">
 									</div>
 									:${emoticon.name}:
 								</a>
-								</span>
-							<!--</li>-->
+							</li>
 						`).join('')}
-					</div>
+					</ol>
 				`
 			}
 		}
