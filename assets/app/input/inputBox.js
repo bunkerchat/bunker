@@ -1,4 +1,4 @@
-app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode) {
+app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emoticons, keycode) {
 	return {
 		template: `
 		<div>
@@ -13,7 +13,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 		</div>
 		`,
 		link: function (scope, elem) {
-			var html, searching, searchTerm, matches, suggestion, matchingEmoticons, matchIndex;
+			var searching, searchTerm, matches, suggestion, matchingEmoticons, matchingUsers, matchIndex;
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 			var popup = $('.message-popup', elem);
@@ -22,7 +22,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 			var anchors = {
 				'emoticons': ':',
-				'user': '@'
+				'users': '@'
 			};
 
 			var handlers = {
@@ -30,12 +30,20 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				'backspace': backspace,
 				'esc': reset,
 				'tab': tab,
-				';': emoticon
+				'space': space,
+				';': emoticon,
+				'2': user
 			};
 
 			var searchers = {
 				'emoticons': searchForEmoticons,
+				'users': searchForUsers,
 				null: _.noop
+			};
+
+			var render = {
+				'emoticons': renderEmoticons,
+				'users': renderUsers
 			};
 
 			inputBox.keydown(e => {
@@ -50,7 +58,10 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 					searchers[searching](key);
 				}
 
+				console.log(key, searching, searchTerm, matches, suggestion, matchingEmoticons, matchingUsers, matchIndex)
+
 				if (searchTerm) {
+					var html = render[searching]();
 					popup.html(html);
 					popup.show();
 				}
@@ -59,36 +70,42 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				}
 			});
 
+			function reset() {
+				searching = null;
+				searchTerm = "";
+				matches = null;
+				suggestion = null;
+				matchingEmoticons = null;
+				matchingUsers = null;
+				matchIndex = -1;
+			}
+
 			function enter(e) {
 				e.preventDefault();
+
+				if (searching && suggestion) {
+					return reset();
+				}
+
 				reset();
 
 				return bunkerData.createMessage($stateParams.roomId, inputBox.val())
 					.then(() => inputBox.val(''));
 			}
 
-			function backspace() {
+			function backspace(e) {
 				if (!searchTerm.length) {
 					searching = null;
 				}
 
-				if (suggestion){
+				if (suggestion) {
 					replaceText(suggestion, searchTerm);
 					suggestion = null;
+					e.preventDefault();
 					return;
 				}
 
 				searchTerm = searchTerm.slice(0, -1);
-			}
-
-			function reset() {
-				html = null;
-				searching = null;
-				searchTerm = "";
-				matches = null;
-				suggestion = null;
-				matchingEmoticons = null;
-				matchIndex = -1;
 			}
 
 			function tab(e) {
@@ -99,7 +116,12 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 				suggestion = getNextMatch(e.shiftKey);
 
 				replaceText(oldSuggestion, suggestion);
-				renderEmoticons();
+			}
+
+			function space() {
+				if (searching && suggestion) {
+					reset();
+				}
 			}
 
 			function replaceText(oldText, newText) {
@@ -136,9 +158,7 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 			function emoticon(e) {
 				if (!e.shiftKey) return;
 
-				if (searching == 'emoticons') {
-					return reset();
-				}
+				if (searching == 'emoticons') return reset();
 
 				searching = 'emoticons';
 			}
@@ -152,12 +172,10 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 
 				matchingEmoticons = _.filter(emoticons.all, emoticon => emoticon.name.indexOf(searchTerm) == 0);
 				matches = _.map(matchingEmoticons, 'name');
-
-				renderEmoticons();
 			}
 
 			function renderEmoticons() {
-				html = `
+				return `
 					<ol class="row list-unstyled ng-scope">
 						${_.map(matchingEmoticons, emoticon => `
 							<li class="col-xs-3 emoticonListItem ${emoticon.name == suggestion ? 'emoticon-selected' : ''}">
@@ -166,6 +184,50 @@ app.directive('inputBox', function ($stateParams, bunkerData, emoticons, keycode
 										<img class="emoticon" src="/assets/images/emoticons/${emoticon.file}">
 									</div>
 									:${emoticon.name}:
+								</a>
+							</li>
+						`).join('')}
+					</ol>
+				`
+			}
+
+			function user(e) {
+				if (!e.shiftKey) return;
+
+				if (searching == 'users') return reset();
+
+				searching = 'users';
+			}
+
+			function searchForUsers(key) {
+				// only allow single letters/numbers/underscores on search term
+				var singleLetterNumber = /^[\w\s\-\.]{1}$/g;
+				if (singleLetterNumber.test(key)) {
+					searchTerm += key;
+				}
+
+				// ugh
+				if (searchTerm == '2') {
+					searchTerm = '';
+				}
+
+				var currentRoom = bunkerData.getRoom($rootScope.roomId);
+				var users = _.map(currentRoom.$members, 'user');
+				var activeUsers = _.filter(users, function (item) {
+					return moment().diff(item.lastConnected, 'days') < 45;
+				});
+
+				matchingUsers = _.filter(activeUsers, user => user.nick.toLowerCase().indexOf(searchTerm) == 0);
+				matches = _.map(matchingUsers, 'nick');
+			}
+
+			function renderUsers() {
+				return `
+					<ol class="row list-unstyled ng-scope">
+						${_.map(matchingUsers, user => `
+							<li class="col-xs-3">
+								<a>
+									${user.nick}
 								</a>
 							</li>
 						`).join('')}
