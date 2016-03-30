@@ -17,7 +17,6 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 			var popup = $('.message-popup', elem);
-			popup.hide();
 			reset();
 
 			var anchors = {
@@ -62,11 +61,17 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					var html = render[searching]();
 					popup.html(html);
 					popup.show();
-				}
-				else {
-					popup.hide();
+					popup.on("click", "li", popupClick);
 				}
 			});
+
+			function popupClick(evt) {
+				var item = $(evt.currentTarget);
+				var value = item.data('value');
+				replaceMatch(searchTerm, value);
+				selectItem();
+				inputBox.focus();
+			}
 
 			function reset() {
 				searching = null;
@@ -76,16 +81,25 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				matchingEmoticons = null;
 				matchingUsers = null;
 				matchIndex = -1;
+				popup.html('');
+				popup.hide();
+			}
+
+			function selectItem(){
+				if (searching == 'emoticons') {
+					inputBox.val(inputBox.val() + ':');
+				}
+
+				inputBox.val(inputBox.val() + ' ');
+
+				reset();
 			}
 
 			function enter(e) {
 				e.preventDefault();
 
 				if (searching && suggestion) {
-					if (searching == 'emoticons') {
-						inputBox.val(inputBox.val() + ':');
-					}
-					reset();
+					selectItem();
 					return;
 				}
 
@@ -121,9 +135,10 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				replaceMatch(oldSuggestion, suggestion);
 			}
 
-			function space() {
+			function space(e) {
 				if (searching && suggestion) {
-					reset();
+					e.preventDefault();
+					selectItem();
 				}
 			}
 
@@ -175,7 +190,8 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				return `
 					<ol class="row list-unstyled ng-scope">
 						${_.map(matchingEmoticons, emoticon => `
-							<li class="col-xs-3 emoticonListItem ${emoticon.name == suggestion ? 'emoticon-selected' : ''}">
+							<li class="col-xs-3 emoticonListItem ${emoticon.name == suggestion ? 'emoticon-selected' : ''}"
+								data-value="${emoticon.name}">
 								<a>
 									<div class="emoticon-container">
 										<img class="emoticon" src="/assets/images/emoticons/${emoticon.file}">
