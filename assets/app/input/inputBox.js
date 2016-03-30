@@ -13,7 +13,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 		</div>
 		`,
 		link: function (scope, elem) {
-			var searching, searchTerm, matches, suggestion, matchingEmoticons, matchingUsers, matchIndex;
+			var searching, searchTerm, matches, suggestion, matchingEmoticons, matchingUsers, matchIndex, hidden;
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 			var popup = $('.message-popup', elem);
@@ -60,8 +60,11 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				if (searchTerm) {
 					var html = render[searching]();
 					popup.html(html);
-					popup.show();
-					popup.on("click", "li", popupClick);
+
+					if(hidden) {
+						popup.show();
+						popup.on("click", "li", popupClick);
+					}
 				}
 			});
 
@@ -81,6 +84,8 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				matchingEmoticons = null;
 				matchingUsers = null;
 				matchIndex = -1;
+				hidden = true;
+				popup.unbind("click");
 				popup.html('');
 				popup.hide();
 			}
@@ -105,7 +110,10 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 				reset();
 
-				return bunkerData.createMessage($stateParams.roomId, inputBox.val())
+				var text = inputBox.val();
+				if(!/\S/.test(text)) return;
+
+				return bunkerData.createMessage($stateParams.roomId, text)
 					.then(() => inputBox.val(''));
 			}
 
