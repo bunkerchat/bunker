@@ -22,11 +22,13 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			var popup = $('.message-popup', elem);
 			reset();
 
+			// anchors are the special keys which define an emoticon or user
 			var anchors = {
 				'emoticons': ':',
 				'users': '@'
 			};
 
+			// handlers are triggered when a specific key is pressed
 			var handlers = {
 				'enter': enter,
 				'backspace': backspace,
@@ -37,20 +39,26 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				'2': user
 			};
 
+			// search functions which are triggered when an anchor is used
 			var searchers = {
 				'emoticons': searchForEmoticons,
 				'users': searchForUsers,
 				null: _.noop
 			};
 
+			// the functions to render the html in the popup
 			var render = {
 				'emoticons': renderEmoticons,
 				'users': renderUsers
 			};
 
+			// events
+
+			// every key press in the text area
 			inputBox.keydown(e => {
 				bunkerData.broadcastTyping($rootScope.roomId);
 
+				// gets a human readable keyboard value
 				var key = keycode(e);
 
 				var handler = handlers[key];
@@ -83,6 +91,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				inputBox.focus();
 			});
 
+			// the send button needs to be attached to the enter handler
 			send.on("click", enter);
 
 			function popupClick(evt) {
@@ -242,16 +251,15 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					searchTerm += key;
 				}
 
-				// ugh
+				// since the @ key is actually shift + 2, when the search term is this, ignore it
+				// since it is the start of looking for a specific user: eg @Jason == 2Jason
 				if (searchTerm == '2') {
 					searchTerm = '';
 				}
 
 				var currentRoom = bunkerData.getRoom($rootScope.roomId);
 				var users = _.map(currentRoom.$members, 'user');
-				var activeUsers = _.filter(users, function (item) {
-					return moment().diff(item.lastConnected, 'days') < 45;
-				});
+				var activeUsers = _.filter(users, user => moment().diff(user.lastConnected, 'days') < 45);
 
 				matchingUsers = _.filter(activeUsers, user => user.nick.toLowerCase().indexOf(searchTerm) == 0);
 				matches = _.map(matchingUsers, 'nick');
