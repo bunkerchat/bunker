@@ -58,8 +58,6 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					searchers[searching](key);
 				}
 
-				console.log(key, searching, searchTerm, matches, suggestion, matchingEmoticons, matchingUsers, matchIndex)
-
 				if (searchTerm) {
 					var html = render[searching]();
 					popup.html(html);
@@ -134,10 +132,6 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				var oldSuggestion = `${anchor}${oldText}${anchor}`;
 
 				var suggestionSearch = anchor + newText;
-
-				// if (searching == 'emoticons') {
-				// 	suggestionSearch += anchor;
-				// }
 
 				var currentText = inputBox.val();
 				var currentSearch = new RegExp(`${oldSuggestion}*$`);
