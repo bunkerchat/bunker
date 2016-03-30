@@ -84,7 +84,11 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				e.preventDefault();
 
 				if (searching && suggestion) {
-					return reset();
+					if (searching == 'emoticons') {
+						inputBox.val(inputBox.val() + ':');
+					}
+					reset();
+					return;
 				}
 
 				reset();
@@ -95,12 +99,13 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			function backspace(e) {
 				if (!searchTerm.length) {
-					searching = null;
+					return reset();
 				}
 
 				if (suggestion) {
-					replaceText(suggestion, searchTerm);
+					replaceMatch(suggestion, searchTerm);
 					suggestion = null;
+					matchIndex = -1;
 					e.preventDefault();
 					return;
 				}
@@ -115,7 +120,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				var oldSuggestion = suggestion || searchTerm;
 				suggestion = getNextMatch(e.shiftKey);
 
-				replaceText(oldSuggestion, suggestion);
+				replaceMatch(oldSuggestion, suggestion);
 			}
 
 			function space() {
@@ -124,15 +129,15 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				}
 			}
 
-			function replaceText(oldText, newText) {
+			function replaceMatch(oldText, newText) {
 				var anchor = anchors[searching];
 				var oldSuggestion = `${anchor}${oldText}${anchor}`;
 
 				var suggestionSearch = anchor + newText;
 
-				if (searching == 'emoticons') {
-					suggestionSearch += anchor;
-				}
+				// if (searching == 'emoticons') {
+				// 	suggestionSearch += anchor;
+				// }
 
 				var currentText = inputBox.val();
 				var currentSearch = new RegExp(`${oldSuggestion}*$`);
@@ -152,14 +157,12 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					matchIndex = matches.length - 1;
 				}
 
-				return matches[matchIndex]
+				return matches[matchIndex];
 			}
 
 			function emoticon(e) {
 				if (!e.shiftKey) return;
-
 				if (searching == 'emoticons') return reset();
-
 				searching = 'emoticons';
 			}
 
@@ -193,9 +196,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			function user(e) {
 				if (!e.shiftKey) return;
-
 				if (searching == 'users') return reset();
-
 				searching = 'users';
 			}
 
