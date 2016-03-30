@@ -6,6 +6,8 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				<div class="row">
 					<form class="col-md-10 no-gutter">
 						<textarea rows="1" class="form-control"></textarea>
+						<button type="submit" class="btn btn-success visible-xs">Send</button>
+						<upload-button></upload-button>
 					</form>
 				</div>
 			</div>
@@ -16,6 +18,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			var searchingFor, searchTerm, matches, suggestedTerm, matchingEmoticons, matchingUsers, matchIndex, hidden;
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
+			var send = container.find('button[type="submit"]');
 			var popup = $('.message-popup', elem);
 			reset();
 
@@ -46,6 +49,8 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			};
 
 			inputBox.keydown(e => {
+				bunkerData.broadcastTyping($rootScope.roomId);
+
 				var key = keycode(e);
 
 				var handler = handlers[key];
@@ -67,6 +72,18 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					}
 				}
 			});
+
+			// Change the text if commanded to do so
+			scope.$on('inputText', function (evt, text) {
+				var val = inputBox.val();
+				var append = val.length ? ' ' : ''; // start with a space if message already started
+				append += text + ' ';
+				val += append;
+				inputBox.val(val);
+				inputBox.focus();
+			});
+
+			send.on("click", enter);
 
 			function popupClick(evt) {
 				var item = $(evt.currentTarget);
