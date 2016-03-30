@@ -8,7 +8,7 @@
 	<li ng-click="inbox.goToRoom(inboxMessage.message)"
 		ng-repeat="inboxMessage in inbox.messages track by inboxMessage._id">
 		<div class="inbox-author">
-			<img gravatar-src-once="inboxMessage.message.author.email | lowercase" gravatar-size="20"/>
+			<img ng-src="{{::inboxMessage.message.author.$gravatar}}"/>
 			{{::inboxMessage.message.author.nick}}
 		</div>
 		<div class="inbox-message-content" ng-class="::{'read': inboxMessage.read}">
