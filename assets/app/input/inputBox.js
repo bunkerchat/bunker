@@ -13,7 +13,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 		</div>
 		`,
 		link: function (scope, elem) {
-			var searching, searchTerm, matches, suggestion, matchingEmoticons, matchingUsers, matchIndex, hidden;
+			var searchingFor, searchTerm, matches, suggestedTerm, matchingEmoticons, matchingUsers, matchIndex, hidden;
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 			var popup = $('.message-popup', elem);
@@ -53,12 +53,12 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					handler(e);
 				}
 
-				if (searching) {
-					searchers[searching](key);
+				if (searchingFor) {
+					searchers[searchingFor](key);
 				}
 
 				if (searchTerm) {
-					var html = render[searching]();
+					var html = render[searchingFor]();
 					popup.html(html);
 
 					if(hidden) {
@@ -77,10 +77,10 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			}
 
 			function reset() {
-				searching = null;
+				searchingFor = null;
 				searchTerm = "";
 				matches = null;
-				suggestion = null;
+				suggestedTerm = null;
 				matchingEmoticons = null;
 				matchingUsers = null;
 				matchIndex = -1;
@@ -91,7 +91,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			}
 
 			function selectItem(){
-				if (searching == 'emoticons') {
+				if (searchingFor == 'emoticons') {
 					inputBox.val(inputBox.val() + ':');
 				}
 
@@ -103,7 +103,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			function enter(e) {
 				e.preventDefault();
 
-				if (searching && suggestion) {
+				if (searchingFor && suggestedTerm) {
 					selectItem();
 					return;
 				}
@@ -122,9 +122,9 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					return reset();
 				}
 
-				if (suggestion) {
-					replaceMatch(suggestion, searchTerm);
-					suggestion = null;
+				if (suggestedTerm) {
+					replaceMatch(suggestedTerm, searchTerm);
+					suggestedTerm = null;
 					matchIndex = -1;
 					e.preventDefault();
 					return;
@@ -135,23 +135,23 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			function tab(e) {
 				e.preventDefault();
-				if (!searching) return;
+				if (!searchingFor) return;
 
-				var oldSuggestion = suggestion || searchTerm;
-				suggestion = getNextMatch(e.shiftKey);
+				var oldSuggestion = suggestedTerm || searchTerm;
+				suggestedTerm = getNextMatch(e.shiftKey);
 
-				replaceMatch(oldSuggestion, suggestion);
+				replaceMatch(oldSuggestion, suggestedTerm);
 			}
 
 			function space(e) {
-				if (searching && suggestion) {
+				if (searchingFor && suggestedTerm) {
 					e.preventDefault();
 					selectItem();
 				}
 			}
 
 			function replaceMatch(oldText, newText) {
-				var anchor = anchors[searching];
+				var anchor = anchors[searchingFor];
 				var oldSuggestion = `${anchor}${oldText}${anchor}`;
 
 				var suggestionSearch = anchor + newText;
@@ -179,8 +179,8 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			function emoticon(e) {
 				if (!e.shiftKey) return;
-				if (searching == 'emoticons') return reset();
-				searching = 'emoticons';
+				if (searchingFor == 'emoticons') return reset();
+				searchingFor = 'emoticons';
 			}
 
 			function searchForEmoticons(key) {
@@ -198,7 +198,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				return `
 					<ol class="row list-unstyled ng-scope">
 						${_.map(matchingEmoticons, emoticon => `
-							<li class="col-xs-3 emoticonListItem ${emoticon.name == suggestion ? 'emoticon-selected' : ''}"
+							<li class="col-xs-3 emoticonListItem ${emoticon.name == suggestedTerm ? 'emoticon-selected' : ''}"
 								data-value="${emoticon.name}">
 								<a>
 									<div class="emoticon-container">
@@ -214,8 +214,8 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			function user(e) {
 				if (!e.shiftKey) return;
-				if (searching == 'users') return reset();
-				searching = 'users';
+				if (searchingFor == 'users') return reset();
+				searchingFor = 'users';
 			}
 
 			function searchForUsers(key) {
@@ -244,7 +244,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				return `
 					<ol class="row list-unstyled ng-scope">
 						${_.map(matchingUsers, user => `
-							<li class="col-xs-3 ${user.nick == suggestion ? 'emoticon-selected' : ''}">
+							<li class="col-xs-3 ${user.nick == suggestedTerm ? 'emoticon-selected' : ''}">
 								<a>
 									<img src="${user.$gravatar}" title="${user.email}"/>
 									${user.nick}
