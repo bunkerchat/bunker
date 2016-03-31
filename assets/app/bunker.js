@@ -84,7 +84,7 @@ window.app = angular.module('bunker', [
 	});
 
 
-$("body").on("click", "[room] img.emoticon", function (evt) {
+$("body").on("click", "img.emoticon", function (evt) {
 	var emoticon = $(evt.target);
 	var original = emoticon.attr('title');
 	emoticon.after(`<span>${original}</span>`);
