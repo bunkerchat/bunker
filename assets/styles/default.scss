@@ -463,6 +463,10 @@ mark:hover {
 	margin-bottom: 4px;
 }
 
+.emoticon-selected{
+	background: $mentionColor;
+}
+
 .sortEmoticons a {
 	margin: 17px;
 }
@@ -703,6 +707,24 @@ li:not(:last-child) .message.last-read:after {
 	border-top: 8px solid #fff;
 	border-top: 8px solid rgba(255, 255, 255, 0); /* needs to be here for carets to work */
 	border-right: 8px solid #fff;
+}
+
+.message-popup {
+	position: fixed;
+	bottom: 47px;
+	width: 460px;
+	height: 107px;
+	text-overflow: ellipsis;
+	border: solid #ddd;
+	border-width: 3px;
+	border-bottom-left-radius: 4px;
+	background: $lightBackgroundColor;
+	overflow-x: hidden;
+	font-size: 13px;
+}
+
+.popup-item {
+	display: inline-block;
 }
 
 .system-message {

@@ -1,4 +1,4 @@
-app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, $interval, pinBoard) {
+app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notification, bunkerConstants, emoticons, $interval, pinBoard, gravatarService) {
 
 	var io = $window.io;
 	var roomLookup = []; // For fast room lookup
@@ -38,14 +38,14 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				_.assign(bunkerData.inbox, initialData.inbox);
 				_.assign(bunkerData.memberships, initialData.memberships);
 
+				_.each(initialData.users, user => {
+					user.$present = bunkerData.isPresent(user);
+					user.$gravatar = gravatarService.url(user.email, {s:20});
+				});
+
 				// instead of sending many duplicate users down, send one list
 				// then re-hydrate all the associations
-				users.length = 0;
-				_.assign(users, _.keyBy(initialData.users, '_id'));
-
-				_.each(users, user => {
-					user.$present = bunkerData.isPresent(user);
-				});
+				users = _.keyBy(initialData.users, '_id');
 
 				_.each(bunkerData.inbox, function (inbox) {
 					if (inbox.message.author) { // TODO causing a bug for @aSig for some reason without this
@@ -156,6 +156,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 			message.$idAndEdited = message._id + '_' + message.editCount;
+			message.author = users[message.author._id];
 		},
 
 		// Rooms

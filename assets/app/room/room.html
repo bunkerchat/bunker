@@ -24,7 +24,7 @@
 						<div ng-switch-when="true">
 							<div class="message-author">
 								<div ng-if="::message.$firstInSeries" title="{{::message.author.email}}">
-									<img gravatar-src-once="message.author.email | lowercase" gravatar-size="30"/>
+									<img ng-src="{{::message.author.$gravatar}}"/>
 									<div class="name">{{::message.author.nick}}</div>
 									<div class="status"
 												ng-class="memberLookup[message.author._id].user.$present ? 'here' : 'away'"
@@ -91,8 +91,7 @@
 					<span class="offline" ng-switch-when="false">
 						<!-- offline member, much less watches -->
 						<span class="user-icon">
-							<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"
-									 title="{{::member.user.email}}"/>
+							<img ng-src="{{::member.user.$gravatar}}" title="{{::member.user.email}}"/>
 						</span>
 						<a ng-click="mentionUser(member.user.nick)">{{::member.user.nick}}</a>
 						<div class="pull-right">
@@ -108,8 +107,7 @@
 						<span ng-switch="member.user.busy === true" class="user-icon">
 							<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
 								<span ng-switch-when="false">
-									<img gravatar-src-once="member.user.email | lowercase" gravatar-size="20"
-											 title="{{::member.user.email}}"/>
+									<img ng-src="{{::member.user.$gravatar}}" title="{{::member.user.email}}"/>
 									<div class="status" ng-class="member.user.$present ? 'here' : 'away'">
 									</div>
 								</span>
