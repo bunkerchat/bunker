@@ -74,9 +74,6 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 				if (searchingFor) {
 					searchers[searchingFor](key);
-					// }
-					//
-					// if (searchTerm) {
 					var html = render[searchingFor]();
 					popup.html(html);
 
@@ -97,7 +94,11 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				inputBox.focus();
 			});
 
-			$rootScope.$on('roomIdChanged', () => inputBox.focus());
+			$rootScope.$on('roomIdChanged', () => {
+				resetMatchSearch();
+				resetMessageEditing();
+				inputBox.focus();
+			});
 			$rootScope.$on('bunkerDataLoaded', () => inputBox.focus());
 
 			// the send button needs to be attached to the enter handler
@@ -107,7 +108,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				e.stopPropagation();
 				e.preventDefault();
 
-				if(!searchingFor) return;
+				if (!searchingFor) return;
 
 				var item = $(e.currentTarget);
 				var value = item.data('value');
@@ -158,6 +159,9 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				}
 				else if (suggestedTerm) {
 					selectItem();
+				}
+				else if (e.shiftKey && bunkerData.userSettings.multilineShiftEnter) {
+					inputBox.val(inputBox.val() + '\n');
 				}
 				else {
 					submitMessage();
