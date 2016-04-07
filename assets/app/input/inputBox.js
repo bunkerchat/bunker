@@ -16,11 +16,15 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 		`,
 		link: function (scope, elem) {
 			var searchingFor, searchTerm, matches, suggestedTerm, matchingEmoticons, matchingUsers, matchIndex, hidden;
+
+			var editingMessage;
+
 			var inputBox = $('textarea', elem);
 			var container = $('.message-input', elem);
 			var send = container.find('button[type="submit"]');
 			var popup = $('.message-popup', elem);
-			reset();
+			resetMatchSearch();
+			resetMessageEditing();
 
 			// anchors are the special keys which define an emoticon or user
 			var anchors = {
@@ -32,9 +36,11 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			var handlers = {
 				'enter': enter,
 				'backspace': backspace,
-				'esc': reset,
+				'esc': esc,
 				'tab': tab,
 				'space': space,
+				'up': up,
+				'down': down,
 				';': emoticon,
 				'2': user
 			};
@@ -74,7 +80,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					var html = render[searchingFor]();
 					popup.html(html);
 
-					if(hidden) {
+					if (hidden) {
 						popup.show();
 						popup.on("click", "li", popupClick);
 					}
@@ -102,7 +108,12 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				inputBox.focus();
 			}
 
-			function reset() {
+			function esc() {
+				if (searchingFor)return resetMatchSearch();
+				resetMessageEditing();
+			}
+
+			function resetMatchSearch() {
 				searchingFor = null;
 				searchTerm = "";
 				matches = null;
@@ -116,14 +127,19 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				popup.hide();
 			}
 
-			function selectItem(){
+			function resetMessageEditing() {
+				editingMessage = null;
+				container.removeClass('edit-mode');
+			}
+
+			function selectItem() {
 				if (searchingFor == 'emoticons') {
 					inputBox.val(inputBox.val() + ':');
 				}
 
 				inputBox.val(inputBox.val() + ' ');
 
-				reset();
+				resetMatchSearch();
 			}
 
 			function enter(e) {
@@ -134,10 +150,10 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					return;
 				}
 
-				reset();
+				resetMatchSearch();
 
 				var text = inputBox.val();
-				if(!/\S/.test(text)) return;
+				if (!/\S/.test(text)) return;
 
 				return bunkerData.createMessage($stateParams.roomId, text)
 					.then(() => inputBox.val(''));
@@ -145,7 +161,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			function backspace(e) {
 				if (!searchTerm.length) {
-					return reset();
+					return resetMatchSearch();
 				}
 
 				if (suggestedTerm) {
@@ -174,6 +190,48 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					e.preventDefault();
 					selectItem();
 				}
+			}
+
+			function up(e) {
+				var currentRoom = bunkerData.getRoom($rootScope.roomId);
+				var messages = currentRoom.$messages.filter(message => {
+					return message.author && message.author._id == bunkerData.user._id;
+				});
+
+				if (!editingMessage) {
+					editingMessage = _.last(messages);
+				}
+				else {
+					var currentIndex = _.findIndex(messages, {_id: editingMessage._id});
+					editingMessage = messages[currentIndex - 1];
+				}
+
+				container.addClass('edit-mode');
+
+				inputBox.val(editingMessage.text);
+			}
+
+			function down(e) {
+				var currentRoom = bunkerData.getRoom($rootScope.roomId);
+				var messages = currentRoom.$messages.filter(message => {
+					return message.author && message.author._id == bunkerData.user._id;
+				});
+
+				if (!editingMessage) {
+					return resetMessageEditing();
+				}
+				else {
+					var currentIndex = _.findIndex(messages, {_id: editingMessage._id});
+					editingMessage = messages[currentIndex + 1];
+
+					// no more messages
+					if(!editingMessage) {
+						inputBox.val('');
+						return resetMessageEditing();
+					}
+				}
+
+				inputBox.val(editingMessage.text);
 			}
 
 			function replaceMatch(oldText, newText) {
@@ -205,7 +263,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			function emoticon(e) {
 				if (!e.shiftKey) return;
-				if (searchingFor == 'emoticons') return reset();
+				if (searchingFor == 'emoticons') return resetMatchSearch();
 				searchingFor = 'emoticons';
 			}
 
@@ -240,7 +298,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			function user(e) {
 				if (!e.shiftKey) return;
-				if (searchingFor == 'users') return reset();
+				if (searchingFor == 'users') return resetMatchSearch();
 				searchingFor = 'users';
 			}
 
