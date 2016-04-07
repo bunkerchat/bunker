@@ -193,16 +193,15 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			}
 
 			function up(e) {
-				var currentRoom = bunkerData.getRoom($rootScope.roomId);
-				var messages = currentRoom.$messages.filter(message => {
-					return message.author && message.author._id == bunkerData.user._id;
-				});
+				var messages = getMessages();
 
 				if (!editingMessage) {
 					editingMessage = _.last(messages);
 				}
 				else {
 					var currentIndex = _.findIndex(messages, {_id: editingMessage._id});
+					console.log(currentIndex);
+					if(currentIndex == 0) return;
 					editingMessage = messages[currentIndex - 1];
 				}
 
@@ -212,26 +211,26 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			}
 
 			function down(e) {
-				var currentRoom = bunkerData.getRoom($rootScope.roomId);
-				var messages = currentRoom.$messages.filter(message => {
-					return message.author && message.author._id == bunkerData.user._id;
-				});
+				if (!editingMessage) return resetMessageEditing();
 
+				var messages = getMessages();
+				var currentIndex = _.findIndex(messages, {_id: editingMessage._id});
+				editingMessage = messages[currentIndex + 1];
+
+				// no more messages
 				if (!editingMessage) {
+					inputBox.val('');
 					return resetMessageEditing();
-				}
-				else {
-					var currentIndex = _.findIndex(messages, {_id: editingMessage._id});
-					editingMessage = messages[currentIndex + 1];
-
-					// no more messages
-					if(!editingMessage) {
-						inputBox.val('');
-						return resetMessageEditing();
-					}
 				}
 
 				inputBox.val(editingMessage.text);
+			}
+
+			function getMessages() {
+				var currentRoom = bunkerData.getRoom($rootScope.roomId);
+				return currentRoom.$messages.filter(message => {
+					return message.author && message.author._id == bunkerData.user._id;
+				});
 			}
 
 			function replaceMatch(oldText, newText) {
