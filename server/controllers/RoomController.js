@@ -43,7 +43,9 @@ module.exports.message = function (req, res) {
 			);
 		})
 		.spread((userUpdate, message) => {
-			message.author = message.author._id;
+			if(message && message.author){
+				message.author = message.author._id;
+			}
 			res.ok(message)
 		})
 		.catch(InvalidInputError, function (err) {

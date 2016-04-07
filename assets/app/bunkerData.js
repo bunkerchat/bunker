@@ -156,7 +156,9 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 			message.$idAndEdited = message._id + '_' + message.editCount;
-			message.author = users[message.author._id];
+			if(message.author) {
+				message.author = users[message.author._id];
+			}
 		},
 
 		// Rooms
