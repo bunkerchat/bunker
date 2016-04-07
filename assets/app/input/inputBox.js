@@ -36,7 +36,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			var handlers = {
 				'enter': enter,
 				'backspace': backspace,
-				'esc': esc,
+				'esc': reset,
 				'tab': tab,
 				'space': space,
 				'up': up,
@@ -97,6 +97,9 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				inputBox.focus();
 			});
 
+			$rootScope.$on('roomIdChanged', () => inputBox.focus());
+			$rootScope.$on('bunkerDataLoaded', () => inputBox.focus());
+
 			// the send button needs to be attached to the enter handler
 			send.on("click", enter);
 
@@ -108,7 +111,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				inputBox.focus();
 			}
 
-			function esc() {
+			function reset() {
 				if (searchingFor)return resetMatchSearch();
 				resetMessageEditing();
 			}
@@ -145,18 +148,35 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			function enter(e) {
 				e.preventDefault();
 
-				if (searchingFor && suggestedTerm) {
+				if (editingMessage){
+					editMessage()
+				}
+				else if (suggestedTerm){
 					selectItem();
-					return;
+				}
+				else{
+					submitMessage();
 				}
 
-				resetMatchSearch();
+				reset();
+			}
 
+			function editMessage() {
 				var text = inputBox.val();
 				if (!/\S/.test(text)) return;
 
-				return bunkerData.createMessage($stateParams.roomId, text)
-					.then(() => inputBox.val(''));
+				editingMessage.text = text;
+				editingMessage.edited = true;
+				inputBox.val('');
+				bunkerData.editMessage(editingMessage);
+			}
+
+			function submitMessage() {
+				var text = inputBox.val();
+				if (!/\S/.test(text)) return;
+
+				inputBox.val('');
+				bunkerData.createMessage($stateParams.roomId, text);
 			}
 
 			function backspace(e) {
@@ -193,6 +213,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			}
 
 			function up(e) {
+				e.preventDefault();
 				var messages = getMessages();
 
 				if (!editingMessage) {
@@ -201,12 +222,11 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				else {
 					var currentIndex = _.findIndex(messages, {_id: editingMessage._id});
 					console.log(currentIndex);
-					if(currentIndex == 0) return;
+					if (currentIndex == 0) return;
 					editingMessage = messages[currentIndex - 1];
 				}
 
 				container.addClass('edit-mode');
-
 				inputBox.val(editingMessage.text);
 			}
 
