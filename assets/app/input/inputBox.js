@@ -211,14 +211,16 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				var oldSuggestion = suggestedTerm || searchTerm;
 				suggestedTerm = getNextMatch(e.shiftKey);
 
+				if (!suggestedTerm) return;
 				replaceMatch(oldSuggestion, suggestedTerm);
 			}
 
 			function space(e) {
-				if (searchingFor && suggestedTerm) {
+				if (suggestedTerm) {
 					e.preventDefault();
-					selectItem();
+					return selectItem();
 				}
+				reset();
 			}
 
 			function up(e) {
