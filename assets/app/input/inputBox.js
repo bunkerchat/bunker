@@ -74,9 +74,9 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 				if (searchingFor) {
 					searchers[searchingFor](key);
-				}
-
-				if (searchTerm) {
+					// }
+					//
+					// if (searchTerm) {
 					var html = render[searchingFor]();
 					popup.html(html);
 
@@ -103,8 +103,13 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			// the send button needs to be attached to the enter handler
 			send.on("click", enter);
 
-			function popupClick(evt) {
-				var item = $(evt.currentTarget);
+			function popupClick(e) {
+				e.stopPropagation();
+				e.preventDefault();
+
+				if(!searchingFor) return;
+
+				var item = $(e.currentTarget);
 				var value = item.data('value');
 				replaceMatch(searchTerm, value);
 				selectItem();
@@ -148,13 +153,13 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			function enter(e) {
 				e.preventDefault();
 
-				if (editingMessage){
+				if (editingMessage) {
 					editMessage()
 				}
-				else if (suggestedTerm){
+				else if (suggestedTerm) {
 					selectItem();
 				}
-				else{
+				else {
 					submitMessage();
 				}
 
@@ -293,7 +298,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					searchTerm += key;
 				}
 
-				matchingEmoticons = _.filter(emoticons.all, emoticon => emoticon.name.indexOf(searchTerm) == 0);
+				matchingEmoticons = _.filter(emoticons.imageEmoticons, emoticon => emoticon.name.indexOf(searchTerm) == 0);
 				matches = _.map(matchingEmoticons, 'name');
 			}
 

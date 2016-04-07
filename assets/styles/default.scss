@@ -721,6 +721,7 @@ li:not(:last-child) .message.last-read:after {
 	background: $lightBackgroundColor;
 	overflow-x: hidden;
 	font-size: 13px;
+	z-index: 1000;
 }
 
 .popup-item {
