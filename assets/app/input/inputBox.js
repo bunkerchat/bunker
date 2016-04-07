@@ -218,7 +218,11 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			function space(e) {
 				if (suggestedTerm) {
 					e.preventDefault();
-					selectItem();
+					return selectItem();
+				}
+
+				if(searchingFor == 'emoticons'){
+					return resetMatchSearch();
 				}
 			}
 
