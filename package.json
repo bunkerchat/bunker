@@ -23,7 +23,7 @@
     "express-session": "1.12.1",
     "favico.js": "0.3.10",
     "font-awesome": "4.5.0",
-    "fs-extra": "0.26.5",
+    "fs-extra": "0.27.0",
     "git-rev": "0.2.1",
     "gulp": "3.9.0",
     "gulp-babel": "6.1.2",
