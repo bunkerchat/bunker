@@ -77,6 +77,12 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.test(text)) {
 		return changeUserRole(roomMember, text);
 	}
+	else if (/^\/setinfo\s+/i.test(text)) {
+		return setInfo(roomMember, text);
+	}
+	else if (/^\/whois\s+/i.test(text)) {
+		return whois(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -584,4 +590,47 @@ function leaderboard(roomMember, text) {
 				})
 				.then(broadcastMessage);
 		})
+}
+
+function setInfo(roomMember, text) {
+	var infoMatch = text.match(/\/setinfo\s+(.+)/i);
+	var info = infoMatch[1].substring(0, 50);
+	var user = roomMember.user;
+
+	return Promise.join(
+		User.findByIdAndUpdate(user._id, {description: info}, {new: true}),
+		RoomMember.find({user: user._id})
+		)
+		.spread(function (updatedUser, memberships) {
+			socketio.io.to('user_' + updatedUser._id)
+				.emit('user', {
+					_id: updatedUser._id,
+					verb: 'updated',
+					data: {description: updatedUser.description}
+				});
+			RoomService.messageRooms(_.map(memberships, 'room'), updatedUser.nick + ' updated their whois info');
+		});
+}
+
+function whois(roomMember, text) {
+	var nickMatches = text.match(/^\/whois\s+([\w\s\-\.]{0,19})/i);
+	var userNick = nickMatches[1];
+	var roomId = roomMember.room;
+
+	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
+		.then(function (whoisUser) {
+			if (!whoisUser) throw new InvalidInputError('Could not find user ' + userNick);
+			var userEmail = whoisUser.user.email;
+			var userDescription = whoisUser.user.description;
+			var message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- " + userDescription;
+
+			if (userEmail === "peter.brejcha@gmail.com") {
+				message += " :petesux:";
+			} else if (userEmail === "jprodahl@gmail.com") {
+				message += " :joshsux:";
+			} else if (userEmail === "polaris878@gmail.com") {
+				message += " :drewsux:";
+			}
+			RoomService.messageRoom(roomId, message);
+		});
 }

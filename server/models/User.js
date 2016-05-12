@@ -46,6 +46,9 @@ var userSchema = new mongoose.Schema({
 	},
 	plaintextpassword: {
 		type: String
+	},
+	description: {
+		type: String
 	}
 });
 
