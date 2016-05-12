@@ -626,6 +626,8 @@ function whois(roomMember, text) {
 
 			if (userEmail === "peter.brejcha@gmail.com") {
 				message += " :petesux:";
+			} else if (userEmail === "jprodahl@gmail.com") {
+				message += " :joshsux:";
 			} else if (userEmail === "polaris878@gmail.com") {
 				message += " :drewsux:";
 			}
