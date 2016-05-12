@@ -623,6 +623,12 @@ function whois(roomMember, text) {
 			var userEmail = whoisUser.user.email;
 			var userDescription = whoisUser.user.description;
 			var message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- " + userDescription;
+
+			if (userEmail === "peter.brejcha@gmail.com") {
+				message += " :petesux:";
+			} else if (userEmail === "polaris878@gmail.com") {
+				message += " :drewsux:";
+			}
 			RoomService.messageRoom(roomId, message);
 		});
 }
