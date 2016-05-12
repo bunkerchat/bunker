@@ -77,7 +77,7 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.test(text)) {
 		return changeUserRole(roomMember, text);
 	}
-	else if (/^\/setInfo\s+/i.test(text)) {
+	else if (/^\/setinfo\s+/i.test(text)) {
 		return setInfo(roomMember, text);
 	}
 	else if (/^\/whois\s+/i.test(text)) {
@@ -593,7 +593,7 @@ function leaderboard(roomMember, text) {
 }
 
 function setInfo(roomMember, text) {
-	var infoMatch = text.match(/\/setInfo\s+(.+)/i);
+	var infoMatch = text.match(/\/setinfo\s+(.+)/i);
 	var info = infoMatch[1].substring(0, 50);
 	var user = roomMember.user;
 
