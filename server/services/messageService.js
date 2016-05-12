@@ -622,7 +622,15 @@ function whois(roomMember, text) {
 			if (!whoisUser) throw new InvalidInputError('Could not find user ' + userNick);
 			var userEmail = whoisUser.user.email;
 			var userDescription = whoisUser.user.description;
-			var message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- " + userDescription;
+			var message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- ";
+
+			if (!userDescription) {
+				message += "User has not set their info";
+			} else {
+				message += userDescription;
+			}
+
+
 
 			if (userEmail === "peter.brejcha@gmail.com") {
 				message += " :petesux:";
@@ -630,7 +638,10 @@ function whois(roomMember, text) {
 				message += " :joshsux:";
 			} else if (userEmail === "polaris878@gmail.com") {
 				message += " :drewsux:";
+			} else if (userEmail === "alexandergmann@gmail.com") {
+				message += " :glensux:";
 			}
+
 			RoomService.messageRoom(roomId, message);
 		});
 }

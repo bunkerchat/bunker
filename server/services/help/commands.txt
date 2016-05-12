@@ -14,4 +14,6 @@ me
 nick
 promote
 roll
+setinfo
 topic
+whois
