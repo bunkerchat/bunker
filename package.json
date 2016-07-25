@@ -9,7 +9,7 @@
     "babel-preset-es2015": "6.3.13",
     "bluebird": "3.2.1",
     "body-parser": "1.14.1",
-    "bootstrap": "3.3.6",
+    "bootstrap": "3.3.7",
     "bower": "1.6.8",
     "cache-manager": "1.3.0",
     "cache-manager-mongodb": "0.1.6",
