@@ -482,8 +482,13 @@ mark:hover {
 	padding: 5px 10px;
 	border-bottom: solid #eee 1px;
 	border-right: solid 1px #eee;
-	line-height: 30px;
+    line-height: 26px;
 	background-color: $lightBackgroundColor;
+    height: 36px;
+
+    mark {
+      padding: 0px 2px;
+    }
 }
 
 [fill], .fill {
@@ -807,7 +812,7 @@ img.fatality {
 
 	.status {
 		position: absolute;
-		top: 9px;
+		top: 8px;
 		left: 8px;
 	}
 
