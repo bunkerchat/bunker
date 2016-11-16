@@ -14,24 +14,32 @@ module.exports.start = function (roomMember, command) {
 	return Poll.findOne({room: roomMember.room, isOpen: true})
 		.then(function (poll) {
 			if(poll) {
-				return buildPollResponse(poll);
+				return defaultPollResponse(poll);
 			}
 
 			_.each(defaultPollOptions, function(option, index){
 				optionVotes.push(0);
 			});
 			return Poll.create({
-				user: roomMember.user._id,
+				user: roomMember.user,
 				room: roomMember.room,
 				question: question,
-				options: defaultPollOptions,
-				optionVotes: optionVotes,
 			}).then(function (newPoll) {
-				return defaultPollResponse(newPoll);
+
+				return Promise.each(defaultPollOptions, function(option, index) {
+					return PollOption.create({
+						poll: newPoll._id,
+						optionString: option,
+						optionNumber: index + 1,
+						numberOfVotes: 0,
+					});
+				})
+					.spread(function(option1, option2, option3) {
+						return defaultPollResponse(newPoll);
+					})
+				//return secondPollResponse(newPoll);
 			});
 		});
-
-
 };
 
 module.exports.vote = function(roomMember, command) {
@@ -40,36 +48,84 @@ module.exports.vote = function(roomMember, command) {
 
 	return Poll.findOne({room: roomMember.room, isOpen: true})
 		.then(function (activePoll) {
-			var num = parseInt(activePoll.optionVotes[optionNumber]);
-			num = num + 1;
-			activePoll.optionVotes[optionNumber] = num;
 
-			return Promise.join(
-				Poll.update({_id: activePoll._id}, {optionVotes: activePoll.optionVotes}, {upsert: true}),
-				defaultPollResponse(activePoll)
-			)
-				.spread(function(poll, response) {
-					return response;
+			return PollOption.findOne({poll: activePoll._id, optionNumber: optionNumber})
+				.then(function (selectedOption) {
+					var num = parseInt(selectedOption.numberOfVotes);
+					num = num + 1;
+					selectedOption.numberOfVotes = num;
+
+					return Promise.join(
+						selectedOption.save(),
+						defaultPollResponse(activePoll)
+					)
+						.spread(function(poll, response) {
+							return response;
+						});
 				});
-
-
 		});
 
 };
 
-function defaultPollResponse(newPoll) {
-	var user = newPoll.user;
+module.exports.close = function(roomMember, command) {
+	var match = /^\/poll(\s?)close?(?:\s*)/ig.exec(command);
+	var optionNumber = match[1];
+
+	return Poll.findOne({room: roomMember.room, isOpen: true})
+		.then(function (activePoll) {
+			activePoll.isOpen = false;
+
+			return Promise.join(
+				activePoll.save(),
+				finalPollResults(activePoll)
+			)
+				.spread(function(poll, response) {
+					return response;
+				});
+		});
+};
+
+function finalPollResults(newPoll) {
+	var user = newPoll.user.nick;
 	var question = newPoll.question;
 	var responseString = [];
-
 	responseString.push(user + " is asking: " + question);
 
-	_.each(newPoll.options, function(option, index) {
-		var numVotes = newPoll.optionVotes[index];
-		responseString.push(index + ". " + option + "  : " + numVotes + " votes");
-	});
+	return PollOption.find({poll: newPoll._id})
+		.then(function (pollOptions) {
+			var ascendingSort = _.sortBy(pollOptions, "numberOfVotes");
+			var sortedList = ascendingSort.reverse();
+			_.each(pollOptions, function(option, index) {
+				var optionString = option.optionString;
+				var optionNum = option.optionNumber;
+				var numVotes = option.numberOfVotes;
+				responseString.push(optionNum + ". " + optionString + "  : " + numVotes + " votes");
+			});
+			var winnerOption = sortedList[0];
+			var winString = winnerOption.optionString;
+			var winVotes = winnerOption.numberOfVotes;
+			responseString.push("The top result is : " + winString + " with a total of " + winVotes);
+			return {message: responseString};
+		});
 
-	return {message: responseString};
+}
+
+function defaultPollResponse(newPoll) {
+	var user = newPoll.user.nick;
+	var question = newPoll.question;
+	var responseString = [];
+	responseString.push(user + " is asking: " + question);
+
+	return PollOption.find({poll: newPoll._id})
+		.then(function (pollOptions) {
+			_.each(pollOptions, function(option, index) {
+				var optionString = option.optionString;
+				var optionNum = option.optionNumber;
+				var numVotes = option.numberOfVotes;
+				responseString.push(optionNum + ". " + optionString + "  : " + numVotes + " votes");
+			});
+			return {message: responseString};
+		});
 }
 
 

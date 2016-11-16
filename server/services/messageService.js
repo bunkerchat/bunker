@@ -90,6 +90,9 @@ messageService.createMessage = function (roomMember, text) {
 	else if(/^\/vote\s+/i.test(text)) {
 		return vote(roomMember, text);
 	}
+	else if(/^\/poll(\s?)close?(?:\s*)/i.test(text)) {
+		return pollClose(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -661,7 +664,6 @@ function poll(roomMember, text) {
 			pollResponse.message.forEach(function (line) {
 				RoomService.messageRoom(roomId, line);
 			});
-			//RoomService.messageRoom(roomId, pollResponse.message);
 		});
 }
 
@@ -672,7 +674,6 @@ function pollClose(roomMember, text) {
 			pollResponse.message.forEach(function (line) {
 				RoomService.messageRoom(roomId, line);
 			});
-			//RoomService.messageRoom(roomId, pollResponse);
 		});
 }
 
@@ -683,6 +684,5 @@ function vote(roomMember, text) {
 			pollResponse.message.forEach(function (line) {
 				RoomService.messageRoom(roomId, line);
 			});
-			//return message(roomMember, pollResponse.message);
 		});
 }
