@@ -11,12 +11,12 @@ var schema = new mongoose.Schema({
 	},
 	optionNumber: {
 		type: Number,
-		default: zero,
-	}
+		default: 0,
+	},
 	numberOfVotes: {
 		type: Number,
 		required: true,
-		default: zero,
+		default: 0,
 	},
 });
 

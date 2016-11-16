@@ -15,6 +15,7 @@ var helpService = require('./helpService');
 var statsService = require('./statsService');
 var leaderboardService = require('./leaderboardService');
 var hangmanService = require('./hangmanService');
+var pollService = require('./pollService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -83,7 +84,7 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/whois\s+/i.test(text)) {
 		return whois(roomMember, text);
 	}
-	else if(/^\/poll\s+/i.test(text)) {
+	else if(/^\/poll?(?:\s+(.+)?|$)/i.test(text)) {
 		return poll(roomMember, text);
 	}
 	else if(/^\/vote\s+/i.test(text)) {
@@ -653,22 +654,35 @@ function whois(roomMember, text) {
 }
 
 function poll(roomMember, text) {
+	var roomId = roomMember.room;
 	return pollService.start(roomMember, text)
 		.then(function (pollResponse) {
-			return message(roomMember, pollResponse.message);
+			console.log(pollResponse);
+			pollResponse.message.forEach(function (line) {
+				RoomService.messageRoom(roomId, line);
+			});
+			//RoomService.messageRoom(roomId, pollResponse.message);
 		});
 }
 
 function pollClose(roomMember, text) {
+	var roomId = roomMember.room;
 	return pollService.close(roomMember, text)
 		.then(function (pollResponse) {
-			return message(roomMember, pollResponse.message);
+			pollResponse.message.forEach(function (line) {
+				RoomService.messageRoom(roomId, line);
+			});
+			//RoomService.messageRoom(roomId, pollResponse);
 		});
 }
 
 function vote(roomMember, text) {
+	var roomId = roomMember.room;
 	return pollService.vote(roomMember, text)
 		.then(function (pollResponse) {
-			return message(roomMember, pollResponse.message);
+			pollResponse.message.forEach(function (line) {
+				RoomService.messageRoom(roomId, line);
+			});
+			//return message(roomMember, pollResponse.message);
 		});
 }

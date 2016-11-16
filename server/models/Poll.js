@@ -23,11 +23,19 @@ var schema = new mongoose.Schema({
 	},
 	totalNumVotes: {
 		type: Number,
-		default: zero,
+		default: 0,
 	},
 	isOpen: {
 		type: Boolean,
 		default: true,
+	},
+	options: {
+		type: Array,
+		default: [],
+	},
+	optionVotes: {
+		type: Array,
+		default: [],
 	},
 });
 
