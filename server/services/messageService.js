@@ -83,6 +83,12 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/whois\s+/i.test(text)) {
 		return whois(roomMember, text);
 	}
+	else if(/^\/poll\s+/i.test(text)) {
+		return poll(roomMember, text);
+	}
+	else if(/^\/vote\s+/i.test(text)) {
+		return vote(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -643,5 +649,26 @@ function whois(roomMember, text) {
 			}
 
 			RoomService.messageRoom(roomId, message);
+		});
+}
+
+function poll(roomMember, text) {
+	return pollService.start(roomMember, text)
+		.then(function (pollResponse) {
+			return message(roomMember, pollResponse.message);
+		});
+}
+
+function pollClose(roomMember, text) {
+	return pollService.close(roomMember, text)
+		.then(function (pollResponse) {
+			return message(roomMember, pollResponse.message);
+		});
+}
+
+function vote(roomMember, text) {
+	return pollService.vote(roomMember, text)
+		.then(function (pollResponse) {
+			return message(roomMember, pollResponse.message);
 		});
 }
