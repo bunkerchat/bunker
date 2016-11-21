@@ -21,7 +21,7 @@ module.exports.start = function (roomMember, command) {
 			} else if(!poll && !question) {
 				var isPrivate = true;
 				var string = 'Needs questions to create poll';
-				return buildMessage(isPrivate, string)
+				return buildMessage(isPrivate, string);
 			}
 
 			_.each(defaultPollOptions, function(option, index){
@@ -55,6 +55,12 @@ module.exports.vote = function(roomMember, command) {
 
 	return Poll.findOne({room: roomMember.room, isOpen: true}).populate('user')
 		.then(function (activePoll) {
+
+			if(!activePoll) {
+				var isPrivate = true;
+				var string = 'No active poll to vote for';
+				return buildMessage(isPrivate, string);
+			}
 
 			var respondees = activePoll.respondees;
 			if (respondees.indexOf(roomMember.user._id) != -1) {
