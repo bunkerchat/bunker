@@ -83,6 +83,7 @@ module.exports.vote = function(roomMember, command) {
 module.exports.close = function(roomMember, command) {
 	var match = /^\/poll(\s?)close?(?:\s*)/ig.exec(command);
 	var optionNumber = match[1];
+	var userId = roomMember.user._id;
 
 	return Poll.findOne({room: roomMember.room, isOpen: true}).populate('user')
 		.then(function (activePoll) {
@@ -91,7 +92,8 @@ module.exports.close = function(roomMember, command) {
 				return {activePoll: false};
 			}
 
-			if ( roomMember.role == 'administrator' || roomMember.role == 'moderator' || roomMember.user._id == activePoll.user._id ) {
+			var ownerId = activePoll.user._id;
+			if ( roomMember.role == 'administrator' || roomMember.role == 'moderator' || ownerId.equals(userId) ) {
 				activePoll.isOpen = false;
 
 				return Promise.join(
