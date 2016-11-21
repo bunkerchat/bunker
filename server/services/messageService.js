@@ -660,13 +660,11 @@ function poll(roomMember, text) {
 	var roomId = roomMember.room;
 	return pollService.start(roomMember, text)
 		.then(function (pollResponse) {
-			console.log(pollResponse);
-			if(pollResponse.activePoll == false && pollResponse.hasQuestion == false) {
-				throw new InvalidInputError('Needs questions to create poll');
-			} else
-			pollResponse.message.forEach(function (line) {
-				RoomService.messageRoom(roomId, line);
-			});
+			if(pollResponse.isPrivate) {
+				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
+			} else {
+				RoomService.messageRoom(roomId, pollResponse.message);
+			}
 		});
 }
 
@@ -674,29 +672,20 @@ function pollClose(roomMember, text) {
 	var roomId = roomMember.room;
 	return pollService.close(roomMember, text)
 		.then(function (pollResponse) {
-			if (pollResponse.canClose == true && pollResponse.activePoll == true ){
-				pollResponse.message.forEach(function (line) {
-					RoomService.messageRoom(roomId, line);
-				});
-			} else if(pollResponse.activePoll == false) {
-				throw new InvalidInputError('No active poll');
-			} else if(pollResponse.canClose == false) {
-				throw new InvalidInputError('Do not have permissions to close poll.');
+			if (pollResponse.isPrivate) {
+				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
+			} else {
+				RoomService.messageRoom(roomId, pollResponse.message);
 			}
 		});
 }
 
+// voting is always private
 function vote(roomMember, text) {
 	var roomId = roomMember.room;
 	return pollService.vote(roomMember, text)
 		.then(function (pollResponse) {
-			if (pollResponse.newVote == true ) {
-				pollResponse.message.forEach(function (line) {
-					RoomService.messageRoom(roomId, line);
-				});
-
-			} else {
-				throw new InvalidInputError('You have already voted');
-			}
+			RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
 		});
 }
+

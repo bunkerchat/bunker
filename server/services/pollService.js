@@ -1,6 +1,7 @@
 var Promise = require('bluebird');
 var request = Promise.promisifyAll(require('request'));
 var socketio = require('../config/socketio');
+var ent = require('ent');
 
 var Poll = require('../models/Poll');
 var PollOption = require('../models/PollOption');
@@ -14,12 +15,14 @@ module.exports.start = function (roomMember, command) {
 	return Poll.findOne({room: roomMember.room, isOpen: true}).populate('user')
 		.then(function (poll) {
 			if(poll) {
-				return defaultPollResponse(poll);
+				var isPrivate = true;
+				return defaultPollResponse(poll, isPrivate);
+
 			} else if(!poll && !question) {
-				return {activePoll: false, hasQuestion: false};
+				var isPrivate = true;
+				var string = 'Needs questions to create poll';
+				return buildMessage(isPrivate, string)
 			}
-
-
 
 			_.each(defaultPollOptions, function(option, index){
 				optionVotes.push(0);
@@ -39,7 +42,8 @@ module.exports.start = function (roomMember, command) {
 					});
 				})
 					.spread(function(option1, option2, option3) {
-						return defaultPollResponse(newPoll);
+						var isPrivate = false;
+						return defaultPollResponse(newPoll, isPrivate);
 					});
 			});
 		});
@@ -54,11 +58,20 @@ module.exports.vote = function(roomMember, command) {
 
 			var respondees = activePoll.respondees;
 			if (respondees.indexOf(roomMember.user._id) != -1) {
-				return {newVote: false, message: "You have already voted"}
+				var isPrivate = true;
+				var string = 'You have already voted';
+				return buildMessage(isPrivate, string);
 
 			} else {
 				return PollOption.findOne({poll: activePoll._id, optionNumber: optionNumber})
 					.then(function (selectedOption) {
+
+						if(!selectedOption) {
+							var isPrivate = true;
+							var string = 'You have not selected a valid option';
+							return buildMessage(isPrivate, string);
+						}
+
 						var num = parseInt(selectedOption.numberOfVotes);
 						num = num + 1;
 						selectedOption.numberOfVotes = num;
@@ -67,10 +80,12 @@ module.exports.vote = function(roomMember, command) {
 
 						activePoll.resondees = respondees;
 
+						var isPrivate = true;
+
 						return Promise.join(
 							selectedOption.save(),
 							activePoll.save(),
-							updatedVotePollResponse(activePoll)
+							updatedVotePollResponse(activePoll, isPrivate)
 						)
 							.spread(function(pollOpts,activePoll, response) {
 								return response;
@@ -89,16 +104,18 @@ module.exports.close = function(roomMember, command) {
 		.then(function (activePoll) {
 			// must create error handling for no active polls
 			if (!activePoll) {
-				return {activePoll: false};
+				var isPrivate = true;
+				var string = 'No active poll';
+				return buildMessage(isPrivate, string);
 			}
 
 			var ownerId = activePoll.user._id;
 			if ( roomMember.role == 'administrator' || roomMember.role == 'moderator' || ownerId.equals(userId) ) {
 				activePoll.isOpen = false;
-
+				var isPrivate = false;
 				return Promise.join(
 					activePoll.save(),
-					finalPollResults(activePoll)
+					finalPollResults(activePoll, isPrivate)
 				)
 					.spread(function(poll, response) {
 						return response;
@@ -106,13 +123,14 @@ module.exports.close = function(roomMember, command) {
 
 			} else {
 				// you do not have perms to close poll
-				return {activePoll: true, canClose: false};
-				//return defaultPollResponse(activePoll);
+				var isPrivate = true;
+				var string = 'Do not have permissions to close poll.';
+				return buildMessage(isPrivate, string);
 			}
 		});
 };
 
-function finalPollResults(newPoll) {
+function finalPollResults(newPoll, isPrivate) {
 	var user = newPoll.user.nick;
 	var question = newPoll.question;
 	var responseString = [];
@@ -132,28 +150,27 @@ function finalPollResults(newPoll) {
 			var winString = winnerOption.optionString;
 			var winVotes = winnerOption.numberOfVotes;
 			responseString.push("The top result is : " + winString + " with a total of " + winVotes);
-			return {activePoll: true, canClose: true, message: responseString};
+			return {isPrivate: isPrivate, message: ent.encode(responseString.join('\n'))};
 		});
 
 }
 
-function defaultPollResponse(newPoll) {
+function defaultPollResponse(newPoll, isPrivate) {
 	var user = newPoll.user.nick;
 	var question = newPoll.question;
 	var responseString = [];
 	responseString.push(user + " is asking: " + question);
 
-	console.log(newPoll);
-
 	return PollOption.find({poll: newPoll._id})
 		.then(function (pollOptions) {
-			_.each(pollOptions, function(option, index) {
+			var ascendingSort = _.sortBy(pollOptions, "optionNumber");
+			_.each(ascendingSort, function(option, index) {
 				var optionString = option.optionString;
 				var optionNum = option.optionNumber;
 				var numVotes = option.numberOfVotes;
 				responseString.push(optionNum + ". " + optionString + "  : " + numVotes + " votes");
 			});
-			return {message: responseString, activePoll: true, hasQuestion: true};
+			return {message: ent.encode(responseString.join('\n')), isPrivate: isPrivate};
 		});
 }
 
@@ -163,332 +180,22 @@ function updatedVotePollResponse(newPoll) {
 	var responseString = [];
 	responseString.push(user + " is asking: " + question);
 
-	console.log(newPoll);
-
 	return PollOption.find({poll: newPoll._id})
 		.then(function (pollOptions) {
-			_.each(pollOptions, function(option, index) {
+			var ascendingSort = _.sortBy(pollOptions, "optionNumber");
+			_.each(ascendingSort, function(option, index) {
 				var optionString = option.optionString;
 				var optionNum = option.optionNumber;
 				var numVotes = option.numberOfVotes;
 				responseString.push(optionNum + ". " + optionString + "  : " + numVotes + " votes");
 			});
-			return {newVote: true, message: responseString};
+			return {isPrivate: true, message: ent.encode(responseString.join('\n'))};
 		});
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-	var defaultPollOptions = ["True", "False", "I don't care"];
-	return getCurrentPoll(roomMember, question).then(function (currentPoll) {
-		if(!currentPoll) {
-			if(!question) throw new InvalidInputError('No question for new poll');
-			else throw new InvalidInputError('There is currently an active poll');
-		}
-
-/!*		return PollOption.find({poll: currentPoll._id}).then(function (options) {
-			if(!options || options.length == 0) {
-
-				//var optionPromises = [];
-
-/!*				_.each(defaultPollOptions, function(defaultOption, index){
-					optionPromises.push(Promise PollOption.create({
-						poll: currentPoll._id,
-						optionString: defaultOption,
-						optionNumber: index + 1
-					});
-
-
-				})*!/
-
-				return Promise.each(defaultPollOptions, function(defaultOption, index) {
-					return PollOption.create({
-						poll: currentPoll._id,
-						optionString: defaultOption,
-						optionNumber: index + 1
-					});
-				});
-			}
-		});*!/
-
-		return buildNewResponse(currentPoll);
-
-
-/!*		if(currentPoll && !question) {
-			return buildResponse(currentPoll);
-		}*!/
-/!*		if (!currentPoll) {
-			return createPoll(roomMember, question);
-		}*!/
-/!*		else {
-			return getPollOptions(currentPoll).then(function(allOptions) {
-				return buildResponse(currentPoll, allOptions);
-			});
-		}*!/
-	});
-};
-
-module.exports.close = function (roomMember, command) {
-
-};
-
-module.exports.vote = function (roomMember, command) {
-	var match = /^\/vote?(?:\s+(.+)?|$)/ig.exec(command);
-	// console.log( "this is match :   " + match[1]);
-	var optionNumber = match[1];
-
-	return Poll.findOne({room: roomMember.room, isOpen: true})
-		.then(function (poll) {
-			PollOption.find({poll: poll._id})
-				.then(function (options) {
-					if(options){
-						console.log(options);
-						console.log("Options exists yo " + options[1].optionString + " !!!!");
-					} else if (!options) {
-						console.log("Options don't exist");
-					}
-				});
-		});
-/!*
-	var currentPoll = getCurrentPoll(roomMember)
-
-	if (currentPoll) {
-		votePollOption(roomMember, currentPoll);
-	}*!/
-/!*	optionVotesUpdated = currentPoll.optionVotes;
-
-	//optionVotesUpdated[optionNumber] = + 1;
-
-	return Poll.findByIdAndUpdate(currentPoll._id, {optionVotes: optionVotesUpdated})
-		.then( function (updatedPoll) {
-
-			socketio.io.to('poll_' + updatedPoll._id)
-				.emit('poll', {
-					_id: updatedPoll._id,
-					verb: 'updated',
-					data: {optionVotes: optionVotesUpdated }
-				});
-
-			return buildResponse(updatedPoll, roomMember);
-		});*!/
-
-};
-
-function aa(currentPoll, allOptions) {
-	var askingUser = currentPoll.user.nick;
-	var question = currentPoll.question;
+function buildMessage(isPrivate, string) {
 	var responseString = [];
-	responseString.push(askingUser + " is asking: " + question);
+	responseString.push(string);
 
-	_.each(allOptions, function(option) {
-		responseString.push(option.optionNumber + ". " + option.optionString + " : " + option.numberOfVotes + " votes");
-	});
-	return {message: responseString};
+	return {isPrivate: isPrivate, message: ent.encode(responseString.join('\n'))};
 }
-
-function buildNewResponse(currentPoll) {
-	PollOption.find({poll: currentPoll._id})
-		.then(function (allOptions) {
-			//var askingUser = currentPoll.user.nick;
-			var question = currentPoll.question;
-			var responseString = [];
-			responseString.push("I " + " is asking: " + question);
-
-			_.each(allOptions, function(option) {
-				responseString.push(option.optionNumber + ". " + option.optionString + " : " + option.numberOfVotes + " votes");
-			});
-
-			messageString = responseString.join(" | ");
-			return {message: messageString};
-		});
-}
-
-/!*function createPoll(roomMember, question) {
-	if (!question) throw new InvalidInputError('Invalid question for poll');
-	var optionsArray = [];
-	var optionsVotesArray = [];
-	optionsArray.push("True");
-	optionsVotesArray.push('0');
-	optionsArray.push("False");
-	optionsVotesArray.push('0');
-
-
-	return Poll.create({
-		user: roomMember.user,
-		room: roomMember.room,
-		question: question,
-	})
-		.then(function (newPoll) {
-			var numResponses = 2;
-			var optionStrings =["True", "False"];
-			var number = 1;
-
-/!*			return Promise.join(
-				PollOption.create({poll: newPoll._id, optionString: "True", optionNumber: 1}),
-				PollOption.create({poll: newPoll._id, optionString: "False", optionNumber: 2})
-			)*!/
-
-			return Promise.each(optionStrings, function(option) {
-				return PollOption.create({poll: newPoll._id, optionString: option, optionNumber: number})
-					.then(function (option) {
-						number += 1;
-						return option;
-					});
-			})
-				.then(function (allOptions) {
-					return buildResponse(newPoll, allOptions);
-				});
-
-		});
-}*!/
-
-
-
-function getCurrentPoll(roomMember, question) {
-	// if there is already a current poll that's active for the room, return that one
-	return Poll.findOne({room: roomMember.room, isOpen: true })
-		.then(function(currentPoll) {
-			if(currentPoll && question) {
-				return null;
-			}
-			else if (!question && !currentPoll) {
-				return null;
-			}
-			else if (currentPoll && !question) {
-				return currentPoll;
-			}
-			else if(question && !currentPoll) {
-				return createPoll(roomMember, question);
-				//return Poll.create({user: roomMember.user, room: roomMember.room, question: question});
-			}
-		});
-}
-
-
-
-
-
-function createPoll(roomMember, question) {
-	return Poll.create({user: roomMember.user, room: roomMember.room, question: question})
-		.then(function (newPoll) {
-			var defaultPollOptions = ["True", "False", "I don't care"];
-			return Promise.each(defaultPollOptions, function (defaultOption, index) {
-				return PollOption.create({
-					poll: newPoll._id,
-					optionString: defaultOption,
-					optionNumber: index + 1
-				});
-			})
-				.spread(function (opt1, op2, opt3) {
-					return newPoll;
-				});
-
-		});
-}
-
-
-function getPollOptions(poll) {
-	// gets all poll options for a poll
-	return PollOption.find({poll: poll._id});
-}
-
-function votePollOption(roomMember, poll, optionNumber) {
-	var newNumVotes;
-
-	return PollOption.findOne({poll: poll._id, optionNumber: optionNumber})
-		.then(function (selectedPollOption) {
-			if(!selectedPollOption) throw new InvalidInputError('Invalid option for poll');
-
-			newNumVotes = selectedPollOption.numberOfVotes;
-			newNumVotes += 1;
-
-			return PollOption.findByIdAndUpdate(selectedPollOption._id, {numberOfVotes: newNumVotes});
-		})
-		.then(function (updatedPollOption) {
-
-			socketio.io.to('polloption' + updatedPollOption._id)
-				.emit('polloption', {
-					_id: updatedPollOption._id,
-					verb: 'updated',
-					data: {numberOfVotes: newNumVotes}
-				});
-
-			return PollOption.find({poll: poll._id})
-				.then(function (allOptions) {
-					return buildResponse(poll, allOptions);
-				});
-		});
-}
-
-function doesOptionExist(poll, optionNumber) {
-	return PollOption.findOne({poll: poll._id, optionNumber: optionNumber});
-}
-
-function buildInitialPollResponse(currentPoll, pollOption1, pollOption2, pollOption3) {
-	var askingUser = currentPoll.user.nick;
-	var question = currentPoll.question;
-	var responseString = [];
-	responseString.push(askingUser + " is asking: " + question);
-	responseString.push(pollOption1.optionNumber + ". " + pollOption1.optionString + " : " + pollOption1.numberOfVotes + " votes");
-	responseString.push(pollOption2.optionNumber + ". " + pollOption2.optionString + " : " + pollOption2.numberOfVotes + " votes");
-	responseString.push(pollOption3.optionNumber + ". " + pollOption3.optionString + " : " + pollOption3.numberOfVotes + " votes");
-	return {message: responseString};
-
-}
-
-function buildResponse (poll, pollOptions) {
-	var askingUser = poll.user.nick;
-	var question = poll.question;
-	var responseString = [];
-	responseString.push(askingUser + " is asking: " + question);
-	var allOptions = pollOptions;
-	allOptions.forEach(function (option) {
-		var optionNumber = option.optionNumber;
-		var optionString = option.optionString;
-		var votes = option.numberOfVotes;
-		responseString.push(optionNumber + ". " + optionString + " : " + votes + " votes");
-	});
-	return {message: responseString};
-/!*
-	pollOptions.forEach(function (option) {
-		var optionNumber = option.optionNumber;
-		var optionString = option.optionString;
-		var votes = option.numberOfVotes;
-		responseString.push(optionNumber + ". " + optionString + " : " + votes + " votes");
-	});*!/
-
-	//return {message: responseString};
-}
-*/
