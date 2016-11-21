@@ -661,6 +661,9 @@ function poll(roomMember, text) {
 	return pollService.start(roomMember, text)
 		.then(function (pollResponse) {
 			console.log(pollResponse);
+			if(pollResponse.activePoll == false && pollResponse.hasQuestion == false) {
+				throw new InvalidInputError('Needs questions to create poll');
+			} else
 			pollResponse.message.forEach(function (line) {
 				RoomService.messageRoom(roomId, line);
 			});
@@ -671,9 +674,15 @@ function pollClose(roomMember, text) {
 	var roomId = roomMember.room;
 	return pollService.close(roomMember, text)
 		.then(function (pollResponse) {
-			pollResponse.message.forEach(function (line) {
-				RoomService.messageRoom(roomId, line);
-			});
+			if (pollResponse.canClose == true && pollResponse.activePoll == true ){
+				pollResponse.message.forEach(function (line) {
+					RoomService.messageRoom(roomId, line);
+				});
+			} else if(pollResponse.activePoll == false) {
+				throw new InvalidInputError('No active poll');
+			} else if(pollResponse.canClose == false) {
+				throw new InvalidInputError('Do not have permissions to close poll.');
+			}
 		});
 }
 
@@ -681,8 +690,13 @@ function vote(roomMember, text) {
 	var roomId = roomMember.room;
 	return pollService.vote(roomMember, text)
 		.then(function (pollResponse) {
-			pollResponse.message.forEach(function (line) {
-				RoomService.messageRoom(roomId, line);
-			});
+			if (pollResponse.newVote == true ) {
+				pollResponse.message.forEach(function (line) {
+					RoomService.messageRoom(roomId, line);
+				});
+
+			} else {
+				throw new InvalidInputError('You have already voted');
+			}
 		});
 }
