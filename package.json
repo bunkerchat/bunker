@@ -41,7 +41,7 @@
     "hookshot": "0.1.0",
     "jquery": "2.2.0",
     "lodash": "4.1.0",
-    "moment": "2.10.6",
+    "moment": "2.12.0",
     "mongodb": "2.0.49",
     "mongoose": "4.3.7",
     "ng-sortable": "1.3.2",
