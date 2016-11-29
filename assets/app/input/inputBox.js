@@ -42,7 +42,13 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				'up': up,
 				'down': down,
 				';': emoticon,
-				'2': user
+				'2': user,
+
+				// ignore these keystrokes
+				'command': _.noop,
+				'alt': _.noop,
+				'ctrl': _.noop,
+				'shift': _.noop
 			};
 
 			// search functions which are triggered when an anchor is used
@@ -62,14 +68,15 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			// every key press in the text area
 			inputBox.keydown(e => {
-				bunkerData.broadcastTyping($rootScope.roomId);
-
 				// gets a human readable keyboard value
 				var key = keycode(e);
 
 				var handler = handlers[key];
 				if (handler) {
 					handler(e);
+				}
+				else{
+					bunkerData.broadcastTyping($rootScope.roomId);
 				}
 
 				if (searchingFor) {
