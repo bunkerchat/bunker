@@ -1,0 +1,11 @@
+SYNOPSIS
+	/setinfo - change your basic info for whois
+	
+SYNTAX
+	/setinfo text
+
+EXAMPLE
+	/setinfo PB Software Developer MN
+
+
+

@@ -246,25 +246,26 @@ mark:hover {
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background-color: $darkBackgroundColor;
+	background-color: white;
+	background-image: url('/assets/images/splash.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
 	z-index: 1040; /* bootstrap sets z-index of navbar to 1030, so we need to be above that */
-	padding-top: 90px;
-	text-align: center;
-	font-family: "Cabin", Arial, sans-serif;
-	font-size: 36px;
-	font-weight: bolder;
-	color: #fff;
 
-	img {
-		width: 150px;
+	p {
+		position: absolute;
+		left: 15px;
+		bottom: 0;
+		color: black;
+		font-family: "Cabin", Arial, sans-serif;
+		font-size: 24px;
+		font-weight: bolder;
+
+		img {
+			height: 25px;
+		}
 	}
-}
-
-.splash-brand {
-	font-size: 150px;
-	text-shadow: 12px 12px 3px $successColor, 24px 24px 6px #000;
-	text-transform: uppercase;
-	text-align: center;
 }
 
 // header dropdowns
@@ -481,8 +482,13 @@ mark:hover {
 	padding: 5px 10px;
 	border-bottom: solid #eee 1px;
 	border-right: solid 1px #eee;
-	line-height: 30px;
+    line-height: 32px;
 	background-color: $lightBackgroundColor;
+    height: 41px;
+
+    mark {
+      padding: 0px 2px;
+    }
 }
 
 [fill], .fill {
@@ -617,6 +623,7 @@ li:not(:last-child) .message.last-read:after {
 			margin-bottom: 0;
 			border-width: 0;
 			background-color: transparent;
+			white-space: pre-wrap;
 		}
 	}
 }
@@ -806,7 +813,7 @@ img.fatality {
 
 	.status {
 		position: absolute;
-		top: 9px;
+		top: 8px;
 		left: 8px;
 	}
 
