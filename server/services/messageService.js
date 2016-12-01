@@ -15,6 +15,7 @@ var helpService = require('./helpService');
 var statsService = require('./statsService');
 var leaderboardService = require('./leaderboardService');
 var hangmanService = require('./hangmanService');
+var pollService = require('./pollService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
@@ -82,6 +83,15 @@ messageService.createMessage = function (roomMember, text) {
 	}
 	else if (/^\/whois\s+/i.test(text)) {
 		return whois(roomMember, text);
+	}
+	else if(/^\/poll?(?:\s+(.+)?|$)/i.test(text)) {
+		return poll(roomMember, text);
+	}
+	else if(/^\/vote\s+/i.test(text)) {
+		return vote(roomMember, text);
+	}
+	else if(/^\/poll(\s?)close?(?:\s*)/i.test(text)) {
+		return pollClose(roomMember, text);
 	}
 	else {
 		return message(roomMember, text, 'standard');
@@ -645,3 +655,37 @@ function whois(roomMember, text) {
 			RoomService.messageRoom(roomId, message);
 		});
 }
+
+function poll(roomMember, text) {
+	var roomId = roomMember.room;
+	return pollService.start(roomMember, text)
+		.then(function (pollResponse) {
+			if(pollResponse.isPrivate) {
+				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
+			} else {
+				RoomService.messageRoom(roomId, pollResponse.message);
+			}
+		});
+}
+
+function pollClose(roomMember, text) {
+	var roomId = roomMember.room;
+	return pollService.close(roomMember, text)
+		.then(function (pollResponse) {
+			if (pollResponse.isPrivate) {
+				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
+			} else {
+				RoomService.messageRoom(roomId, pollResponse.message);
+			}
+		});
+}
+
+// voting is always private
+function vote(roomMember, text) {
+	var roomId = roomMember.room;
+	return pollService.vote(roomMember, text)
+		.then(function (pollResponse) {
+			RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
+		});
+}
+

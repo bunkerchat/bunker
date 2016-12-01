@@ -1,0 +1,12 @@
+NAME
+	/vote - allows user to vote for an option on the active poll
+
+COMMANDS
+	/vote [optionNumber] 			....Will apply your vote to the specified option
+	
+EXAMPLE
+	/vote 1
+	
+	
+	
+	
