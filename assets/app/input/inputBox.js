@@ -75,7 +75,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				if (handler) {
 					handler(e);
 				}
-				else{
+				else {
 					bunkerData.broadcastTyping($rootScope.roomId);
 				}
 
@@ -192,7 +192,20 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				if (!/\S/.test(text)) return;
 
 				inputBox.val('');
-				bunkerData.createMessage($stateParams.roomId, text);
+
+				if (/^\/clear/i.test(text)) {
+					// Special command to clear all messages or message from a user
+					var nickMatches = /\/clear\s+(.+)/i.exec(text);
+					var nick;
+					if(nickMatches && nickMatches.length === 2) {
+						nick = nickMatches[1].trim();
+					}
+					bunkerData.clearMessagesFromNick($stateParams.roomId, nick);
+				}
+				else {
+					// Default
+					bunkerData.createMessage($stateParams.roomId, text);
+				}
 			}
 
 			function backspace(e) {
@@ -228,7 +241,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					return selectItem();
 				}
 
-				if(searchingFor == 'emoticons'){
+				if (searchingFor == 'emoticons') {
 					return resetMatchSearch();
 				}
 			}
