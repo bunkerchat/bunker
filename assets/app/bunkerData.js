@@ -40,7 +40,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 				_.each(initialData.users, user => {
 					user.$present = bunkerData.isPresent(user);
-					user.$gravatar = gravatarService.url(user.email, {s:20});
+					user.$gravatar = gravatarService.url(user.email, {s: 20});
 				});
 
 				// instead of sending many duplicate users down, send one list
@@ -145,6 +145,27 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					return room;
 				});
 		},
+		clearMessagesFromNick: function (roomId, nick) {
+			if (!roomId || !roomLookup[roomId]) return;
+			var room = roomLookup[roomId];
+
+			$timeout(function () {
+				_.each(room.$messages, function (message) {
+					if (!nick || (message.author && message.author.nick === nick)) {
+						var hiddenMessage = _.cloneDeep(message);
+						hiddenMessage.$hidden = true;
+						hiddenMessage.editCount++;
+						bunkerData.decorateMessage(room, hiddenMessage);
+
+						var otherMessage = _.find(room.$messages, {_id: message._id});
+						hiddenMessage.$firstInSeries = otherMessage.$firstInSeries;
+
+						var index = _.indexOf(room.$messages, otherMessage);
+						room.$messages.splice(index, 1, hiddenMessage);
+					}
+				});
+			});
+		},
 		clearOldMessages: function (id) {
 			if (!id || !roomLookup[id] || roomLookup[id].$messages.length <= 100) return;
 			roomLookup[id].$messages.splice(0, roomLookup[id].$messages.length - 100);
@@ -156,7 +177,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
 			message.$idAndEdited = message._id + '_' + message.editCount;
-			if(message.author) {
+			if (message.author) {
 				message.author = users[message.author._id];
 			}
 		},
@@ -206,7 +227,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				if (present == bunkerData.user.present) return;
 
 				bunkerData.user.present = present;
-				io.socket.emitAsync('/user/current/present', { present });
+				io.socket.emitAsync('/user/current/present', {present});
 			}, 5000);
 		},
 		cancelBroadcastTyping: function () {

@@ -9,16 +9,17 @@
 			<!-- message log -->
 
 			<ol class="list-unstyled message-list" ng-class="{'has-topic': current.topic}"
-					message-log-scroll
-					room-id="{{::current._id}}"
-					on-scroll-top="loadPreviousMessages()">
+				message-log-scroll
+				room-id="{{::current._id}}"
+				on-scroll-top="loadPreviousMessages()">
 
 				<li id="{{::message._id}}" class="message-container"
-						ng-switch="::!!message.author"
-						ng-repeat="message in current.$messages track by message.$idAndEdited">
+					ng-switch="::!!message.author"
+					ng-if="::!message.$hidden"
+					ng-repeat="message in current.$messages track by message.$idAndEdited">
 
 					<div class="message message-type-{{::message.type || 'none'}}"
-							 ng-class="::{ local: message.author._id == user._id, 'message-mention': message.$mentionsUser }">
+						 ng-class="::{ local: message.author._id == user._id, 'message-mention': message.$mentionsUser }">
 
 						<!-- standard message -->
 						<div ng-switch-when="true">
@@ -27,8 +28,8 @@
 									<img ng-src="{{::message.author.$gravatar}}"/>
 									<div class="name">{{::message.author.nick}}</div>
 									<div class="status"
-												ng-class="memberLookup[message.author._id].user.$present ? 'here' : 'away'"
-												ng-if="memberLookup[message.author._id].user.connected">
+										 ng-class="memberLookup[message.author._id].user.$present ? 'here' : 'away'"
+										 ng-if="memberLookup[message.author._id].user.connected">
 									</div>
 								</div>
 							</div>
@@ -68,7 +69,7 @@
 								</div>
 								<span class="message-info text-muted">
 									<small am-time-ago="message.createdAt"
-												 title="{{::message.createdAt | date:'medium'}}">
+										   title="{{::message.createdAt | date:'medium'}}">
 									</small>
 								</span>
 							</div>
@@ -85,8 +86,8 @@
 			<!-- member list -->
 			<ul class="list-group member-list" ng-if="current.$selected">
 				<li class="list-group-item"
-						ng-switch="member.user.connected"
-						ng-repeat="member in memberList track by member._id">
+					ng-switch="member.user.connected"
+					ng-repeat="member in memberList track by member._id">
 
 					<span class="offline" ng-switch-when="false">
 						<!-- offline member, much less watches -->
@@ -95,7 +96,8 @@
 						</span>
 						<a ng-click="mentionUser(member.user.nick)">{{::member.user.nick}}</a>
 						<div class="pull-right">
-							<span ng-show="::member.role != 'member'" ng-switch="::member.role" title="{{::member.role}}">
+							<span ng-show="::member.role != 'member'" ng-switch="::member.role"
+								  title="{{::member.role}}">
 								<i class="fa fa-gavel" ng-switch-when="administrator"></i>
 								<i class="fa fa-comments" ng-switch-when="moderator"></i>
 							</span>
@@ -139,8 +141,8 @@
 
 				<div class="debugging" ng-if="settings.showDebugging">
 					<dl class="dl-horizontal" angular-stats watch-count=".watch-count" digest-length=".digest-length"
-							on-watch-count-update="onWatchCountUpdate(watchCount)"
-							on-digest-length-update="onDigestLengthUpdate(digestLength)">
+						on-watch-count-update="onWatchCountUpdate(watchCount)"
+						on-digest-length-update="onDigestLengthUpdate(digestLength)">
 
 						<dt>Watches</dt>
 						<dd class="watch-count"></dd>
