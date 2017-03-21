@@ -1,55 +1,81 @@
-import React from 'react';
+import React from 'react'
 import {
 	Platform,
 	StyleSheet,
 	Text,
 	View,
-} from 'react-native';
+} from 'react-native'
 
-import {GiftedChat, Actions, Bubble} from 'react-native-gifted-chat';
-import CustomActions from './CustomActions';
-import CustomView from './CustomView';
+import _ from 'lodash'
+import SocketIOClient from 'socket.io-client'
+import {GiftedChat, Actions, Bubble} from 'react-native-gifted-chat'
+import CustomActions from './CustomActions'
+import CustomView from './CustomView'
+
+const serverUri =`http://192.168.1.121:9002`
 
 export default class Example extends React.Component {
 	constructor(props) {
-		super(props);
+		super(props)
 		this.state = {
 			messages: [],
 			loadEarlier: true,
 			typingText: null,
 			isLoadingEarlier: false,
-		};
+		}
 
-		this._isMounted = false;
-		this.onSend = this.onSend.bind(this);
-		this.onReceive = this.onReceive.bind(this);
-		this.renderCustomActions = this.renderCustomActions.bind(this);
-		this.renderBubble = this.renderBubble.bind(this);
-		this.renderFooter = this.renderFooter.bind(this);
-		this.onLoadEarlier = this.onLoadEarlier.bind(this);
+		this._isMounted = false
+		this.onSend = this.onSend.bind(this)
+		this.onReceive = this.onReceive.bind(this)
+		this.renderCustomActions = this.renderCustomActions.bind(this)
+		this.renderBubble = this.renderBubble.bind(this)
+		this.renderFooter = this.renderFooter.bind(this)
+		this.onLoadEarlier = this.onLoadEarlier.bind(this)
 
-		this._isAlright = null;
+		this._isAlright = null
+
+		this.socket = SocketIOClient(serverUri, {jsonp: false, transports: ['websocket']})
+
+		const setState = this.setState
+
+		this.socket.on('connect', () => {
+			console.log('socketio:startSocketIoClient connected')
+
+			// send an init message to server, verifing connection
+			this.socket.emit('/init', {},  initialData => {
+				console.log('socketio:startSocketIoClient got init response', initialData)
+				// once round trip established, set status to online
+
+
+				const room = _.find(initialData.rooms, {_id: '54490412e7dde30200eb8b41'})
+				const messages = room.$messages
+				_.each(messages, message =>{
+					const user = _.find(initialData.users, {_id: message.author}) || {_id: -1, name: 'SYSTEM'}
+					user.name = user.nick
+
+					message.user = user
+				})
+
+				this.setState({messages: room.$messages})
+			})
+		})
 	}
 
 	componentWillMount() {
-		this._isMounted = true;
+		this._isMounted = true
 		this.setState(() => {
 			return {
 				messages: require('./data/messages.js'),
-			};
-		});
+			}
+		})
 	}
 
 	componentWillUnmount() {
-		this._isMounted = false;
+		this._isMounted = false
 	}
 
 	onLoadEarlier() {
-		this.setState((previousState) => {
-			return {
-				isLoadingEarlier: true,
-			};
-		});
+		this.setState({isLoadingEarlier: true})
 
 		setTimeout(() => {
 			if (this._isMounted === true) {
@@ -58,21 +84,21 @@ export default class Example extends React.Component {
 						messages: GiftedChat.prepend(previousState.messages, require('./data/old_messages.js')),
 						loadEarlier: false,
 						isLoadingEarlier: false,
-					};
-				});
+					}
+				})
 			}
-		}, 1000); // simulating network
+		}, 1000) // simulating network
 	}
 
 	onSend(messages = []) {
 		this.setState((previousState) => {
 			return {
 				messages: GiftedChat.append(previousState.messages, messages),
-			};
-		});
+			}
+		})
 
 		// for demo purpose
-		this.answerDemo(messages);
+		this.answerDemo(messages)
 	}
 
 	answerDemo(messages) {
@@ -81,8 +107,8 @@ export default class Example extends React.Component {
 				this.setState((previousState) => {
 					return {
 						typingText: 'React Native is typing'
-					};
-				});
+					}
+				})
 			}
 		}
 
@@ -90,13 +116,13 @@ export default class Example extends React.Component {
 			if (this._isMounted === true) {
 				if (messages.length > 0) {
 					if (messages[0].image) {
-						this.onReceive('Nice picture!');
+						this.onReceive('Nice picture!')
 					} else if (messages[0].location) {
-						this.onReceive('My favorite place');
+						this.onReceive('My favorite place')
 					} else {
 						if (!this._isAlright) {
-							this._isAlright = true;
-							this.onReceive('Alright');
+							this._isAlright = true
+							this.onReceive('Alright')
 						}
 					}
 				}
@@ -105,9 +131,9 @@ export default class Example extends React.Component {
 			this.setState((previousState) => {
 				return {
 					typingText: null,
-				};
-			});
-		}, 1000);
+				}
+			})
+		}, 1000)
 	}
 
 	onReceive(text) {
@@ -123,8 +149,8 @@ export default class Example extends React.Component {
 						// avatar: 'https://facebook.github.io/react/img/logo_og.png',
 					},
 				}),
-			};
-		});
+			}
+		})
 	}
 
 	renderCustomActions(props) {
@@ -133,23 +159,24 @@ export default class Example extends React.Component {
 				<CustomActions
 					{...props}
 				/>
-			);
+			)
 		}
 		const options = {
 			'Action 1': (props) => {
-				alert('option 1');
+				alert('option 1')
 			},
 			'Action 2': (props) => {
-				alert('option 2');
+				alert('option 2')
 			},
-			'Cancel': () => {},
-		};
+			'Cancel': () => {
+			},
+		}
 		return (
 			<Actions
 				{...props}
 				options={options}
 			/>
-		);
+		)
 	}
 
 	renderBubble(props) {
@@ -162,7 +189,7 @@ export default class Example extends React.Component {
 					}
 				}}
 			/>
-		);
+		)
 	}
 
 	renderCustomView(props) {
@@ -170,7 +197,7 @@ export default class Example extends React.Component {
 			<CustomView
 				{...props}
 			/>
-		);
+		)
 	}
 
 	renderFooter(props) {
@@ -181,9 +208,9 @@ export default class Example extends React.Component {
 						{this.state.typingText}
 					</Text>
 				</View>
-			);
+			)
 		}
-		return null;
+		return null
 	}
 
 	render() {
@@ -204,7 +231,7 @@ export default class Example extends React.Component {
 				renderCustomView={this.renderCustomView}
 				renderFooter={this.renderFooter}
 			/>
-		);
+		)
 	}
 }
 
@@ -219,4 +246,4 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: '#aaa',
 	},
-});
+})
