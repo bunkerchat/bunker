@@ -39,14 +39,7 @@ export default class Example extends React.Component {
 		const setState = this.setState
 
 		this.socket.on('connect', () => {
-			console.log('socketio:startSocketIoClient connected')
-
-			// send an init message to server, verifing connection
 			this.socket.emit('/init', {},  initialData => {
-				console.log('socketio:startSocketIoClient got init response', initialData)
-				// once round trip established, set status to online
-
-
 				const room = _.find(initialData.rooms, {_id: '54490412e7dde30200eb8b41'})
 				const messages = room.$messages
 				_.each(messages, message =>{
