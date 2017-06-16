@@ -20,6 +20,11 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 					if (!room.$messages) room.$messages = [];
 					bunkerData.addMessage(room, message);
 					notifications.newMessage(room, message);
+
+					if(message.type === 'standard'){
+						room.$lastMessage = message;
+					}
+
 					$rootScope.$broadcast('bunkerMessaged', message);
 					$rootScope.$broadcast('bunkerMessaged.' + message.type, message);
 				}
