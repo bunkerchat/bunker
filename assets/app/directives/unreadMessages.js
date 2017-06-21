@@ -8,8 +8,8 @@ app.directive('unreadMessages', function ($rootScope, bunkerData) {
 		var original = el.text();
 		var favico = new Favico();
 
-		var mentionImage = $('<img src="/assets/images/bunkerIcon_mention.png"/>')[0];
-		var unreadImage = $('<img src="/assets/images/bunkerIcon_unread.png" />')[0];
+		var mentionImage = $('<img ng-src="/assets/images/bunkerIcon_mention.png"/>')[0];
+		var unreadImage = $('<img ng-src="/assets/images/bunkerIcon_unread.png" />')[0];
 
 		$rootScope.$on('visibilityShow', function () {
 			hasFocus = true;

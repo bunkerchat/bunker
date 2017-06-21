@@ -126,7 +126,7 @@
 
 						<div class="pull-right">
 							<span ng-show="member.$fighting">
-								<img src="/assets/images/emoticons/punch.gif"/>
+								<img ng-src="/assets/images/emoticons/punch.gif"/>
 							</span>
 							<span ng-if="member.role != 'member'" ng-switch="member.role" title="{{member.role}}">
 								<i class="fa fa-gavel" ng-switch-when="administrator"></i>

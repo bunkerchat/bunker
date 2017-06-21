@@ -110,21 +110,21 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					var word = makeDictionaryLink[1].split(' ').join('').toLowerCase();
 					text = text.replace(/\|(.*)\|/i, `<a href="https://www.wordnik.com/words/${word}" target="_blank">$1</a>`);
 				}
-				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
+				return text.replace(/:hangman(\d):/, '<img class="emoticon" ng-src="/assets/images/hangman$1.png"/>');
 			}
 
 			function parseFight(text) {
 				var match = /:([^0-9:]*):/.exec(text);
 
 				while (match) {
-					text = text.replace(/:([^0-9:]*):/, '<img class="emoticon" src="/assets/images/$1.png"/>');
+					text = text.replace(/:([^0-9:]*):/, '<img class="emoticon" ng-src="/assets/images/$1.png"/>');
 					match = /:([^0-9:]*):/.exec(text);
 				}
 
 				// check for a fatality
 				match = /:(\w*)*:/.exec(text);
 				if (match) {
-					var fatality = '<img class="fatality" src="/assets/images/fatalities/' + match[1] + '.gif"/>';
+					var fatality = '<img class="fatality" ng-src="/assets/images/fatalities/' + match[1] + '.gif"/>';
 					text = text.replace(/:(\w*):/, '');
 					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
 				}
@@ -153,7 +153,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						// if an image emoticon (more common)
 						if (!knownEmoticon.isIcon) {
 							text = replaceAll(text, emoticonText,
-								`<img class="emoticon" title="${emoticonText}" src="/assets/images/emoticons/${knownEmoticon.file}"/>`);
+								`<img class="emoticon" title="${emoticonText}" ng-src="/assets/images/emoticons/${knownEmoticon.file}"/>`);
 						}
 						else { // font-awesome icon emoticon
 							text = replaceAll(text, emoticonText,
@@ -209,8 +209,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						attachedMedia = `
 							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
 								<video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop>
-									<source type="video/webm" src="${imgurLinkWebm}">
-									<source type="video/mp4" src="${imgurLinkMpeg}">
+									<source type="video/webm" ng-src="${imgurLinkWebm}">
+									<source type="video/mp4" ng-src="${imgurLinkMpeg}">
 								</video>
 							</div>`;
 					}
@@ -219,7 +219,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						attachedMedia = `
 							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
 								<video autoplay loop muted>
-									<source type="video/mp4" src="${link.toLowerCase().replace('gifv', 'mp4')}">
+									<source type="video/mp4" ng-src="${link.toLowerCase().replace('gifv', 'mp4')}">
 								</video>
 							</div>`;
 					}
@@ -237,7 +237,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 							attachedMedia = `
 								<div message="::bunkerMessage" bunker-media="${link}">
 									<div class="stupid-twitter tweet_${id}">
-										<script src="https://api.twitter.com/1/statuses/oembed.json?id=${id}&amp;callback=addTweet&amp"></script>
+										<script ng-src="https://api.twitter.com/1/statuses/oembed.json?id=${id}&amp;callback=addTweet&amp"></script>
 									</div>
 								</div>`;
 						}
@@ -247,7 +247,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						toggleLink(link);
 						attachedMedia = `
 							<div message="::bunkerMessage" bunker-media="${link}">
-								<iframe src="https://player.vimeo.com/video/${match[1]}?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+								<iframe ng-src="https://player.vimeo.com/video/${match[1]}?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 							</div>`;
 					}
 					else if (/^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.test(link) && !attachedMedia) {
@@ -257,7 +257,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						toggleLink(link);
 						attachedMedia = `
 							<div message="::bunkerMessage" bunker-media="${link}">
-								<iframe src="https://embed.spotify.com/?uri=${uri}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+								<iframe ng-src="https://embed.spotify.com/?uri=${uri}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
 							</div>`;
 					}
 					else if (/gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?|.gif)/gi.test(link) && !attachedMedia) {
@@ -275,7 +275,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						toggleLink(link);
 						attachedMedia = `
 						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
-							<img src="${link}"/>
+							<img ng-src="${link}"/>
 						</div>`
 					}
 				});

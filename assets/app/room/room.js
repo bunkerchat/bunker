@@ -85,7 +85,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 				if (!knownEmoticon) return;
 
 				var animationBox = angular.element(
-					'<div class="animation-box closed" style="left: ' + (Math.random() * 60 + 20) + '%"><img src="/assets/images/emoticons/' + knownEmoticon + '"/></div>'
+					'<div class="animation-box closed" style="left: ' + (Math.random() * 60 + 20) + '%"><img ng-src="/assets/images/emoticons/' + knownEmoticon + '"/></div>'
 				);
 
 				el.append(animationBox);
