@@ -88,7 +88,7 @@ userService.disconnectUser = function (user, socketIds) {
 		}, callback)
 	})
 		.then(() => {
-			if (user.connected) return;
+			if (connected) return;
 
 			var io = require('../config/socketio').io;
 			io.to('user_' + user._id).emit('user', {
