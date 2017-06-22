@@ -382,7 +382,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 						${_.map(matchingUsers, user => `
 							<li class="col-xs-3 ${user.nick == suggestedTerm ? 'emoticon-selected' : ''}">
 								<a>
-									<img ng-src="${user.$gravatar}" title="${user.email}"/>
+									<img src="${user.$gravatar}" title="${user.email}"/>
 									${user.nick}
 								</a>
 							</li>
