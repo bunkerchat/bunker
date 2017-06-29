@@ -108,7 +108,7 @@
 						<!-- default, online member -->
 						<span ng-switch="member.user.busy === true" class="user-icon">
 							<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
-								<span ng-switch-when="false">
+								<span ng-switch-when="false"  ng-class="{inRoom:member.user.activeRoom === roomId}">
 									<img ng-src="{{::member.user.$gravatar}}" title="{{::member.user.email}}"/>
 									<div class="status" ng-class="member.user.$present ? 'here' : 'away'">
 									</div>
