@@ -237,7 +237,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 							attachedMedia = `
 								<div message="::bunkerMessage" bunker-media="${link}">
 									<div class="stupid-twitter tweet_${id}">
-										<script ng-src="https://api.twitter.com/1/statuses/oembed.json?id=${id}&amp;callback=addTweet&amp"></script>
+										<script src="https://api.twitter.com/1/statuses/oembed.json?id=${id}&amp;callback=addTweet&amp"></script>
 									</div>
 								</div>`;
 						}
