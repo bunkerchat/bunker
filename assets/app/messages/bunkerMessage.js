@@ -35,6 +35,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 			else {
 				scope.$watch('bunkerMessage.topic', function (topic) {
 					elem.html(parseText(topic));
+					$compile(elem.contents())(scope);
 				});
 			}
 
