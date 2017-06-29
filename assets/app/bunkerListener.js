@@ -1,4 +1,4 @@
-app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications, pinBoard) {
+app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications, pinBoard, gravatarService) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt._id);
@@ -30,6 +30,10 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 				}
 				break;
 			case 'updated':
+				_.each(evt.data.$members, member => {
+					member.user.$gravatar = gravatarService.url(member.user.email, {s: 20});
+				});
+
 				_.assign(room, evt.data);
 				break;
 		}
