@@ -8,20 +8,23 @@ var imageSearch = module.exports;
 
 imageSearch.image = function (query) {
 	return googleImageSearch(query)
-		.catch(() => bingImageSearch(query, true))
+		// .catch(() => bingImageSearch(query, true))
 		.catch(() => ({provider: 'none', images:[]}));
 };
 
 imageSearch.gif = function (query) {
 	return googleImageSearch(query, true)
-		.catch(() => bingImageSearch(query, true))
+		// .catch(() => bingImageSearch(query, true))
 		.catch(() => ({provider: 'none', images:[]}));
 };
 
 function googleImageSearch(query, animated) {
 	var key = `imageSearch/google-${animated ? 'gif' : 'image'}|${query}`;
 	return cacheService.fourMonths.getAsync(key)
-		.then(result => result || lookup())
+		.then(result => {
+			if(result) log.info(`cache hit: ${key}`)
+			return result || lookup()
+		})
 		.then(JSON.parse);
 
 	function lookup() {
@@ -60,7 +63,10 @@ function googleImageSearch(query, animated) {
 				}
 			})
 			.then(JSON.stringify)
-			.then(results => cacheService.fourMonths.setAsync(key, results));
+			.then(results => {
+				if(results) log.info(`no cache: ${key}`)
+				return cacheService.fourMonths.setAsync(key, results)
+			});
 	}
 }
 
