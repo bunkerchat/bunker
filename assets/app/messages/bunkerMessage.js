@@ -143,12 +143,12 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 			}
 
 			function parseEmoticons(text) {
-				var replacedEmotes = {};
+				const replacedEmotes = {};
 
 				// Parse emoticons
-				_.each(text.match(/:\w+:/g), emoticonText => {
-					var knownEmoticon = _.find(emoticons.all, known => {
-						return known.file.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticonText.replace(/:/g, '').toLowerCase();
+				_.each(text.match(/:[\w-]+:/g), emoticonText => {
+					const knownEmoticon = _.find(emoticons.all, known => {
+						return known.file.replace(/\.\w{1,4}$/, '').toLowerCase() === emoticonText.replace(/:/g, '').toLowerCase();
 					});
 					if (knownEmoticon && !replacedEmotes[knownEmoticon.file]) {
 						// if an image emoticon (more common)
@@ -158,7 +158,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						}
 						else { // font-awesome icon emoticon
 							text = replaceAll(text, emoticonText,
-								`<i class="fa ${knownEmoticon.file.replace('icon_', 'fa-').replace(/_/g, '-')}" title=":${knownEmoticon.name}:"></i>`);
+								`<i class="fa ${knownEmoticon.file}" title=":${knownEmoticon.name}:"></i>`);
 						}
 						replacedEmotes[knownEmoticon.file] = true;
 					}

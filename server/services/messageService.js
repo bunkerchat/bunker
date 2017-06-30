@@ -302,10 +302,10 @@ function setRoomAttribute(roomMember, text) {
 					message = `${user.nick} cleared the room icon`;
 				}
 				else {
-					if (!icon.startsWith(':icon_')) throw new InvalidInputError('Invalid icon — use icon emoticons (they start with :icon_)');
-					icon = icon.replace(/:|icon_/g, '').replace(/_/g, '-');
+					if (!icon.startsWith(':fa-')) throw new InvalidInputError('Invalid icon — use Font Awesome icons (they start with :fa-)');
+					icon = icon.replace(/:|fa-/g, '');
 					room.icon = icon;
-					message = `${user.nick} changed the room icon to '${icon}'`;
+					message = `${user.nick} changed the room icon to :fa-${icon}:`;
 				}
 			}
 
