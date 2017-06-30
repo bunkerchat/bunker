@@ -2,7 +2,7 @@ var Promise = require('bluebird');
 var request = Promise.promisifyAll(require('request'), {multiArgs: true});
 
 var config = require('../config/config');
-var cacheService = require('./cacheService');
+var ImageCache = require('../models/ImageCache')
 
 var imageSearch = module.exports;
 
@@ -20,12 +20,14 @@ imageSearch.gif = function (query) {
 
 function googleImageSearch(query, animated) {
 	var key = `imageSearch/google-${animated ? 'gif' : 'image'}|${query}`;
-	return cacheService.fourMonths.getAsync(key)
-		.then(result => {
-			if(result) log.info(`cache hit: ${key}`)
-			return result || lookup()
+	return ImageCache.findOne({key:key})
+		.then(dbCache => {
+			if(dbCache) {
+				log.info(`cache hit: ${key}`)
+				return dbCache.results
+			}
+			return lookup()
 		})
-		.then(JSON.parse);
 
 	function lookup() {
 		if(!query) return Promise.reject('no query');
@@ -62,11 +64,13 @@ function googleImageSearch(query, animated) {
 					images: _(body.items).map('link').map(ensureResult).value()
 				}
 			})
-			.then(JSON.stringify)
 			.then(results => {
 				if(results) log.info(`no cache: ${key}`)
-				return cacheService.fourMonths.setAsync(key, results)
-			});
+				return ImageCache.create({key, results})
+			})
+			.then(dbCache =>{
+				return dbCache.results
+			})
 	}
 }
 
