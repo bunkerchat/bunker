@@ -28,11 +28,11 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 		},
 		link: function (scope, elem) {
 
-			if(!scope.bunkerMessage) return
+			if (!scope.bunkerMessage) return
 
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
 			// check topics first since they use a watch to update (lobby text, lobby topic, room topic)
-			if(scope.bunkerMessage.topic) {
+			if (scope.bunkerMessage.topic) {
 				scope.$watch('bunkerMessage.topic', function (topic) {
 					elem.html(parseText(topic));
 					$compile(elem.contents())(scope);
@@ -195,6 +195,11 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				var replacedLinks = {};
 
 				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
+
+				// android is dumb and loads too much shit
+				if (_.includes(navigator.appVersion, 'Android')) {
+					shouldParseMedia = false
+				}
 
 				// Parse links
 				var attachedMedia;
