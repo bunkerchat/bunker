@@ -13,7 +13,7 @@
 					ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
 					<h4 class="list-group-item-heading">
 						{{room.name}}
-						<small class="hidden-xs" ng-bind-html="room.topic"></small>
+						<small bunker-message="room" media="false"></small>
 					</h4>
 					<span class="lobby-room-users">
 						{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>

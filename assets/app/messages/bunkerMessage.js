@@ -23,7 +23,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 		template: `<span></span>`,
 		scope: {
 			bunkerMessage: '=',
-			media: '@'
+			media: '@',
+			small: '@'
 		},
 		link: function (scope, elem) {
 
