@@ -22,7 +22,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 					notifications.newMessage(room, message);
 
 					if(message.type === 'standard'){
-						room.$lastMessage = message;
+						room.$lastMessage = _.cloneDeep(message);
 						room.$lastMessage.topic = room.$lastMessage.text;
 					}
 
