@@ -35,6 +35,8 @@ app.controller('lobbyController', function ($rootScope, $state, bunkerData) {
 			self.publicRooms = bunkerData.publicRooms;
 			_.each(self.rooms, room => {
 				room.$lastMessage = _(room.$messages).filter({type: 'standard'}).last();
+				room.$lastMessage.topic = room.$lastMessage.text;
+				delete room.$lastMessage.text
 			});
 		});
 	}
