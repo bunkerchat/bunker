@@ -24,7 +24,6 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 					if(message.type === 'standard'){
 						room.$lastMessage = message;
 						room.$lastMessage.topic = room.$lastMessage.text;
-						delete room.$lastMessage.text
 					}
 
 					$rootScope.$broadcast('bunkerMessaged', message);

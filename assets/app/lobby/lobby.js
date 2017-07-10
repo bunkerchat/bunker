@@ -36,7 +36,6 @@ app.controller('lobbyController', function ($rootScope, $state, bunkerData) {
 			_.each(self.rooms, room => {
 				room.$lastMessage = _(room.$messages).filter({type: 'standard'}).last();
 				room.$lastMessage.topic = room.$lastMessage.text;
-				delete room.$lastMessage.text
 			});
 		});
 	}
