@@ -233,6 +233,14 @@ mark {
 	display: inline-block;
 	color: black;
 	background-color: black;
+
+	&.toggle-mark{
+		&:hover{
+			color:black;
+		}
+		color: black;
+		background-color: $lightBackgroundColor
+	}
 }
 
 mark:hover {
