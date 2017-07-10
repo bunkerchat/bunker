@@ -28,19 +28,16 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 		},
 		link: function (scope, elem) {
 
-			if (!scope.bunkerMessage) return
-
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
-			// check topics first since they use a watch to update (lobby text, lobby topic, room topic)
-			if (scope.bunkerMessage.topic) {
+			if (scope.bunkerMessage && scope.bunkerMessage.text) {
+				elem.find('span').html(parseText(scope.bunkerMessage.text));
+				$compile(elem.contents())(scope);
+			}
+			else {
 				scope.$watch('bunkerMessage.topic', function (topic) {
 					elem.html(parseText(topic));
 					$compile(elem.contents())(scope);
 				});
-			}
-			else if (scope.bunkerMessage.text) {
-				elem.find('span').html(parseText(scope.bunkerMessage.text));
-				$compile(elem.contents())(scope);
 			}
 
 			function parseText(text) {

@@ -37,6 +37,7 @@ app.controller('lobbyController', function ($rootScope, $state, bunkerData) {
 				var lastMessage = _(room.$messages).filter({type: 'standard'}).last();
 				room.$lastMessage = _.cloneDeep(lastMessage);
 				room.$lastMessage.topic = room.$lastMessage.text;
+				delete room.$lastMessage.text;
 			});
 		});
 	}
