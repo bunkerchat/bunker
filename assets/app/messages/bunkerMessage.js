@@ -196,8 +196,10 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
 
-				// android is dumb and loads too much shit
-				if (_.includes(navigator.appVersion, 'Android')) {
+				// do no media on mobile
+				const isAndroid = _.includes(navigator.appVersion, 'Android')
+				const isIphone = _.includes(navigator.appVersion, 'iPhone')
+				if (isAndroid || isIphone) {
 					shouldParseMedia = false
 				}
 
