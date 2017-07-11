@@ -210,6 +210,9 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 					if (!shouldParseMedia) return text;
 
+					// try to serve https first
+					link = link.replace('http:','')
+
 					// Only parse media (images, youtube) if asked to
 					if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
 						var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
