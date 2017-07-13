@@ -25,7 +25,7 @@ app.controller('HeaderController', function ($rootScope, $stateParams, $state, $
 	header.leaveRoom = function () {
 		bunkerData.leaveRoom($rootScope.roomId)
 			.then(function () {
-				$state.go('lobby');
+				$state.go('chat.lobby');
 			});
 	};
 

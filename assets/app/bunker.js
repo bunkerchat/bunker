@@ -74,7 +74,11 @@ window.app = angular.module('bunker', [
 						resolve(returnData);
 					});
 				}, 50);
-			});
+			})
+				.catch(err => {
+					console.log('server error', err)
+					throw err
+				});
 		};
 
 		// Can't put this bunkerListener init in the `connect` closure or it causes duplication of messages

@@ -308,9 +308,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	};
 
 	function reinit(data) {
-		return bunkerData.init().then(function () {
-			return data;
-		});
+		return bunkerData.init().then(() => data);
 	}
 
 	function decorateMessages(room) {
