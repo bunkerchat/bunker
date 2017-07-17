@@ -228,7 +228,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 				bunkerData.user.present = present;
 				io.socket.emitAsync('/user/current/present', {present});
-			}, 5000);
+			}, 250);
 		},
 		cancelBroadcastTyping: function () {
 			if (typingTimeout) $timeout.cancel(typingTimeout);

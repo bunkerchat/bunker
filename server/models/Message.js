@@ -47,4 +47,6 @@ var messageSchema = new mongoose.Schema({
 	}
 });
 
+messageSchema.index({ text: 'text'});
+
 module.exports = mongoose.model('Message', messageSchema, 'message');

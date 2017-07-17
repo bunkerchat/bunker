@@ -174,6 +174,8 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 
 	var awayTimeout;
 
+	// this timer resets based on keypress or mouse clicks. Sort of a 10 minute backup in case
+	// "visibilityShow" or "visiblityHide" doesn't trigger.
 	function resetTimer() {
 		clearTimeout(awayTimeout);
 		awayTimeout = setTimeout(handleVisibilityHide, 1000 * 60 * 10 /* 10 min */);
