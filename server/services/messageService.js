@@ -133,7 +133,7 @@ function animation(roomMember, text) {
 
 	const emoticon = (/:\w+:/.exec(text))[0];
 
-	let words = [];
+	var words = [];
 	switch (emoticon) {
 		case ':doge:':
 			words.push('bunker', 'chat', 'wow', 'messages', 'communicatoins',
@@ -170,7 +170,7 @@ function animation(roomMember, text) {
 			break;
 		case ':hansolo:':
 			words.push('i shot first', 'laugh it up fuzzball',
-				'sorry about the mess', 'don\'t get cocky', 'let\'s blow this thing and go home', 'smuggling',
+				'sorry about the mess', 'don\'t get cocky', 'var\'s blow this thing and go home', 'smuggling',
 				'money', 'bounty', 'debt', 'carbonite', 'scoundrel');
 			break;
 		case ':chrome:':
@@ -263,7 +263,7 @@ function setRoomAttribute(roomMember, text) {
 
 	return Room.findById(roomMember.room)
 		.then(room => {
-			let message;
+			var message;
 
 			if (command === 'topic') {
 				const topic = matches[2].substr(0, 200).trim();
@@ -297,7 +297,7 @@ function setRoomAttribute(roomMember, text) {
 			else if (command === 'icon') {
 				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room icon');
 
-				let icon = matches[2].toLowerCase().trim();
+				var icon = matches[2].toLowerCase().trim();
 				if (!icon || icon.length === 0) {
 					room.icon = null;
 					message = `${user.nick} cleared the room icon`;
@@ -348,7 +348,7 @@ function magic8ball(roomMember, text) {
 			.then(broadcastMessage);
 	}, 3000);
 
-	let question = ' shakes the magic 8 ball...';
+	var question = ' shakes the magic 8 ball...';
 	const questionMatch = text.match(/\/magic8ball\s+(.+)/i);
 	if (questionMatch) {
 		question = ' shakes the magic 8 ball and asks "' + questionMatch[1] + '"';
@@ -360,7 +360,7 @@ function magic8ball(roomMember, text) {
 function roll(roomMember, text) {
 	const matches = text.match(/\/roll\s+(.+)/i);
 	const roll = matches ? matches[1] : null;
-	let rollOutcome;
+	var rollOutcome;
 
 	// Generic number roll
 	if (/^\d+$/.test(roll)) {
@@ -370,15 +370,15 @@ function roll(roomMember, text) {
 	// d20 case for D&D nerds
 	else if (/^\d*d\d*$/i.test(roll)) { // a dice roll
 		const textParse = /(\d*)d(\d*)/.exec(roll);
-		let diceCount = parseInt(textParse[1]) || 1; // Default at least one die (converts /roll d10 to /roll 1d10)
-		let dieSides = parseInt(textParse[2]) || 6; // Default at six sided die (converts /roll 10d to /roll 10d6)
+		var diceCount = parseInt(textParse[1]) || 1; // Default at least one die (converts /roll d10 to /roll 1d10)
+		var dieSides = parseInt(textParse[2]) || 6; // Default at six sided die (converts /roll 10d to /roll 10d6)
 
 		if (diceCount > 25) diceCount = 25;
 		if (dieSides > 50) dieSides = 50;
 
-		let total = 0;
+		var total = 0;
 		const dieString = [];
-		for (let i = 0; i < diceCount; i++) {
+		for (var i = 0; i < diceCount; i++) {
 			const die = Math.ceil(Math.random() * dieSides);
 			total += die;
 			dieString.push('[' + die + ']');
@@ -538,7 +538,7 @@ function hangman(roomMember, text) {
 function changeUserRole(roomMember, text) {
 	if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change to promote');
 
-	let newRole;
+	var newRole;
 	const user = roomMember.user;
 	const roomId = roomMember.room;
 
@@ -633,7 +633,7 @@ function whois(roomMember, text) {
 			if (!whoisUser) throw new InvalidInputError('Could not find user ' + userNick);
 			const userEmail = whoisUser.user.email;
 			const userDescription = whoisUser.user.description;
-			let message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- ";
+			var message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- ";
 
 			if (!userDescription) {
 				message += "User has not set their info";
