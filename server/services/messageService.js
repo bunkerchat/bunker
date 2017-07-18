@@ -361,13 +361,14 @@ function magic8ball(roomMember, text) {
 }
 
 function meme(roomMember, text) {
-	const matches = text.match(/\/meme\s+(\w+)\s+(.+)/i);
-	if (!matches || matches.length !== 3) {
-		throw new InvalidInputError(`Invalid meme format - example: /meme tb text for 'the bobs' meme`);
+	const matches = text.match(/\/meme\s+(\w+)\s+([^|]+)\|?([^|]*)/i);
+	if (!matches || matches.length < 3) {
+		throw new InvalidInputError(`Invalid meme format - example: /meme tb line 1 text | line 2 text`);
 	}
 	const image = matches ? matches[1] : null;
-	const imageText = matches ? matches[2] : null;
-	const url = `http://upboat.me/${image}//${imageText.replace(/\s/g, '%20')}.jpg`;
+	const line1 = matches ? matches[2] : null;
+	const line2 = matches ? matches[3] : null;
+	const url = `http://upboat.me/${image}/${line1.trim().replace(/\s/g, '%20')}/${line2.trim().replace(/\s/g, '%20')}.jpg`;
 	return message(roomMember, url);
 }
 
