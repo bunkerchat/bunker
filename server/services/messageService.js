@@ -85,14 +85,17 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/whois\s+/i.test(text)) {
 		return whois(roomMember, text);
 	}
-	else if(/^\/poll?(?:\s+(.+)?|$)/i.test(text)) {
+	else if (/^\/poll?(?:\s+(.+)?|$)/i.test(text)) {
 		return poll(roomMember, text);
 	}
-	else if(/^\/vote\s+/i.test(text)) {
+	else if (/^\/vote\s+/i.test(text)) {
 		return vote(roomMember, text);
 	}
-	else if(/^\/poll(\s?)close?(?:\s*)/i.test(text)) {
+	else if (/^\/poll(\s?)close?(?:\s*)/i.test(text)) {
 		return pollClose(roomMember, text);
+	}
+	else if (/^\/meme/i.test(text)) {
+		return meme(roomMember, text);
 	}
 	else {
 		return message(roomMember, text, 'standard');
@@ -114,11 +117,11 @@ function stats(roomMember, text) {
 		return statsService.getStatsForUser(userNick, roomMember.room)
 			.then(function (stats) {
 				return Message.create({
-						room: roomMember.room,
-						type: 'stats',
-						author: roomMember.user._id,
-						text: stats
-					})
+					room: roomMember.room,
+					type: 'stats',
+					author: roomMember.user._id,
+					text: stats
+				})
 					.then(broadcastMessage);
 			});
 	}
@@ -206,7 +209,7 @@ function setUserNick(roomMember, text) {
 	return Promise.join(
 		User.findByIdAndUpdate(user._id, {nick: newNick}, {new: true}),
 		RoomMember.find({user: user._id})
-		)
+	)
 		.spread(function (updatedUser, memberships) {
 			socketio.io.to('user_' + updatedUser._id)
 				.emit('user', {
@@ -340,11 +343,11 @@ function magic8ball(roomMember, text) {
 
 	setTimeout(function () {
 		return Message.create({
-				room: roomMember.room,
-				author: null,
-				type: '8ball',
-				text: ':magic8ball: ' + ballResponse
-			})
+			room: roomMember.room,
+			author: null,
+			type: '8ball',
+			text: ':magic8ball: ' + ballResponse
+		})
 			.then(broadcastMessage);
 	}, 3000);
 
@@ -355,6 +358,17 @@ function magic8ball(roomMember, text) {
 	}
 
 	return message(roomMember, roomMember.user.nick + question, 'room');
+}
+
+function meme(roomMember, text) {
+	const matches = text.match(/\/meme\s+(\w+)\s+(.+)/i);
+	if (!matches || matches.length !== 3) {
+		throw new InvalidInputError(`Invalid meme format - example: /meme tb text for 'the bobs' meme`);
+	}
+	const image = matches ? matches[1] : null;
+	const imageText = matches ? matches[2] : null;
+	const url = `http://upboat.me/${image}//${imageText.replace(/\s/g, '%20')}.jpg`;
+	return message(roomMember, url);
 }
 
 function roll(roomMember, text) {
@@ -402,11 +416,11 @@ function message(roomMember, text, type) {
 	type = type || 'standard';
 
 	return Message.create({
-			room: roomMember.room,
-			type: type,
-			author: type === 'standard' ? roomMember.user : null,
-			text: text
-		})
+		room: roomMember.room,
+		type: type,
+		author: type === 'standard' ? roomMember.user : null,
+		text: text
+	})
 		.then(function (message) {
 			broadcastMessage(message);
 			saveInMentionedInboxes(message);
@@ -463,11 +477,11 @@ function code(roomMember, text) {
 	// strip out /code
 	text = text.substr(6);
 	return Message.create({
-			room: roomMember.room,
-			type: 'code',
-			author: roomMember.user,
-			text: text
-		})
+		room: roomMember.room,
+		type: 'code',
+		author: roomMember.user,
+		text: text
+	})
 		.then(broadcastMessage)
 }
 
@@ -582,11 +596,11 @@ function leaderboard(roomMember, text) {
 		return leaderboardService.getLoserboard()
 			.then(function (loserboard) {
 				return Message.create({
-						room: roomMember.room,
-						type: 'stats',
-						author: roomMember.user,
-						text: loserboard
-					})
+					room: roomMember.room,
+					type: 'stats',
+					author: roomMember.user,
+					text: loserboard
+				})
 					.then(broadcastMessage);
 			})
 	}
@@ -594,11 +608,11 @@ function leaderboard(roomMember, text) {
 	return leaderboardService.getLeaderboard()
 		.then(function (leaderboard) {
 			return Message.create({
-					room: roomMember.room,
-					type: 'stats',
-					author: roomMember.user,
-					text: leaderboard
-				})
+				room: roomMember.room,
+				type: 'stats',
+				author: roomMember.user,
+				text: leaderboard
+			})
 				.then(broadcastMessage);
 		})
 }
@@ -611,7 +625,7 @@ function setInfo(roomMember, text) {
 	return Promise.join(
 		User.findByIdAndUpdate(user._id, {description: info}, {new: true}),
 		RoomMember.find({user: user._id})
-		)
+	)
 		.spread(function (updatedUser, memberships) {
 			socketio.io.to('user_' + updatedUser._id)
 				.emit('user', {
@@ -642,7 +656,6 @@ function whois(roomMember, text) {
 			}
 
 
-
 			if (userEmail === "peter.brejcha@gmail.com") {
 				message += " :petesux:";
 			} else if (userEmail === "jprodahl@gmail.com") {
@@ -661,7 +674,7 @@ function poll(roomMember, text) {
 	const roomId = roomMember.room;
 	return pollService.start(roomMember, text)
 		.then(function (pollResponse) {
-			if(pollResponse.isPrivate) {
+			if (pollResponse.isPrivate) {
 				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
 			} else {
 				RoomService.messageRoom(roomId, pollResponse.message);
