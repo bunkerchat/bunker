@@ -204,7 +204,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				var attachedMedia;
 				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
 					if (!replacedLinks[link]) {
-						text = replaceAll(text, link, `<a href="${link}" target="_blank">${link}</a>`);
+						const target = _.includes(link, window.location.origin) ? '_self' : '_blank'
+						text = replaceAll(text, link, `<a href="${link}" target="${target}">${link}</a>`);
 						replacedLinks[link] = true;
 					}
 

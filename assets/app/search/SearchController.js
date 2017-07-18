@@ -10,9 +10,6 @@ app.controller('SearchController', function ($state, $stateParams, bunkerData) {
 		$state.go('search', {query: search.query, reload:true})
 	}
 
-	search.hi = function(){
-	}
-
 	bunkerData.search($stateParams)
 		.then(messages => {
 			search.ready = true;
