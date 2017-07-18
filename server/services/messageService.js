@@ -58,7 +58,7 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/show\s+:\w+:/i.test(text)) {
 		return animation(roomMember, text);
 	}
-	else if (/^\/me'|\s+/i.test(text)) {
+	else if (/^\/me\s+/i.test(text)) {
 		return me(roomMember, text);
 	}
 	else if (/^\/h(?:angman)?(?:\s(\w)?|$)/i.test(text)) {
