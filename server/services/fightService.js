@@ -47,41 +47,43 @@ module.exports.play = function (roomMember, command) {
 				throw new InvalidInputError('Cannot start the fight — cannot challenge yourself');
 			}
 
-			return getFight(roomMember.user._id, opponentRoomMember.user._id, roomMember.room).then(function (fight) {
-				if (!fight) {
-					throw new InvalidInputError('Cannot start the fight — unable to challenge ' + opponentNick + ', there is already an active fight');
-				}
-
-				return FightRound.find({fight: fight._id}).then(function (rounds) {
-					if (!rounds || rounds.length == 0) {
-						// this is a new challenge
-
-						return Promise.each(roundPlays, (roundPlay, index) => {
-							return FightRound.create({
-								fight: fight._id,
-								challengerPlay: roundPlay,
-								roundNumber: index + 1
-							});
-						})
-							.then(() => buildChallengeResponse(fight));
+			return getFight(roomMember.user._id, opponentRoomMember.user._id, roomMember.room)
+				.then(function (fight) {
+					if (!fight) {
+						throw new InvalidInputError('Cannot start the fight — unable to challenge ' + opponentNick + ', there is already an active fight');
 					}
 
-					// Existing challenge
+					return FightRound.find({fight: fight._id})
+						.then(function (rounds) {
+							if (!rounds || rounds.length == 0) {
+								// this is a new challenge
 
-					rounds = _.sortBy(rounds, 'roundNumber');
-					_.each(rounds, function (round, index) {
-						round.opponentPlay = roundPlays[index];
-					});
+								return Promise.each(roundPlays, (roundPlay, index) => {
+									return FightRound.create({
+										fight: fight._id,
+										challengerPlay: roundPlay,
+										roundNumber: index + 1
+									});
+								})
+									.then(() => buildChallengeResponse(fight));
+							}
 
-					return Promise.join(
-						fight.save(),
-						Promise.each(rounds, function (round) {
-							return round.save();
-						})
-					)
-						.spread(buildFightResultsResponse);
+							// Existing challenge
+
+							rounds = _.sortBy(rounds, 'roundNumber');
+							_.each(rounds, function (round, index) {
+								round.opponentPlay = roundPlays[index];
+							});
+
+							return Promise.join(
+								fight.save(),
+								Promise.each(rounds, function (round) {
+									return round.save();
+								})
+							)
+								.spread(buildFightResultsResponse);
+						});
 				});
-			});
 		});
 };
 
@@ -162,27 +164,28 @@ function getFight(userId, opponentUserId, roomId) {
 		opponent: opponentUserId,
 		room: roomId,
 		resultMessage: ''
-	}).then(function (fight) {
-		if (fight) {
-			// we can't have more than one active fight between the same users in a room.
-			return null;
-		}
-		else {
-			return Fight.findOne({
-				challenger: opponentUserId,
-				opponent: userId,
-				room: roomId,
-				resultMessage: ''
-			}).then(function (fight) {
-				if (fight) {
-					return fight;
-				}
-				else {
-					return Fight.create({challenger: userId, room: roomId, opponent: opponentUserId});
-				}
-			});
-		}
-	});
+	})
+		.then(function (fight) {
+			if (fight) {
+				// we can't have more than one active fight between the same users in a room.
+				return null;
+			}
+			else {
+				return Fight.findOne({
+					challenger: opponentUserId,
+					opponent: userId,
+					room: roomId,
+					resultMessage: ''
+				}).then(function (fight) {
+					if (fight) {
+						return fight;
+					}
+					else {
+						return Fight.create({challenger: userId, room: roomId, opponent: opponentUserId});
+					}
+				});
+			}
+		});
 }
 
 function buildChallengeResponse(fight) {

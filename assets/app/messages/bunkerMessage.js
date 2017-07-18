@@ -131,7 +131,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
 				}
 				if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
-					text += '<div message="::bunkerMessage" ><pre>' + text + '</pre></div>';
+					text = '<div message="::bunkerMessage" ><pre>' + text + '</pre></div>';
 					return text
 				}
 
