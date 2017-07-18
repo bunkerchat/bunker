@@ -197,16 +197,18 @@ const memes = [
 module.exports = {
 	getHelp() {
 		const memeImageStringBuilder = [];
-		for (var i = 0; i < memes.length; i += 2) {
-			// first column
-			var row = _.padEnd(`${memes[i].value} — ${memes[i].label}`, 60);
+		const columns = _.chunk(memes, memes.length / 2);
 
-			// second column
-			if (i + 1 < memes.length) {
-				row += `${memes[i + 1].value} — ${memes[i + 1].label}`;
+		for (var i = 0; i < columns[0].length; i++) {
+			var row = _.padEnd(`${columns[0][i].value} — ${columns[0][i].label}`, 60);
+			if (columns[1][i]) {
+				row += `${columns[1][i].value} — ${columns[1][i].label}`;
 			}
-
 			memeImageStringBuilder.push(row);
+		}
+
+		if (columns[2]) {
+			memeImageStringBuilder.push(`${columns[2][0].value} — ${columns[2][0].label}`);
 		}
 
 		return `
