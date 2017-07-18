@@ -16,6 +16,7 @@ var statsService = require('./statsService');
 var leaderboardService = require('./leaderboardService');
 var hangmanService = require('./hangmanService');
 var pollService = require('./pollService');
+var fightService = require('./fightService');
 
 var ForbiddenError = require('../errors/ForbiddenError');
 var InvalidInputError = require('../errors/InvalidInputError');
