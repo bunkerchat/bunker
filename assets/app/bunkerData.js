@@ -173,6 +173,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		getHistoryMessages: function (roomId, startDate, endDate) {
 			return io.socket.emitAsync('/room/history', {roomId: roomId, startDate: startDate, endDate: endDate});
 		},
+		search: params =>{
+			if(!params.query) return Promise.resolve()
+			return io.socket.emitAsync('/search', params);
+		},
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);

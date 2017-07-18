@@ -72,6 +72,8 @@ module.exports.socketio = function (socket) {
 	socket.on('/room/pinMessage', socketToController(roomController.pinMessage));
 	socket.on('/room/unPinMessage', socketToController(roomController.unPinMessage));
 
+	// search
+	socket.on('/search', socketToController(roomController.search))
 };
 
 function socketToController(controllerFn) {

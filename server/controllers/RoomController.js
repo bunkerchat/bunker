@@ -219,6 +219,28 @@ module.exports.history = function (req, res) {
 		.catch(res.serverError);
 };
 
+module.exports.search = function (req, res) {
+	var query = req.body.query;
+	var roomIds = []
+	var userId = req.session.userId.toObjectId();
+
+	RoomMember.find({user: userId})
+		.then(roomMembers => {
+			var roomIds = _.map(roomMembers, 'room')
+
+			return Message.find({
+				$text: {$search: query},
+				room: {$in: roomIds}
+			}, {
+				score: {$meta: "textScore"}
+			})
+				.sort({score: {$meta: 'textScore'}})
+				.populate('author')
+		})
+		.then(res.ok)
+		.catch(res.serverError);
+};
+
 // GET /room/:id/media
 // Get media messages posted in this room
 module.exports.media = function (req, res) {
