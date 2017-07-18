@@ -151,7 +151,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 			$timeout(function () {
 				_.each(room.$messages, function (message) {
-					if (!nick || (message.author && message.author.nick === nick)) {
+					if ((!nick && !message.author) || (message.author && message.author.nick === nick)) {
 						var hiddenMessage = _.cloneDeep(message);
 						hiddenMessage.$hidden = true;
 						hiddenMessage.editCount++;
