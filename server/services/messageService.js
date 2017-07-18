@@ -1,27 +1,27 @@
-var ent = require('ent');
-var moment = require('moment');
-var Promise = require('bluebird');
-var socketio = require('../config/socketio');
+const ent = require('ent');
+const moment = require('moment');
+const Promise = require('bluebird');
+const socketio = require('../config/socketio');
 
-var Message = require('../models/Message');
-var User = require('../models/User');
-var Room = require('../models/Room');
-var RoomMember = require('../models/RoomMember');
-var InboxMessage = require('../models/InboxMessage');
+const Message = require('../models/Message');
+const User = require('../models/User');
+const Room = require('../models/Room');
+const RoomMember = require('../models/RoomMember');
+const InboxMessage = require('../models/InboxMessage');
 
-var RoomService = require('./RoomService');
-var imageSearch = require('./imageSearch');
-var helpService = require('./helpService');
-var statsService = require('./statsService');
-var leaderboardService = require('./leaderboardService');
-var hangmanService = require('./hangmanService');
-var pollService = require('./pollService');
+const RoomService = require('./RoomService');
+const imageSearch = require('./imageSearch');
+const helpService = require('./helpService');
+const statsService = require('./statsService');
+const leaderboardService = require('./leaderboardService');
+const hangmanService = require('./hangmanService');
+const pollService = require('./pollService');
 
-var ForbiddenError = require('../errors/ForbiddenError');
-var InvalidInputError = require('../errors/InvalidInputError');
-var ValidationError = require('mongoose').Error.ValidationError;
+const ForbiddenError = require('../errors/ForbiddenError');
+const InvalidInputError = require('../errors/InvalidInputError');
+const ValidationError = require('mongoose').Error.ValidationError;
 
-var messageService = module.exports;
+const messageService = module.exports;
 
 messageService.createMessage = function (roomMember, text) {
 
@@ -106,10 +106,10 @@ function getHelp(roomMember, text) {
 }
 
 function stats(roomMember, text) {
-	var match = /^\/stats\s+([\d\w\s\-\.]+)$/ig.exec(text);
+	const match = /^\/stats\s+([\d\w\s\-\.]+)$/ig.exec(text);
 
 	if (match) {
-		var userNick = match[1];
+		const userNick = match[1];
 		return statsService.getStatsForUser(userNick, roomMember.room)
 			.then(function (stats) {
 				return Message.create({
@@ -130,9 +130,9 @@ function stats(roomMember, text) {
 
 function animation(roomMember, text) {
 
-	var emoticon = (/:\w+:/.exec(text))[0];
+	const emoticon = (/:\w+:/.exec(text))[0];
 
-	var words = [];
+	let words = [];
 	switch (emoticon) {
 		case ':doge:':
 			words.push('bunker', 'chat', 'wow', 'messages', 'communicatoins',
@@ -140,7 +140,7 @@ function animation(roomMember, text) {
 				'open source', 'message history', 'typing', 'jpro', 'javascritp',
 				':successkid:', '/show :doge:', roomMember.user.nick);
 			words = _.map(words, function (word) {
-				var random = _.random(0, 100, false);
+				const random = _.random(0, 100, false);
 				if (random > 92) return 'such ' + word;
 				if (random > 82 && random < 90) return 'much ' + word;
 				if (random > 72 && random < 80) return 'so ' + word;
@@ -195,12 +195,12 @@ function animation(roomMember, text) {
 }
 
 function setUserNick(roomMember, text) {
-	var nickMatches = text.match(/^\/nick\s+([\w\s\-\.]{0,19})/i);
+	const nickMatches = text.match(/^\/nick\s+([\w\s\-\.]{0,19})/i);
 	if (!nickMatches || !nickMatches[1]) throw new InvalidInputError('Invalid nick');
 
-	var user = roomMember.user;
-	var newNick = nickMatches[1];
-	if (user.nick == newNick) throw new InvalidInputError('Nick is already set');
+	const user = roomMember.user;
+	const newNick = nickMatches[1];
+	if (user.nick === newNick) throw new InvalidInputError('Nick is already set');
 
 	return Promise.join(
 		User.findByIdAndUpdate(user._id, {nick: newNick}, {new: true}),
@@ -221,15 +221,15 @@ function setUserBusy(roomMember, text) {
 	return RoomMember.find({user: roomMember.user._id})
 		.then(function (memberships) {
 
-			var user = roomMember.user;
-			var busy = !user.busy; // Flip busy status
-			var busyMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
-			var busyMessage = busy && busyMessageMatches ? busyMessageMatches[1] : null;
+			const user = roomMember.user;
+			const busy = !user.busy; // Flip busy status
+			const busyMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
+			const busyMessage = busy && busyMessageMatches ? busyMessageMatches[1] : null;
 
 			return [User.findByIdAndUpdate(user._id, {busy: busy, busyMessage: busyMessage}, {new: true}), memberships];
 		})
 		.spread(function (user, memberships) {
-			var message = [];
+			const message = [];
 			message.push(user.nick);
 			message.push(user.busy ? 'is now away' : 'is back');
 			if (user.busy && user.busyMessage) {
@@ -251,21 +251,21 @@ function setRoomAttribute(roomMember, text) {
 
 	if (roomMember.role === 'member') throw new ForbiddenError('Must be an administrator or moderator to change room attributes');
 
-	var user = roomMember.user;
-	var matches = text.match(/\/(\w+)\s*(.*)/i);
-	var commands = ['name', 'topic', 'privacy', 'icon'];
-	var command = matches[1].toLowerCase();
+	const user = roomMember.user;
+	const matches = text.match(/\/(\w+)\s*(.*)/i);
+	const commands = ['name', 'topic', 'privacy', 'icon'];
+	const command = matches[1].toLowerCase();
 
-	if (!matches || _.intersection(commands, [command]).length == 0) {
+	if (!matches || _.intersection(commands, [command]).length === 0) {
 		throw new InvalidInputError(`Invalid room command — options are ${commands.join(', ')}`);
 	}
 
 	return Room.findById(roomMember.room)
 		.then(room => {
-			var message;
+			let message;
 
-			if (command == 'topic') {
-				var topic = matches[2].substr(0, 200).trim();
+			if (command === 'topic') {
+				const topic = matches[2].substr(0, 200).trim();
 				room.topic = topic;
 
 				if (topic && topic.length > 0) {
@@ -275,29 +275,29 @@ function setRoomAttribute(roomMember, text) {
 					message = `${user.nick} cleared the topic`;
 				}
 			}
-			if (command == 'name') {
+			if (command === 'name') {
 				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room name');
 
-				var name = matches[2].substr(0, 50).trim();
+				const name = matches[2].substr(0, 50).trim();
 				room.name = name;
 				message = `${user.nick} changed the room name to ${name}`;
 			}
-			else if (command == 'privacy') {
+			else if (command === 'privacy') {
 				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room privacy');
 
-				var privacy = matches[2].toLowerCase().trim();
-				if (privacy != 'public' && privacy != 'private') {
+				const privacy = matches[2].toLowerCase().trim();
+				if (privacy !== 'public' && privacy !== 'private') {
 					throw new InvalidInputError('Invalid privacy — options are public, private');
 				}
 
-				room.isPrivate = privacy == 'private';
+				room.isPrivate = privacy === 'private';
 				message = `${user.nick} changed the room to ${room.isPrivate ? 'private' : 'public'}`;
 			}
-			else if (command == 'icon') {
+			else if (command === 'icon') {
 				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room icon');
 
-				var icon = matches[2].toLowerCase().trim();
-				if (!icon || icon.length == 0) {
+				let icon = matches[2].toLowerCase().trim();
+				if (!icon || icon.length === 0) {
 					room.icon = null;
 					message = `${user.nick} cleared the room icon`;
 				}
@@ -321,13 +321,13 @@ function setRoomAttribute(roomMember, text) {
 			RoomService.messageRoom(room._id, message);
 		})
 		.catch(ValidationError, err => {
-			var message = _.sample(err.errors).message;
+			const message = _.sample(err.errors).message;
 			throw new InvalidInputError(`Invalid room ${command} input — ${message}`);
 		});
 }
 
 function magic8ball(roomMember, text) {
-	var ballResponse = _.sample([
+	const ballResponse = _.sample([
 		"It is certain", "It is decidedly so", "Yes definitely",
 		"You may rely on it", "As I see it, yes",
 		"Most likely", "Outlook good", "Yes", "Signs point to yes", "Without a doubt",
@@ -347,8 +347,8 @@ function magic8ball(roomMember, text) {
 			.then(broadcastMessage);
 	}, 3000);
 
-	var question = ' shakes the magic 8 ball...';
-	var questionMatch = text.match(/\/magic8ball\s+(.+)/i);
+	let question = ' shakes the magic 8 ball...';
+	const questionMatch = text.match(/\/magic8ball\s+(.+)/i);
 	if (questionMatch) {
 		question = ' shakes the magic 8 ball and asks "' + questionMatch[1] + '"';
 	}
@@ -357,28 +357,28 @@ function magic8ball(roomMember, text) {
 }
 
 function roll(roomMember, text) {
-	var matches = text.match(/\/roll\s+(.+)/i);
-	var roll = matches ? matches[1] : null;
-	var rollOutcome;
+	const matches = text.match(/\/roll\s+(.+)/i);
+	const roll = matches ? matches[1] : null;
+	let rollOutcome;
 
 	// Generic number roll
 	if (/^\d+$/.test(roll)) {
-		var max = Math.round(+roll);
+		const max = Math.round(+roll);
 		rollOutcome = 'rolled ' + Math.ceil(Math.random() * max) + ' out of ' + max;
 	}
 	// d20 case for D&D nerds
 	else if (/^\d*d\d*$/i.test(roll)) { // a dice roll
-		var textParse = /(\d*)d(\d*)/.exec(roll);
-		var diceCount = parseInt(textParse[1]) || 1; // Default at least one die (converts /roll d10 to /roll 1d10)
-		var dieSides = parseInt(textParse[2]) || 6; // Default at six sided die (converts /roll 10d to /roll 10d6)
+		const textParse = /(\d*)d(\d*)/.exec(roll);
+		let diceCount = parseInt(textParse[1]) || 1; // Default at least one die (converts /roll d10 to /roll 1d10)
+		let dieSides = parseInt(textParse[2]) || 6; // Default at six sided die (converts /roll 10d to /roll 10d6)
 
 		if (diceCount > 25) diceCount = 25;
 		if (dieSides > 50) dieSides = 50;
 
-		var total = 0;
-		var dieString = [];
-		for (var i = 0; i < diceCount; i++) {
-			var die = Math.ceil(Math.random() * dieSides);
+		let total = 0;
+		const dieString = [];
+		for (let i = 0; i < diceCount; i++) {
+			const die = Math.ceil(Math.random() * dieSides);
 			total += die;
 			dieString.push('[' + die + ']');
 		}
@@ -403,7 +403,7 @@ function message(roomMember, text, type) {
 	return Message.create({
 			room: roomMember.room,
 			type: type,
-			author: type == 'standard' ? roomMember.user : null,
+			author: type === 'standard' ? roomMember.user : null,
 			text: text
 		})
 		.then(function (message) {
@@ -439,7 +439,7 @@ function saveInMentionedInboxes(message) {
 		.populate('user')
 		.then(roomMembers => roomMembers)
 		.each(roomMember => {
-			var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
+			const regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
 			if (!regex.test(message.text)) return;
 
 			return InboxMessage.create({user: roomMember.user._id, message: message._id})
@@ -471,8 +471,8 @@ function code(roomMember, text) {
 }
 
 function image(roomMember, text) {
-	var match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
-	var searchQuery = ent.decode(match[1]);
+	const match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
+	const searchQuery = ent.decode(match[1]);
 
 	return imageSearch.image(searchQuery)
 		.then(result => {
@@ -490,8 +490,8 @@ function image(roomMember, text) {
 }
 
 function gif(roomMember, text) {
-	var match = /^\/gif(?:pick|search)*\s+(.*)$/i.exec(text);
-	var searchQuery = ent.decode(match[1]);
+	const match = /^\/gif(?:pick|search)*\s+(.*)$/i.exec(text);
+	const searchQuery = ent.decode(match[1]);
 
 	return imageSearch.gif(searchQuery)
 		.then(result => {
@@ -535,27 +535,27 @@ function hangman(roomMember, text) {
 }
 
 function changeUserRole(roomMember, text) {
-	if (roomMember.role != 'administrator') throw new ForbiddenError('Must be an administrator to change to promote');
+	if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change to promote');
 
-	var newRole;
-	var user = roomMember.user;
-	var roomId = roomMember.room;
+	let newRole;
+	const user = roomMember.user;
+	const roomId = roomMember.room;
 
-	var match = /^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.exec(text);
-	var action = match[1];
-	var userNick = match[2];
+	const match = /^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.exec(text);
+	const action = match[1];
+	const userNick = match[2];
 
-	if (user.nick == userNick) throw new InvalidInputError('You cannot promote or demote yourself');
+	if (user.nick === userNick) throw new InvalidInputError('You cannot promote or demote yourself');
 
 	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
 		.then(function (roomMemberToPromote) {
 			if (!roomMemberToPromote) throw new InvalidInputError('Could not find user ' + userNick);
 
-			if (action == 'promote') {
-				newRole = roomMemberToPromote.role == 'member' ? 'moderator' : 'administrator';
+			if (action === 'promote') {
+				newRole = roomMemberToPromote.role === 'member' ? 'moderator' : 'administrator';
 			}
 			else { // demote
-				newRole = roomMemberToPromote.role == 'administrator' ? 'moderator' : 'member';
+				newRole = roomMemberToPromote.role === 'administrator' ? 'moderator' : 'member';
 			}
 
 			return RoomMember.findByIdAndUpdate(roomMemberToPromote._id, {role: newRole}, {new: true});
@@ -569,13 +569,13 @@ function changeUserRole(roomMember, text) {
 					data: {role: newRole}
 				});
 
-			var message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
+			const message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
 			RoomService.messageRoom(roomId, message);
 		});
 }
 
 function leaderboard(roomMember, text) {
-	var match = /^\/leaderboard\s+\-losers.*$/ig.exec(text);
+	const match = /^\/leaderboard\s+\-losers.*$/ig.exec(text);
 
 	if (match) {
 		return leaderboardService.getLoserboard()
@@ -603,9 +603,9 @@ function leaderboard(roomMember, text) {
 }
 
 function setInfo(roomMember, text) {
-	var infoMatch = text.match(/\/setinfo\s+(.+)/i);
-	var info = infoMatch[1].substring(0, 50);
-	var user = roomMember.user;
+	const infoMatch = text.match(/\/setinfo\s+(.+)/i);
+	const info = infoMatch[1].substring(0, 50);
+	const user = roomMember.user;
 
 	return Promise.join(
 		User.findByIdAndUpdate(user._id, {description: info}, {new: true}),
@@ -623,16 +623,16 @@ function setInfo(roomMember, text) {
 }
 
 function whois(roomMember, text) {
-	var nickMatches = text.match(/^\/whois\s+([\w\s\-\.]{0,19})/i);
-	var userNick = nickMatches[1];
-	var roomId = roomMember.room;
+	const nickMatches = text.match(/^\/whois\s+([\w\s\-\.]{0,19})/i);
+	const userNick = nickMatches[1];
+	const roomId = roomMember.room;
 
 	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
 		.then(function (whoisUser) {
 			if (!whoisUser) throw new InvalidInputError('Could not find user ' + userNick);
-			var userEmail = whoisUser.user.email;
-			var userDescription = whoisUser.user.description;
-			var message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- ";
+			const userEmail = whoisUser.user.email;
+			const userDescription = whoisUser.user.description;
+			let message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- ";
 
 			if (!userDescription) {
 				message += "User has not set their info";
@@ -657,7 +657,7 @@ function whois(roomMember, text) {
 }
 
 function poll(roomMember, text) {
-	var roomId = roomMember.room;
+	const roomId = roomMember.room;
 	return pollService.start(roomMember, text)
 		.then(function (pollResponse) {
 			if(pollResponse.isPrivate) {
@@ -669,7 +669,7 @@ function poll(roomMember, text) {
 }
 
 function pollClose(roomMember, text) {
-	var roomId = roomMember.room;
+	const roomId = roomMember.room;
 	return pollService.close(roomMember, text)
 		.then(function (pollResponse) {
 			if (pollResponse.isPrivate) {
@@ -682,7 +682,7 @@ function pollClose(roomMember, text) {
 
 // voting is always private
 function vote(roomMember, text) {
-	var roomId = roomMember.room;
+	const roomId = roomMember.room;
 	return pollService.vote(roomMember, text)
 		.then(function (pollResponse) {
 			RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
