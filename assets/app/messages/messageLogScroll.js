@@ -21,7 +21,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 					if (image.length) {
 						// If we have an image, wait for it to load before scrolling
 						image.load(function () {
-							scroll(250);
+							scroll(500);
 						});
 					} else {
 						// Otherwise scroll immediately
