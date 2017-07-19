@@ -365,7 +365,7 @@ function meme(roomMember, text) {
 		return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, require('./memeService').getHelp(), 'help');
 	}
 
-	const matches = text.match(/^\/meme\s+(\w+)\s+(\w+)\s*[|\/]?\s*(\w+)?\s*[|\/]?\s*(\w+)?\s*[|\/]?\s*(\w+)?\s*[|\/]?\s*(\w+)?\s*[|\/]?\s*(\w+)?/i);
+	const matches = text.match(/\/meme\s+(\w+)\s+([\w\s]+)\s*[|\/]?\s*([\w\s]+)?\s*[|\/]?\s*([\w\s]+)?\s*[|\/]?\s*([\w\s]+)?\s*[|\/]?\s*([\w\s]+)?\s*[|\/]?\s*([\w\s]+)?/i);
 	if (!matches || matches.length < 3) {
 		throw new InvalidInputError(`Invalid meme format - example: /meme tb line 1 text | line 2 text`);
 	}
