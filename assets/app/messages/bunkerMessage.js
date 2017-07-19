@@ -286,7 +286,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						toggleLink(link);
 						attachedMedia = `
 						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
-							<img ng-src="${link}"/>
+							<img ng-src="${link}" imageonload/>
 						</div>`
 					}
 				});
@@ -294,14 +294,6 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				// If we made an image, attach it now
 				if (attachedMedia) {
 					const element = angular.element(attachedMedia)
-					bunkerMessage.$imageLoading = true
-					bunkerMessage.$imagePromise = new Promise((resolve) =>{
-						element.find('img').one('load', () =>{
-							bunkerMessage.$imageLoading = false
-							resolve()
-						})
-					})
-
 					elem.append(element);
 				}
 
@@ -315,6 +307,21 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					text = text.replace(`${link}</a>`, `${link}</a> ${toggleButton}`);
 				}
 			}
+		}
+	};
+});
+
+
+app.directive('imageonload', function($rootScope) {
+	return {
+		restrict: 'A',
+		link: function(scope, element, attrs) {
+			element.bind('load', function() {
+				$rootScope.$broadcast('messageImageLoaded', {height: this.height})
+			});
+			element.bind('error', function(){
+				console.log('image could not be loaded');
+			});
 		}
 	};
 });
