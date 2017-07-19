@@ -361,18 +361,21 @@ function magic8ball(roomMember, text) {
 }
 
 function meme(roomMember, text) {
-	if(/\/meme\s*$/.test(text)) {
+	if (/\/meme\s*$/.test(text)) {
 		return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, require('./memeService').getHelp(), 'help');
 	}
 
-	const matches = text.match(/\/meme\s+(\w+)\s+([^|]+)\|?([^|]*)/i);
+	const matches = text.match(/^\/meme\s+(\w+)\s+(\w+)\s*[|\/]?\s*(\w+)?\s*[|\/]?\s*(\w+)?\s*[|\/]?\s*(\w+)?\s*[|\/]?\s*(\w+)?\s*[|\/]?\s*(\w+)?/i);
 	if (!matches || matches.length < 3) {
 		throw new InvalidInputError(`Invalid meme format - example: /meme tb line 1 text | line 2 text`);
 	}
-	const image = matches ? matches[1] : null;
-	const line1 = matches ? matches[2] : null;
-	const line2 = matches ? matches[3] : null;
-	const url = `http://upboat.me/${image}/${line1.trim().replace(/\s/g, '%20')}/${line2.trim().replace(/\s/g, '%20')}.jpg`;
+	const image = matches[1];
+	const lines = _(matches.slice(2))
+		.filter()
+		.map(value => encodeURIComponent(value))
+		.join('/')
+
+	const url = `http://upboat.me/${image}/${lines}.jpg`;
 	return message(roomMember, url);
 }
 
