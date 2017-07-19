@@ -14,29 +14,30 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 			}
 
 			$rootScope.$on('bunkerMessaged', function (evt, message) {
+				$timeout(function () {
+					if (atBottomOfPage() || message.author._id == bunkerData.user._id) {
+						// Check for images
+						var image = angular.element('#' + message._id).find('img');
+						if (image.length) {
+							// If we have an image, wait for it to load before scrolling
+							image.load(function () {
+								scroll(100);
+							});
+						} else {
+							// Otherwise scroll immediately
+							scroll();
+						}
 
-				if (atBottomOfPage() || message.author._id == bunkerData.user._id) {
-					// Check for images
-					var image = angular.element('#' + message._id).find('img');
-					if (image.length) {
-						// If we have an image, wait for it to load before scrolling
-						image.load(function () {
-							scroll(500);
-						});
+						// if the user is only watching new messages, trim the message log
+						clearMessageCounter++;
+						if (clearMessageCounter > 5) {
+							bunkerData.clearOldMessages($scope.roomId);
+							clearMessageCounter = 0;
+						}
 					} else {
-						// Otherwise scroll immediately
-						scroll();
-					}
-
-					// if the user is only watching new messages, trim the message log
-					clearMessageCounter++;
-					if (clearMessageCounter > 5) {
-						bunkerData.clearOldMessages($scope.roomId);
 						clearMessageCounter = 0;
 					}
-				} else {
-					clearMessageCounter = 0;
-				}
+				}, 25)
 			});
 
 			// Watch scrolling to top, execute given function
@@ -61,7 +62,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 			});
 
 			$scope.$on('visibilityHide', function () {
-				$timeout(() => animationControl.stop({all:true}));
+				$timeout(() => animationControl.stop({all: true}));
 			});
 
 			$scope.$on('visibilityShow', function () {
