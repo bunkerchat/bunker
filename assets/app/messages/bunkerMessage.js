@@ -27,10 +27,11 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 			small: '@'
 		},
 		link: function (scope, elem) {
+			const bunkerMessage = scope.bunkerMessage
 
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
-			if (scope.bunkerMessage && scope.bunkerMessage.text) {
-				elem.find('span').html(parseText(scope.bunkerMessage.text));
+			if (bunkerMessage && bunkerMessage.text) {
+				elem.find('span').html(parseText(bunkerMessage.text));
 				$compile(elem.contents())(scope);
 			}
 			else {
@@ -43,13 +44,13 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 			function parseText(text) {
 				if (!text) return;
 
-				if (scope.bunkerMessage.type == 'code') {
+				if (bunkerMessage.type == 'code') {
 					text = parseCode(text);
 				}
-				else if (scope.bunkerMessage.type == 'hangman') {
+				else if (bunkerMessage.type == 'hangman') {
 					text = parseHangman(text);
 				}
-				else if (scope.bunkerMessage.type == 'fight') {
+				else if (bunkerMessage.type == 'fight') {
 					// fight message can have custom images as well as block text
 					text = parseFight(text);
 				}
@@ -83,7 +84,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 			}
 
 			function createQuotedBlock(text) {
-				scope.bunkerMessage.type = 'quote';
+				bunkerMessage.type = 'quote';
 
 				// Scan for overtabs
 				var lines = text.split('&#10;');
@@ -98,7 +99,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					text = spacingRemoved.join('&#10;');
 				}
 
-				if (scope.bunkerMessage.type == 'stats') {
+				if (bunkerMessage.type == 'stats') {
 					text = parseEmoticons(text);
 				}
 
@@ -292,9 +293,16 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 				// If we made an image, attach it now
 				if (attachedMedia) {
-					//text += attachedMedia;
-					elem.append(angular.element(attachedMedia));
-					//$compile(attachedMedia)(scope.$new());
+					const element = angular.element(attachedMedia)
+					bunkerMessage.$imageLoading = true
+					bunkerMessage.$imagePromise = new Promise((resolve) =>{
+						element.find('img').one('load', () =>{
+							bunkerMessage.$imageLoading = false
+							resolve()
+						})
+					})
+
+					elem.append(element);
 				}
 
 				return text;
