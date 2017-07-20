@@ -5,19 +5,6 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
-	<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
-	<link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css"/>
-	<link rel="stylesheet" href="/assets/vendor/highlightjs/styles/github.css"/>
-	<link rel="stylesheet" href="/node_modules/ng-sortable/dist/ng-sortable.min.css"/>
-
-	<!-- build:sass /assets/bundled/default.css -->
-	<link rel="stylesheet" href="/assets/styles/default.scss" />
-	<!-- endbuild -->
-
-	<!-- build:remove -->
-	<link rel="stylesheet" href="/assets/bundled/default.css" />
-	<!-- endbuild -->
-
 	<link rel="stylesheet" ng-href="{{ loadMinimal ? '/assets/bundled/minimalist.css' : '' }}" custom-stylesheet/>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
@@ -44,6 +31,38 @@
 	window.useJavascriptBundle = <%= useJavascriptBundle %>;
 	window.emoticons = <%- JSON.stringify(emoticons) %>;
 	window.debugging = <%= debugging %>;
+</script>
+
+<noscript id="deferred-styles">
+	<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="/assets/vendor/highlightjs/styles/github.css"/>
+	<link rel="stylesheet" href="/node_modules/ng-sortable/dist/ng-sortable.min.css"/>
+
+	<!-- build:sass /assets/bundled/default.css -->
+	<link rel="stylesheet" href="/assets/styles/default.scss"/>
+	<!-- endbuild -->
+
+	<!-- build:remove -->
+	<link rel="stylesheet" href="/assets/bundled/default.css"/>
+	<!-- endbuild -->
+</noscript>
+<script>
+	// Inline CSS for max perf
+	// https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery
+	const loadDeferredStyles = function () {
+		const addStylesNode = document.getElementById("deferred-styles");
+		const replacement = document.createElement("div");
+		replacement.innerHTML = addStylesNode.textContent;
+		document.body.appendChild(replacement)
+		addStylesNode.parentElement.removeChild(addStylesNode);
+	};
+	const raf = requestAnimationFrame || mozRequestAnimationFrame ||
+			webkitRequestAnimationFrame || msRequestAnimationFrame;
+	if (raf) raf(function () {
+		window.setTimeout(loadDeferredStyles, 0);
+	});
+	else window.addEventListener('load', loadDeferredStyles);
 </script>
 
 <!-- build:jsLib /assets/bundled/vendor.js -->
