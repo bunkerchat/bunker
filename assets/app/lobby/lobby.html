@@ -8,9 +8,9 @@
 
 			<ul class="list-group">
 				<li class="col-md-4 list-group-item"
-					ui-sref="chat.room({roomId: room._id})"
-					ng-if="room.$resolved"
-					ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
+						ui-sref="chat.room({roomId: room._id})"
+						ng-if="room.$resolved"
+						ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
 					<h4 class="list-group-item-heading">
 						{{room.name}}
 						<small bunker-message="room" media="false"></small>
@@ -19,12 +19,25 @@
 						{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>
 					</span>
 
-					<p ng-if="room.$lastMessage">
+					<div class="derp" ng-if="room.$lastMessage">
 						<span am-time-ago="room.$lastMessage.createdAt"></span>
-						<img gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="30"/>
-						{{room.$lastMessage.author.nick}}:
-						<span bunker-message="room.$lastMessage" media="false"></span>
-					</p>
+						<div class="lobby-user-message">
+							<img ng-src="{{::room.$lastMessage.author.$gravatar}}"/>
+							<div class="name">{{::room.$lastMessage.author.nick}}</div>
+							<div class="status"
+									 ng-class="room.$lastMessage.author.$present ? 'here' : 'away'"
+									 ng-if="room.$lastMessage.author.connected"></div>
+
+
+							<!--<div class="status"-->
+							<!--ng-class="room.$lastMessage.author.$present ? 'here' : 'away'"-->
+							<!--ng-if="room.$lastMessage.author.connected"></div>-->
+							<!--<img gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="30"/>-->
+							<!--{{room.$lastMessage.author.nick}}:-->
+							<span bunker-message="room.$lastMessage" media="false"></span>
+						</div>
+					</div>
+
 					<p ng-if="!room.$lastMessage">
 						No messages yet!
 					</p>
@@ -40,8 +53,8 @@
 
 			<ul class="list-group">
 				<li class="col-md-4 list-group-item"
-					ui-sref="chat.room({roomId: room._id})"
-					ng-repeat="room in lobby.publicRooms track by room._id">
+						ui-sref="chat.room({roomId: room._id})"
+						ng-repeat="room in lobby.publicRooms track by room._id">
 					<h4 class="list-group-item-heading">
 						{{room.name}}
 					</h4>
@@ -70,7 +83,7 @@
 
 		<div class="input-group">
 			<input type="text" class="form-control" placeholder="Or create a new room"
-				   ng-model="newRoomName" ng-required="true"/>
+						 ng-model="newRoomName" ng-required="true"/>
 
 			<span class="input-group-btn">
 					<button class="btn btn-success">Create</button>
