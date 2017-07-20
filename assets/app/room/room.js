@@ -14,7 +14,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			bunkerData.$promise.then(function () {
 				$scope.current = bunkerData.getRoom($scope.roomId);
 
-				$scope.currentMembership = _.find(bunkerData.memberships, { room: $scope.current._id });
+				$scope.currentMembership = _.find(bunkerData.memberships, {room: $scope.current._id});
 				// Setup watches once we have data
 
 				$scope.$watchCollection('current.$members', function (members) {
@@ -67,9 +67,9 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					}, start);
 				}
 
-				for (var i = 0; i < message.words.length; i++) {
-					popupElement(message.words[i]);
-				}
+				_.each(message.words, word => {
+					popupElement(word);
+				});
 
 				showEmoticonAnimation(el, message.emoticon);
 			});
@@ -78,14 +78,16 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			$rootScope.$on('visibilityShow', updateLastRead);
 
 			function showEmoticonAnimation(el, emoticon) {
-				var knownEmoticon = _.find(emoticons.files, function (known) {
-					return known.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticon.replace(/:/g, '').toLowerCase();
+				const knownEmoticon = _.find(emoticons.files, function (known) {
+					return known.replace(/\.\w{1,4}$/, '').toLowerCase() === emoticon.replace(/:/g, '').toLowerCase();
 				});
 
 				if (!knownEmoticon) return;
 
-				var animationBox = angular.element(
-					'<div class="animation-box closed" style="left: ' + (Math.random() * 60 + 20) + '%"><img ng-src="/assets/images/emoticons/' + knownEmoticon + '"/></div>'
+				const animationBox = angular.element(
+					`<div class="animation-box closed" style="left: ${Math.random() * 60 + 20}%">` +
+						`<img src="/assets/images/emoticons/${knownEmoticon}"/>` +
+					`</div>`
 				);
 
 				el.append(animationBox);
@@ -103,17 +105,17 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			function updateMemberList() {
 				$scope.memberList = _($scope.current.$members)
 					.sortBy(function (member) {
-						var user = member.user;
+						const user = member.user;
 						return (user.connected ? (user.$present ? '000' : '111') : '999') + user.nick.toLowerCase();
 					})
 					.value();
 			}
 
 			function updateLastRead() {
-				if (!$scope.current.$selected || $scope.current.$messages.length == 0) return;
+				if (!$scope.current.$selected || $scope.current.$messages.length === 0) return;
 
-				var membership = _.find(bunkerData.memberships, {room: $scope.current._id});
-				var lastReadId = _.last($scope.current.$messages)._id != membership.lastReadMessage ? membership.lastReadMessage : null;
+				const membership = _.find(bunkerData.memberships, {room: $scope.current._id});
+				var lastReadId = _.last($scope.current.$messages)._id !== membership.lastReadMessage ? membership.lastReadMessage : null;
 
 				el.find('.message.last-read').removeClass('last-read');
 				if (lastReadId) {
