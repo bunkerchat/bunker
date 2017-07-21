@@ -97,6 +97,9 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/meme/i.test(text)) {
 		return meme(roomMember, text);
 	}
+	else if (/^\/\w+/i.test(text)) {
+		return badCommand(roomMember, text);
+	}
 	else {
 		return message(roomMember, text, 'standard');
 	}
@@ -382,6 +385,12 @@ function meme(roomMember, text) {
 
 	const url = `http://upboat.me/${image}/${lines}.jpg`;
 	return message(roomMember, url);
+}
+
+function badCommand(roomMember, text){
+	const matches = text.match(/\/(\w+)/i);
+	const command = matches[1]
+	throw new InvalidInputError(`Invalid command — ${command}`);
 }
 
 function roll(roomMember, text) {
