@@ -55,7 +55,7 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/roll/i.test(text)) {
 		return roll(roomMember, text);
 	}
-	else if (/^\/show\s+:\w+:/i.test(text)) {
+	else if (/^\/show\s+:?\w+:?/i.test(text)) {
 		return animation(roomMember, text);
 	}
 	else if (/^\/me\s+/i.test(text)) {
@@ -134,11 +134,16 @@ function stats(roomMember, text) {
 
 function animation(roomMember, text) {
 
-	const emoticon = (/:\w+:/.exec(text))[0];
+	const emoticonMatches = /\/show\s+:?(\w+):?/.exec(text);
+	if (!emoticonMatches || emoticonMatches.length < 1) {
+		throw new InvalidInputError('Invalid show format — example: /show doge');
+	}
+
+	const emoticon = emoticonMatches[1];
 
 	var words = [];
 	switch (emoticon) {
-		case ':doge:':
+		case 'doge':
 			words.push('bunker', 'chat', 'wow', 'messages', 'communicatoins',
 				'http', 'sockets', 'emoticons', 'real time', 'trollign', 'features',
 				'open source', 'message history', 'typing', 'jpro', 'javascritp',
@@ -153,49 +158,49 @@ function animation(roomMember, text) {
 				return word;
 			});
 			break;
-		case ':slap:':
+		case 'slap':
 			words.push('five fingers', 'SLAP', 'darknesssss', 'to the face', 'CHARLIE MURPHY', 'I\'m rick james',
 				'darkness everybody', 'upside his head', 'cold blooded', 'bang bang');
 			break;
-		case ':ricers:':
+		case 'ricers':
 			words.push('omg', 'spoiler', 'RPM', 'zoom zoom', 'VROOOOOOMM', 'beep beep', 'slow drivers', 'fast lane',
 				'WRX', 'too fast too furious', 'torque', 'horsepower');
 			break;
-		case ':trollface:':
+		case 'trollface':
 			words.push('trollololol', 'T-R-rolled');
 			break;
-		case ':itsatrap:':
+		case 'itsatrap':
 			words.push('it\'s a trap!', 'attack formation', 'all craft prepare to retreat',
 				'firepower', 'evasive action', 'engage those star destroyers');
 			break;
-		case ':smaug:':
+		case 'smaug':
 			words.push('SHMAAAUGGG');
 			break;
-		case ':hansolo:':
+		case 'hansolo':
 			words.push('i shot first', 'laugh it up fuzzball',
-				'sorry about the mess', 'don\'t get cocky', 'var\'s blow this thing and go home', 'smuggling',
+				'sorry about the mess', 'don\'t get cocky', 'let\'s blow this thing and go home', 'smuggling',
 				'money', 'bounty', 'debt', 'carbonite', 'scoundrel');
 			break;
-		case ':chrome:':
+		case 'chrome':
 			words.push('i live i die i live again', 'valhalla',
 				'V8', 'chrome grill', 'cars', 'mah steering wheel',
 				'chapped lips', 'trucks', 'engines', 'fast', 'desert', 'wasteland', 'war');
 			break;
-		case ':canada:':
+		case 'canada':
 			words.push('maple syrup', 'hosers', 'hockey', 'ice', 'snow', 'arctic circle', 'eskimos',
 				'nunavut', 'canucks', 'mounties', 'eh', 'sorry', 'bacon', 'aboot');
 			break;
-		case ':burrito:':
+		case 'burrito':
 			words.push('beans', 'carnitas', 'tortilla', 'noms', 'steak', 'farm fresh', 'double-wrapped',
 				'rice', 'free guac lol', 'bowl > tortilla', 'foil wrapped for warmth', 'pancheros > chipotle');
 			break;
-		case ':magic8ball:':
+		case 'magic8ball':
 			words.push('all-knowing', 'omniscient', 'round', 'number 8', 'bawlz', 'predictions', 'shaking',
 				'future', 'revealing', 'how does it know?', 'not good 4 billiardz lol');
 			break;
 	}
 
-	RoomService.animateInRoom(roomMember, emoticon, _.sample(words, 10));
+	RoomService.animateInRoom(roomMember, emoticon, _.sampleSize(words, 10));
 }
 
 function setUserNick(roomMember, text) {
