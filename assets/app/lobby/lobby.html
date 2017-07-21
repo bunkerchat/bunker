@@ -21,7 +21,7 @@
 
 					<p ng-if="room.$lastMessage">
 						<span am-time-ago="room.$lastMessage.createdAt"></span>
-						<img gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="30"/>
+						<img class="gravatar-md" gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="60"/>
 						{{room.$lastMessage.author.nick}}:
 						<span bunker-message="room.$lastMessage" media="false"></span>
 					</p>

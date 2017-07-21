@@ -40,7 +40,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 				_.each(initialData.users, user => {
 					user.$present = bunkerData.isPresent(user);
-					user.$gravatar = gravatarService.url(user.email, {s: 20});
+					user.$gravatar = gravatarService.url(user.email, {s: 40});
 				});
 
 				// instead of sending many duplicate users down, send one list

@@ -33,7 +33,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 				break;
 			case 'updated':
 				_.each(evt.data.$members, member => {
-					member.user.$gravatar = gravatarService.url(member.user.email, {s: 20});
+					member.user.$gravatar = gravatarService.url(member.user.email, {s: 40});
 				});
 
 				_.assign(room, evt.data);
