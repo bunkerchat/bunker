@@ -7,6 +7,10 @@
 				<i ng-show="roomId" class="fa fa-arrow-left"></i>
 				{{header.currentRoomName}}
 			</a>
+
+			<span class="mobile-upload-button visible-xs">
+				<upload-button></upload-button>
+			</span>
 		</div>
 		<ul class="nav navbar-nav navbar-rooms hidden-xs" as-sortable="header.dragRoomListeners" ng-model="header.rooms">
 			<li ui-sref-active="active" ng-repeat="room in header.rooms track by room._id" as-sortable-item
@@ -20,7 +24,6 @@
 				</span>
 			</li>
 		</ul>
-
 		<div ng-if="header.showOptions">
 
 			<ul class="nav navbar-nav navbar-right hidden-xs">
