@@ -1202,7 +1202,7 @@ img.fatality {
 		input, textarea {
 			float: left;
 			height: 48px;
-			width: calc(100vw - 126px);
+			width: calc(100vw - 64px);
 			border-radius: 0;
 			border: 0;
 			line-height: 36px;
@@ -1332,4 +1332,34 @@ img.fatality {
 	100% {
 		transform: scale(1);
 	}
+}
+
+.mobile-upload-button {
+  float: right;
+  line-height: 42px;
+  position: relative;
+}
+
+.mobile-upload-button button{
+  height: 40px;
+  padding: 4px 12px;
+  display: inline-block;
+  float: right;
+  width: 60px;
+  background: white;
+  border: 0;
+  outline: none;
+  color: #333;
+  font-size: 15px;
+  border-radius: 0px;
+  line-height: 36px;
+}
+
+.mobile-upload-button input[type=file]{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }

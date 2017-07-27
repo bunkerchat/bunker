@@ -102,4 +102,10 @@
 	.message-list.has-topic {
 		height: calc(100vh - 73px);
 	}
+
+  .message-input {
+	button {
+	  height: 28px;
+  	}
+  }
 }
