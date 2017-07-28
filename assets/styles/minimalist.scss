@@ -1,43 +1,43 @@
 // this file is loaded after the default css if the style is selected
-
-.alert a, .alert .alert-link {
+@media (min-width: 768px) { // xs is < 768px
+  .alert a, .alert .alert-link {
 	color: #93c54b;
 	text-decoration: none;
-}
+  }
 
-.navbar-brand {
+  .navbar-brand {
 	padding: 16px 15px;
-}
+  }
 
-.panel-heading {
+  .panel-heading {
 	line-height: 7px;
-}
+  }
 
-// fix the container height for minimal
-.message-list {
+  // fix the container height for minimal
+  .message-list {
 	height: calc(100vh - 72px);
-}
+  }
 
-.message-list.has-topic {
+  .message-list.has-topic {
 	height: calc(100vh - 113px);
-}
+  }
 
-.message-body pre {
+  .message-body pre {
 	margin-top: 10px;
 	border: dotted #ccc 2px;
 	border-radius: 3px;
 	background: #FAFAFA;
 	color: #666;
 	tab-size: 4;
-}
+  }
 
-// message history
+  // message history
 
-.message-history-anchor {
+  .message-history-anchor {
 	position: relative;
-}
+  }
 
-.message-history {
+  .message-history {
 	position: absolute;
 	background-color: white;
 	border: 1px black solid;
@@ -46,60 +46,53 @@
 	top: -86px;
 	padding: 8px;
 	box-shadow: #888 3px 5px 3px;
-}
+  }
 
-.message-history ul {
+  .message-history ul {
 	padding: 0;
-}
+  }
 
-.message-history li {
+  .message-history li {
 	list-style: none;
-}
+  }
 
-[room] .right-pane {
+  [room] .right-pane {
 	height: calc(100vh - 72px);
-}
+  }
 
-.message-input {
+  .message-input {
 
 	form {
-		height: 32px;
+	  height: 32px;
 	}
 
 	input[type=text], button {
-		border-radius: 0;
+	  border-radius: 0;
 	}
 	.right-pane {
-		height: 32px;
+	  height: 32px;
 	}
 
 	// make input box smaller
 	textarea {
-		height: 32px;
-		padding: 2px 0 0 8px;
-		resize: none;
-		overflow: hidden;
-		line-height: 26px;
+	  height: 32px;
+	  padding: 2px 0 0 8px;
+	  resize: none;
+	  overflow: hidden;
+	  line-height: 26px;
 	}
 
 	button {
-		height: 32px;
-		padding: 4px 12px;
+	  height: 32px;
+	  padding: 4px 12px;
 	}
-}
+  }
 
-.member-list .status.pull-right {
+  .member-list .status.pull-right {
 	margin-top: 8px;
-}
+  }
 
-.room-options {
+  .room-options {
 	bottom: -32px;
-}
-
-// mobile modifications
-
-@media (max-width: 767px) { // xs is < 768px
-	.message-list.has-topic {
-		height: calc(100vh - 73px);
-	}
+  }
 }

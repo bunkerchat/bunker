@@ -234,9 +234,9 @@ mark {
 	color: black;
 	background-color: black;
 
-	&.toggle-mark{
-		&:hover{
-			color:black;
+	&.toggle-mark {
+		&:hover {
+			color: black;
 		}
 		color: black;
 		background-color: $lightBackgroundColor
@@ -472,7 +472,7 @@ mark:hover {
 	margin-bottom: 4px;
 }
 
-.emoticon-selected{
+.emoticon-selected {
 	background: $mentionColor;
 }
 
@@ -490,13 +490,13 @@ mark:hover {
 	padding: 5px 10px;
 	border-bottom: solid #eee 1px;
 	border-right: solid 1px #eee;
-    line-height: 32px;
+	line-height: 32px;
 	background-color: $lightBackgroundColor;
-    height: 41px;
+	height: 41px;
 
-    mark {
-      padding: 0px 2px;
-    }
+	mark {
+		padding: 0px 2px;
+	}
 }
 
 [fill], .fill {
@@ -827,7 +827,7 @@ img.fatality {
 		text-align: center;
 	}
 
-	.inRoom{
+	.inRoom {
 		box-shadow: 1px 1px 5px #888888
 	}
 
@@ -1037,11 +1037,11 @@ img.fatality {
 	}
 }
 
-.searchbar{
+.searchbar {
 	margin: 15px 0 15px 0;
 }
 
-.search-result{
+.search-result {
 	margin-bottom: 5px;
 }
 
@@ -1076,7 +1076,7 @@ img.fatality {
 		overflow-y: scroll;
 		position: fixed;
 		top: 40px;
-		bottom: 40px;
+		bottom: 52px;
 		left: 0;
 		right: 0;
 		background-color: #efefef;
@@ -1202,7 +1202,7 @@ img.fatality {
 		input, textarea {
 			float: left;
 			height: 48px;
-			width: calc(100vw - 126px);
+			width: calc(100vw - 64px);
 			border-radius: 0;
 			border: 0;
 			line-height: 36px;
@@ -1332,4 +1332,34 @@ img.fatality {
 	100% {
 		transform: scale(1);
 	}
+}
+
+.mobile-upload-button {
+  float: right;
+  line-height: 42px;
+  position: relative;
+}
+
+.mobile-upload-button button{
+  height: 40px;
+  padding: 4px 12px;
+  display: inline-block;
+  float: right;
+  width: 60px;
+  border: 0;
+  outline: none;
+  font-size: 15px;
+  border-radius: 0px;
+  line-height: 36px;
+  background-color: transparent;
+  color: #eee;
+}
+
+.mobile-upload-button input[type=file]{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }
