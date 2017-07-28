@@ -233,6 +233,14 @@ mark {
 	display: inline-block;
 	color: black;
 	background-color: black;
+
+	&.toggle-mark {
+		&:hover {
+			color: black;
+		}
+		color: black;
+		background-color: $lightBackgroundColor
+	}
 }
 
 mark:hover {
@@ -464,7 +472,7 @@ mark:hover {
 	margin-bottom: 4px;
 }
 
-.emoticon-selected{
+.emoticon-selected {
 	background: $mentionColor;
 }
 
@@ -482,13 +490,13 @@ mark:hover {
 	padding: 5px 10px;
 	border-bottom: solid #eee 1px;
 	border-right: solid 1px #eee;
-    line-height: 32px;
+	line-height: 32px;
 	background-color: $lightBackgroundColor;
-    height: 41px;
+	height: 41px;
 
-    mark {
-      padding: 0px 2px;
-    }
+	mark {
+		padding: 0px 2px;
+	}
 }
 
 [fill], .fill {
@@ -623,6 +631,7 @@ li:not(:last-child) .message.last-read:after {
 			margin-bottom: 0;
 			border-width: 0;
 			background-color: transparent;
+			white-space: pre-wrap;
 		}
 	}
 }
@@ -777,6 +786,14 @@ img.fatality {
 	height: 46px;
 }
 
+.gravatar-sm {
+	height: 20px
+}
+
+.gravatar-md {
+	height: 30px
+}
+
 .member-list {
 	height: calc(100vh - 108px);
 	overflow-y: auto;
@@ -810,10 +827,14 @@ img.fatality {
 		text-align: center;
 	}
 
+	.inRoom {
+		box-shadow: 1px 1px 5px #888888
+	}
+
 	.status {
-		position: absolute;
-		top: 8px;
-		left: 8px;
+		position: relative;
+		top: -20px;
+		left: -4px;
 	}
 
 	.pull-right i {
@@ -1016,6 +1037,14 @@ img.fatality {
 	}
 }
 
+.searchbar {
+	margin: 15px 0 15px 0;
+}
+
+.search-result {
+	margin-bottom: 5px;
+}
+
 // Mobile modifications
 
 @media (max-width: 767px) { // xs is < 768px
@@ -1047,7 +1076,7 @@ img.fatality {
 		overflow-y: scroll;
 		position: fixed;
 		top: 40px;
-		bottom: 40px;
+		bottom: 52px;
 		left: 0;
 		right: 0;
 		background-color: #efefef;
@@ -1317,13 +1346,13 @@ img.fatality {
   display: inline-block;
   float: right;
   width: 60px;
-  background: white;
   border: 0;
   outline: none;
-  color: #333;
   font-size: 15px;
   border-radius: 0px;
   line-height: 36px;
+  background-color: transparent;
+  color: #eee;
 }
 
 .mobile-upload-button input[type=file]{

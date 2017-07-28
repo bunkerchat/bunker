@@ -91,7 +91,7 @@ module.exports.getEmoticonNamesFromDisk = function () {
 		// Font-Awesome icons (read from the .css file)
 		fs.readFileAsync('./node_modules/font-awesome/css/font-awesome.css', {encoding: 'utf8'}).then(data => {
 			return data.match(/\.fa-([a-z\-]+):before/g).map(icon => {
-				return icon.replace(':before', '').replace('.fa', 'icon').replace(/-/g, '_');
+				return icon.replace(':before', '').replace('.fa', 'fa');
 			});
 		})
 	)

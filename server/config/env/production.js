@@ -1,7 +1,7 @@
 var config = module.exports;
 
 config.environment = 'production';
-config.url = 'http://bunkerchat.net';
+config.url = 'https://bunkerchat.net';
 
 config.db = {
 	host: 'localhost',

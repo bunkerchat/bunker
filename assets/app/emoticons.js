@@ -1,8 +1,8 @@
 app.factory('emoticons', function ($window) {
-	var emoticons = $window.emoticons;
+	const emoticons = $window.emoticons;
 
-	var list = _.map(emoticons, function (emoticon) {
-		return {name: emoticonName(emoticon), file: emoticon, isIcon: /^icon_/.test(emoticon), $count: 0};
+	const list = _.map(emoticons, function (emoticon) {
+		return {name: emoticonName(emoticon), file: emoticon, isIcon: /^fa-/.test(emoticon), $count: 0};
 	});
 
 	return {

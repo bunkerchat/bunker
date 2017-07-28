@@ -21,18 +21,18 @@ RoomService.messageRoom = function (room, messageText) {
 };
 
 RoomService.animateInRoom = function (roomMember, emoticon, words) {
-	var room = roomMember.room;
-	var user = roomMember.user;
-	var roomId = room._id ? room._id : room;
+	const room = roomMember.room;
+	const user = roomMember.user;
+	const roomId = room._id ? room._id : room;
 
 	socketio.io.to('room_' + roomId).emit('room', {
 		_id: roomId, verb: 'messaged', data: {
 			_id: uuid.v4(),
 			type: 'animation',
 			room: roomId,
-			user: user,
-			words: words,
-			emoticon: emoticon,
+			user,
+			words,
+			emoticon,
 			text: user.nick + ' shows the room ' + emoticon,
 			createdAt: new Date().toISOString()
 		}

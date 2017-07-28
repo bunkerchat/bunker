@@ -6,7 +6,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 		templateUrl: '/assets/app/room/room.html',
 		link: function ($scope, $element) {
 
-			var el = angular.element($element);
+			const el = angular.element($element);
 
 			$scope.user = bunkerData.user;
 			$scope.settings = bunkerData.userSettings;
@@ -14,7 +14,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			bunkerData.$promise.then(function () {
 				$scope.current = bunkerData.getRoom($scope.roomId);
 
-				$scope.currentMembership = _.find(bunkerData.memberships, { room: $scope.current._id });
+				$scope.currentMembership = _.find(bunkerData.memberships, {room: $scope.current._id});
 				// Setup watches once we have data
 
 				$scope.$watchCollection('current.$members', function (members) {
@@ -41,18 +41,18 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			};
 
 			$rootScope.$on('bunkerMessaged.animation', function (evt, message) {
-				if (message.room !== $scope.current._id) return;
+				if (!$scope.current.$selected) return;
 
-				var body = angular.element(document).find('body').eq(0);
-				var colors = ['red', 'green', 'blue', 'purple', 'brown', 'orange'];
+				const body = angular.element(document).find('body').eq(0);
+				const colors = ['red', 'green', 'blue', 'purple', 'brown', 'orange'];
 
 				function popupElement(word) {
 
-					var left = _.random(20, $window.innerWidth - 200, false);
-					var top = _.random(100, $window.innerHeight - 100, false);
-					var start = _.random(0, 3000, false);
-					var end = _.random(3000, 6000, false);
-					var wow = angular.element('<h1 class="doge doge-fade-in" ' +
+					const left = _.random(20, $window.innerWidth - 200, false);
+					const top = _.random(100, $window.innerHeight - 100, false);
+					const start = _.random(0, 3000, false);
+					const end = _.random(3000, 6000, false);
+					const wow = angular.element('<h1 class="doge doge-fade-in" ' +
 						'style="left: ' + left + 'px; top: ' + top + 'px; ' +
 						'color: ' + _.sample(colors) + ';">' + word + '</h1>');
 
@@ -67,9 +67,9 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 					}, start);
 				}
 
-				for (var i = 0; i < message.words.length; i++) {
-					popupElement(message.words[i]);
-				}
+				_.each(message.words, word => {
+					popupElement(word);
+				});
 
 				showEmoticonAnimation(el, message.emoticon);
 			});
@@ -78,14 +78,16 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			$rootScope.$on('visibilityShow', updateLastRead);
 
 			function showEmoticonAnimation(el, emoticon) {
-				var knownEmoticon = _.find(emoticons.files, function (known) {
-					return known.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticon.replace(/:/g, '').toLowerCase();
+				const knownEmoticon = _.find(emoticons.files, function (known) {
+					return known.replace(/\.\w{1,4}$/, '').toLowerCase() === emoticon.replace(/:/g, '').toLowerCase();
 				});
 
 				if (!knownEmoticon) return;
 
-				var animationBox = angular.element(
-					'<div class="animation-box closed" style="left: ' + (Math.random() * 60 + 20) + '%"><img src="/assets/images/emoticons/' + knownEmoticon + '"/></div>'
+				const animationBox = angular.element(
+					`<div class="animation-box closed" style="left: ${Math.random() * 60 + 20}%">` +
+					`<img src="/assets/images/emoticons/${knownEmoticon}"/>` +
+					`</div>`
 				);
 
 				el.append(animationBox);
@@ -103,17 +105,17 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 			function updateMemberList() {
 				$scope.memberList = _($scope.current.$members)
 					.sortBy(function (member) {
-						var user = member.user;
+						const user = member.user;
 						return (user.connected ? (user.$present ? '000' : '111') : '999') + user.nick.toLowerCase();
 					})
 					.value();
 			}
 
 			function updateLastRead() {
-				if (!$scope.current.$selected || $scope.current.$messages.length == 0) return;
+				if (!$scope.current.$selected || $scope.current.$messages.length === 0) return;
 
-				var membership = _.find(bunkerData.memberships, {room: $scope.current._id});
-				var lastReadId = _.last($scope.current.$messages)._id != membership.lastReadMessage ? membership.lastReadMessage : null;
+				const membership = _.find(bunkerData.memberships, {room: $scope.current._id});
+				const lastReadId = _.last($scope.current.$messages)._id !== membership.lastReadMessage ? membership.lastReadMessage : null;
 
 				el.find('.message.last-read').removeClass('last-read');
 				if (lastReadId) {

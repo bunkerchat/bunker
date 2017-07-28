@@ -37,6 +37,11 @@ window.app = angular.module('bunker', [
 				url: '/rooms/{roomId}/history?date&message',
 				templateUrl: '/assets/app/room/roomHistory.html',
 				controller: 'RoomHistoryController as room'
+			})
+			.state('search',{
+				url:'/search?query&roomId',
+				templateUrl:'/assets/app/search/search.html',
+				controller: 'SearchController as search'
 			});
 	})
 	.config(function ($compileProvider, gravatarServiceProvider) {
@@ -74,7 +79,11 @@ window.app = angular.module('bunker', [
 						resolve(returnData);
 					});
 				}, 50);
-			});
+			})
+				.catch(err => {
+					console.log('server error', err)
+					throw err
+				});
 		};
 
 		// Can't put this bunkerListener init in the `connect` closure or it causes duplication of messages

@@ -7,7 +7,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					<form class="col-md-10 no-gutter">
 						<textarea rows="1" class="form-control"></textarea>
 						<button type="submit" class="btn btn-success visible-xs">Send</button>
-						<upload-button></upload-button>
+						<upload-button class="hidden-xs"></upload-button>
 					</form>
 				</div>
 			</div>
@@ -42,7 +42,13 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				'up': up,
 				'down': down,
 				';': emoticon,
-				'2': user
+				'2': user,
+
+				// ignore these keystrokes
+				'command': _.noop,
+				'alt': _.noop,
+				'ctrl': _.noop,
+				'shift': _.noop
 			};
 
 			// search functions which are triggered when an anchor is used
@@ -62,14 +68,15 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 
 			// every key press in the text area
 			inputBox.keydown(e => {
-				bunkerData.broadcastTyping($rootScope.roomId);
-
 				// gets a human readable keyboard value
 				var key = keycode(e);
 
 				var handler = handlers[key];
 				if (handler) {
 					handler(e);
+				}
+				else {
+					bunkerData.broadcastTyping($rootScope.roomId);
 				}
 
 				if (searchingFor) {
@@ -185,7 +192,20 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				if (!/\S/.test(text)) return;
 
 				inputBox.val('');
-				bunkerData.createMessage($stateParams.roomId, text);
+
+				if (/^\/clear/i.test(text)) {
+					// Special command to clear all messages or message from a user
+					var nickMatches = /\/clear\s+(.+)/i.exec(text);
+					var nick;
+					if(nickMatches && nickMatches.length === 2) {
+						nick = nickMatches[1].trim();
+					}
+					bunkerData.clearMessagesFromNick($stateParams.roomId, nick);
+				}
+				else {
+					// Default
+					bunkerData.createMessage($stateParams.roomId, text);
+				}
 			}
 
 			function backspace(e) {
@@ -221,7 +241,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					return selectItem();
 				}
 
-				if(searchingFor == 'emoticons'){
+				if (searchingFor == 'emoticons') {
 					return resetMatchSearch();
 				}
 			}

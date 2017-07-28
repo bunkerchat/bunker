@@ -1,4 +1,4 @@
-app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications, pinBoard) {
+app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications, pinBoard, gravatarService) {
 
 	function handleRoomEvent(evt) {
 		var room = bunkerData.getRoom(evt._id);
@@ -20,11 +20,22 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 					if (!room.$messages) room.$messages = [];
 					bunkerData.addMessage(room, message);
 					notifications.newMessage(room, message);
+
+					if(message.type === 'standard'){
+						room.$lastMessage = _.cloneDeep(message);
+						room.$lastMessage.topic = room.$lastMessage.text;
+						delete room.$lastMessage.text;
+					}
+
 					$rootScope.$broadcast('bunkerMessaged', message);
 					$rootScope.$broadcast('bunkerMessaged.' + message.type, message);
 				}
 				break;
 			case 'updated':
+				_.each(evt.data.$members, member => {
+					member.user.$gravatar = gravatarService.url(member.user.email, {s: 40});
+				});
+
 				_.assign(room, evt.data);
 				break;
 		}
@@ -163,6 +174,8 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 
 	var awayTimeout;
 
+	// this timer resets based on keypress or mouse clicks. Sort of a 10 minute backup in case
+	// "visibilityShow" or "visiblityHide" doesn't trigger.
 	function resetTimer() {
 		clearTimeout(awayTimeout);
 		awayTimeout = setTimeout(handleVisibilityHide, 1000 * 60 * 10 /* 10 min */);
