@@ -100,6 +100,12 @@
 
 @media (max-width: 767px) { // xs is < 768px
 	.message-list.has-topic {
-		height: calc(100vh - 73px);
+		height: calc(100vh - 129px);
 	}
+
+  .message-input {
+	button {
+	  height: 28px;
+  	}
+  }
 }
