@@ -1335,31 +1335,31 @@ img.fatality {
 }
 
 .mobile-upload-button {
-  float: right;
-  line-height: 42px;
-  position: relative;
+	float: right;
+	line-height: 42px;
+	position: relative;
 }
 
-.mobile-upload-button button{
-  height: 40px;
-  padding: 4px 12px;
-  display: inline-block;
-  float: right;
-  width: 60px;
-  border: 0;
-  outline: none;
-  font-size: 15px;
-  border-radius: 0px;
-  line-height: 36px;
-  background-color: transparent;
-  color: #eee;
+.mobile-upload-button button {
+	height: 40px;
+	padding: 4px 12px;
+	display: inline-block;
+	float: right;
+	width: 60px;
+	border: 0;
+	outline: none;
+	font-size: 15px;
+	border-radius: 0px;
+	line-height: 36px;
+	background-color: transparent;
+	color: #eee;
 }
 
-.mobile-upload-button input[type=file]{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
+.mobile-upload-button input[type=file] {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
 }

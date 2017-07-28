@@ -1,98 +1,98 @@
 // this file is loaded after the default css if the style is selected
 @media (min-width: 768px) { // xs is < 768px
-  .alert a, .alert .alert-link {
-	color: #93c54b;
-	text-decoration: none;
-  }
-
-  .navbar-brand {
-	padding: 16px 15px;
-  }
-
-  .panel-heading {
-	line-height: 7px;
-  }
-
-  // fix the container height for minimal
-  .message-list {
-	height: calc(100vh - 72px);
-  }
-
-  .message-list.has-topic {
-	height: calc(100vh - 113px);
-  }
-
-  .message-body pre {
-	margin-top: 10px;
-	border: dotted #ccc 2px;
-	border-radius: 3px;
-	background: #FAFAFA;
-	color: #666;
-	tab-size: 4;
-  }
-
-  // message history
-
-  .message-history-anchor {
-	position: relative;
-  }
-
-  .message-history {
-	position: absolute;
-	background-color: white;
-	border: 1px black solid;
-	z-index: 100;
-	right: 30px;
-	top: -86px;
-	padding: 8px;
-	box-shadow: #888 3px 5px 3px;
-  }
-
-  .message-history ul {
-	padding: 0;
-  }
-
-  .message-history li {
-	list-style: none;
-  }
-
-  [room] .right-pane {
-	height: calc(100vh - 72px);
-  }
-
-  .message-input {
-
-	form {
-	  height: 32px;
+	.alert a, .alert .alert-link {
+		color: #93c54b;
+		text-decoration: none;
 	}
 
-	input[type=text], button {
-	  border-radius: 0;
-	}
-	.right-pane {
-	  height: 32px;
+	.navbar-brand {
+		padding: 16px 15px;
 	}
 
-	// make input box smaller
-	textarea {
-	  height: 32px;
-	  padding: 2px 0 0 8px;
-	  resize: none;
-	  overflow: hidden;
-	  line-height: 26px;
+	.panel-heading {
+		line-height: 7px;
 	}
 
-	button {
-	  height: 32px;
-	  padding: 4px 12px;
+	// fix the container height for minimal
+	.message-list {
+		height: calc(100vh - 72px);
 	}
-  }
 
-  .member-list .status.pull-right {
-	margin-top: 8px;
-  }
+	.message-list.has-topic {
+		height: calc(100vh - 113px);
+	}
 
-  .room-options {
-	bottom: -32px;
-  }
+	.message-body pre {
+		margin-top: 10px;
+		border: dotted #ccc 2px;
+		border-radius: 3px;
+		background: #FAFAFA;
+		color: #666;
+		tab-size: 4;
+	}
+
+	// message history
+
+	.message-history-anchor {
+		position: relative;
+	}
+
+	.message-history {
+		position: absolute;
+		background-color: white;
+		border: 1px black solid;
+		z-index: 100;
+		right: 30px;
+		top: -86px;
+		padding: 8px;
+		box-shadow: #888 3px 5px 3px;
+	}
+
+	.message-history ul {
+		padding: 0;
+	}
+
+	.message-history li {
+		list-style: none;
+	}
+
+	[room] .right-pane {
+		height: calc(100vh - 72px);
+	}
+
+	.message-input {
+
+		form {
+			height: 32px;
+		}
+
+		input[type=text], button {
+			border-radius: 0;
+		}
+		.right-pane {
+			height: 32px;
+		}
+
+		// make input box smaller
+		textarea {
+			height: 32px;
+			padding: 2px 0 0 8px;
+			resize: none;
+			overflow: hidden;
+			line-height: 26px;
+		}
+
+		button {
+			height: 32px;
+			padding: 4px 12px;
+		}
+	}
+
+	.member-list .status.pull-right {
+		margin-top: 8px;
+	}
+
+	.room-options {
+		bottom: -32px;
+	}
 }
