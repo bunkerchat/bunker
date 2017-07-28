@@ -1076,7 +1076,7 @@ img.fatality {
 		overflow-y: scroll;
 		position: fixed;
 		top: 40px;
-		bottom: 40px;
+		bottom: 52px;
 		left: 0;
 		right: 0;
 		background-color: #efefef;
@@ -1346,13 +1346,13 @@ img.fatality {
   display: inline-block;
   float: right;
   width: 60px;
-  background: white;
   border: 0;
   outline: none;
-  color: #333;
   font-size: 15px;
   border-radius: 0px;
   line-height: 36px;
+  background-color: transparent;
+  color: #eee;
 }
 
 .mobile-upload-button input[type=file]{

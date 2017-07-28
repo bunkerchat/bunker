@@ -7,6 +7,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 					<form class="col-md-10 no-gutter">
 						<textarea rows="1" class="form-control"></textarea>
 						<button type="submit" class="btn btn-success visible-xs">Send</button>
+						<upload-button class="hidden-xs"></upload-button>
 					</form>
 				</div>
 			</div>
