@@ -13,7 +13,7 @@
 					ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
 					<h4 class="list-group-item-heading">
 						{{room.name}}
-						<small class="hidden-xs" ng-bind-html="room.topic"></small>
+						<small bunker-message="room" media="false"></small>
 					</h4>
 					<span class="lobby-room-users">
 						{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>
@@ -21,8 +21,9 @@
 
 					<p ng-if="room.$lastMessage">
 						<span am-time-ago="room.$lastMessage.createdAt"></span>
-						<img gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="30"/>
-						{{room.$lastMessage.author.nick}}: {{room.$lastMessage.text}}
+						<img class="gravatar-md" gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="60"/>
+						{{room.$lastMessage.author.nick}}:
+						<span bunker-message="room.$lastMessage" media="false"></span>
 					</p>
 					<p ng-if="!room.$lastMessage">
 						No messages yet!

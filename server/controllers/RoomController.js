@@ -43,7 +43,7 @@ module.exports.message = function (req, res) {
 			);
 		})
 		.spread((userUpdate, message) => {
-			if(message && message.author){
+			if (message && message.author) {
 				message.author = message.author._id;
 			}
 			res.ok(message)
@@ -184,6 +184,9 @@ module.exports.leave = function (req, res) {
 					req.socket.leave('room_' + roomId);
 
 					RoomService.messageRoom(roomId, user.nick + ' has left the room');
+
+					// if nothing is returned, the promise on the client doesn't get notified
+					return 'ok'
 				});
 		})
 		.then(res.ok)
@@ -216,6 +219,28 @@ module.exports.history = function (req, res) {
 		.catch(res.serverError);
 };
 
+module.exports.search = function (req, res) {
+	var query = req.body.query;
+	var roomIds = []
+	var userId = req.session.userId.toObjectId();
+
+	RoomMember.find({user: userId})
+		.then(roomMembers => {
+			var roomIds = _.map(roomMembers, 'room')
+
+			return Message.find({
+				$text: {$search: query},
+				room: {$in: roomIds}
+			}, {
+				score: {$meta: "textScore"}
+			})
+				.sort({score: {$meta: 'textScore'}})
+				.populate('author')
+		})
+		.then(res.ok)
+		.catch(res.serverError);
+};
+
 // GET /room/:id/media
 // Get media messages posted in this room
 module.exports.media = function (req, res) {
@@ -243,7 +268,7 @@ module.exports.media = function (req, res) {
 };
 
 // POST /room/:id/pins
-module.exports.pinMessage = function(req, res) {
+module.exports.pinMessage = function (req, res) {
 
 	var roomId = req.body.roomId.toObjectId();
 	var messageId = req.body.messageId.toObjectId();
@@ -256,17 +281,17 @@ module.exports.pinMessage = function(req, res) {
 
 	RoomMember.findOne({room: roomId, user: userId})
 		.populate('user')
-		.then(function(roomMember) {
+		.then(function (roomMember) {
 
 			if (!roomMember || (roomMember.role !== 'administrator' && roomMember.role !== 'moderator')) {
 				throw new ForbiddenError('Must be a member of this room with admin or mod privileges!');
 			}
 
-			return [PinnedMessage.create({ message: messageId, room: roomId, user: userId }),
-					Message.findOne(messageId).populate('author').populate('room'),
-					roomMember.user];
+			return [PinnedMessage.create({message: messageId, room: roomId, user: userId}),
+				Message.findOne(messageId).populate('author').populate('room'),
+				roomMember.user];
 		})
-		.spread(function(pinnedMessage, message, user) {
+		.spread(function (pinnedMessage, message, user) {
 
 			if (message.room.id !== req.body.roomId) {
 				throw new InvalidInputError('Can only pin message to the room it belongs to.');
@@ -282,7 +307,7 @@ module.exports.pinMessage = function(req, res) {
 			req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
 				_id: req.body.roomId,
 				verb: 'messaged',
-				data: { pinnedMessage: pinnedMessage, pinned: true }
+				data: {pinnedMessage: pinnedMessage, pinned: true}
 			});
 
 			res.ok();
@@ -292,23 +317,23 @@ module.exports.pinMessage = function(req, res) {
 		.catch(res.serverError);
 };
 
-module.exports.unPinMessage = function(req, res) {
+module.exports.unPinMessage = function (req, res) {
 
 	var messageId = req.body.messageId.toObjectId();
 	var userId = req.session.userId.toObjectId();
 	var roomId = req.body.roomId.toObjectId();
 
 	RoomMember.findOne({room: roomId, user: userId})
-		.then(function(roomMember) {
+		.then(function (roomMember) {
 
 			if (!roomMember || (roomMember.role !== 'administrator' && roomMember.role !== 'moderator')) {
 				throw new ForbiddenError('Must be a member of this room with admin or mod privileges!');
 			}
 
-			return PinnedMessage.remove({ message: messageId });
+			return PinnedMessage.remove({message: messageId});
 		})
-		.then(function() {
-			var unPinResult = { pinnedMessage: { message: { _id: req.body.messageId }, room: req.body.roomId }, pinned: false };
+		.then(function () {
+			var unPinResult = {pinnedMessage: {message: {_id: req.body.messageId}, room: req.body.roomId}, pinned: false};
 
 			req.io.to('pinnedMessage_' + req.body.roomId).emit('pinboard', {
 				_id: req.body.roomId,

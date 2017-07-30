@@ -1,0 +1,66 @@
+<div class="container-fluid">
+
+	<div class="row">
+		<form ng-submit="search.submit()">
+			<div class="col-lg-6 searchbar">
+				<div class="input-group">
+					<input type="text" ng-model="search.query" name="query" class="form-control" placeholder="Search for...">
+					<span class="input-group-btn">
+						<input class="btn btn-default" type="submit" id="submit2" value="Go!"/>
+					</span>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="row" ng-if="search.messages.length">
+		<div class="col-md-10 col-xs-12 no-gutter">
+			<ol class="list-unstyled message-list">
+				<li class="message-container search-result" id="{{::message._id}}" ng-switch="::!!message.author"
+						ng-repeat="message in search.messages track by message._id">
+					<div class="message"
+							 ng-class="::{ local: message.author._id == user._id, 'message-mention': message.$mentionsUser }">
+
+						<!-- standard message -->
+						<div ng-switch-when="true">
+							<div class="message-author">
+								<span>
+									<img class="gravatar-sm" gravatar-src-once="::message.author.email | lowercase" gravatar-size="40"/>
+									<div class="name">{{::message.author.nick}}</div>
+								</span>
+							</div>
+							<div class="message-body" ng-class="::{'edited': message.edited }">
+								<span bunker-message="::message"></span>
+								<span class="message-info text-muted">
+									<i class="fa fa-pencil" ng-if="message.edited"></i>
+									<span>
+										<a ui-sref="roomHistory({roomId: message.room, date: message.createdAt, message: message._id})"
+											 class="">
+											<small>{{::message.createdAt | date:'short'}}</small>
+										</a>
+									</span>
+								</span>
+							</div>
+						</div>
+
+						<!-- system message -->
+						<div ng-switch-default>
+							<div class="new-message-body">
+								<div class="system-message">
+									<span bunker-message="::message"></span>
+								</div>
+								<span class="message-info text-muted">
+									<small>
+										{{::message.createdAt | date:'h:mm:ss a'}}
+									</small>
+								</span>
+							</div>
+						</div>
+
+					</div>
+				</li>
+			</ol>
+		</div>
+	</div>
+
+</div>

@@ -23,10 +23,10 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 		template: `<span></span>`,
 		scope: {
 			bunkerMessage: '=',
-			media: '@'
+			media: '@',
+			small: '@'
 		},
 		link: function (scope, elem) {
-
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
 			if (scope.bunkerMessage && scope.bunkerMessage.text) {
 				elem.find('span').html(parseText(scope.bunkerMessage.text));
@@ -35,6 +35,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 			else {
 				scope.$watch('bunkerMessage.topic', function (topic) {
 					elem.html(parseText(topic));
+					$compile(elem.contents())(scope);
 				});
 			}
 
@@ -110,26 +111,26 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					var word = makeDictionaryLink[1].split(' ').join('').toLowerCase();
 					text = text.replace(/\|(.*)\|/i, `<a href="https://www.wordnik.com/words/${word}" target="_blank">$1</a>`);
 				}
-				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
+				return text.replace(/:hangman(\d):/, '<img class="emoticon" ng-src="/assets/images/hangman$1.png"/>');
 			}
 
 			function parseFight(text) {
 				var match = /:([^0-9:]*):/.exec(text);
 
 				while (match) {
-					text = text.replace(/:([^0-9:]*):/, '<img class="emoticon" src="/assets/images/$1.png"/>');
+					text = text.replace(/:([^0-9:]*):/, '<img class="emoticon" ng-src="/assets/images/$1.png"/>');
 					match = /:([^0-9:]*):/.exec(text);
 				}
 
 				// check for a fatality
 				match = /:(\w*)*:/.exec(text);
 				if (match) {
-					var fatality = '<img class="fatality" src="/assets/images/fatalities/' + match[1] + '.gif"/>';
+					var fatality = '<img class="fatality" ng-src="/assets/images/fatalities/' + match[1] + '.gif"/>';
 					text = text.replace(/:(\w*):/, '');
 					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
 				}
 				if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
-					text += '<div message="::bunkerMessage" ><pre>' + text + '</pre></div>';
+					text = '<div message="::bunkerMessage" ><pre>' + text + '</pre></div>';
 					return text
 				}
 
@@ -142,22 +143,22 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 			}
 
 			function parseEmoticons(text) {
-				var replacedEmotes = {};
+				const replacedEmotes = {};
 
 				// Parse emoticons
-				_.each(text.match(/:\w+:/g), emoticonText => {
-					var knownEmoticon = _.find(emoticons.all, known => {
-						return known.file.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticonText.replace(/:/g, '').toLowerCase();
+				_.each(text.match(/:[\w-]+:/g), emoticonText => {
+					const knownEmoticon = _.find(emoticons.all, known => {
+						return known.file.replace(/\.\w{1,4}$/, '').toLowerCase() === emoticonText.replace(/:/g, '').toLowerCase();
 					});
 					if (knownEmoticon && !replacedEmotes[knownEmoticon.file]) {
 						// if an image emoticon (more common)
 						if (!knownEmoticon.isIcon) {
 							text = replaceAll(text, emoticonText,
-								`<img class="emoticon" title="${emoticonText}" src="/assets/images/emoticons/${knownEmoticon.file}"/>`);
+								`<img class="emoticon" title="${emoticonText}" ng-src="/assets/images/emoticons/${knownEmoticon.file}"/>`);
 						}
 						else { // font-awesome icon emoticon
 							text = replaceAll(text, emoticonText,
-								`<i class="fa ${knownEmoticon.file.replace('icon_', 'fa-').replace(/_/g, '-')}" title=":${knownEmoticon.name}:"></i>`);
+								`<i class="fa ${knownEmoticon.file} fa-lg" title=":${knownEmoticon.name}:"></i>`);
 						}
 						replacedEmotes[knownEmoticon.file] = true;
 					}
@@ -191,11 +192,19 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
 
+				// do no media on mobile
+				const isAndroid = _.includes(navigator.appVersion, 'Android')
+				const isIphone = _.includes(navigator.appVersion, 'iPhone')
+				if (isAndroid || isIphone) {
+					shouldParseMedia = false
+				}
+
 				// Parse links
 				var attachedMedia;
 				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
 					if (!replacedLinks[link]) {
-						text = replaceAll(text, link, `<a href="${link}" target="_blank">${link}</a>`);
+						const target = _.includes(link, window.location.origin) ? '_self' : '_blank'
+						text = replaceAll(text, link, `<a href="${link}" target="${target}">${link}</a>`);
 						replacedLinks[link] = true;
 					}
 
@@ -209,8 +218,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						attachedMedia = `
 							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
 								<video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop>
-									<source type="video/webm" src="${imgurLinkWebm}">
-									<source type="video/mp4" src="${imgurLinkMpeg}">
+									<source type="video/webm" ng-src="${imgurLinkWebm}">
+									<source type="video/mp4" ng-src="${imgurLinkMpeg}">
 								</video>
 							</div>`;
 					}
@@ -219,7 +228,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						attachedMedia = `
 							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
 								<video autoplay loop muted>
-									<source type="video/mp4" src="${link.toLowerCase().replace('gifv', 'mp4')}">
+									<source type="video/mp4" ng-src="${link.toLowerCase().replace('gifv', 'mp4')}">
 								</video>
 							</div>`;
 					}
@@ -247,7 +256,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						toggleLink(link);
 						attachedMedia = `
 							<div message="::bunkerMessage" bunker-media="${link}">
-								<iframe src="https://player.vimeo.com/video/${match[1]}?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+								<iframe ng-src="https://player.vimeo.com/video/${match[1]}?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 							</div>`;
 					}
 					else if (/^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.test(link) && !attachedMedia) {
@@ -257,7 +266,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						toggleLink(link);
 						attachedMedia = `
 							<div message="::bunkerMessage" bunker-media="${link}">
-								<iframe src="https://embed.spotify.com/?uri=${uri}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+								<iframe ng-src="https://embed.spotify.com/?uri=${uri}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
 							</div>`;
 					}
 					else if (/gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?|.gif)/gi.test(link) && !attachedMedia) {
@@ -275,16 +284,15 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						toggleLink(link);
 						attachedMedia = `
 						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
-							<img src="${link}"/>
+							<img ng-src="${link}" imageonload/>
 						</div>`
 					}
 				});
 
 				// If we made an image, attach it now
 				if (attachedMedia) {
-					//text += attachedMedia;
-					elem.append(angular.element(attachedMedia));
-					//$compile(attachedMedia)(scope.$new());
+					const element = angular.element(attachedMedia)
+					elem.append(element);
 				}
 
 				return text;
@@ -297,6 +305,21 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					text = text.replace(`${link}</a>`, `${link}</a> ${toggleButton}`);
 				}
 			}
+		}
+	};
+});
+
+
+app.directive('imageonload', function($rootScope) {
+	return {
+		restrict: 'A',
+		link: function(scope, element, attrs) {
+			element.bind('load', function() {
+				$rootScope.$broadcast('messageImageLoaded', {height: this.height})
+			});
+			element.bind('error', function(){
+				console.log('image could not be loaded');
+			});
 		}
 	};
 });

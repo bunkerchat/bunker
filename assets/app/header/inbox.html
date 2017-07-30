@@ -2,7 +2,7 @@
 	<a ng-click="inbox.clearInbox()">Clear all messages</a>
 </header>
 <div class="lead text-center" ng-if="inbox.messages.length == 0">
-	No inbox messages <img src="/assets/images/emoticons/qq.gif"/>
+	No inbox messages <img ng-src="/assets/images/emoticons/qq.gif"/>
 </div>
 <ol class="list-unstyled " ng-if="inbox.messages.length > 0">
 	<li ng-click="inbox.goToRoom(inboxMessage.message)"

@@ -9,24 +9,14 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 			var tolerance = 31;
 			var clearMessageCounter = 0;
 
-			function atBottomOfPage() {
-				return el.scrollTop + el.clientHeight + tolerance >= el.scrollHeight;
+			function atBottomOfPage(height) {
+				height = height || 0
+				return el.scrollTop + el.clientHeight + tolerance + height  >= el.scrollHeight;
 			}
 
 			$rootScope.$on('bunkerMessaged', function (evt, message) {
-
 				if (atBottomOfPage() || message.author._id == bunkerData.user._id) {
-					// Check for images
-					var image = angular.element('#' + message._id).find('img');
-					if (image.length) {
-						// If we have an image, wait for it to load before scrolling
-						image.load(function () {
-							scroll(250);
-						});
-					} else {
-						// Otherwise scroll immediately
-						scroll();
-					}
+					scroll();
 
 					// if the user is only watching new messages, trim the message log
 					clearMessageCounter++;
@@ -37,7 +27,14 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 				} else {
 					clearMessageCounter = 0;
 				}
+
 			});
+
+			$rootScope.$on('messageImageLoaded', (evt, image) =>{
+				if (atBottomOfPage(image.height)){
+					scroll()
+				}
+			})
 
 			// Watch scrolling to top, execute given function
 			angular.element(el).bind('scroll', _.throttle(function () {
@@ -61,7 +58,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 			});
 
 			$scope.$on('visibilityHide', function () {
-				$timeout(() => animationControl.stop({all:true}));
+				$timeout(() => animationControl.stop({all: true}));
 			});
 
 			$scope.$on('visibilityShow', function () {

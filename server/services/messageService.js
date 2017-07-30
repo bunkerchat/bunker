@@ -1,27 +1,28 @@
-var ent = require('ent');
-var moment = require('moment');
-var Promise = require('bluebird');
-var socketio = require('../config/socketio');
+const ent = require('ent');
+const moment = require('moment');
+const Promise = require('bluebird');
+const socketio = require('../config/socketio');
 
-var Message = require('../models/Message');
-var User = require('../models/User');
-var Room = require('../models/Room');
-var RoomMember = require('../models/RoomMember');
-var InboxMessage = require('../models/InboxMessage');
+const Message = require('../models/Message');
+const User = require('../models/User');
+const Room = require('../models/Room');
+const RoomMember = require('../models/RoomMember');
+const InboxMessage = require('../models/InboxMessage');
 
-var RoomService = require('./RoomService');
-var imageSearch = require('./imageSearch');
-var helpService = require('./helpService');
-var statsService = require('./statsService');
-var leaderboardService = require('./leaderboardService');
-var hangmanService = require('./hangmanService');
-var pollService = require('./pollService');
+const RoomService = require('./RoomService');
+const imageSearch = require('./imageSearch');
+const helpService = require('./helpService');
+const statsService = require('./statsService');
+const leaderboardService = require('./leaderboardService');
+const hangmanService = require('./hangmanService');
+const pollService = require('./pollService');
+const fightService = require('./fightService');
 
-var ForbiddenError = require('../errors/ForbiddenError');
-var InvalidInputError = require('../errors/InvalidInputError');
-var ValidationError = require('mongoose').Error.ValidationError;
+const ForbiddenError = require('../errors/ForbiddenError');
+const InvalidInputError = require('../errors/InvalidInputError');
+const ValidationError = require('mongoose').Error.ValidationError;
 
-var messageService = module.exports;
+const messageService = module.exports;
 
 messageService.createMessage = function (roomMember, text) {
 
@@ -54,7 +55,7 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/roll/i.test(text)) {
 		return roll(roomMember, text);
 	}
-	else if (/^\/show\s+:\w+:/i.test(text)) {
+	else if (/^\/show\s+:?\w+:?/i.test(text)) {
 		return animation(roomMember, text);
 	}
 	else if (/^\/me\s+/i.test(text)) {
@@ -84,14 +85,20 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/whois\s+/i.test(text)) {
 		return whois(roomMember, text);
 	}
-	else if(/^\/poll?(?:\s+(.+)?|$)/i.test(text)) {
+	else if (/^\/poll?(?:\s+(.+)?|$)/i.test(text)) {
 		return poll(roomMember, text);
 	}
-	else if(/^\/vote\s+/i.test(text)) {
+	else if (/^\/vote\s+/i.test(text)) {
 		return vote(roomMember, text);
 	}
-	else if(/^\/poll(\s?)close?(?:\s*)/i.test(text)) {
+	else if (/^\/poll(\s?)close?(?:\s*)/i.test(text)) {
 		return pollClose(roomMember, text);
+	}
+	else if (/^\/meme/i.test(text)) {
+		return meme(roomMember, text);
+	}
+	else if (/^\/\w+/i.test(text)) {
+		return badCommand(roomMember, text);
 	}
 	else {
 		return message(roomMember, text, 'standard');
@@ -106,18 +113,18 @@ function getHelp(roomMember, text) {
 }
 
 function stats(roomMember, text) {
-	var match = /^\/stats\s+([\d\w\s\-\.]+)$/ig.exec(text);
+	const match = /^\/stats\s+([\d\w\s\-\.]+)$/ig.exec(text);
 
 	if (match) {
-		var userNick = match[1];
+		const userNick = match[1];
 		return statsService.getStatsForUser(userNick, roomMember.room)
 			.then(function (stats) {
 				return Message.create({
-						room: roomMember.room,
-						type: 'stats',
-						author: roomMember.user._id,
-						text: stats
-					})
+					room: roomMember.room,
+					type: 'stats',
+					author: roomMember.user._id,
+					text: stats
+				})
 					.then(broadcastMessage);
 			});
 	}
@@ -130,17 +137,22 @@ function stats(roomMember, text) {
 
 function animation(roomMember, text) {
 
-	var emoticon = (/:\w+:/.exec(text))[0];
+	const emoticonMatches = /\/show\s+:?(\w+):?/.exec(text);
+	if (!emoticonMatches || emoticonMatches.length < 1) {
+		throw new InvalidInputError('Invalid show format — example: /show doge');
+	}
+
+	const emoticon = emoticonMatches[1];
 
 	var words = [];
 	switch (emoticon) {
-		case ':doge:':
+		case 'doge':
 			words.push('bunker', 'chat', 'wow', 'messages', 'communicatoins',
 				'http', 'sockets', 'emoticons', 'real time', 'trollign', 'features',
 				'open source', 'message history', 'typing', 'jpro', 'javascritp',
 				':successkid:', '/show :doge:', roomMember.user.nick);
 			words = _.map(words, function (word) {
-				var random = _.random(0, 100, false);
+				const random = _.random(0, 100, false);
 				if (random > 92) return 'such ' + word;
 				if (random > 82 && random < 90) return 'much ' + word;
 				if (random > 72 && random < 80) return 'so ' + word;
@@ -149,63 +161,63 @@ function animation(roomMember, text) {
 				return word;
 			});
 			break;
-		case ':slap:':
+		case 'slap':
 			words.push('five fingers', 'SLAP', 'darknesssss', 'to the face', 'CHARLIE MURPHY', 'I\'m rick james',
 				'darkness everybody', 'upside his head', 'cold blooded', 'bang bang');
 			break;
-		case ':ricers:':
+		case 'ricers':
 			words.push('omg', 'spoiler', 'RPM', 'zoom zoom', 'VROOOOOOMM', 'beep beep', 'slow drivers', 'fast lane',
 				'WRX', 'too fast too furious', 'torque', 'horsepower');
 			break;
-		case ':trollface:':
+		case 'trollface':
 			words.push('trollololol', 'T-R-rolled');
 			break;
-		case ':itsatrap:':
+		case 'itsatrap':
 			words.push('it\'s a trap!', 'attack formation', 'all craft prepare to retreat',
 				'firepower', 'evasive action', 'engage those star destroyers');
 			break;
-		case ':smaug:':
+		case 'smaug':
 			words.push('SHMAAAUGGG');
 			break;
-		case ':hansolo:':
+		case 'hansolo':
 			words.push('i shot first', 'laugh it up fuzzball',
 				'sorry about the mess', 'don\'t get cocky', 'let\'s blow this thing and go home', 'smuggling',
 				'money', 'bounty', 'debt', 'carbonite', 'scoundrel');
 			break;
-		case ':chrome:':
+		case 'chrome':
 			words.push('i live i die i live again', 'valhalla',
 				'V8', 'chrome grill', 'cars', 'mah steering wheel',
 				'chapped lips', 'trucks', 'engines', 'fast', 'desert', 'wasteland', 'war');
 			break;
-		case ':canada:':
+		case 'canada':
 			words.push('maple syrup', 'hosers', 'hockey', 'ice', 'snow', 'arctic circle', 'eskimos',
 				'nunavut', 'canucks', 'mounties', 'eh', 'sorry', 'bacon', 'aboot');
 			break;
-		case ':burrito:':
+		case 'burrito':
 			words.push('beans', 'carnitas', 'tortilla', 'noms', 'steak', 'farm fresh', 'double-wrapped',
 				'rice', 'free guac lol', 'bowl > tortilla', 'foil wrapped for warmth', 'pancheros > chipotle');
 			break;
-		case ':magic8ball:':
+		case 'magic8ball':
 			words.push('all-knowing', 'omniscient', 'round', 'number 8', 'bawlz', 'predictions', 'shaking',
 				'future', 'revealing', 'how does it know?', 'not good 4 billiardz lol');
 			break;
 	}
 
-	RoomService.animateInRoom(roomMember, emoticon, _.sample(words, 10));
+	RoomService.animateInRoom(roomMember, emoticon, _.sampleSize(words, 10));
 }
 
 function setUserNick(roomMember, text) {
-	var nickMatches = text.match(/^\/nick\s+([\w\s\-\.]{0,19})/i);
+	const nickMatches = text.match(/^\/nick\s+([\w\s\-\.]{0,19})/i);
 	if (!nickMatches || !nickMatches[1]) throw new InvalidInputError('Invalid nick');
 
-	var user = roomMember.user;
-	var newNick = nickMatches[1];
-	if (user.nick == newNick) throw new InvalidInputError('Nick is already set');
+	const user = roomMember.user;
+	const newNick = nickMatches[1];
+	if (user.nick === newNick) throw new InvalidInputError('Nick is already set');
 
 	return Promise.join(
 		User.findByIdAndUpdate(user._id, {nick: newNick}, {new: true}),
 		RoomMember.find({user: user._id})
-		)
+	)
 		.spread(function (updatedUser, memberships) {
 			socketio.io.to('user_' + updatedUser._id)
 				.emit('user', {
@@ -221,15 +233,15 @@ function setUserBusy(roomMember, text) {
 	return RoomMember.find({user: roomMember.user._id})
 		.then(function (memberships) {
 
-			var user = roomMember.user;
-			var busy = !user.busy; // Flip busy status
-			var busyMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
-			var busyMessage = busy && busyMessageMatches ? busyMessageMatches[1] : null;
+			const user = roomMember.user;
+			const busy = !user.busy; // Flip busy status
+			const busyMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
+			const busyMessage = busy && busyMessageMatches ? busyMessageMatches[1] : null;
 
 			return [User.findByIdAndUpdate(user._id, {busy: busy, busyMessage: busyMessage}, {new: true}), memberships];
 		})
 		.spread(function (user, memberships) {
-			var message = [];
+			const message = [];
 			message.push(user.nick);
 			message.push(user.busy ? 'is now away' : 'is back');
 			if (user.busy && user.busyMessage) {
@@ -251,12 +263,12 @@ function setRoomAttribute(roomMember, text) {
 
 	if (roomMember.role === 'member') throw new ForbiddenError('Must be an administrator or moderator to change room attributes');
 
-	var user = roomMember.user;
-	var matches = text.match(/\/(\w+)\s*(.*)/i);
-	var commands = ['name', 'topic', 'privacy', 'icon'];
-	var command = matches[1].toLowerCase();
+	const user = roomMember.user;
+	const matches = text.match(/\/(\w+)\s*(.*)/i);
+	const commands = ['name', 'topic', 'privacy', 'icon'];
+	const command = matches[1].toLowerCase();
 
-	if (!matches || _.intersection(commands, [command]).length == 0) {
+	if (!matches || _.intersection(commands, [command]).length === 0) {
 		throw new InvalidInputError(`Invalid room command — options are ${commands.join(', ')}`);
 	}
 
@@ -264,8 +276,8 @@ function setRoomAttribute(roomMember, text) {
 		.then(room => {
 			var message;
 
-			if (command == 'topic') {
-				var topic = matches[2].substr(0, 200).trim();
+			if (command === 'topic') {
+				const topic = matches[2].substr(0, 200).trim();
 				room.topic = topic;
 
 				if (topic && topic.length > 0) {
@@ -275,37 +287,37 @@ function setRoomAttribute(roomMember, text) {
 					message = `${user.nick} cleared the topic`;
 				}
 			}
-			if (command == 'name') {
+			if (command === 'name') {
 				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room name');
 
-				var name = matches[2].substr(0, 50).trim();
+				const name = matches[2].substr(0, 50).trim();
 				room.name = name;
 				message = `${user.nick} changed the room name to ${name}`;
 			}
-			else if (command == 'privacy') {
+			else if (command === 'privacy') {
 				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room privacy');
 
-				var privacy = matches[2].toLowerCase().trim();
-				if (privacy != 'public' && privacy != 'private') {
+				const privacy = matches[2].toLowerCase().trim();
+				if (privacy !== 'public' && privacy !== 'private') {
 					throw new InvalidInputError('Invalid privacy — options are public, private');
 				}
 
-				room.isPrivate = privacy == 'private';
+				room.isPrivate = privacy === 'private';
 				message = `${user.nick} changed the room to ${room.isPrivate ? 'private' : 'public'}`;
 			}
-			else if (command == 'icon') {
+			else if (command === 'icon') {
 				if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change room icon');
 
 				var icon = matches[2].toLowerCase().trim();
-				if (!icon || icon.length == 0) {
+				if (!icon || icon.length === 0) {
 					room.icon = null;
 					message = `${user.nick} cleared the room icon`;
 				}
 				else {
-					if (!icon.startsWith(':icon_')) throw new InvalidInputError('Invalid icon — use icon emoticons (they start with :icon_)');
-					icon = icon.replace(/:|icon_/g, '').replace(/_/g, '-');
+					if (!icon.startsWith(':fa-')) throw new InvalidInputError('Invalid icon — use Font Awesome icons (they start with :fa-)');
+					icon = icon.replace(/:|fa-/g, '');
 					room.icon = icon;
-					message = `${user.nick} changed the room icon to '${icon}'`;
+					message = `${user.nick} changed the room icon to :fa-${icon}:`;
 				}
 			}
 
@@ -321,13 +333,13 @@ function setRoomAttribute(roomMember, text) {
 			RoomService.messageRoom(room._id, message);
 		})
 		.catch(ValidationError, err => {
-			var message = _.sample(err.errors).message;
+			const message = _.sample(err.errors).message;
 			throw new InvalidInputError(`Invalid room ${command} input — ${message}`);
 		});
 }
 
 function magic8ball(roomMember, text) {
-	var ballResponse = _.sample([
+	const ballResponse = _.sample([
 		"It is certain", "It is decidedly so", "Yes definitely",
 		"You may rely on it", "As I see it, yes",
 		"Most likely", "Outlook good", "Yes", "Signs point to yes", "Without a doubt",
@@ -339,16 +351,16 @@ function magic8ball(roomMember, text) {
 
 	setTimeout(function () {
 		return Message.create({
-				room: roomMember.room,
-				author: null,
-				type: '8ball',
-				text: ':magic8ball: ' + ballResponse
-			})
+			room: roomMember.room,
+			author: null,
+			type: '8ball',
+			text: ':magic8ball: ' + ballResponse
+		})
 			.then(broadcastMessage);
 	}, 3000);
 
 	var question = ' shakes the magic 8 ball...';
-	var questionMatch = text.match(/\/magic8ball\s+(.+)/i);
+	const questionMatch = text.match(/\/magic8ball\s+(.+)/i);
 	if (questionMatch) {
 		question = ' shakes the magic 8 ball and asks "' + questionMatch[1] + '"';
 	}
@@ -356,19 +368,44 @@ function magic8ball(roomMember, text) {
 	return message(roomMember, roomMember.user.nick + question, 'room');
 }
 
+function meme(roomMember, text) {
+	if (/\/meme\s*$/.test(text)) {
+		return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, require('./memeService').getHelp(), 'help');
+	}
+
+	const matches = text.match(/\/meme\s+(\w+)\s+([\w\s]+)\s*[|\/]?\s*([\w\s]+)?\s*[|\/]?\s*([\w\s]+)?\s*[|\/]?\s*([\w\s]+)?\s*[|\/]?\s*([\w\s]+)?\s*[|\/]?\s*([\w\s]+)?/i);
+	if (!matches || matches.length < 3) {
+		throw new InvalidInputError(`Invalid meme format - example: /meme tb line 1 text | line 2 text`);
+	}
+	const image = matches[1];
+	const lines = _(matches.slice(2))
+		.filter()
+		.map(value => encodeURIComponent(value))
+		.join('/')
+
+	const url = `http://upboat.me/${image}/${lines}.jpg`;
+	return message(roomMember, url);
+}
+
+function badCommand(roomMember, text){
+	const matches = text.match(/\/(\w+)/i);
+	const command = matches[1]
+	throw new InvalidInputError(`Invalid command — ${command}`);
+}
+
 function roll(roomMember, text) {
-	var matches = text.match(/\/roll\s+(.+)/i);
-	var roll = matches ? matches[1] : null;
+	const matches = text.match(/\/roll\s+(.+)/i);
+	const roll = matches ? matches[1] : null;
 	var rollOutcome;
 
 	// Generic number roll
 	if (/^\d+$/.test(roll)) {
-		var max = Math.round(+roll);
+		const max = Math.round(+roll);
 		rollOutcome = 'rolled ' + Math.ceil(Math.random() * max) + ' out of ' + max;
 	}
 	// d20 case for D&D nerds
 	else if (/^\d*d\d*$/i.test(roll)) { // a dice roll
-		var textParse = /(\d*)d(\d*)/.exec(roll);
+		const textParse = /(\d*)d(\d*)/.exec(roll);
 		var diceCount = parseInt(textParse[1]) || 1; // Default at least one die (converts /roll d10 to /roll 1d10)
 		var dieSides = parseInt(textParse[2]) || 6; // Default at six sided die (converts /roll 10d to /roll 10d6)
 
@@ -376,9 +413,9 @@ function roll(roomMember, text) {
 		if (dieSides > 50) dieSides = 50;
 
 		var total = 0;
-		var dieString = [];
+		const dieString = [];
 		for (var i = 0; i < diceCount; i++) {
-			var die = Math.ceil(Math.random() * dieSides);
+			const die = Math.ceil(Math.random() * dieSides);
 			total += die;
 			dieString.push('[' + die + ']');
 		}
@@ -401,11 +438,11 @@ function message(roomMember, text, type) {
 	type = type || 'standard';
 
 	return Message.create({
-			room: roomMember.room,
-			type: type,
-			author: type == 'standard' ? roomMember.user : null,
-			text: text
-		})
+		room: roomMember.room,
+		type: type,
+		author: type === 'standard' ? roomMember.user : null,
+		text: text
+	})
 		.then(function (message) {
 			broadcastMessage(message);
 			saveInMentionedInboxes(message);
@@ -439,7 +476,7 @@ function saveInMentionedInboxes(message) {
 		.populate('user')
 		.then(roomMembers => roomMembers)
 		.each(roomMember => {
-			var regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
+			const regex = new RegExp(roomMember.user.nick + '\\b|@[Aa]ll', 'i');
 			if (!regex.test(message.text)) return;
 
 			return InboxMessage.create({user: roomMember.user._id, message: message._id})
@@ -462,17 +499,17 @@ function code(roomMember, text) {
 	// strip out /code
 	text = text.substr(6);
 	return Message.create({
-			room: roomMember.room,
-			type: 'code',
-			author: roomMember.user,
-			text: text
-		})
+		room: roomMember.room,
+		type: 'code',
+		author: roomMember.user,
+		text: text
+	})
 		.then(broadcastMessage)
 }
 
 function image(roomMember, text) {
-	var match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
-	var searchQuery = ent.decode(match[1]);
+	const match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
+	const searchQuery = ent.decode(match[1]);
 
 	return imageSearch.image(searchQuery)
 		.then(result => {
@@ -490,8 +527,8 @@ function image(roomMember, text) {
 }
 
 function gif(roomMember, text) {
-	var match = /^\/gif(?:pick|search)*\s+(.*)$/i.exec(text);
-	var searchQuery = ent.decode(match[1]);
+	const match = /^\/gif(?:pick|search)*\s+(.*)$/i.exec(text);
+	const searchQuery = ent.decode(match[1]);
 
 	return imageSearch.gif(searchQuery)
 		.then(result => {
@@ -535,27 +572,27 @@ function hangman(roomMember, text) {
 }
 
 function changeUserRole(roomMember, text) {
-	if (roomMember.role != 'administrator') throw new ForbiddenError('Must be an administrator to change to promote');
+	if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change to promote');
 
 	var newRole;
-	var user = roomMember.user;
-	var roomId = roomMember.room;
+	const user = roomMember.user;
+	const roomId = roomMember.room;
 
-	var match = /^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.exec(text);
-	var action = match[1];
-	var userNick = match[2];
+	const match = /^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.exec(text);
+	const action = match[1];
+	const userNick = match[2];
 
-	if (user.nick == userNick) throw new InvalidInputError('You cannot promote or demote yourself');
+	if (user.nick === userNick) throw new InvalidInputError('You cannot promote or demote yourself');
 
 	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
 		.then(function (roomMemberToPromote) {
 			if (!roomMemberToPromote) throw new InvalidInputError('Could not find user ' + userNick);
 
-			if (action == 'promote') {
-				newRole = roomMemberToPromote.role == 'member' ? 'moderator' : 'administrator';
+			if (action === 'promote') {
+				newRole = roomMemberToPromote.role === 'member' ? 'moderator' : 'administrator';
 			}
 			else { // demote
-				newRole = roomMemberToPromote.role == 'administrator' ? 'moderator' : 'member';
+				newRole = roomMemberToPromote.role === 'administrator' ? 'moderator' : 'member';
 			}
 
 			return RoomMember.findByIdAndUpdate(roomMemberToPromote._id, {role: newRole}, {new: true});
@@ -569,23 +606,23 @@ function changeUserRole(roomMember, text) {
 					data: {role: newRole}
 				});
 
-			var message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
+			const message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
 			RoomService.messageRoom(roomId, message);
 		});
 }
 
 function leaderboard(roomMember, text) {
-	var match = /^\/leaderboard\s+\-losers.*$/ig.exec(text);
+	const match = /^\/leaderboard\s+\-losers.*$/ig.exec(text);
 
 	if (match) {
 		return leaderboardService.getLoserboard()
 			.then(function (loserboard) {
 				return Message.create({
-						room: roomMember.room,
-						type: 'stats',
-						author: roomMember.user,
-						text: loserboard
-					})
+					room: roomMember.room,
+					type: 'stats',
+					author: roomMember.user,
+					text: loserboard
+				})
 					.then(broadcastMessage);
 			})
 	}
@@ -593,24 +630,24 @@ function leaderboard(roomMember, text) {
 	return leaderboardService.getLeaderboard()
 		.then(function (leaderboard) {
 			return Message.create({
-					room: roomMember.room,
-					type: 'stats',
-					author: roomMember.user,
-					text: leaderboard
-				})
+				room: roomMember.room,
+				type: 'stats',
+				author: roomMember.user,
+				text: leaderboard
+			})
 				.then(broadcastMessage);
 		})
 }
 
 function setInfo(roomMember, text) {
-	var infoMatch = text.match(/\/setinfo\s+(.+)/i);
-	var info = infoMatch[1].substring(0, 50);
-	var user = roomMember.user;
+	const infoMatch = text.match(/\/setinfo\s+(.+)/i);
+	const info = infoMatch[1].substring(0, 50);
+	const user = roomMember.user;
 
 	return Promise.join(
 		User.findByIdAndUpdate(user._id, {description: info}, {new: true}),
 		RoomMember.find({user: user._id})
-		)
+	)
 		.spread(function (updatedUser, memberships) {
 			socketio.io.to('user_' + updatedUser._id)
 				.emit('user', {
@@ -623,15 +660,15 @@ function setInfo(roomMember, text) {
 }
 
 function whois(roomMember, text) {
-	var nickMatches = text.match(/^\/whois\s+([\w\s\-\.]{0,19})/i);
-	var userNick = nickMatches[1];
-	var roomId = roomMember.room;
+	const nickMatches = text.match(/^\/whois\s+([\w\s\-\.]{0,19})/i);
+	const userNick = nickMatches[1];
+	const roomId = roomMember.room;
 
 	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
 		.then(function (whoisUser) {
 			if (!whoisUser) throw new InvalidInputError('Could not find user ' + userNick);
-			var userEmail = whoisUser.user.email;
-			var userDescription = whoisUser.user.description;
+			const userEmail = whoisUser.user.email;
+			const userDescription = whoisUser.user.description;
 			var message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- ";
 
 			if (!userDescription) {
@@ -639,7 +676,6 @@ function whois(roomMember, text) {
 			} else {
 				message += userDescription;
 			}
-
 
 
 			if (userEmail === "peter.brejcha@gmail.com") {
@@ -657,10 +693,10 @@ function whois(roomMember, text) {
 }
 
 function poll(roomMember, text) {
-	var roomId = roomMember.room;
+	const roomId = roomMember.room;
 	return pollService.start(roomMember, text)
 		.then(function (pollResponse) {
-			if(pollResponse.isPrivate) {
+			if (pollResponse.isPrivate) {
 				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
 			} else {
 				RoomService.messageRoom(roomId, pollResponse.message);
@@ -669,7 +705,7 @@ function poll(roomMember, text) {
 }
 
 function pollClose(roomMember, text) {
-	var roomId = roomMember.room;
+	const roomId = roomMember.room;
 	return pollService.close(roomMember, text)
 		.then(function (pollResponse) {
 			if (pollResponse.isPrivate) {
@@ -682,7 +718,7 @@ function pollClose(roomMember, text) {
 
 // voting is always private
 function vote(roomMember, text) {
-	var roomId = roomMember.room;
+	const roomId = roomMember.room;
 	return pollService.vote(roomMember, text)
 		.then(function (pollResponse) {
 			RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);

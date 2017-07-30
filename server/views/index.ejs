@@ -11,15 +11,21 @@
 	<link rel="stylesheet" href="/node_modules/ng-sortable/dist/ng-sortable.min.css"/>
 
 	<!-- build:sass /assets/bundled/default.css -->
-	<link rel="stylesheet" href="/assets/styles/default.scss" />
+	<link rel="stylesheet" href="/assets/styles/default.scss"/>
 	<!-- endbuild -->
 
 	<!-- build:remove -->
-	<link rel="stylesheet" href="/assets/bundled/default.css" />
+	<link rel="stylesheet" href="/assets/bundled/default.css"/>
 	<!-- endbuild -->
-
 	<link rel="stylesheet" ng-href="{{ loadMinimal ? '/assets/bundled/minimalist.css' : '' }}" custom-stylesheet/>
-	<link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+	<link rel="manifest" href="/assets/manifest.json">
+	<link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="msapplication-config" content="/assets/browserconfig.xml">
+	<meta name="theme-color" content="#ffffff">
+	<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
 </head>
 <body>
 
@@ -38,6 +44,30 @@
 	window.emoticons = <%- JSON.stringify(emoticons) %>;
 	window.debugging = <%= debugging %>;
 </script>
+
+<!-- disabled for now cause it doesn't work with Dave's stupid minimalist ui thing
+love you dave
+future use: put <link>'s here that can be stream loaded
+<noscript id="deferred-styles">
+</noscript>
+<script>
+	// Inline CSS for max perf
+	// https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery
+	var loadDeferredStyles = function () {
+		var addStylesNode = document.getElementById("deferred-styles");
+		var replacement = document.createElement("div");
+		replacement.innerHTML = addStylesNode.textContent;
+		document.body.appendChild(replacement)
+		addStylesNode.parentElement.removeChild(addStylesNode);
+	};
+	var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+			webkitRequestAnimationFrame || msRequestAnimationFrame;
+	if (raf) raf(function () {
+		window.setTimeout(loadDeferredStyles, 0);
+	});
+	else window.addEventListener('load', loadDeferredStyles);
+</script>
+-->
 
 <!-- build:jsLib /assets/bundled/vendor.js -->
 <script src="/assets/vendor/youtube-iframe-api/youtube.iframe-api.js"></script>
@@ -77,6 +107,7 @@
 <script src="/assets/app/messages/gfycat.js"></script>
 <script src="/assets/app/messages/bunkerMedia.js"></script>
 <script src="/assets/app/messages/bunkerQuote.js"></script>
+<script src="/assets/app/messages/mark.js"></script>
 <script src="/assets/app/messages/messageLogScroll.js"></script>
 <script src="/assets/app/messages/notifications.js"></script>
 <script src="/assets/app/directives/customStylesheet.js"></script>
@@ -107,6 +138,7 @@
 <script src="/assets/app/room/animationControl.js"></script>
 <script src="/assets/app/help/HelpController.js"></script>
 <script src="/assets/app/pinBoard/pinBoard.js"></script>
+<script src="/assets/app/search/SearchController.js"></script>
 <!-- endbuild -->
 
 </body>

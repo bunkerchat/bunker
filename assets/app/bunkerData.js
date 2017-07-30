@@ -40,7 +40,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 				_.each(initialData.users, user => {
 					user.$present = bunkerData.isPresent(user);
-					user.$gravatar = gravatarService.url(user.email, {s: 20});
+					user.$gravatar = gravatarService.url(user.email, {s: 40});
 				});
 
 				// instead of sending many duplicate users down, send one list
@@ -151,7 +151,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 			$timeout(function () {
 				_.each(room.$messages, function (message) {
-					if (!nick || (message.author && message.author.nick === nick)) {
+					if ((!nick && !message.author) || (message.author && message.author.nick === nick)) {
 						var hiddenMessage = _.cloneDeep(message);
 						hiddenMessage.$hidden = true;
 						hiddenMessage.editCount++;
@@ -172,6 +172,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 		getHistoryMessages: function (roomId, startDate, endDate) {
 			return io.socket.emitAsync('/room/history', {roomId: roomId, startDate: startDate, endDate: endDate});
+		},
+		search: params =>{
+			if(!params.query) return Promise.resolve()
+			return io.socket.emitAsync('/search', params);
 		},
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
@@ -228,7 +232,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 				bunkerData.user.present = present;
 				io.socket.emitAsync('/user/current/present', {present});
-			}, 5000);
+			}, 250);
 		},
 		cancelBroadcastTyping: function () {
 			if (typingTimeout) $timeout.cancel(typingTimeout);
@@ -308,9 +312,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 	};
 
 	function reinit(data) {
-		return bunkerData.init().then(function () {
-			return data;
-		});
+		return bunkerData.init().then(() => data);
 	}
 
 	function decorateMessages(room) {
