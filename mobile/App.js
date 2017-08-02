@@ -12,6 +12,8 @@ import {GiftedChat, Actions, Bubble} from 'react-native-gifted-chat'
 import CustomActions from './CustomActions'
 import CustomView from './CustomView'
 
+import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
+
 const serverUri =`http://192.168.1.121:9002`
 
 export default class Example extends React.Component {
@@ -65,6 +67,10 @@ export default class Example extends React.Component {
 
 	componentWillUnmount() {
 		this._isMounted = false
+	}
+
+	componentDidMount() {
+		this._setupGoogleSignin();
 	}
 
 	onLoadEarlier() {
@@ -187,9 +193,11 @@ export default class Example extends React.Component {
 
 	renderCustomView(props) {
 		return (
-			<CustomView
-				{...props}
-			/>
+			<GoogleSigninButton
+				style={{width: 48, height: 48}}
+				size={GoogleSigninButton.Size.Icon}
+				color={GoogleSigninButton.Color.Dark}
+				onPress={this._signIn.bind(this)}/>
 		)
 	}
 
@@ -225,6 +233,37 @@ export default class Example extends React.Component {
 				renderFooter={this.renderFooter}
 			/>
 		)
+	}
+
+	// Copied from https://github.com/devfd/react-native-google-signin/blob/master/example/index.ios.js
+	_signIn() {
+		GoogleSignin.signIn()
+			.then((user) => {
+				console.log(user);
+				this.setState({user: user});
+			})
+			.catch((err) => {
+				console.log('WRONG SIGNIN', err);
+			})
+			.done();
+	}
+
+	async _setupGoogleSignin() {
+		try {
+			await GoogleSignin.hasPlayServices({ autoResolve: true });
+			await GoogleSignin.configure({
+				iosClientId: '603421766430-mjg34tcspqcio7eld8hu4djv5vjdvtsr.apps.googleusercontent.com',
+				webClientId: '603421766430-60og8n04mebic8hi49u1mrcmcdmugnd5.apps.googleusercontent.com',
+				offlineAccess: false
+			});
+
+			const user = await GoogleSignin.currentUserAsync();
+			console.log(user);
+			this.setState({user});
+		}
+		catch(err) {
+			console.log("Google signin error", err.code, err.message);
+		}
 	}
 }
 
