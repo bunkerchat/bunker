@@ -36,24 +36,24 @@ export default class Example extends React.Component {
 
 		this._isAlright = null
 
-		this.socket = SocketIOClient(serverUri, {jsonp: false, transports: ['websocket']})
-
-		const setState = this.setState
-
-		this.socket.on('connect', () => {
-			this.socket.emit('/init', {},  initialData => {
-				const room = _.find(initialData.rooms, {_id: '54490412e7dde30200eb8b41'})
-				const messages = room.$messages
-				_.each(messages, message =>{
-					const user = _.find(initialData.users, {_id: message.author}) || {_id: -1, name: 'SYSTEM'}
-					user.name = user.nick
-
-					message.user = user
-				})
-
-				this.setState({messages: room.$messages})
-			})
-		})
+		// this.socket = SocketIOClient(serverUri, {jsonp: false, transports: ['websocket']})
+        //
+		// const setState = this.setState
+        //
+		// this.socket.on('connect', () => {
+		// 	this.socket.emit('/init', {},  initialData => {
+		// 		const room = _.find(initialData.rooms, {_id: '54490412e7dde30200eb8b41'})
+		// 		const messages = room.$messages
+		// 		_.each(messages, message =>{
+		// 			const user = _.find(initialData.users, {_id: message.author}) || {_id: -1, name: 'SYSTEM'}
+		// 			user.name = user.nick
+        //
+		// 			message.user = user
+		// 		})
+        //
+		// 		this.setState({messages: room.$messages})
+		// 	})
+		// })
 	}
 
 	componentWillMount() {
@@ -193,11 +193,9 @@ export default class Example extends React.Component {
 
 	renderCustomView(props) {
 		return (
-			<GoogleSigninButton
-				style={{width: 48, height: 48}}
-				size={GoogleSigninButton.Size.Icon}
-				color={GoogleSigninButton.Color.Dark}
-				onPress={this._signIn.bind(this)}/>
+			<Text>
+				test
+			</Text>
 		)
 	}
 
@@ -215,6 +213,18 @@ export default class Example extends React.Component {
 	}
 
 	render() {
+		return (
+			<View style={styles.container}>
+				<GoogleSigninButton
+					style={{width: 212, height: 48}}
+					size={GoogleSigninButton.Size.Standard}
+					color={GoogleSigninButton.Color.Auto}
+					onPress={console.log('test')}/>
+			</View>
+		)
+	}
+
+	renderGiftedChat() {
 		return (
 			<GiftedChat
 				messages={this.state.messages}
@@ -277,5 +287,21 @@ const styles = StyleSheet.create({
 	footerText: {
 		fontSize: 14,
 		color: '#aaa',
+	},
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#F5FCFF',
+	},
+	welcome: {
+		fontSize: 20,
+		textAlign: 'center',
+		margin: 10,
+	},
+	instructions: {
+		textAlign: 'center',
+		color: '#333333',
+		marginBottom: 5,
 	},
 })
