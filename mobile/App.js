@@ -264,70 +264,6 @@ export default class Example extends React.Component {
 				this.setState({ user });
 
 				return this.performBunkerSignOn(user.serverAuthCode);
-
-				fetch(`${serverUri}/auth/googleCallback`, {
-					method: 'POST',
-					headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						code: user.serverAuthCode
-					}),
-					credentials: 'include'
-				})
-					.then((response) => {
-
-						// console.log(response.status);
-                        //
-						// if (response.status !== 200) {
-						// 	return;
-						// }
-                        //
-						// const socketCookieVar = response.headers.get('Set-Cookie');
-                        //
-						// console.log('cookie var ' + socketCookieVar);
-						// console.log(response.headers)
-
-						fetch(`${serverUri}/`, {
-							credentials: 'include'
-						}).then((response) => {
-							CookieManager.get('http://localhost:9002', (err, res) => {
-								console.log('---- cookie manager ----')
-								console.log(res)
-
-								const connectCookie = `connect.sid=${res['connect.sid']}`;
-
-								console.log(connectCookie);
-
-								self.socket = SocketIOClient(serverUri, { extraHeaders: { 'cookie': connectCookie }, jsonp: false, transports: ['websocket']})
-
-								this.socket.on('connect', () => {
-									console.log('connected');
-									this.socket.emit('/init', {},  initialData => {
-										console.log('inited')
-
-										const room = initialData.rooms[0]; //_.find(initialData.rooms, {_id: '54490412e7dde30200eb8b41'})
-
-										const messages = room.$messages
-
-										console.log('+++++++++++')
-										console.log(messages[0])
-
-										// _.each(messages, message => {
-										// 	const user = _.find(initialData.users, {_id: message.author}) || {_id: -1, name: 'SYSTEM'}
-										// 	user.name = user.nick
-										//
-										// 	message.user = user
-										// })
-										//
-										// this.setState({messages: room.$messages})
-									})
-								})
-							})
-						})
-					})
-					.catch((error) => alert('error!'));
 			})
 			.then(() => {
 				self.createAndConnectWebSocket();
@@ -368,8 +304,6 @@ export default class Example extends React.Component {
 
 				self.fetchInitData((initialData) => {
 
-					console.log('inited')
-
 					const room = initialData.rooms[0]; //_.find(initialData.rooms, {_id: '54490412e7dde30200eb8b41'})
 
 					const messages = room.$messages
@@ -403,6 +337,8 @@ export default class Example extends React.Component {
 				console.log('have user, going to socket');
 				// TODO: need to figure out what to do here.
 				// touching homepage to re-init session if needed.
+				// Note that fetch API doesn't persist cookie quite the way that's expected, so this won't work after
+				// rebooting the simulator. Will need to figure out another way to store session cookie.
 				this.touchHomepage()
 					.then(this.createAndConnectWebSocket);
 			}
@@ -436,12 +372,9 @@ export default class Example extends React.Component {
 
 		CookieManager.get(serverUri, (err, res) => {
 
-			console.log('---- cookie manager ----')
-			console.log(res)
-
 			const connectCookieHeader = `connect.sid=${res[cookieName]}`;
 
-			console.log(connectCookieHeader);
+			console.log(res);
 
 			cb(res[cookieName], connectCookieHeader)
 		})
@@ -453,7 +386,6 @@ export default class Example extends React.Component {
 		this.socket = SocketIOClient(serverUri, { extraHeaders: { 'cookie': cookieHeader }, jsonp: false, transports: ['websocket']})
 
 		this.socket.on('connect', () => {
-			console.log('connected');
 
 			cb();
 		})
