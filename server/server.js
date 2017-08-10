@@ -24,6 +24,8 @@ var app = Promise.promisifyAll(require('./config/express'));
 var server = Promise.promisifyAll(require('http').Server(app));
 var socketio = require('./config/socketio');
 
+var httpProxy = require('http-proxy');
+
 var User = require('./models/User');
 var Room = require('./models/Room');
 
@@ -34,8 +36,33 @@ module.exports.run = function (cb) {
 	connectToMongoose()
 		.then(startup)
 		.then(function () {
+
+			// quite possibly the hackiest thing ever.
+			// okay so this is proxying web request
+			const proxyServer = httpProxy.createProxyServer({
+				target: 'http://localhost:8083',
+				ws: true
+			});
+
+			proxyServer.on('proxyReq', (clientRequest, req) => {
+				if (/\/socket\.io\//ig.test(req.url)) {
+					console.log('incoming socket io request')
+				}
+			});
+
+			proxyServer.on('proxyReqWs', (clientRequest, req, socket) => {
+				// check for url parm. if it exists, set it as cookie.
+				console.log('ws request yay');
+			});
+
+			proxyServer.on('error', (error) => {
+				// TODO: do something w/ errors.
+			});
+
+			proxyServer.listen(config.express.port);
+
 			socketio.connect(server);
-			return server.listenAsync(config.express.port);
+			return server.listenAsync(8083);
 		})
 		.then(function () {
 			log.info('server - hosted - http://' + config.express.hostName + ':' + config.express.port);

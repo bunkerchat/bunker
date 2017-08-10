@@ -55,7 +55,7 @@ auth.init = function (app) {
 	passport.use(new GooglePlusStrategy({
 		clientId: config.google.clientID,
 		clientSecret: config.google.clientSecret,
-		redirectUri: null
+		// redirectUri: null
 	}, loginCallback));
 
 	function loginCallback(tokens, profile, done) {

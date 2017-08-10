@@ -39,6 +39,7 @@
     "gulp-uglify": "1.5.1",
     "gulp-usemin": "0.3.16",
     "hookshot": "0.1.0",
+    "http-proxy": "1.16.2",
     "jquery": "2.2.0",
     "lodash": "4.1.0",
     "moment": "2.10.6",
