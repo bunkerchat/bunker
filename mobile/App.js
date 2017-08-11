@@ -15,6 +15,8 @@ import CustomView from './CustomView'
 
 import CookieManager from 'react-native-cookies'
 
+import base64 from 'base-64'
+
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 
 const serverUri = `http://localhost:9002`
@@ -282,7 +284,7 @@ export default class Example extends React.Component {
 	}
 
 	authenticateWithServer(serverAuthCode) {
-		return fetch(`${serverUri}/auth/googleCallback`, {
+		return fetch(`${serverUri}/auth/googleCallback?client=mobile`, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -383,7 +385,7 @@ export default class Example extends React.Component {
 	// TODO: promisfy this.
 	createSocket(cookie, cookieHeader, cb) {
 
-		this.socket = SocketIOClient(serverUri, { extraHeaders: { 'cookie': cookieHeader }, jsonp: false, transports: ['websocket']})
+		this.socket = SocketIOClient(serverUri, { query: `bsid=${base64.encode(cookie)}`, extraHeaders: { 'cookie': cookieHeader }, jsonp: false, transports: ['websocket']})
 
 		this.socket.on('connect', () => {
 

@@ -25,6 +25,7 @@ var server = Promise.promisifyAll(require('http').Server(app));
 var socketio = require('./config/socketio');
 
 var httpProxy = require('http-proxy');
+var url = require('url');
 
 var User = require('./models/User');
 var Room = require('./models/Room');
@@ -44,15 +45,28 @@ module.exports.run = function (cb) {
 				ws: true
 			});
 
-			proxyServer.on('proxyReq', (clientRequest, req) => {
+			const rewriteCookieValueIfNeeded = (clientRequest, req, socket) => {
+
 				if (/\/socket\.io\//ig.test(req.url)) {
-					console.log('incoming socket io request')
+					const incomingQuery = url.parse(req.url, true).query;
+
+					if (incomingQuery.bsid) {
+						const decodedSid = Buffer.from(incomingQuery.bsid, 'base64').toString();
+						const decodedSidCookie = `connect.sid=${decodedSid}`;
+
+						const currentCookieHeader = clientRequest.getHeader('cookie');
+
+						clientRequest.setHeader('cookie', currentCookieHeader ? `${currentCookieHeader}; ${decodedSidCookie}` : decodedSidCookie);
+					}
 				}
-			});
+			};
+
+			proxyServer.on('proxyReq', rewriteCookieValueIfNeeded);
 
 			proxyServer.on('proxyReqWs', (clientRequest, req, socket) => {
 				// check for url parm. if it exists, set it as cookie.
 				console.log('ws request yay');
+				rewriteCookieValueIfNeeded(clientRequest, req, socket);
 			});
 
 			proxyServer.on('error', (error) => {
