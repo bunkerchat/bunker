@@ -34,6 +34,9 @@ auth.init = function (app) {
 		resave: false,
 		saveUninitialized: true,
 		collection: 'bunker_sessions',
+		cookie: {
+			maxAge: 120 * 24 * 60 * 60 * 1000 // ~ 4 months
+		},
 		store: new MongoStore({
 			url: 'mongodb://' + config.db.host + ':' + config.db.port + '/' + config.db.session
 		})

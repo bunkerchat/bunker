@@ -39,7 +39,10 @@ module.exports.run = function (cb) {
 		.then(function () {
 
 			// quite possibly the hackiest thing ever.
-			// okay so this is proxying web request
+			// okay so this is proxying web request to actual configured server, residing on 8083.
+			// this allows us to rewrite the request in code, without having to have any rewriting happening
+			// in nginx or somewhere else. This whole thing can be removed if/when we are able to get cookies
+			// sent down properly with socketio client.
 			const proxyServer = httpProxy.createProxyServer({
 				target: 'http://localhost:8083',
 				ws: true
@@ -56,18 +59,20 @@ module.exports.run = function (cb) {
 
 						const currentCookieHeader = clientRequest.getHeader('cookie');
 
-						clientRequest.setHeader('cookie', currentCookieHeader ? `${currentCookieHeader}; ${decodedSidCookie}` : decodedSidCookie);
+						// make sure the cookie header doesn't already exist first.
+						const appendCookieHeader = !/connect\.sid/ig.test(currentCookieHeader);
+
+						if (appendCookieHeader) {
+							clientRequest.setHeader('cookie', currentCookieHeader ? `${currentCookieHeader}; ${decodedSidCookie}` : decodedSidCookie);
+						}
 					}
 				}
 			};
 
+			// This is in case we want to use long polling transport or something
 			proxyServer.on('proxyReq', rewriteCookieValueIfNeeded);
 
-			proxyServer.on('proxyReqWs', (clientRequest, req, socket) => {
-				// check for url parm. if it exists, set it as cookie.
-				console.log('ws request yay');
-				rewriteCookieValueIfNeeded(clientRequest, req, socket);
-			});
+			proxyServer.on('proxyReqWs', rewriteCookieValueIfNeeded);
 
 			proxyServer.on('error', (error) => {
 				// TODO: do something w/ errors.

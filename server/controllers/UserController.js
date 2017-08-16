@@ -27,9 +27,6 @@ module.exports.init = (req, res) => {
 	if (!req.session.userId) return res.ok();
 	const userId = req.session.userId.toObjectId();
 
-	// uncomment to bypass auth
-	//const userId = "542ac3bc52ac0402005eaf0c" // jason
-
 	var socket = req.socket;
 
 	// allows sending async messages back to connected client from server
