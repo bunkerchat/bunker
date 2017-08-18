@@ -4,8 +4,7 @@ import {
 	StyleSheet,
 	Text,
 	View,
-	TouchableOpacity,
-	AsyncStorage
+	TouchableOpacity
 } from 'react-native'
 
 import _ from 'lodash'
@@ -14,7 +13,7 @@ import {GiftedChat, Actions, Bubble} from 'react-native-gifted-chat'
 import CustomActions from './CustomActions'
 import CustomView from './CustomView'
 
-import CookieManager from 'react-native-cookies'
+import BunkerSessionManager from './shared/BunkerSessionManager'
 
 import base64 from 'base-64'
 
@@ -43,6 +42,8 @@ export default class Example extends React.Component {
 
 		this.createAndConnectWebSocket = this.createAndConnectWebSocket.bind(this)
 
+		this.bunkerSessionManager = new BunkerSessionManager(serverUri)
+
 		this._isAlright = null
 	}
 
@@ -60,7 +61,7 @@ export default class Example extends React.Component {
 	}
 
 	componentDidMount() {
-		this._setupGoogleSignin();
+		this._initializeSignin();
 	}
 
 	onLoadEarlier() {
@@ -264,125 +265,48 @@ export default class Example extends React.Component {
 		)
 	}
 
-	// Copied from https://github.com/devfd/react-native-google-signin/blob/master/example/index.ios.js
 	async _signIn() {
-
-		const user = await GoogleSignin.signIn();
-
-		console.log(user);
 
 		this.setState({ viewState: 'loading' });
 
-		await this.performBunkerSignOn(user.serverAuthCode);
+		const user = await this.bunkerSessionManager.signIn();
 
 		this.setState({ user, viewState: 'homeScreen' });
 
 		await this.createAndConnectWebSocket();
 	}
 
-	async _setupGoogleSignin() {
-		try {
-			await GoogleSignin.hasPlayServices({ autoResolve: true });
-			await GoogleSignin.configure({
-				iosClientId: '618885628861-t08otgtft1n229tdb3dje74eeull8slh.apps.googleusercontent.com',
-				webClientId: '618885628861-8j3qt047v1p2g6q528bm6ihdchpohe94.apps.googleusercontent.com',
-				// iosClientId: '603421766430-mjg34tcspqcio7eld8hu4djv5vjdvtsr.apps.googleusercontent.com',
-				// webClientId: '603421766430-60og8n04mebic8hi49u1mrcmcdmugnd5.apps.googleusercontent.com',
-				offlineAccess: true
-			});
+	async _initializeSignin() {
+		const sessionSetupResult = await this.bunkerSessionManager.setupGoogleSignin();
 
-			const user = await GoogleSignin.currentUserAsync();
-
-			console.log(user);
-			this.setState({ user });
-
-			if (user) {
-				console.log('have user, restoring and validating session.');
-
-				const isSessionValid = await this.restoreAndValidateSession();
-
-				// Sign the user out and make them sign back in again.
-				if (!isSessionValid) {
-					console.log('session not valid! signing user out');
-
-					await this.signOut();
-
-					this.setState({ user: null, viewState: 'signIn' });
-
-					return;
-				}
-
-				console.log('user valid, connecting...');
-
-				this.setState({ viewState: 'homeScreen' });
-
-				// everything good, try connecting.
-				await this.createAndConnectWebSocket();
-			}
+		if (sessionSetupResult.error) {
+			// TODO: error handling
 		}
-		catch(err) {
+
+		if (sessionSetupResult.user) {
+			this.setState({ user: sessionSetupResult.user, viewState: 'homeScreen' });
+			await this.createAndConnectWebSocket();
+		}
+		else {
 			this.setState({ user: null, viewState: 'signIn' });
-			console.log("Google signin error", err.code, err.message);
 		}
 	}
 
-	async signOut() {
-		await AsyncStorage.removeItem('bunkerSessionCookie');
-		await GoogleSignin.signOut();
-	}
-
-	logUserOutOfApp() {
-		GoogleSignin.revokeAccess()
-			.then(() => this.signOut())
-			.then(() => {
-				this.setState({ user: null, viewState: 'signIn' });
-			})
-			.done();
-	}
-
-	// This is a hack needed to call the 'isLoggedIn' policy which configures the web socket session correctly.
-	// Might be able to get rid of this by moving the policy to some middleware. Also, this might actually need
-	// to be called in situations where the user is logged in to reset the connect.sid session cookie.
-	touchHomepage() {
-		return fetch(`${serverUri}/`, {
-			credentials: 'include'
-		});
-	}
-
-	async performBunkerSignOn(serverAuthCode) {
-		try {
-			await this.authenticateWithServer(serverAuthCode);
-			await this.touchHomepage();
-		}
-		catch (err) {
-			alert(`error authenticating with Bunker!\n${err}`);
-		}
-	}
-
-	async authenticateWithServer(serverAuthCode) {
-		await fetch(`${serverUri}/auth/googleCallback?client=mobile`, {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				code: serverAuthCode
-			}),
-			credentials: 'include'
-		});
+	async logUserOutOfApp() {
+		await this.bunkerSessionManager.logUserOutOfApp();
+		this.setState({ user: null, viewState: 'signIn' });
 	}
 
 	async createAndConnectWebSocket() {
 		const self = this;
 
 		// first need to get the cookie so we can pass it down to the socket.
-		const cookieResult = await self.getBunkerSessionCookie();
+		const cookieResult = await self.bunkerSessionManager.getBunkerSessionCookie();
 
 		await self.createSocket(cookieResult.cookieValue, cookieResult.header);
 
 		// successfully created socket, now save off cookie as we know it's valid (maybe...)
-		await self.saveBunkerSessionCookie(cookieResult.cookieValue);
+		await self.bunkerSessionManager.saveBunkerSessionCookie(cookieResult.cookieValue);
 
 		self.fetchInitData((initialData) => {
 
@@ -395,97 +319,6 @@ export default class Example extends React.Component {
 
 			self.setState({ bunkerConnected: true })
 		})
-	}
-
-	getBunkerSessionCookie() {
-
-		const cookieName = 'connect.sid';
-
-		return new Promise(resolve => {
-
-			CookieManager.get(serverUri, (err, cookiesForHost) => {
-				const connectCookieHeader = `connect.sid=${cookiesForHost[cookieName]}`;
-
-				console.log(cookiesForHost);
-
-				resolve({ cookieValue: cookiesForHost[cookieName], header: connectCookieHeader });
-			});
-		});
-	}
-
-	// returns true if bunker session can be restored and is still valid. False otherwise.
-	async restoreAndValidateSession() {
-		// TODO: this is what should be done to restore bunker cookie from async storage. However, doesn't work
-		// because of issues with react-native cookies (or some other reason).
-		//
-		// const restoreResult = await this.restoreBunkerSessionCookie();
-        //
-		// if (!restoreResult) {
-		// 	console.log('no session was restored.');
-		// 	return false;
-		// }
-
-		const validateCookieResult = await this.validateSessionCookie();
-
-		return validateCookieResult;
-	}
-
-	async saveBunkerSessionCookie(cookieValue) {
-		await AsyncStorage.setItem('bunkerSessionCookie', cookieValue);
-	}
-
-	// Just visit the homepage. If we get a redirect, session is invalid. Otherwise, it's valid.
-	// Huge hack, probably need a server endpoint to truly validate the session. Another option may be to check for
-	// set-cookie header or something and update the stored cookie value.
-	async validateSessionCookie() {
-		try {
-			const response = await fetch(`${serverUri}/`, {
-				credentials: 'include',
-				redirect: 'manual' // TODO: react-native doesn't seem to honor this parameter.
-			});
-
-			console.log('url ' + response.url);
-
-			if (/\/login/ig.test(response.url)) {
-				console.log('not validated, returning false from validate');
-				return false;
-			}
-
-			console.log('validated, returning true from validate')
-
-			return true;
-		}
-		catch (error) {
-			console.log('not validated, returning false from validate');
-			return false;
-		}
-	}
-
-	setBunkerCookie(cookieValue) {
-		return new Promise(resolve => {
-			// TODO: this doesn't appear to be working properly, find out why.
-			CookieManager.setFromResponse(serverUri, { 'connect.sid': cookieValue }, (result) => {
-				resolve(result);
-			});
-		});
-	}
-
-	// return true if cookie was restored, false otherwise.
-	// Need to investigate why restoring cookie using react-native cookies isn't working. Until it is working,
-	// this method doesn't do anything useful.
-	async restoreBunkerSessionCookie() {
-		const cookieValue = await AsyncStorage.getItem('bunkerSessionCookie');
-
-		if (cookieValue) {
-			// set this here so it gets picked up by fetch api
-			await this.setBunkerCookie(cookieValue);
-
-			console.log('returning true for restore.')
-			return true;
-		}
-
-		console.log('returning false from restore');
-		return false;
 	}
 
 	createSocket(cookie, cookieHeader) {
