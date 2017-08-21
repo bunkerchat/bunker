@@ -1,6 +1,7 @@
+import Immutable from 'seamless-immutable'
 import {makeReducer} from '../config/Redux'
 
-const INITIAL_STATE = {}
+const INITIAL_STATE = Immutable({})
 const reducer = {}
 
 export function derp (foo, bar) {
