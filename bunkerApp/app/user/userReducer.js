@@ -1,4 +1,4 @@
-import {makeReducer} from '../Redux'
+import {makeReducer} from '../config/Redux'
 
 const INITIAL_STATE = {}
 const reducer = {}

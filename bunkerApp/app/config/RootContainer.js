@@ -1,19 +1,19 @@
 import React from 'react'
 import {StatusBar, StyleSheet, View, Text} from 'react-native'
 import {connect} from 'react-redux'
+import AppNavigator from './AppNavigator'
 
 class RootContainer extends React.PureComponent {
 	render(){
 		return <View style={styles.applicationView}>
 			<StatusBar  />
-			<Text> Hi </Text>
+			<AppNavigator />
 		</View>
 	}
 }
 
 const styles = StyleSheet.create({
 	applicationView:{
-		marginTop: 20,
 		flex: 1
 	}
 })

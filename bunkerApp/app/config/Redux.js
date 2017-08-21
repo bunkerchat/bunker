@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux'
-import room from './rooms/roomReducer'
-import user from './user/userReducer'
+import room from '../rooms/roomReducer'
+import user from '../user/userReducer'
 
 export const reducers = {
 	room,

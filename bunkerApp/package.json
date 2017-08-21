@@ -9,6 +9,8 @@
   },
   "scripts": {
     "start": "react-native start",
+		"start:clean": "watchman watch-del-all && react-native start --reset-cache",
+		"postinstall": "react-native link",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "test": "node node_modules/jest/bin/jest.js --watch"
