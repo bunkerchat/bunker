@@ -10,6 +10,8 @@ var socketio = module.exports;
 
 socketio.connect = function (server) {
 
+	// Below is an attempt to proxy only incoming socket requests. This failed because of bunker web using long polling.
+	// Now proxying everything.
 	// create server to attach socket to
 	// const targetServer = http.createServer().listen(8083);
     //
@@ -40,7 +42,7 @@ socketio.connect = function (server) {
 	// });
 
 	var session = require('./auth').session;
-	var io = require('socket.io')(server); // targetServer
+	var io = require('socket.io')(server);
 	socketio.io = io;
 
 	if(config.useRedis){

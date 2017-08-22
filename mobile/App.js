@@ -277,18 +277,24 @@ export default class Example extends React.Component {
 	}
 
 	async _initializeSignin() {
-		const sessionSetupResult = await this.bunkerSessionManager.setupGoogleSignin();
+		try {
+			const sessionSetupResult = await this.bunkerSessionManager.setupGoogleSignin();
 
-		if (sessionSetupResult.error) {
+			if (sessionSetupResult.error) {
+				// TODO: error handling
+			}
+
+			if (sessionSetupResult.user) {
+				this.setState({user: sessionSetupResult.user, viewState: 'homeScreen'});
+				await this.createAndConnectWebSocket();
+			}
+			else {
+				this.setState({ user: null, viewState: 'signIn' });
+			}
+		}
+		catch (err) {
+			console.log('error initializing ' + err);
 			// TODO: error handling
-		}
-
-		if (sessionSetupResult.user) {
-			this.setState({ user: sessionSetupResult.user, viewState: 'homeScreen' });
-			await this.createAndConnectWebSocket();
-		}
-		else {
-			this.setState({ user: null, viewState: 'signIn' });
 		}
 	}
 

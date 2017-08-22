@@ -15,20 +15,6 @@ var auth = module.exports;
 
 auth.init = function (app) {
 
-	// logging func, remove me
-	app.use((req, res, next) => {
-		console.log(req.url);
-
-		const oldEnd = res.end;
-
-		res.end = function() {
-			console.log(res.statusCode);
-			oldEnd.apply(res, arguments);
-		};
-
-		next();
-	})
-
 	var session = auth.session = Session({
 		secret: '64ec1dff67add7c8ff0b08e0b518e43c',
 		resave: false,

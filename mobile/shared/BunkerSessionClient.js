@@ -44,19 +44,14 @@ export default class BunkerSessionClient {
 				redirect: 'manual' // TODO: react-native doesn't seem to honor this parameter.
 			});
 
-			console.log('url ' + response.url);
-
 			if (/\/login/ig.test(response.url)) {
 				console.log('not validated, returning false from validate');
 				return false;
 			}
 
-			console.log('validated, returning true from validate')
-
 			return true;
 		}
 		catch (error) {
-			console.log('not validated, returning false from validate');
 			return false;
 		}
 	}

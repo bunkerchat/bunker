@@ -37,24 +37,19 @@ export default class BunkerSessionManager {
 			// set this here so it gets picked up by fetch api
 			await this.setBunkerCookie(cookieValue);
 
-			console.log('returning true for restore.')
 			return true;
 		}
 
-		console.log('returning false from restore');
 		return false;
 	}
 
 	getBunkerSessionCookie() {
-
 		const cookieName = 'connect.sid';
 
 		return new Promise(resolve => {
 
 			CookieManager.get(this.serverUri, (err, cookiesForHost) => {
 				const connectCookieHeader = `connect.sid=${cookiesForHost[cookieName]}`;
-
-				console.log(cookiesForHost);
 
 				resolve({ cookieValue: cookiesForHost[cookieName], header: connectCookieHeader });
 			});
