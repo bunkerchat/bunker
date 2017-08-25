@@ -52,6 +52,9 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/magic8ball/i.test(text)) {
 		return magic8ball(roomMember, text); // Jordan's Magic 8 Ball, Bitches
 	}
+	else if (/^\/trump/i.test(text)) {
+		return trump(roomMember);
+	}
 	else if (/^\/roll/i.test(text)) {
 		return roll(roomMember, text);
 	}
@@ -365,6 +368,46 @@ function magic8ball(roomMember, text) {
 		question = ' shakes the magic 8 ball and asks "' + questionMatch[1] + '"';
 	}
 
+	return message(roomMember, roomMember.user.nick + question, 'room');
+}
+
+
+function trump(roomMember) {
+	const response = _.sample([
+		`Any negative polls are fake news, just like the CNN, ABC, NBC polls in the election.`,
+		`An ‘extremely credible source’ has called my office and told me that Barack Obama’s birth certificate is a fraud.`,
+		`I will build a great wall – and nobody builds walls better than me, believe me.`,
+		`They’re rapists… And some, I assume, are good people.`,
+		`All of the women on The Apprentice flirted with me – consciously or unconsciously. That’s to be expected.`,
+		`The beauty of me is that I’m very rich.`,
+		`It’s freezing and snowing in New York – we need global warming!`,
+		`I’ve said if Ivanka weren’t my daughter, perhaps I’d be dating her.`,
+		`My fingers are long and beautiful, as, it has been well documented, are various other parts of my body.`,
+		`The point is, you can never be too greedy.`,
+		`My IQ is one of the highest — and you all know it! Please don’t feel so stupid or insecure; it’s not your fault.`,
+		`Look at those hands, are they small hands?`,
+		`Number one, I have great respect for women. I was the one that really broke the glass ceiling on behalf of women.`,
+		`I’m just thinking to myself right now, we should just cancel the election and just give it to Trump, right?`,
+		`I thought being President would be easier than my old life.`,
+		`And when you’re a star, they let you do it. You can do anything. Grab them by the pussy. You can do anything.`,
+		`40 Wall Street actually was the second-tallest building in downtown Manhattan… And now it’s the tallest.`,
+		`Why can’t we use nuclear weapons?`,
+		`I think I am actually humble. I think I’m much more humble than you would understand.`,
+		`Fake news is at an all time high.`,
+		`I know more about ISIS than the generals do. Believe me.`
+	]);
+
+	setTimeout(function () {
+		return Message.create({
+			room: roomMember.room,
+			author: null,
+			type: '8ball',
+			text: `:trump: ${response}`
+		})
+			.then(broadcastMessage);
+	}, 3000);
+
+	const question = ' asks Trump what he thinks on this topic';
 	return message(roomMember, roomMember.user.nick + question, 'room');
 }
 
