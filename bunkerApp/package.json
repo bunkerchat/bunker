@@ -1,0 +1,29 @@
+{
+  "name": "bunkerApp",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "babel-preset-react-native-stage-0": "^1.0.1",
+    "jest-expo": "~19.0.0",
+    "react-test-renderer": "16.0.0-alpha.12"
+  },
+  "scripts": {
+    "start": "react-native start",
+		"start:clean": "watchman watch-del-all && react-native start --reset-cache",
+		"postinstall": "react-native link",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "test": "node node_modules/jest/bin/jest.js --watch"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "react": "16.0.0-alpha.12",
+    "react-native": "^0.46.1",
+    "react-navigation": "1.0.0-beta.11",
+    "react-redux": "5.0.6",
+    "redux": "3.7.2",
+    "socket.io-client": "2.0.3"
+  }
+}
