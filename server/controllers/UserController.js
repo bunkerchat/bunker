@@ -23,10 +23,11 @@ module.exports.init = (req, res) => {
 	var user, userSettings, memberships, inbox, rooms, version;
 	const userIds = [];
 
+	// comment out below two lines to bypass auth.
 	if (!req.session.userId) return res.ok();
-
 	const userId = req.session.userId.toObjectId();
-	const socket = req.socket;
+
+	var socket = req.socket;
 
 	// allows sending async messages back to connected client from server
 	socket.join('userself_' + userId);

@@ -24,6 +24,9 @@ var app = Promise.promisifyAll(require('./config/express'));
 var server = Promise.promisifyAll(require('http').Server(app));
 var socketio = require('./config/socketio');
 
+var httpProxy = require('http-proxy');
+var url = require('url');
+
 var User = require('./models/User');
 var Room = require('./models/Room');
 
@@ -34,8 +37,51 @@ module.exports.run = function (cb) {
 	connectToMongoose()
 		.then(startup)
 		.then(function () {
+
+			// quite possibly the hackiest thing ever.
+			// okay so this is proxying web request to actual configured server, residing on 8083.
+			// this allows us to rewrite the request in code, without having to have any rewriting happening
+			// in nginx or somewhere else. This whole thing can be removed if/when we are able to get cookies
+			// sent down properly with socketio client.
+			const proxyServer = httpProxy.createProxyServer({
+				target: 'http://localhost:8083',
+				ws: true
+			});
+
+			const rewriteCookieValueIfNeeded = (clientRequest, req, socket) => {
+
+				if (/\/socket\.io\//ig.test(req.url)) {
+					const incomingQuery = url.parse(req.url, true).query;
+
+					if (incomingQuery.bsid) {
+						const decodedSid = Buffer.from(incomingQuery.bsid, 'base64').toString();
+						const decodedSidCookie = `connect.sid=${decodedSid}`;
+
+						const currentCookieHeader = clientRequest.getHeader('cookie');
+
+						// make sure the cookie header doesn't already exist first.
+						const appendCookieHeader = !/connect\.sid/ig.test(currentCookieHeader);
+
+						if (appendCookieHeader) {
+							clientRequest.setHeader('cookie', currentCookieHeader ? `${currentCookieHeader}; ${decodedSidCookie}` : decodedSidCookie);
+						}
+					}
+				}
+			};
+
+			// This is in case we want to use long polling transport or something
+			proxyServer.on('proxyReq', rewriteCookieValueIfNeeded);
+
+			proxyServer.on('proxyReqWs', rewriteCookieValueIfNeeded);
+
+			proxyServer.on('error', (error) => {
+				// TODO: do something w/ errors.
+			});
+
+			proxyServer.listen(config.express.port);
+
 			socketio.connect(server);
-			return server.listenAsync(config.express.port);
+			return server.listenAsync(8083);
 		})
 		.then(function () {
 			log.info('server - hosted - http://' + config.express.hostName + ':' + config.express.port);
