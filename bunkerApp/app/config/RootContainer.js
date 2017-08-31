@@ -2,9 +2,12 @@ import React from 'react'
 import {StatusBar, StyleSheet, View, Text} from 'react-native'
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin'
 import {connect} from 'react-redux'
+import SocketIOClient from 'socket.io-client'
+import base64 from 'base-64'
 import AppNavigator from './AppNavigator'
 import {login} from '../user/userReducer'
 import BunkerSessionManager from '../../shared/BunkerSessionManager'
+
 const serverUri = `http://localhost:9002`
 
 class RootContainer extends React.PureComponent {
@@ -40,7 +43,7 @@ class RootContainer extends React.PureComponent {
 			}
 			else {
 				login(null)
-				this.setState({ user: null, viewState: 'signIn' });
+				this.setState({user: null, viewState: 'signIn'});
 			}
 		}
 		catch (err) {
@@ -51,18 +54,18 @@ class RootContainer extends React.PureComponent {
 
 	async _signIn() {
 
-		this.setState({ viewState: 'loading' });
+		this.setState({viewState: 'loading'});
 
 		const user = await this.bunkerSessionManager.signIn();
 
-		this.setState({ user, viewState: 'homeScreen' });
+		this.setState({user, viewState: 'homeScreen'});
 
 		await this.createAndConnectWebSocket();
 	}
 
 	async logUserOutOfApp() {
 		await this.bunkerSessionManager.logUserOutOfApp();
-		this.setState({ user: null, viewState: 'signIn' });
+		this.setState({user: null, viewState: 'signIn'});
 	}
 
 	async createAndConnectWebSocket() {
@@ -85,7 +88,7 @@ class RootContainer extends React.PureComponent {
 			console.log('+++++++++++')
 			console.log(messages[0])
 
-			self.setState({ bunkerConnected: true })
+			self.setState({bunkerConnected: true})
 		})
 	}
 
@@ -94,7 +97,7 @@ class RootContainer extends React.PureComponent {
 			this.socket = SocketIOClient(serverUri,
 				{
 					query: `bsid=${base64.encode(cookie)}`,
-					extraHeaders: { 'cookie': cookieHeader },
+					extraHeaders: {'cookie': cookieHeader},
 					jsonp: false,
 					transports: ['websocket']
 				});
@@ -128,7 +131,14 @@ class RootContainer extends React.PureComponent {
 	render() {
 		return <View style={styles.applicationView}>
 			<StatusBar/>
-			<AppNavigator/>
+			{/*<AppNavigator/>*/}
+
+			<GoogleSigninButton
+				style={{width: 212, height: 48}}
+				size={GoogleSigninButton.Size.Standard}
+				color={GoogleSigninButton.Color.Auto}
+				onPress={this._signIn.bind(this)}/>
+
 		</View>
 	}
 }

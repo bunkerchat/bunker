@@ -1,4 +1,3 @@
-
 import {AsyncStorage} from 'react-native'
 
 import CookieManager from 'react-native-cookies'
@@ -21,7 +20,7 @@ export default class BunkerSessionManager {
 	setBunkerCookie(cookieValue) {
 		return new Promise(resolve => {
 			// TODO: this doesn't appear to be working properly, find out why.
-			CookieManager.setFromResponse(this.serverUri, { 'connect.sid': cookieValue }, (result) => {
+			CookieManager.setFromResponse(this.serverUri, {'connect.sid': cookieValue}, (result) => {
 				resolve(result);
 			});
 		});
@@ -43,16 +42,11 @@ export default class BunkerSessionManager {
 		return false;
 	}
 
-	getBunkerSessionCookie() {
+	async getBunkerSessionCookie() {
 		const cookieName = 'connect.sid';
 
-		return new Promise(resolve => {
-
-			CookieManager.get(this.serverUri, (err, cookiesForHost) => {
-				const connectCookieHeader = `connect.sid=${cookiesForHost[cookieName]}`;
-
-				resolve({ cookieValue: cookiesForHost[cookieName], header: connectCookieHeader });
-			});
-		});
+		const cookiesForHost = await CookieManager.get(this.serverUri)
+		const connectCookieHeader = `connect.sid=${cookiesForHost[cookieName]}`;
+		return {cookieValue: cookiesForHost[cookieName], header: connectCookieHeader}
 	}
 }
