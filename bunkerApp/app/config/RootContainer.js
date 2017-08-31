@@ -6,9 +6,9 @@ import SocketIOClient from 'socket.io-client'
 import base64 from 'base-64'
 import AppNavigator from './AppNavigator'
 import {login} from '../user/userReducer'
-import BunkerSessionManager from './BunkerSessionManager'
-
-const serverUri = `http://localhost:9002`
+import BunkerSessionManager from '../session/BunkerSessionManager'
+import {initializeSignIn} from '../session/sessionThunks'
+import {signIn} from '../session/BunkerSessionClient'
 
 class RootContainer extends React.PureComponent {
 
@@ -18,123 +18,15 @@ class RootContainer extends React.PureComponent {
 		this.state = {
 			viewState: 'loading'
 		}
-
-		this.createAndConnectWebSocket = this.createAndConnectWebSocket.bind(this)
-		this.bunkerSessionManager = new BunkerSessionManager(serverUri)
 	}
 
 	componentDidMount() {
-		this._initializeSignin();
-	}
-
-	async _initializeSignin() {
-		const {login} = this.props
-
-		try {
-			const sessionSetupResult = await this.bunkerSessionManager.setupGoogleSignin();
-
-			if (sessionSetupResult.error) {
-				// TODO: error handling
-			}
-
-			if (sessionSetupResult.user) {
-				await this.createAndConnectWebSocket();
-
-				login(sessionSetupResult.user)
-				// this.setState({user: sessionSetupResult.user, viewState: 'homeScreen'});
-			}
-			else {
-				login(null)
-				// this.setState({user: null, viewState: 'signIn'});
-			}
-		}
-		catch (err) {
-			console.log('error initializing ' + err);
-			// TODO: error handling
-		}
-	}
-
-	async _signIn() {
-		const {login} = this.props
-		// this.setState({viewState: 'loading'});
-
-		const user = await this.bunkerSessionManager.signIn();
-
-		login(user)
-		// this.setState({user, viewState: 'homeScreen'});
-
-		await this.createAndConnectWebSocket();
-	}
-
-	async logUserOutOfApp() {
-		const {login} = this.props
-		await this.bunkerSessionManager.logUserOutOfApp();
-		login(null)
-		// this.setState({user: null, viewState: 'signIn'});
-	}
-
-	async createAndConnectWebSocket() {
-		const self = this;
-
-		// first need to get the cookie so we can pass it down to the socket.
-		const cookieResult = await self.bunkerSessionManager.getBunkerSessionCookie();
-
-		await self.createSocket(cookieResult.cookieValue, cookieResult.header);
-
-		// successfully created socket, now save off cookie as we know it's valid (maybe...)
-		await self.bunkerSessionManager.saveBunkerSessionCookie(cookieResult.cookieValue);
-
-		self.fetchInitData((initialData) => {
-
-			const room = initialData.rooms[0]; //_.find(initialData.rooms, {_id: '54490412e7dde30200eb8b41'})
-
-			const messages = room.$messages
-
-			console.log('+++++++++++')
-			console.log(messages[0])
-
-			self.setState({bunkerConnected: true})
-		})
-	}
-
-	createSocket(cookie, cookieHeader) {
-		return new Promise((resolve, reject) => {
-			this.socket = SocketIOClient(serverUri,
-				{
-					query: `bsid=${base64.encode(cookie)}`,
-					extraHeaders: {'cookie': cookieHeader},
-					jsonp: false,
-					transports: ['websocket']
-				});
-
-			this.socket.on('connect', () => {
-				resolve();
-			});
-
-			// TODO: error scenarios
-		});
-	}
-
-	// TODO: can probably promisfy this
-	fetchInitData(cb) {
-		this.socket.emit('/init', {}, initialData => {
-
-			cb(initialData);
-
-			// _.each(messages, message => {
-			// 	const user = _.find(initialData.users, {_id: message.author}) || {_id: -1, name: 'SYSTEM'}
-			// 	user.name = user.nick
-			//
-			// 	message.user = user
-			// })
-			//
-			// this.setState({messages: room.$messages})
-		})
+		this.props.initializeSignIn()
 	}
 
 
 	render() {
-		const {loggedInUser} = this.props
+		const {loggedInUser, signIn} = this.props
 		return <View style={styles.applicationView}>
 			<StatusBar/>
 			{loggedInUser && <AppNavigator/>}
@@ -142,7 +34,7 @@ class RootContainer extends React.PureComponent {
 				style={{width: 212, height: 48}}
 				size={GoogleSigninButton.Size.Standard}
 				color={GoogleSigninButton.Color.Auto}
-				onPress={this._signIn.bind(this)}/>}
+				onPress={() => signIn()}/>}
 		</View>
 	}
 }
@@ -159,6 +51,6 @@ const mapStateToProps = (state, props) => {
 	}
 }
 
-const actions = {login}
+const actions = {login, initializeSignIn, signIn}
 
 export default connect(mapStateToProps, actions)(RootContainer)
