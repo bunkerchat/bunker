@@ -8,9 +8,6 @@ const INITIAL_STATE = Immutable({
 const reducer = {}
 
 export const login = loggedInUser => ({type: 'user/login', loggedInUser})
-reducer['user/login'] = (state, {loggedInUser}) => {
-	loggedInUser.derp = "erter"
-	return state.merge({loggedInUser})
-}
+reducer['user/login'] = (state, {loggedInUser}) => state.merge({loggedInUser})
 
 export default makeReducer(INITIAL_STATE, reducer)
