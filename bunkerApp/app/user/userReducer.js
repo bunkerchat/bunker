@@ -1,13 +1,13 @@
 import Immutable from 'seamless-immutable'
-import {makeReducer} from '../config/Redux'
+import {makeReducer} from '../config/reduxTools'
 
 const INITIAL_STATE = Immutable({
-	user: null
+	loggedInUser: null
 })
 
 const reducer = {}
 
-export const login = user => ({type: 'user/login', user})
-reducer['user/login'] = (state, {user}) => state.merge({user})
+export const login = loggedInUser => ({type: 'user/login', loggedInUser})
+reducer['user/login'] = (state, {loggedInUser}) => state.merge({loggedInUser})
 
 export default makeReducer(INITIAL_STATE, reducer)

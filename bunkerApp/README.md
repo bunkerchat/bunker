@@ -16,9 +16,9 @@
 
 Runs your app in development mode.
 
-
-Sometimes you may need to reset or clear the React Native packager's cache.
-To do so, run `npm start:clean`
+### `npm run start:clean`
+Sometimes you may need to reset or clear the React Native packager's cache.  You meay need to
+do this after installing a new package in `package.json` or switching branches
 
 #### `npm test`
 

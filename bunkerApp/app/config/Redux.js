@@ -9,10 +9,4 @@ export const reducers = {
 	user
 }
 
-export default rootReducer = combineReducers(reducers)
-
-export function makeReducer(initialState, reducerMap = {}) {
-	return (state = initialState, {type = '', ...payload}) => {
-		return (reducerMap[type] || (() => state))(state, payload)
-	}
-}
+export default combineReducers(reducers)
