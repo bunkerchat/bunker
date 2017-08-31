@@ -28,6 +28,8 @@ class RootContainer extends React.PureComponent {
 	}
 
 	async _initializeSignin() {
+		const {login} = this.props
+
 		try {
 			const sessionSetupResult = await this.bunkerSessionManager.setupGoogleSignin();
 
@@ -53,18 +55,21 @@ class RootContainer extends React.PureComponent {
 	}
 
 	async _signIn() {
-
+		const {login} = this.props
 		this.setState({viewState: 'loading'});
 
 		const user = await this.bunkerSessionManager.signIn();
 
+		login(user)
 		this.setState({user, viewState: 'homeScreen'});
 
 		await this.createAndConnectWebSocket();
 	}
 
 	async logUserOutOfApp() {
+		const {login} = this.props
 		await this.bunkerSessionManager.logUserOutOfApp();
+		login(null)
 		this.setState({user: null, viewState: 'signIn'});
 	}
 
@@ -129,16 +134,15 @@ class RootContainer extends React.PureComponent {
 
 
 	render() {
+		const {loggedInUser} = this.props
 		return <View style={styles.applicationView}>
 			<StatusBar/>
-			{/*<AppNavigator/>*/}
-
-			<GoogleSigninButton
+			{loggedInUser && <AppNavigator/>}
+			{!loggedInUser && <GoogleSigninButton
 				style={{width: 212, height: 48}}
 				size={GoogleSigninButton.Size.Standard}
 				color={GoogleSigninButton.Color.Auto}
-				onPress={this._signIn.bind(this)}/>
-
+				onPress={this._signIn.bind(this)}/>}
 		</View>
 	}
 }
