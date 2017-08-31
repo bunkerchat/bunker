@@ -55,4 +55,46 @@ export default class BunkerSessionClient {
 			return false;
 		}
 	}
+
+	async createAndConnectWebSocket() {
+		const self = this;
+
+		// first need to get the cookie so we can pass it down to the socket.
+		const cookieResult = await self.bunkerSessionManager.getBunkerSessionCookie();
+
+		await self.createSocket(cookieResult.cookieValue, cookieResult.header);
+
+		// successfully created socket, now save off cookie as we know it's valid (maybe...)
+		await self.bunkerSessionManager.saveBunkerSessionCookie(cookieResult.cookieValue);
+
+		self.fetchInitData((initialData) => {
+
+			const room = initialData.rooms[0]; //_.find(initialData.rooms, {_id: '54490412e7dde30200eb8b41'})
+
+			const messages = room.$messages
+
+			console.log('+++++++++++')
+			console.log(messages[0])
+
+			self.setState({bunkerConnected: true})
+		})
+	}
+
+	createSocket(cookie, cookieHeader) {
+		return new Promise((resolve, reject) => {
+			this.socket = SocketIOClient(serverUri,
+				{
+					query: `bsid=${base64.encode(cookie)}`,
+					extraHeaders: {'cookie': cookieHeader},
+					jsonp: false,
+					transports: ['websocket']
+				});
+
+			this.socket.on('connect', () => {
+				resolve();
+			});
+
+			// TODO: error scenarios
+		});
+	}
 }

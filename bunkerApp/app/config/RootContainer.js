@@ -6,7 +6,7 @@ import SocketIOClient from 'socket.io-client'
 import base64 from 'base-64'
 import AppNavigator from './AppNavigator'
 import {login} from '../user/userReducer'
-import BunkerSessionManager from '../../shared/BunkerSessionManager'
+import BunkerSessionManager from './BunkerSessionManager'
 
 const serverUri = `http://localhost:9002`
 
@@ -41,11 +41,11 @@ class RootContainer extends React.PureComponent {
 				await this.createAndConnectWebSocket();
 
 				login(sessionSetupResult.user)
-				this.setState({user: sessionSetupResult.user, viewState: 'homeScreen'});
+				// this.setState({user: sessionSetupResult.user, viewState: 'homeScreen'});
 			}
 			else {
 				login(null)
-				this.setState({user: null, viewState: 'signIn'});
+				// this.setState({user: null, viewState: 'signIn'});
 			}
 		}
 		catch (err) {
@@ -56,12 +56,12 @@ class RootContainer extends React.PureComponent {
 
 	async _signIn() {
 		const {login} = this.props
-		this.setState({viewState: 'loading'});
+		// this.setState({viewState: 'loading'});
 
 		const user = await this.bunkerSessionManager.signIn();
 
 		login(user)
-		this.setState({user, viewState: 'homeScreen'});
+		// this.setState({user, viewState: 'homeScreen'});
 
 		await this.createAndConnectWebSocket();
 	}
@@ -70,7 +70,7 @@ class RootContainer extends React.PureComponent {
 		const {login} = this.props
 		await this.bunkerSessionManager.logUserOutOfApp();
 		login(null)
-		this.setState({user: null, viewState: 'signIn'});
+		// this.setState({user: null, viewState: 'signIn'});
 	}
 
 	async createAndConnectWebSocket() {
