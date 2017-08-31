@@ -8,7 +8,12 @@ class LoginScreen extends React.PureComponent{
 		title: 'Login',
 	}
 
-	render(){
+	_renderLoggedInUser(){
+		const {loggedInUser} = this.props
+		return <Text>{JSON.stringify(loggedInUser, null, 2)}</Text>
+	}
+
+	_renderLoginButton(){
 		const {login} = this.props
 
 		const fakeUser = {
@@ -17,8 +22,17 @@ class LoginScreen extends React.PureComponent{
 		}
 
 		return <View>
-			<Text> Hello World </Text>
+			<Text> Click Login </Text>
 			<Button onPress={() => login(fakeUser)} title="Login" />
+		</View>
+	}
+
+	render(){
+		const {loggedInUser} = this.props
+
+		return <View>
+			{loggedInUser && this._renderLoggedInUser()}
+			{!loggedInUser && this._renderLoginButton()}
 		</View>
 	}
 }
@@ -28,7 +42,9 @@ const style = StyleSheet.create({
 })
 
 const mapStateToProps = (state, props) => {
-	return {}
+	return {
+		loggedInUser: state.user.loggedInUser
+	}
 }
 
 const actions = {login}
