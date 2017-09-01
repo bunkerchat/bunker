@@ -13,6 +13,7 @@ class RoomScreen extends React.PureComponent {
 	// https://facebook.github.io/react-native/docs/flatlist.html
 	_keyExtractor = message => message._id
 	_renderItem = ({item, separators}) => <BunkerMessage message={item} {...this.props} />
+	_itemSeperator = () => <View style={style.separator} />
 
 	render() {
 		const {messages} = this.props
@@ -21,13 +22,19 @@ class RoomScreen extends React.PureComponent {
 				data={messages}
 				keyExtractor={this._keyExtractor}
 				renderItem={this._renderItem}
+				ItemSeparatorComponent = {this._itemSeperator}
 			/>
 		</View>
 	}
 }
 
 const style = StyleSheet.create({
-	roomContainer: {}
+	roomContainer: {},
+	separator:{
+		marginVertical: 5,
+		borderTopColor: 'gray',
+		borderTopWidth: StyleSheet.hairlineWidth
+	}
 })
 
 const mapStateToProps = (state, props) => {
