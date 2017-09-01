@@ -2,22 +2,14 @@ import React from 'react'
 import {StatusBar, StyleSheet, View, Text} from 'react-native'
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin'
 import {connect} from 'react-redux'
-import SocketIOClient from 'socket.io-client'
-import base64 from 'base-64'
 import AppNavigator from './AppNavigator'
 import {login} from '../user/userReducer'
-import BunkerSessionManager from '../session/BunkerSessionManager'
-import {initializeSignIn} from '../session/sessionThunks'
-import {signIn} from '../session/BunkerSessionClient'
+import {initializeSignIn, signIn} from '../session/sessionThunks'
 
 class RootContainer extends React.PureComponent {
 
 	constructor(props) {
 		super(props)
-
-		this.state = {
-			viewState: 'loading'
-		}
 	}
 
 	componentDidMount() {
@@ -25,7 +17,8 @@ class RootContainer extends React.PureComponent {
 	}
 
 	render() {
-		const {loggedInUser, signIn} = this.props
+		const {loggedInUser, signIn} = this.props;
+
 		return <View style={styles.applicationView}>
 			<StatusBar/>
 			{loggedInUser && <AppNavigator/>}

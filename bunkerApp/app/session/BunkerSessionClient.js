@@ -49,10 +49,3 @@ export async function validateSessionCookie() {
 		return false;
 	}
 }
-
-async function logUserOutOfApp() {
-	const {login} = this.props
-	await this.bunkerSessionManager.logUserOutOfApp();
-	login(null)
-	// this.setState({user: null, viewState: 'signIn'});
-}

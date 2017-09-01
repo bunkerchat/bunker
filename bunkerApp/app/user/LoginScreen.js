@@ -1,8 +1,8 @@
 import React from 'react'
 import {StatusBar, StyleSheet, View, Text, Button} from 'react-native'
-import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 import {connect} from 'react-redux'
 import {login} from './userReducer'
+import ChatWrapper from '../rooms/ChatWrapper';
 
 class LoginScreen extends React.PureComponent{
 	static navigationOptions = {
@@ -14,11 +14,15 @@ class LoginScreen extends React.PureComponent{
 		return <Text>{JSON.stringify(loggedInUser, null, 2)}</Text>
 	}
 
+	_renderChatWrapper() {
+		return <ChatWrapper/>
+	}
+
 	render(){
 		const {loggedInUser} = this.props
 
 		return <View>
-			{loggedInUser && this._renderLoggedInUser()}
+			{loggedInUser && this._renderChatWrapper()}
 			{!loggedInUser && this._renderLoginButton()}
 		</View>
 	}

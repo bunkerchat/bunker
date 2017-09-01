@@ -41,14 +41,5 @@ export const fetchInitData = dispatch => {
 	return sendSocketIoMessage('/init')
 		.then(initialData => {
 			dispatch({type:'socketio-init', ...initialData})
-			// const room = initialData.rooms[0]; //_.find(initialData.rooms, {_id: '54490412e7dde30200eb8b41'})
-      //
-			// const messages = room.$messages
-      //
-			// console.log('+++++++++++')
-			// console.log(messages[0])
 		})
-
-
-	// self.setState({bunkerConnected: true})
 }
