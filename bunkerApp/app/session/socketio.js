@@ -23,8 +23,18 @@ export const connectToServer = (cookie, cookieHeader) => async (dispatch) => {
 		_.each(socketioEvents, event =>{
 			socket.on(event, data =>{
 				data = data || {}
+
+				// socketio firing this without event sometimes, I don't know why :-(
+				const socketEvent = event || JSON.stringify(data)
+
+				// socket.io internal events are usually not objects
+				if(!_.isObject(data)){
+					data = {data}
+				}
+
 				const verb = data.verb ? `-${data.verb}` : ''
-				dispatch({type: `socketio-${event}${verb}`, ...data})
+				const action = _.assign({type: `socketio-${socketEvent}${verb}`}, data)
+				dispatch(action)
 			})
 		})
 
