@@ -96,7 +96,7 @@ module.exports.init = (req, res) => {
 
 			return Promise.map(rooms, room => {
 				return Promise.join(
-					Message.find({room: room._id}).sort('-createdAt').limit(40).lean(),
+					Message.find({room: room._id}).sort('createdAt').limit(40).lean(),
 					RoomMember.find({room: room._id}).lean(),
 					PinnedMessage.find({room: room._id}).sort('-createdAt').populate('message')
 				)

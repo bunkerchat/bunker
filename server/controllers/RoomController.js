@@ -61,7 +61,7 @@ module.exports.findOne = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	Promise.join(
 		Room.findOne(pk),
-		Message.find({room: pk}).limit(40).sort({createdAt: -1}).populate('author'),
+		Message.find({room: pk}).limit(40).populate('author'),
 		RoomMember.find({room: pk}).populate('user')
 	)
 		.spread(function (room, messages, members) {

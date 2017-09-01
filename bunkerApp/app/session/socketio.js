@@ -2,6 +2,7 @@ import base64 from 'base-64'
 import _ from 'lodash'
 import SocketIOClient from 'socket.io-client'
 import {serverUri} from '../config/configVariables'
+
 const socketioEvents = ['connect', 'room', 'user', 'roommember', 'user_roommember', 'inboxMessage', 'reconnect', 'disconnect']
 
 let socket
@@ -20,20 +21,22 @@ export const connectToServer = (cookie, cookieHeader) => async (dispatch) => {
 			resolve()
 		});
 
-		_.each(socketioEvents, event =>{
-			socket.on(event, data =>{
-				data = data || {}
+		_.each(socketioEvents, eventType => {
+			socket.on(eventType, event => {
+				event = event || {}
 
 				// socketio firing this without event sometimes, I don't know why :-(
-				const socketEvent = event || JSON.stringify(data)
+				const socketEvent = eventType || JSON.stringify(event)
 
 				// socket.io internal events are usually not objects
-				if(!_.isObject(data)){
-					data = {data}
+				if (!_.isObject(event)) {
+					event = {event: event}
 				}
 
-				const verb = data.verb ? `-${data.verb}` : ''
-				const action = _.assign({type: `socketio-${socketEvent}${verb}`}, data)
+				// split the data from the event object to flatten it a bit for the redux action
+				const {data, ..._event} = event
+				const verb = event.verb ? `-${event.verb}` : ''
+				let action = {type: `socketio-${socketEvent}${verb}`, _event, data}
 				dispatch(action)
 			})
 		})
