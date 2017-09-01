@@ -13,6 +13,7 @@ export async function getBunkerSessionCookie() {
 }
 
 export async function saveBunkerSession(cookieValue) {
+	if(!cookieValue) return
 	await AsyncStorage.setItem('bunkerSessionCookie', cookieValue);
 }
 

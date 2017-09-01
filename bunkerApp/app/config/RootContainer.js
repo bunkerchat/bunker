@@ -24,7 +24,6 @@ class RootContainer extends React.PureComponent {
 		this.props.initializeSignIn()
 	}
 
-
 	render() {
 		const {loggedInUser, signIn} = this.props
 		return <View style={styles.applicationView}>
