@@ -2,10 +2,11 @@ import {StackNavigator, addNavigationHelpers} from "react-navigation"
 import React from 'react'
 import {connect} from 'react-redux'
 import LoginScreen from '../user/LoginScreen'
+import RoomScreen from '../rooms/RoomScreen'
 
 export const AppNavigator = StackNavigator({
-	Login: {screen: LoginScreen},
-	// Chat: { screen: ChatScreen },
+	Room: {screen: RoomScreen},
+	Login: {screen: LoginScreen}
 })
 
 class AppWithNavigationState extends React.PureComponent {
