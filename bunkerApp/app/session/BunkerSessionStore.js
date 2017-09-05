@@ -32,7 +32,6 @@ async function setBunkerCookie(cookieValue) {
 }
 
 // Need to investigate why restoring cookie using react-native cookies isn't working. Until it is working,
-
 // this method doesn't do anything useful.
 async function restoreBunkerSession() {
 	const cookieValue = await AsyncStorage.getItem('bunkerSessionCookie');

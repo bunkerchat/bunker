@@ -10,6 +10,10 @@ class RootContainer extends React.PureComponent {
 
 	constructor(props) {
 		super(props)
+
+		this.state = {
+			viewState: 'loading'
+		}
 	}
 
 	componentDidMount() {
@@ -17,8 +21,7 @@ class RootContainer extends React.PureComponent {
 	}
 
 	render() {
-		const {loggedInUser, signIn} = this.props;
-
+		const {loggedInUser, signIn} = this.props
 		return <View style={styles.applicationView}>
 			<StatusBar/>
 			{loggedInUser && <AppNavigator/>}
