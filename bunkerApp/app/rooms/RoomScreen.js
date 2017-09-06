@@ -38,12 +38,7 @@ const style = StyleSheet.create({
 })
 
 const mapStateToProps = (state, props) => {
-	// when drew wires up navigation, the roomId will come in here
 	const {roomId} = props.navigation.state.params
-
-	// HACK: get the first room id
-	// const roomId = _.keys(state.room.rooms)[0]
-	// if(!roomId) return {}
 
 	const room = state.room.rooms[roomId]
 
