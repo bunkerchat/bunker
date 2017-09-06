@@ -6,9 +6,9 @@ import BunkerMessage from './BunkerMessage'
 
 class RoomScreen extends React.PureComponent {
 
-	navigationOptions = ({ navigation }) => ({
-		title: `Chat with ${navigation.state.params.user}`,
-	})
+	static navigationOptions = ({ navigation }) => ({
+		title: navigation.state.params.roomName,
+	});
 
 	// https://facebook.github.io/react-native/docs/flatlist.html
 	_keyExtractor = message => message._id
@@ -39,11 +39,11 @@ const style = StyleSheet.create({
 
 const mapStateToProps = (state, props) => {
 	// when drew wires up navigation, the roomId will come in here
-	//const {roomId} = props.navigation.state.params
+	const {roomId} = props.navigation.state.params
 
 	// HACK: get the first room id
-	const roomId = _.keys(state.room.rooms)[0]
-	if(!roomId) return {}
+	// const roomId = _.keys(state.room.rooms)[0]
+	// if(!roomId) return {}
 
 	const room = state.room.rooms[roomId]
 
