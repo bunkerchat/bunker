@@ -1,16 +1,16 @@
 import React from 'react'
-import {FlatList, StyleSheet, View, Text, TouchableHighlight} from 'react-native'
+import {StyleSheet, View, Text, TouchableHighlight} from 'react-native'
 import {connect} from 'react-redux'
 import {NavigationActions} from 'react-navigation'
 
 class RoomItem extends React.PureComponent {
 
-	_onPress() {
+	_onPress = () => {
 		this.props.onPressItem(this.props.id, this.props.name);
-	}
+	};
 
 	render() {
-		return <TouchableHighlight onPress={this._onPress.bind(this)}><Text>{this.props.name}</Text></TouchableHighlight>
+		return <TouchableHighlight onPress={this._onPress} style={style.roomItem}><Text>{this.props.name}</Text></TouchableHighlight>
 	}
 }
 
@@ -20,7 +20,7 @@ class RoomSelector extends React.PureComponent {
 		title: 'Rooms',
 	})
 
-	_onPressItem(id, roomName) {
+	_onPressItem = (id, roomName) => {
 		this.props.navigation.dispatch(NavigationActions.navigate({
 			routeName: 'Room',
 			params: {
@@ -28,29 +28,31 @@ class RoomSelector extends React.PureComponent {
 				roomName
 			}
 		}));
-	}
-
-	_keyExtractor = room => room._id
-	_renderItem = ({item, separators}) => <RoomItem name={item.name} onPressItem={this._onPressItem.bind(this)} id={item._id} />
-	_itemSeperator = () => <View style={style.separator} />
+	};
 
 	render() {
 		const {rooms} = this.props
-		// Flat list might not be the best for this view.
-		return <View style={style.roomsContainer}>
-			{rooms && <FlatList
-				data={rooms}
-				keyExtractor={this._keyExtractor}
-				renderItem={this._renderItem}
-				ItemSeparatorComponent = {this._itemSeperator}
-			/>}
-			{!rooms && <Text>Loading!</Text>}
-		</View>
+
+		if (rooms && rooms.length) {
+			return <View style={style.roomsContainer}>
+				{rooms.map(x => <RoomItem key={x._id} name={x.name} onPressItem={this._onPressItem} id={x._id} />)}
+			</View>
+		}
+
+		return <View style={style.roomsContainer} />;
 	}
 }
 
 const style = StyleSheet.create({
-	roomsContainer: {},
+	roomsContainer: {
+		flex: 1,
+		flexDirection: 'column'
+	},
+	roomItem: {
+		justifyContent: 'center',
+		height: 46,
+		paddingLeft: 10,
+	},
 	separator:{
 		marginVertical: 5,
 		borderTopColor: 'gray',

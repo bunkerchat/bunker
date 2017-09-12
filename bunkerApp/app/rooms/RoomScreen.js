@@ -1,5 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
 import {FlatList, StatusBar, StyleSheet, View, Text, Button} from 'react-native'
 import {connect} from 'react-redux'
 import BunkerMessage from './BunkerMessage'
@@ -19,6 +18,7 @@ class RoomScreen extends React.PureComponent {
 		const {messages} = this.props
 		return <View style={style.roomContainer}>
 			<FlatList
+				inverted
 				data={messages}
 				keyExtractor={this._keyExtractor}
 				renderItem={this._renderItem}

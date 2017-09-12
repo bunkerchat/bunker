@@ -8,10 +8,6 @@ const INITIAL_STATE = Immutable({
 const reducer = {}
 
 reducer['socketio-init'] = (state, {rooms}) => {
-	_.each(rooms, room =>{
-		room.$messages = _.orderBy(room.$messages, ['createdAt'], ['asc'])
-	})
-
 	return state.merge({rooms: _.keyBy(rooms, '_id')})
 }
 
@@ -23,7 +19,7 @@ reducer['socketio-room-messaged'] = (state, {data}) => {
 	if (message.edited) {
 
 	} else {
-		const $messages = room.$messages.concat(message)
+		const $messages = [message, ...room.$messages]
 		return state.setIn(['rooms',roomId,'$messages'], $messages)
 	}
 }
