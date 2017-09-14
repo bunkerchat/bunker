@@ -496,7 +496,7 @@ function trump(roomMember) {
 			room: roomMember.room,
 			author: null,
 			type: '8ball',
-			text: `:trump: ${response}`
+			text: `:trump: ${_.shuffle(response.split(' ')).join(' ')}`
 		})
 			.then(broadcastMessage);
 	}, 3000);
