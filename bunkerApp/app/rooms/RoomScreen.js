@@ -1,5 +1,5 @@
 import React from 'react'
-import {FlatList, StatusBar, StyleSheet, View, Text, Button} from 'react-native'
+import {FlatList, KeyboardAvoidingView, StyleSheet, View, TextInput, Button} from 'react-native'
 import {connect} from 'react-redux'
 import BunkerMessage from './BunkerMessage'
 
@@ -16,20 +16,37 @@ class RoomScreen extends React.PureComponent {
 
 	render() {
 		const {messages} = this.props
-		return <View style={style.roomContainer}>
-			<FlatList
-				inverted
-				data={messages}
-				keyExtractor={this._keyExtractor}
-				renderItem={this._renderItem}
-				ItemSeparatorComponent = {this._itemSeperator}
+		return <KeyboardAvoidingView
+				style={style.roomContainer}
+				behavior={'position'}
+				contentContainerStyle={{flex: 1}}
+				keyboardVerticalOffset={64}>
+			{/* hack to offset the navigation bar. See https://github.com/facebook/react-native/issues/13393 */}
+
+			<View style={style.messageList}>
+				<FlatList
+					inverted
+					data={messages}
+					keyExtractor={this._keyExtractor}
+					renderItem={this._renderItem}
+					ItemSeparatorComponent = {this._itemSeperator}
+				/>
+			</View>
+			<TextInput
+				style={{flex: 1, borderColor: 'gray', borderWidth: 1}}
+				keyboardType={'default'}
 			/>
-		</View>
+		</KeyboardAvoidingView>
 	}
 }
 
 const style = StyleSheet.create({
-	roomContainer: {},
+	roomContainer: {
+		flex: 1
+	},
+	messageList: {
+		flex: 15
+	},
 	separator:{
 		marginVertical: 5,
 		borderTopColor: 'gray',
