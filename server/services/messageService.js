@@ -490,7 +490,7 @@ function trump(roomMember) {
 		`A lot of call-ins about vote flipping at the voting booths in Texas. People are not happy. BIG lines. What is going on?`,
 		`We’ve got to be nice and cool nice and calm. All right stay on point Donald. Stay on point. No sidetracks Donald. Nice and easy.`
 	]);
-	const to = 'userself_' + roomMember.user._id;
+
 	setTimeout(function () {
 		return Message.create({
 			room: roomMember.room,
@@ -498,11 +498,11 @@ function trump(roomMember) {
 			type: 'trump',
 			text: `:trump: ${response}`
 		})
-			.then(message => broadcastMessage(message, to));
+			.then(broadcastMessage);
 	}, 3000);
 
 	const question = ' asks Trump what he thinks on this topic';
-	return message(roomMember, roomMember.user.nick + question, 'room', to);
+	return message(roomMember, roomMember.user.nick + question, 'room');
 }
 
 function meme(roomMember, text) {
@@ -570,7 +570,7 @@ function me(roomMember, text) {
 	return message(roomMember, roomMember.user.nick + text.substring(3), 'emote');
 }
 
-function message(roomMember, text, type, to) {
+function message(roomMember, text, type) {
 
 	type = type || 'standard';
 
@@ -581,17 +581,17 @@ function message(roomMember, text, type, to) {
 		text: text
 	})
 		.then(function (message) {
-			broadcastMessage(message, to);
+			broadcastMessage(message);
 			saveInMentionedInboxes(message);
 			return populateMessage(message);
 		});
 }
 
-function broadcastMessage(message, to) {
+function broadcastMessage(message) {
 	return Message.findById(message._id)
 		.populate('author')
 		.then(function (message) {
-			socketio.io.to(to || 'room_' + message.room)
+			socketio.io.to('room_' + message.room)
 				.emit('room', {
 					_id: message.room,
 					verb: 'messaged',
