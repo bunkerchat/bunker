@@ -11,7 +11,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 
 			function atBottomOfPage(height) {
 				height = height || 0;
-				return el.scrollTop + el.clientHeight + tolerance - height  >= el.scrollHeight;
+				return el.scrollTop + el.clientHeight + tolerance + height  >= el.scrollHeight;
 			}
 
 			$rootScope.$on('bunkerMessaged', function (evt, message) {
