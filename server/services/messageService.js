@@ -495,7 +495,7 @@ function trump(roomMember) {
 		return Message.create({
 			room: roomMember.room,
 			author: null,
-			type: '8ball',
+			type: 'trump',
 			text: `:trump: ${response}`
 		})
 			.then(broadcastMessage);

@@ -23,6 +23,7 @@ var messageSchema = new mongoose.Schema({
 			'help',
 			'roll',
 			'8ball',
+			'trump',
 			'animation',
 			'buildNotification',
 			'hangman',

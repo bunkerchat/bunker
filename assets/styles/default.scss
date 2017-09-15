@@ -540,7 +540,8 @@ li:not(:last-child) .message.last-read:after {
 
 // message type specific styles
 
-.message.message-type-8ball [bunker-message] {
+.message.message-type-8ball [bunker-message],
+.message.message-type-trump [bunker-message] {
 	-webkit-animation: fadein 2.5s; /* Safari, Chrome and Opera > 12.1 */
 	-moz-animation: fadein 2.5s; /* Firefox < 16 */
 	-o-animation: fadein 2.5s; /* Opera < 12.1 */
