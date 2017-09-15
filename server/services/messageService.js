@@ -52,9 +52,9 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/magic8ball/i.test(text)) {
 		return magic8ball(roomMember, text); // Jordan's Magic 8 Ball, Bitches
 	}
-	else if (/^\/trump/i.test(text)) {
-		return trump(roomMember);
-	}
+	// else if (/^\/trump/i.test(text)) {
+	// 	return trump(roomMember);
+	// }
 	else if (/^\/roll/i.test(text)) {
 		return roll(roomMember, text);
 	}
