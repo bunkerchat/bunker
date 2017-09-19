@@ -2,6 +2,7 @@ import React from 'react'
 import {FlatList, KeyboardAvoidingView, StyleSheet, View, TextInput, Button} from 'react-native'
 import {connect} from 'react-redux'
 import BunkerMessage from './BunkerMessage'
+import MessageBox from './MessageBox'
 
 class RoomScreen extends React.PureComponent {
 
@@ -32,17 +33,15 @@ class RoomScreen extends React.PureComponent {
 					ItemSeparatorComponent = {this._itemSeperator}
 				/>
 			</View>
-			<TextInput
-				style={{flex: 1, borderColor: 'gray', borderWidth: 1}}
-				keyboardType={'default'}
-			/>
+			<MessageBox />
 		</KeyboardAvoidingView>
 	}
 }
 
 const style = StyleSheet.create({
 	roomContainer: {
-		flex: 1
+		flex: 1,
+		backgroundColor: '#EEE'
 	},
 	messageList: {
 		flex: 15
@@ -65,6 +64,4 @@ const mapStateToProps = (state, props) => {
 	}
 }
 
-const actions = {}
-
-export default connect(mapStateToProps, actions)(RoomScreen)
+export default connect(mapStateToProps, {})(RoomScreen)
