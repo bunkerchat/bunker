@@ -1,12 +1,24 @@
 import React from 'react'
 import {StyleSheet, View, TextInput, Button} from 'react-native'
 import {connect} from 'react-redux'
-import BunkerMessage from './BunkerMessage'
+import {sendMessage} from './messageThunks'
 
 class MessageBox extends React.PureComponent {
 
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			text: null
+		};
+	}
+
+	// Curious if all this should use redux or no...?
 	sendPress = () => {
-		console.log('sent')
+		// this returns a promise but we don't care about the result for now. Would need to be different if
+		// we cared about errors maybe???
+		this.props.sendMessage(this.props.roomId, this.state.text);
+		this.setState({text: null})
 	};
 
 	render() {
@@ -16,6 +28,8 @@ class MessageBox extends React.PureComponent {
 					keyboardType={'default'}
 					placeholder="Type a message..."
 					placeholderTextColor="#BCBCBC"
+					onChangeText={(text) => this.setState({text})}
+					value={this.state.text}
 				/>
 				<Button title="Send" onPress={this.sendPress} />
 			</View>
@@ -37,4 +51,4 @@ const style = StyleSheet.create({
 	}
 });
 
-export default MessageBox
+export default connect(null, {sendMessage})(MessageBox)

@@ -2,7 +2,7 @@ import React from 'react'
 import {FlatList, KeyboardAvoidingView, StyleSheet, View, TextInput, Button} from 'react-native'
 import {connect} from 'react-redux'
 import BunkerMessage from './BunkerMessage'
-import MessageBox from './MessageBox'
+import MessageToolbar from './MessageToolbar'
 
 class RoomScreen extends React.PureComponent {
 
@@ -16,7 +16,7 @@ class RoomScreen extends React.PureComponent {
 	_itemSeperator = () => <View style={style.separator} />
 
 	render() {
-		const {messages} = this.props
+		const {messages, room} = this.props
 		return <KeyboardAvoidingView
 				style={style.roomContainer}
 				behavior={'position'}
@@ -33,7 +33,7 @@ class RoomScreen extends React.PureComponent {
 					ItemSeparatorComponent = {this._itemSeperator}
 				/>
 			</View>
-			<MessageBox />
+			<MessageToolbar roomId={room._id} />
 		</KeyboardAvoidingView>
 	}
 }
