@@ -99,5 +99,3 @@ $("body").on("click", "[room] img.emoticon", function (evt) {
 	emoticon.after(`<span>${original}</span>`);
 	emoticon.remove();
 });
-
-//putting a comment here to cache bust the templates.js :-(
