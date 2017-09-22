@@ -1,5 +1,6 @@
 var Promise = require('bluebird');
 //var fs = Promise.promisifyAll(require('fs'));
+const request = require('request')
 
 var config = require('../config/config');
 var UserSettings = require('../models/UserSettings');
@@ -60,3 +61,8 @@ viewController.logout = function (req, res) {
 	req.session.destroy();
 	res.redirect('/login');
 };
+
+viewController.image = (req, res) => {
+	if(!req.params.imgurl) return res.ok()
+	req.pipe(request(decodeURIComponent(req.params.imgurl))).pipe(res)
+}

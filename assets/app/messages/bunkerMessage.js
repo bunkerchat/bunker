@@ -282,9 +282,14 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
 						// Image link
 						toggleLink(link);
+
+						const wrappedLink = bunkerData.userSettings.bunkerServesImages
+							? `/api/image/${encodeURIComponent(link)}`
+							: link
+
 						attachedMedia = `
-						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
-							<img ng-src="${link}" imageonload/>
+						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${wrappedLink}">
+							<img ng-src="${wrappedLink}" imageonload/>
 						</div>`
 					}
 				});
@@ -310,14 +315,14 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 });
 
 
-app.directive('imageonload', function($rootScope) {
+app.directive('imageonload', function ($rootScope) {
 	return {
 		restrict: 'A',
-		link: function(scope, element, attrs) {
-			element.bind('load', function() {
+		link: function (scope, element, attrs) {
+			element.bind('load', function () {
 				$rootScope.$broadcast('messageImageLoaded', {height: this.height})
 			});
-			element.bind('error', function(){
+			element.bind('error', function () {
 				console.log('image could not be loaded');
 			});
 		}

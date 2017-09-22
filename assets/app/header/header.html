@@ -78,6 +78,12 @@
 							</a>
 						</li>
 						<li role="presentation">
+							<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('bunkerServesImages')">
+								<i class="fa {{header.settings.bunkerServesImages ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+								Bunker serves all images
+							</a>
+						</li>
+						<li role="presentation">
 							<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('minimalView')">
 								<i class="fa {{header.settings.minimalView ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
 								Use Minimalist UI

@@ -35,6 +35,9 @@ module.exports.http = function (app) {
 
 	// Basic Login
 	app.post('/api/user/loginbasic', auth.authenicateLocal);
+
+	// proxy images
+	app.get('/api/image/:imgurl', viewController.image)
 };
 
 module.exports.socketio = function (socket) {
