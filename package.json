@@ -62,7 +62,7 @@
     "start": "node app.js",
     "debug": "node debug app.js",
     "postinstall": "node node_modules/bower/bin/bower install && node node_modules/gulp/bin/gulp.js sass",
-    "deploy": "npm prune && npm cache clean && npm install && node node_modules/gulp/bin/gulp.js && forever restart app.js"
+    "deploy": "npm prune && npm install && gulp && forever restart app.js"
   },
   "main": "app.js",
   "repository": {
