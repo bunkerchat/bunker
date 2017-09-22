@@ -193,11 +193,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
 
 				// do no media on mobile
-				const isAndroid = _.includes(navigator.appVersion, 'Android')
-				const isIphone = _.includes(navigator.appVersion, 'iPhone')
-				if (isAndroid || isIphone) {
-					shouldParseMedia = false
-				}
+				const onMobile = _.includes(navigator.appVersion, 'Android')
+					|| _.includes(navigator.appVersion, 'iPhone')
 
 				// Parse links
 				var attachedMedia;
@@ -212,6 +209,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 					// Only parse media (images, youtube) if asked to
 					if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
+						if(onMobile) return text
+
 						var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
 						var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
 						toggleLink(link);
@@ -224,6 +223,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 							</div>`;
 					}
 					else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
+						if(onMobile) return text
+
 						toggleLink(link);
 						attachedMedia = `
 							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
@@ -283,8 +284,10 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						// Image link
 						toggleLink(link);
 
-						const wrappedLink = bunkerData.userSettings.bunkerServesImages
-							? `/api/image/${encodeURIComponent(link)}`
+						const mobileParam = onMobile ? '?small=true' : ''
+
+						const wrappedLink = (onMobile || bunkerData.userSettings.bunkerServesImages)
+							? `/api/image/${encodeURIComponent(link)}${mobileParam}`
 							: link
 
 						attachedMedia = `

@@ -1,6 +1,7 @@
 var Promise = require('bluebird');
 //var fs = Promise.promisifyAll(require('fs'));
 const request = require('request')
+const sharp = require('sharp')
 
 var config = require('../config/config');
 var UserSettings = require('../models/UserSettings');
@@ -63,6 +64,12 @@ viewController.logout = function (req, res) {
 };
 
 viewController.image = (req, res) => {
-	if(!req.params.imgurl) return res.ok()
-	req.pipe(request(decodeURIComponent(req.params.imgurl))).pipe(res)
+	if (!req.params.imgurl) return res.ok()
+
+	const resize = sharp()
+	// don't crash server on error
+		.on('error', err => res.ok())
+		.resize(400)
+
+	req.pipe(request(decodeURIComponent(req.params.imgurl))).pipe(resize).pipe(res)
 }
