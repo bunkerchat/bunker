@@ -5,8 +5,15 @@ var UserSettings = require('./../models/UserSettings');
 var RoomMember = require('./../models/RoomMember');
 var Room = require('./../models/Room');
 
+const crypto = require('crypto');
+
 userService.pendingTasks = {};
 userService.connectionUpdateWaitSeconds = 15;
+
+const userEmailToGravatarMd5 = function(userEmail) {
+	const normalizedUserEmail = userEmail && userEmail.trim().toLowerCase();
+	return crypto.createHash('md5').update(normalizedUserEmail).digest('hex');
+};
 
 userService.findOrCreateBunkerUser = function (profile) {
 	var email = profile.emails[0].value;
@@ -45,7 +52,8 @@ userService.findOrCreateBunkerUser = function (profile) {
 			//token: accessToken,
 			// when no display name, get everything before @ in email
 			nick: (profile.displayName || email.replace(/@.*/, "")).substr(0, 20),
-			email: email
+			email: email,
+			gravatarMd5: userEmailToGravatarMd5(email)
 		});
 
 		user.settings = new UserSettings({user: user});
@@ -55,6 +63,17 @@ userService.findOrCreateBunkerUser = function (profile) {
 				return user.save();
 			});
 	}
+};
+
+userService.updateGravatarMd5ForUsers = function() {
+
+	// use this to reset for testing purposes: User.update({}, {gravatarMd5: null}, {multi: true})
+
+	return User.find({ gravatarMd5: null }).then(users => {
+		return Promise.map(users, user => {
+			return User.update({_id: user._id}, {gravatarMd5: userEmailToGravatarMd5(user.email)});
+		});
+	});
 };
 
 userService.disconnectSocket = function (socket) {

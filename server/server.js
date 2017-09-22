@@ -30,6 +30,8 @@ var url = require('url');
 var User = require('./models/User');
 var Room = require('./models/Room');
 
+const userService = require('./services/userService');
+
 module.exports.run = function (cb) {
 
 	log.info('server - Starting "' + config.environment + '"');
@@ -108,6 +110,7 @@ function connectToMongoose() {
 function startup(){
 	return Promise.join(
 		User.update({}, {typingIn: null}, { multi: true }),
+		userService.updateGravatarMd5ForUsers(),
 		ensureFirstRoom()
 	)
 }

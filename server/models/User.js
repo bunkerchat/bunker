@@ -36,6 +36,10 @@ var userSchema = new mongoose.Schema({
 		type: String,
 		defaultsTo: null
 	},
+	gravatarMd5: {
+		type: String,
+		defaultsTo: null
+	},
 	settings: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'UserSettings'
