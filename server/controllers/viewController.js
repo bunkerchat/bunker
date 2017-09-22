@@ -71,5 +71,11 @@ viewController.image = (req, res) => {
 		.on('error', err => res.ok())
 		.resize(400)
 
-	req.pipe(request(decodeURIComponent(req.params.imgurl))).pipe(resize).pipe(res)
+	let requestPipe = req.pipe(request(decodeURIComponent(req.params.imgurl)))
+
+	if (req.query.small) {
+		requestPipe = requestPipe.pipe(resize)
+	}
+
+	requestPipe.pipe(res)
 }
