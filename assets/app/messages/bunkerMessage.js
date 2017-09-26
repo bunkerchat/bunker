@@ -197,13 +197,13 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					|| _.includes(navigator.appVersion, 'iPhone')
 
 				// if user turns off link meta, replace meta object with empty object
-				const {image, title, url} = bunkerData.userSettings.linkPreview ? (scope.bunkerMessage.linkMeta || {}) : {}
+				const linkMeta = bunkerData.userSettings.linkPreview ? (scope.bunkerMessage.linkMeta || {}) : {}
 
 				// Parse links
 				var attachedMedia;
 				const links = [...text.match(/https?:\/\/\S+/gi)]
-				if (image) {
-					links.push(image)
+				if (linkMeta.image) {
+					links.push(linkMeta.image)
 				}
 
 				_.each(links, function (link) {
@@ -291,7 +291,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
 						// Image link
 						toggleLink(link);
-						toggleLink(url);
+						toggleLink(linkMeta.url);
 
 						const mobileParam = onMobile ? '?small=true' : ''
 
@@ -299,8 +299,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 							? `/api/image/${encodeURIComponent(link)}${mobileParam}`
 							: link
 
-						const titleHtml = title ? `<h5>${title}</h5>` : ''
-						const previewImageCss = link ? 'image-preview' : ''
+						const titleHtml = linkMeta.title ? `<h5>${linkMeta.title}</h5>` : ''
+						const previewImageCss = linkMeta.image ? 'image-preview' : ''
 
 						attachedMedia = `
 						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${wrappedLink}">
