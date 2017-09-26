@@ -1,3 +1,5 @@
+const messageService = module.exports;
+
 const ent = require('ent');
 const socketio = require('../config/socketio');
 
@@ -16,10 +18,7 @@ const fightService = require('./fightService');
 const animationService = require('./animationService')
 const userService = require('./userService')
 
-const ForbiddenError = require('../errors/ForbiddenError');
 const InvalidInputError = require('../errors/InvalidInputError');
-
-const messageService = module.exports;
 
 messageService.createMessage = function (roomMember, text) {
 
@@ -72,7 +71,7 @@ messageService.createMessage = function (roomMember, text) {
 		return gif(roomMember, text);
 	}
 	else if (/^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.test(text)) {
-		return changeUserRole(roomMember, text);
+		return userService.changeUserRole(roomMember, text);
 	}
 	else if (/^\/setinfo\s+/i.test(text)) {
 		return userService.setInfo(roomMember, text);
@@ -100,7 +99,20 @@ messageService.createMessage = function (roomMember, text) {
 	}
 };
 
-messageService.broadcastMessage = broadcastMessage;
+function broadcastMessage(message) {
+	return Message.findById(message._id)
+		.populate('author')
+		.then(function (message) {
+			socketio.io.to('room_' + message.room)
+				.emit('room', {
+					_id: message.room,
+					verb: 'messaged',
+					data: message
+				});
+		});
+}
+
+messageService.broadcastMessage = broadcastMessage
 
 function getHelp(roomMember, text) {
 	return helpService.getHelp(text)
@@ -277,19 +289,6 @@ function message(roomMember, text, type) {
 		});
 }
 
-function broadcastMessage(message) {
-	return Message.findById(message._id)
-		.populate('author')
-		.then(function (message) {
-			socketio.io.to('room_' + message.room)
-				.emit('room', {
-					_id: message.room,
-					verb: 'messaged',
-					data: message
-				});
-		});
-}
-
 function populateMessage(message) {
 	return Message.findById(message._id)
 		.lean()
@@ -395,45 +394,5 @@ function hangman(roomMember, text) {
 			}
 
 			return message(roomMember, hangmanResponse.message, 'hangman');
-		});
-}
-
-function changeUserRole(roomMember, text) {
-	if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change to promote');
-
-	var newRole;
-	const user = roomMember.user;
-	const roomId = roomMember.room;
-
-	const match = /^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.exec(text);
-	const action = match[1];
-	const userNick = match[2];
-
-	if (user.nick === userNick) throw new InvalidInputError('You cannot promote or demote yourself');
-
-	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
-		.then(function (roomMemberToPromote) {
-			if (!roomMemberToPromote) throw new InvalidInputError('Could not find user ' + userNick);
-
-			if (action === 'promote') {
-				newRole = roomMemberToPromote.role === 'member' ? 'moderator' : 'administrator';
-			}
-			else { // demote
-				newRole = roomMemberToPromote.role === 'administrator' ? 'moderator' : 'member';
-			}
-
-			return RoomMember.findByIdAndUpdate(roomMemberToPromote._id, {role: newRole}, {new: true});
-		})
-		.then(function (promotedMember) {
-
-			socketio.io.to('roommember_' + promotedMember._id)
-				.emit('roommember', {
-					_id: promotedMember._id,
-					verb: 'updated',
-					data: {role: newRole}
-				});
-
-			const message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
-			RoomService.messageRoom(roomId, message);
 		});
 }

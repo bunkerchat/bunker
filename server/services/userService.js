@@ -7,6 +7,7 @@ const socketio = require('../config/socketio');
 const RoomService = require('./RoomService');
 
 const InvalidInputError = require('../errors/InvalidInputError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 userService.pendingTasks = {};
 userService.connectionUpdateWaitSeconds = 15;
@@ -62,7 +63,7 @@ userService.findOrCreateBunkerUser = function (profile) {
 
 userService.disconnectSocket = function (socket) {
 	return User.findOne({sockets: {$elemMatch: {socketId: socket.id}}})
-		.then(user=> userService.disconnectUser(user, socket.id));
+		.then(user => userService.disconnectUser(user, socket.id));
 };
 
 userService.disconnectUser = function (user, socketIds) {
@@ -177,3 +178,44 @@ userService.whois = (roomMember, text) => {
 			RoomService.messageRoom(roomId, message);
 		});
 }
+
+userService.changeUserRole = (roomMember, text) => {
+	if (roomMember.role !== 'administrator') throw new ForbiddenError('Must be an administrator to change to promote');
+
+	var newRole;
+	const user = roomMember.user;
+	const roomId = roomMember.room;
+
+	const match = /^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.exec(text);
+	const action = match[1];
+	const userNick = match[2];
+
+	if (user.nick === userNick) throw new InvalidInputError('You cannot promote or demote yourself');
+
+	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
+		.then(function (roomMemberToPromote) {
+			if (!roomMemberToPromote) throw new InvalidInputError('Could not find user ' + userNick);
+
+			if (action === 'promote') {
+				newRole = roomMemberToPromote.role === 'member' ? 'moderator' : 'administrator';
+			}
+			else { // demote
+				newRole = roomMemberToPromote.role === 'administrator' ? 'moderator' : 'member';
+			}
+
+			return RoomMember.findByIdAndUpdate(roomMemberToPromote._id, {role: newRole}, {new: true});
+		})
+		.then(function (promotedMember) {
+
+			socketio.io.to('roommember_' + promotedMember._id)
+				.emit('roommember', {
+					_id: promotedMember._id,
+					verb: 'updated',
+					data: {role: newRole}
+				});
+
+			const message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
+			RoomService.messageRoom(roomId, message);
+		});
+}
+
