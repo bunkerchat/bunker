@@ -1,16 +1,19 @@
-var userService = module.exports;
+const userService = module.exports;
+const User = require('./../models/User');
+const UserSettings = require('./../models/UserSettings');
+const RoomMember = require('./../models/RoomMember');
+const Room = require('./../models/Room');
+const socketio = require('../config/socketio');
+const RoomService = require('./RoomService');
 
-var User = require('./../models/User');
-var UserSettings = require('./../models/UserSettings');
-var RoomMember = require('./../models/RoomMember');
-var Room = require('./../models/Room');
+const InvalidInputError = require('../errors/InvalidInputError');
 
 userService.pendingTasks = {};
 userService.connectionUpdateWaitSeconds = 15;
 
 userService.findOrCreateBunkerUser = function (profile) {
-	var email = profile.emails[0].value;
-	var user;
+	const email = profile.emails[0].value;
+	let user;
 
 	return User.findOne({email: email})
 		.then(function (dbUser) {
@@ -41,7 +44,7 @@ userService.findOrCreateBunkerUser = function (profile) {
 		});
 
 	function createNewUser() {
-		var user = new User({
+		const user = new User({
 			//token: accessToken,
 			// when no display name, get everything before @ in email
 			nick: (profile.displayName || email.replace(/@.*/, "")).substr(0, 20),
@@ -73,7 +76,7 @@ userService.disconnectUser = function (user, socketIds) {
 		_.remove(user.sockets, {socketId: socketId});
 	});
 
-	var connected = user.sockets.length > 0;
+	const connected = user.sockets.length > 0;
 
 	// This code looks strange because:
 	// 1: findByIdAndUpdate was not returning a promise
@@ -90,7 +93,7 @@ userService.disconnectUser = function (user, socketIds) {
 		.then(() => {
 			if (connected) return;
 
-			var io = require('../config/socketio').io;
+			const io = require('../config/socketio').io;
 			io.to('user_' + user._id).emit('user', {
 				_id: user._id,
 				verb: 'updated',
@@ -99,3 +102,78 @@ userService.disconnectUser = function (user, socketIds) {
 		});
 };
 
+userService.setUserNick = (roomMember, text) => {
+	const nickMatches = text.match(/^\/nick\s+([\w\s\-\.]{0,19})/i);
+	if (!nickMatches || !nickMatches[1]) throw new InvalidInputError('Invalid nick');
+
+	const user = roomMember.user;
+	const newNick = nickMatches[1];
+	if (user.nick === newNick) throw new InvalidInputError('Nick is already set');
+
+	return Promise.join(
+		User.findByIdAndUpdate(user._id, {nick: newNick}, {new: true}),
+		RoomMember.find({user: user._id})
+	)
+		.spread(function (updatedUser, memberships) {
+			socketio.io.to('user_' + updatedUser._id)
+				.emit('user', {
+					_id: updatedUser._id,
+					verb: 'updated',
+					data: {nick: updatedUser.nick}
+				});
+			RoomService.messageRooms(_.map(memberships, 'room'), user.nick + ' changed their handle to ' + updatedUser.nick);
+		});
+}
+
+userService.setInfo = (roomMember, text) => {
+	const infoMatch = text.match(/\/setinfo\s+(.+)/i);
+	const info = infoMatch[1].substring(0, 50);
+	const user = roomMember.user;
+
+	return Promise.join(
+		User.findByIdAndUpdate(user._id, {description: info}, {new: true}),
+		RoomMember.find({user: user._id})
+	)
+		.spread(function (updatedUser, memberships) {
+			socketio.io.to('user_' + updatedUser._id)
+				.emit('user', {
+					_id: updatedUser._id,
+					verb: 'updated',
+					data: {description: updatedUser.description}
+				});
+			RoomService.messageRooms(_.map(memberships, 'room'), updatedUser.nick + ' updated their whois info');
+		});
+}
+
+userService.whois = (roomMember, text) => {
+	const nickMatches = text.match(/^\/whois\s+([\w\s\-\.]{0,19})/i);
+	const userNick = nickMatches[1];
+	const roomId = roomMember.room;
+
+	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
+		.then(function (whoisUser) {
+			if (!whoisUser) throw new InvalidInputError('Could not find user ' + userNick);
+			const userEmail = whoisUser.user.email;
+			const userDescription = whoisUser.user.description;
+			let message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- ";
+
+			if (!userDescription) {
+				message += "User has not set their info";
+			} else {
+				message += userDescription;
+			}
+
+
+			if (userEmail === "peter.brejcha@gmail.com") {
+				message += " :petesux:";
+			} else if (userEmail === "jprodahl@gmail.com") {
+				message += " :joshsux:";
+			} else if (userEmail === "polaris878@gmail.com") {
+				message += " :drewsux:";
+			} else if (userEmail === "alexandergmann@gmail.com") {
+				message += " :glensux:";
+			}
+
+			RoomService.messageRoom(roomId, message);
+		});
+}

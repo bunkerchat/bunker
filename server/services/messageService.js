@@ -5,7 +5,6 @@ const socketio = require('../config/socketio');
 
 const Message = require('../models/Message');
 const User = require('../models/User');
-const Room = require('../models/Room');
 const RoomMember = require('../models/RoomMember');
 const InboxMessage = require('../models/InboxMessage');
 
@@ -18,6 +17,7 @@ const hangmanService = require('./hangmanService');
 const pollService = require('./pollService');
 const fightService = require('./fightService');
 const animationService = require('./animationService')
+const userService = require('./userService')
 
 const ForbiddenError = require('../errors/ForbiddenError');
 const InvalidInputError = require('../errors/InvalidInputError');
@@ -32,7 +32,8 @@ messageService.createMessage = function (roomMember, text) {
 		throw new InvalidInputError(); // block the trolls
 	}
 	else if (/^\/nick\s+/i.test(text)) {
-		return setUserNick(roomMember, text); // Change the current user's nick
+		// Change the current user's nick
+		return userService.setUserNick(roomMember, text);
 	}
 	else if (/^\/(away|afk|busy)/i.test(text)) {
 		return setUserBusy(roomMember, text); // away, afk, busy (with optional message)
@@ -80,10 +81,10 @@ messageService.createMessage = function (roomMember, text) {
 		return changeUserRole(roomMember, text);
 	}
 	else if (/^\/setinfo\s+/i.test(text)) {
-		return setInfo(roomMember, text);
+		return userService.setInfo(roomMember, text);
 	}
 	else if (/^\/whois\s+/i.test(text)) {
-		return whois(roomMember, text);
+		return userService.whois(roomMember, text);
 	}
 	else if (/^\/poll?(?:\s+(.+)?|$)/i.test(text)) {
 		return poll(roomMember, text);
@@ -138,29 +139,6 @@ function stats(roomMember, text) {
 function animation(roomMember, text) {
 	const {words, emoticon} = animationService.getWordsToAnimate(text)
 	RoomService.animateInRoom(roomMember, emoticon, words);
-}
-
-function setUserNick(roomMember, text) {
-	const nickMatches = text.match(/^\/nick\s+([\w\s\-\.]{0,19})/i);
-	if (!nickMatches || !nickMatches[1]) throw new InvalidInputError('Invalid nick');
-
-	const user = roomMember.user;
-	const newNick = nickMatches[1];
-	if (user.nick === newNick) throw new InvalidInputError('Nick is already set');
-
-	return Promise.join(
-		User.findByIdAndUpdate(user._id, {nick: newNick}, {new: true}),
-		RoomMember.find({user: user._id})
-	)
-		.spread(function (updatedUser, memberships) {
-			socketio.io.to('user_' + updatedUser._id)
-				.emit('user', {
-					_id: updatedUser._id,
-					verb: 'updated',
-					data: {nick: updatedUser.nick}
-				});
-			RoomService.messageRooms(_.map(memberships, 'room'), user.nick + ' changed their handle to ' + updatedUser.nick);
-		});
 }
 
 function setUserBusy(roomMember, text) {
@@ -492,59 +470,6 @@ function leaderboard(roomMember, text) {
 			})
 				.then(broadcastMessage);
 		})
-}
-
-function setInfo(roomMember, text) {
-	const infoMatch = text.match(/\/setinfo\s+(.+)/i);
-	const info = infoMatch[1].substring(0, 50);
-	const user = roomMember.user;
-
-	return Promise.join(
-		User.findByIdAndUpdate(user._id, {description: info}, {new: true}),
-		RoomMember.find({user: user._id})
-	)
-		.spread(function (updatedUser, memberships) {
-			socketio.io.to('user_' + updatedUser._id)
-				.emit('user', {
-					_id: updatedUser._id,
-					verb: 'updated',
-					data: {description: updatedUser.description}
-				});
-			RoomService.messageRooms(_.map(memberships, 'room'), updatedUser.nick + ' updated their whois info');
-		});
-}
-
-function whois(roomMember, text) {
-	const nickMatches = text.match(/^\/whois\s+([\w\s\-\.]{0,19})/i);
-	const userNick = nickMatches[1];
-	const roomId = roomMember.room;
-
-	return RoomService.getRoomMemberByNickAndRoom(userNick, roomId)
-		.then(function (whoisUser) {
-			if (!whoisUser) throw new InvalidInputError('Could not find user ' + userNick);
-			const userEmail = whoisUser.user.email;
-			const userDescription = whoisUser.user.description;
-			var message = "Whois " + whoisUser.user.nick + ": " + userEmail + " -- ";
-
-			if (!userDescription) {
-				message += "User has not set their info";
-			} else {
-				message += userDescription;
-			}
-
-
-			if (userEmail === "peter.brejcha@gmail.com") {
-				message += " :petesux:";
-			} else if (userEmail === "jprodahl@gmail.com") {
-				message += " :joshsux:";
-			} else if (userEmail === "polaris878@gmail.com") {
-				message += " :drewsux:";
-			} else if (userEmail === "alexandergmann@gmail.com") {
-				message += " :glensux:";
-			}
-
-			RoomService.messageRoom(roomId, message);
-		});
 }
 
 function poll(roomMember, text) {
