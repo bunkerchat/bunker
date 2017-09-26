@@ -44,9 +44,9 @@ messageService.createMessage = function (roomMember, text) {
 	//else if (/^\/stats/i.test(text)) {
 	//	return stats(roomMember, text);
 	//}
-	else if (/^\/leaderboard/i.test(text)) {
-		return leaderboard(roomMember, text);
-	}
+	// else if (/^\/leaderboard/i.test(text)) {
+	// 	return leaderboard(roomMember, text);
+	// }
 	else if (/^\/(topic|name|privacy|icon)/i.test(text)) {
 		return RoomService.setRoomAttribute(roomMember, text);
 	}
@@ -87,13 +87,13 @@ messageService.createMessage = function (roomMember, text) {
 		return userService.whois(roomMember, text);
 	}
 	else if (/^\/poll?(?:\s+(.+)?|$)/i.test(text)) {
-		return poll(roomMember, text);
+		return pollService.poll(roomMember, text);
 	}
 	else if (/^\/vote\s+/i.test(text)) {
-		return vote(roomMember, text);
+		return pollService.vote(roomMember, text);
 	}
 	else if (/^\/poll(\s?)close?(?:\s*)/i.test(text)) {
-		return pollClose(roomMember, text);
+		return pollService.pollClose(roomMember, text);
 	}
 	else if (/^\/meme/i.test(text)) {
 		return meme(roomMember, text);
@@ -471,37 +471,3 @@ function leaderboard(roomMember, text) {
 				.then(broadcastMessage);
 		})
 }
-
-function poll(roomMember, text) {
-	const roomId = roomMember.room;
-	return pollService.start(roomMember, text)
-		.then(function (pollResponse) {
-			if (pollResponse.isPrivate) {
-				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
-			} else {
-				RoomService.messageRoom(roomId, pollResponse.message);
-			}
-		});
-}
-
-function pollClose(roomMember, text) {
-	const roomId = roomMember.room;
-	return pollService.close(roomMember, text)
-		.then(function (pollResponse) {
-			if (pollResponse.isPrivate) {
-				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
-			} else {
-				RoomService.messageRoom(roomId, pollResponse.message);
-			}
-		});
-}
-
-// voting is always private
-function vote(roomMember, text) {
-	const roomId = roomMember.room;
-	return pollService.vote(roomMember, text)
-		.then(function (pollResponse) {
-			RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
-		});
-}
-
