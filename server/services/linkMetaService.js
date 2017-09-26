@@ -16,7 +16,8 @@ const metaMap = {
  * @returns {Promise.<T>}
  */
 linkMetaService.lookup = text => {
-	const urlMatch = /(https?:\/\/.+)/gi.exec(text)
+	// urls without images
+	const urlMatch = /(https?:\/\/(?![^" ]*(?:jpg|png|gif|gifv|mp4|webm))[^" ]+)/gi.exec(text)
 	if (!urlMatch || !urlMatch[1]) return Promise.resolve()
 
 	const url = urlMatch[1]
