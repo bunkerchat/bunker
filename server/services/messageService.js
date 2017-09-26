@@ -1,6 +1,4 @@
 const ent = require('ent');
-const moment = require('moment');
-const Promise = require('bluebird');
 const socketio = require('../config/socketio');
 
 const Message = require('../models/Message');
@@ -12,7 +10,6 @@ const RoomService = require('./RoomService');
 const imageSearch = require('./imageSearch');
 const helpService = require('./helpService');
 const statsService = require('./statsService');
-const leaderboardService = require('./leaderboardService');
 const hangmanService = require('./hangmanService');
 const pollService = require('./pollService');
 const fightService = require('./fightService');
@@ -44,9 +41,6 @@ messageService.createMessage = function (roomMember, text) {
 	//else if (/^\/stats/i.test(text)) {
 	//	return stats(roomMember, text);
 	//}
-	// else if (/^\/leaderboard/i.test(text)) {
-	// 	return leaderboard(roomMember, text);
-	// }
 	else if (/^\/(topic|name|privacy|icon)/i.test(text)) {
 		return RoomService.setRoomAttribute(roomMember, text);
 	}
@@ -442,32 +436,4 @@ function changeUserRole(roomMember, text) {
 			const message = roomMember.user.nick + ' has changed ' + userNick + ' to ' + newRole;
 			RoomService.messageRoom(roomId, message);
 		});
-}
-
-function leaderboard(roomMember, text) {
-	const match = /^\/leaderboard\s+\-losers.*$/ig.exec(text);
-
-	if (match) {
-		return leaderboardService.getLoserboard()
-			.then(function (loserboard) {
-				return Message.create({
-					room: roomMember.room,
-					type: 'stats',
-					author: roomMember.user,
-					text: loserboard
-				})
-					.then(broadcastMessage);
-			})
-	}
-
-	return leaderboardService.getLeaderboard()
-		.then(function (leaderboard) {
-			return Message.create({
-				room: roomMember.room,
-				type: 'stats',
-				author: roomMember.user,
-				text: leaderboard
-			})
-				.then(broadcastMessage);
-		})
 }
