@@ -68,7 +68,6 @@ userService.findOrCreateBunkerUser = function (profile) {
 userService.updateGravatarMd5ForUsers = function() {
 
 	// use this to reset for testing purposes: User.update({}, {gravatarMd5: null}, {multi: true})
-
 	return User.find({ gravatarMd5: null }).then(users => {
 		return Promise.map(users, user => {
 			return User.update({_id: user._id}, {gravatarMd5: userEmailToGravatarMd5(user.email)});

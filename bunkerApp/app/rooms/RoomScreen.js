@@ -11,9 +11,24 @@ class RoomScreen extends React.PureComponent {
 	});
 
 	// https://facebook.github.io/react-native/docs/flatlist.html
-	_keyExtractor = message => message._id
-	_renderItem = ({item, separators}) => <BunkerMessage message={item} {...this.props} />
-	_itemSeperator = () => <View style={style.separator} />
+	_keyExtractor = message => message._id;
+
+	_renderItem = ({item, index, separators}) => {
+		const prevMessage = this.props.messages[index + 1];
+		var isFirstInRun = true;
+
+		if (prevMessage && prevMessage.author && prevMessage.author.toLowerCase() === item.author.toLowerCase()) {
+			isFirstInRun = false;
+		}
+
+		return <BunkerMessage
+				message={item}
+				isFirstInRun={isFirstInRun}
+				currentUserId={this.props.currentUser._id}
+				user={this.props.users && this.props.users[item.author]} />
+	};
+
+	_itemSeperator = () => <View style={style.separator} />;
 
 	render() {
 		const {messages, room} = this.props
@@ -60,6 +75,8 @@ const mapStateToProps = (state, props) => {
 
 	return {
 		room,
+		currentUser: state.user.currentBunkerUser,
+		users: state.user.users,
 		messages: room.$messages
 	}
 }
