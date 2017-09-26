@@ -17,6 +17,7 @@ const pollService = require('./pollService');
 const fightService = require('./fightService');
 const animationService = require('./animationService')
 const userService = require('./userService')
+const linkMetaService = require('./linkMetaService')
 
 const InvalidInputError = require('../errors/InvalidInputError');
 
@@ -95,7 +96,8 @@ messageService.createMessage = function (roomMember, text) {
 		return badCommand(roomMember, text);
 	}
 	else {
-		return message(roomMember, text, 'standard');
+		return linkMetaService.lookup(text)
+			.then(linkMeta => message(roomMember, text, 'standard', linkMeta))
 	}
 };
 
@@ -272,15 +274,16 @@ function me(roomMember, text) {
 	return message(roomMember, roomMember.user.nick + text.substring(3), 'emote');
 }
 
-function message(roomMember, text, type) {
+function message(roomMember, text, type, linkMeta) {
 
 	type = type || 'standard';
 
 	return Message.create({
+		type,
+		text,
+		linkMeta,
 		room: roomMember.room,
-		type: type,
-		author: type === 'standard' ? roomMember.user : null,
-		text: text
+		author: type === 'standard' ? roomMember.user : null
 	})
 		.then(function (message) {
 			broadcastMessage(message);

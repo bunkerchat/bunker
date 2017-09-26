@@ -196,9 +196,17 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				const onMobile = _.includes(navigator.appVersion, 'Android')
 					|| _.includes(navigator.appVersion, 'iPhone')
 
+				// if user turns off link meta, replace meta object with empty object
+				const {image, title, url} = bunkerData.userSettings.linkPreview ? (scope.bunkerMessage.linkMeta || {}) : {}
+
 				// Parse links
 				var attachedMedia;
-				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
+				const links = [...text.match(/https?:\/\/\S+/gi)]
+				if (image) {
+					links.push(image)
+				}
+
+				_.each(links, function (link) {
 					if (!replacedLinks[link]) {
 						const target = _.includes(link, window.location.origin) ? '_self' : '_blank'
 						text = replaceAll(text, link, `<a href="${link}" target="${target}">${link}</a>`);
@@ -209,7 +217,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 					// Only parse media (images, youtube) if asked to
 					if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
-						if(onMobile) return text
+						if (onMobile) return text
 
 						var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
 						var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
@@ -223,7 +231,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 							</div>`;
 					}
 					else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
-						if(onMobile) return text
+						if (onMobile) return text
 
 						toggleLink(link);
 						attachedMedia = `
@@ -283,6 +291,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
 						// Image link
 						toggleLink(link);
+						toggleLink(url);
 
 						const mobileParam = onMobile ? '?small=true' : ''
 
@@ -290,9 +299,13 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 							? `/api/image/${encodeURIComponent(link)}${mobileParam}`
 							: link
 
+						const titleHtml = title ? `<h5>${title}</h5>` : ''
+						const previewImageCss = link ? 'image-preview' : ''
+
 						attachedMedia = `
 						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${wrappedLink}">
-							<img ng-src="${wrappedLink}" imageonload/>
+							${titleHtml}
+							<img class="${previewImageCss}" ng-src="${wrappedLink}" imageonload/>
 						</div>`
 					}
 				});
