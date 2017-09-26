@@ -1,23 +1,63 @@
-var Promise = require('bluebird');
-var request = Promise.promisifyAll(require('request'), {multiArgs: true});
+const imageSearch = module.exports;
 
-var config = require('../config/config');
-var ImageCache = require('../models/ImageCache')
+const Promise = require('bluebird');
+const request = Promise.promisifyAll(require('request'), {multiArgs: true});
+const ent = require('ent');
 
-var imageSearch = module.exports;
+const config = require('../config/config');
+const ImageCache = require('../models/ImageCache')
+const socketio = require('../config/socketio');
 
-imageSearch.image = function (query) {
+imageSearch.image = (roomMember, text) => {
+	const match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
+	const searchQuery = ent.decode(match[1]);
+
+	return image(searchQuery)
+		.then(result => {
+			socketio.io.to('userself_' + roomMember.user._id)
+				.emit('user', {
+					_id: roomMember.user._id,
+					verb: 'messaged',
+					data: {
+						type: 'pick',
+						message: `[${result.provider} image "${searchQuery}"] `,
+						data: result.images
+					}
+				});
+		});
+}
+
+imageSearch.gif = (roomMember, text) => {
+	const match = /^\/gif(?:pick|search)*\s+(.*)$/i.exec(text);
+	const searchQuery = ent.decode(match[1]);
+
+	return gif(searchQuery)
+		.then(result => {
+			socketio.io.to('userself_' + roomMember.user._id)
+				.emit('user', {
+					_id: roomMember.user._id,
+					verb: 'messaged',
+					data: {
+						type: 'pick',
+						message: `[${result.provider} gif "${searchQuery}"] `,
+						data: result.images
+					}
+				});
+		});
+}
+
+function image (query) {
 	return googleImageSearch(query)
 		.catch(() => ({provider: 'none', images: []}));
 };
 
-imageSearch.gif = function (query) {
+function gif (query) {
 	return googleImageSearch(query, true)
 		.catch(() => ({provider: 'none', images: []}));
 };
 
 function googleImageSearch(query, animated) {
-	var key = `imageSearch/google-${animated ? 'gif' : 'image'}|${query}`;
+	const key = `imageSearch/google-${animated ? 'gif' : 'image'}|${query}`;
 	return ImageCache.findOne({key: key})
 		.then(dbCache => {
 			if (dbCache) {
@@ -30,7 +70,7 @@ function googleImageSearch(query, animated) {
 	function lookup() {
 		if (!query) return Promise.reject('no query');
 
-		var qs = {
+		const qs = {
 			q: query,
 			searchType: 'image',
 			safe: 'high',
@@ -53,7 +93,7 @@ function googleImageSearch(query, animated) {
 		})
 			.spread((res, body) => {
 				if (res.statusCode === 403) {
-					console.log('sad face');
+					log.error(`403 - ${JSON.stringify(res.body, null, 2)}`);
 					return Promise.reject(new Error('over capacity'));
 				}
 

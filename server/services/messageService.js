@@ -65,10 +65,10 @@ messageService.createMessage = function (roomMember, text) {
 		return code(roomMember, text);
 	}
 	else if (/^\/image(?:pick|search)*\s+/i.test(text)) {
-		return image(roomMember, text);
+		return imageSearch.image(roomMember, text);
 	}
 	else if (/^\/gif(?:pick|search)*\s+/i.test(text)) {
-		return gif(roomMember, text);
+		return imageSearch.gif(roomMember, text);
 	}
 	else if (/^\/(promote|demote)\s+([\w\s\-\.]{0,19})/i.test(text)) {
 		return userService.changeUserRole(roomMember, text);
@@ -331,44 +331,6 @@ function code(roomMember, text) {
 		text: text
 	})
 		.then(broadcastMessage)
-}
-
-function image(roomMember, text) {
-	const match = /^\/image(?:pick|search)*\s+(.*)$/i.exec(text);
-	const searchQuery = ent.decode(match[1]);
-
-	return imageSearch.image(searchQuery)
-		.then(result => {
-			socketio.io.to('userself_' + roomMember.user._id)
-				.emit('user', {
-					_id: roomMember.user._id,
-					verb: 'messaged',
-					data: {
-						type: 'pick',
-						message: `[${result.provider} image "${searchQuery}"] `,
-						data: result.images
-					}
-				});
-		});
-}
-
-function gif(roomMember, text) {
-	const match = /^\/gif(?:pick|search)*\s+(.*)$/i.exec(text);
-	const searchQuery = ent.decode(match[1]);
-
-	return imageSearch.gif(searchQuery)
-		.then(result => {
-			socketio.io.to('userself_' + roomMember.user._id)
-				.emit('user', {
-					_id: roomMember.user._id,
-					verb: 'messaged',
-					data: {
-						type: 'pick',
-						message: `[${result.provider} gif "${searchQuery}"] `,
-						data: result.images
-					}
-				});
-		});
 }
 
 function fight(roomMember, text) {
