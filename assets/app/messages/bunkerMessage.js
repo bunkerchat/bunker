@@ -196,8 +196,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				const onMobile = _.includes(navigator.appVersion, 'Android')
 					|| _.includes(navigator.appVersion, 'iPhone')
 
-				// if user turns off link meta, replace meta object with empty object
-				const linkMeta = bunkerData.userSettings.linkPreview ? (scope.bunkerMessage.linkMeta || {}) : {}
+				const linkMeta = scope.bunkerMessage.linkMeta || {}
 
 				// Parse links
 				var attachedMedia;

@@ -21,10 +21,6 @@ var userSettingsSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
-	linkPreview: {
-		type: Boolean,
-		default: false
-	},
 	minimalView: {
 		type: Boolean,
 		default: false
