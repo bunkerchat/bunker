@@ -23,7 +23,7 @@ linkMetaService.lookup = text => {
 	const url = urlMatch[1]
 	const linkMeta = {url}
 
-	return request.getAsync(url)
+	return request.getAsync(url, {timeout: 1500})
 		.spread((res, body) => {
 			// load body into fake jquery finder
 			const $ = cheerio.load(body)
