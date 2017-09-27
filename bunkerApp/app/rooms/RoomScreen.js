@@ -17,6 +17,7 @@ class RoomScreen extends React.PureComponent {
 		const prevMessage = this.props.messages[index + 1];
 		var isFirstInRun = true;
 
+		// TODO: place this in reducer
 		if (prevMessage && prevMessage.author && prevMessage.author.toLowerCase() === item.author.toLowerCase()) {
 			isFirstInRun = false;
 		}
@@ -45,7 +46,7 @@ class RoomScreen extends React.PureComponent {
 					data={messages}
 					keyExtractor={this._keyExtractor}
 					renderItem={this._renderItem}
-					ItemSeparatorComponent = {this._itemSeperator}
+					// ItemSeparatorComponent = {this._itemSeperator}
 				/>
 			</View>
 			<MessageToolbar roomId={room._id} />
