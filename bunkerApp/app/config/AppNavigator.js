@@ -9,7 +9,20 @@ export const AppNavigator = StackNavigator({
 	Rooms: {screen: RoomSelector},
 	Room: {screen: RoomScreen},
 	Login: {screen: LoginScreen}
-})
+}, {
+	navigationOptions: {
+		headerStyle: {
+			backgroundColor: '#45494D',
+		},
+		headerTitleStyle: {
+			color: 'white'
+		},
+		headerBackTitleStyle: {
+			color: 'white'
+		},
+		headerTintColor: 'white'
+	}
+});
 
 class AppWithNavigationState extends React.PureComponent {
 

@@ -20,7 +20,7 @@ class RootContainer extends React.PureComponent {
 		const {loggedInUser, signIn} = this.props
 
 		return <View style={styles.applicationView}>
-			<StatusBar/>
+			<StatusBar barStyle="light-content" />
 			{loggedInUser && <AppNavigator/>}
 			{!loggedInUser && <GoogleSigninButton
 				style={{width: 212, height: 48}}
