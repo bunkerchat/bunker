@@ -1,12 +1,47 @@
+const pollService = module.exports
 var Promise = require('bluebird');
 var request = Promise.promisifyAll(require('request'));
 var socketio = require('../config/socketio');
 var ent = require('ent');
 
+const RoomService = require('./RoomService');
 var Poll = require('../models/Poll');
 var PollOption = require('../models/PollOption');
 
-module.exports.start = function (roomMember, command) {
+pollService.poll = (roomMember, text) => {
+	const roomId = roomMember.room;
+	return pollService.start(roomMember, text)
+		.then(function (pollResponse) {
+			if (pollResponse.isPrivate) {
+				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
+			} else {
+				RoomService.messageRoom(roomId, pollResponse.message);
+			}
+		});
+}
+
+pollService.pollClose = (roomMember, text) => {
+	const roomId = roomMember.room;
+	return pollService.close(roomMember, text)
+		.then(function (pollResponse) {
+			if (pollResponse.isPrivate) {
+				RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
+			} else {
+				RoomService.messageRoom(roomId, pollResponse.message);
+			}
+		});
+}
+
+// voting is always private
+pollService.vote = (roomMember, text) => {
+	const roomId = roomMember.room;
+	return pollService.vote(roomMember, text)
+		.then(function (pollResponse) {
+			RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, pollResponse.message);
+		});
+}
+
+pollService.start = function (roomMember, command) {
 	var match = /^\/poll?(?:\s+(.+)?|$)/ig.exec(command);
 	var question = match[1];
 	var defaultPollOptions = ["True", "False", "I don't care"];
@@ -49,7 +84,7 @@ module.exports.start = function (roomMember, command) {
 		});
 };
 
-module.exports.vote = function(roomMember, command) {
+pollService.vote = function(roomMember, command) {
 	var match = /^\/vote?(?:\s+(.+)?|$)/ig.exec(command);
 	var optionNumber = match[1];
 
@@ -101,7 +136,7 @@ module.exports.vote = function(roomMember, command) {
 		});
 };
 
-module.exports.close = function(roomMember, command) {
+pollService.close = function(roomMember, command) {
 	var match = /^\/poll(\s?)close?(?:\s*)/ig.exec(command);
 	var optionNumber = match[1];
 	var userId = roomMember.user._id;

@@ -23,12 +23,14 @@ var messageSchema = new mongoose.Schema({
 			'help',
 			'roll',
 			'8ball',
+			'trump',
 			'animation',
 			'buildNotification',
 			'hangman',
 			'fight',
 			'code',
-			'stats'
+			'stats',
+			'link'
 		],
 		default: 'standard'
 	},
@@ -44,6 +46,9 @@ var messageSchema = new mongoose.Schema({
 	editCount: {
 		type: Number,
 		default: 0
+	},
+	linkMeta: {
+		type: Object
 	}
 });
 
