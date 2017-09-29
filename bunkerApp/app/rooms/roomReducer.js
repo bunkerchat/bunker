@@ -16,8 +16,17 @@ reducer['socketio-room-messaged'] = (state, {data}) => {
 	const roomId = message.room
 	const room = state.rooms[roomId]
 
-	if (message.edited) {
+	// full author object is populated, we just want ID.
+	message.author = message.author && message.author._id;
 
+	if (message.edited) {
+		const index = _.findIndex(room.$messages, { _id: message._id });
+
+		if (index === -1) return state;
+
+		const $messages = [...room.$messages.slice(0, index), message, ...room.$messages.slice(index + 1)];
+
+		return state.setIn(['rooms', roomId, '$messages'], $messages);
 	} else {
 		const $messages = [message, ...room.$messages]
 		return state.setIn(['rooms',roomId,'$messages'], $messages)

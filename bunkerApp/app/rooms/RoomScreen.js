@@ -11,10 +11,6 @@ class RoomScreen extends React.PureComponent {
 		title: navigation.state.params.roomName,
 	});
 
-	getAuthorId(message) {
-		return message && message.author && (_.isObject(message.author) ? message.author._id : message.author);
-	}
-
 	// https://facebook.github.io/react-native/docs/flatlist.html
 	_keyExtractor = message => message._id;
 
@@ -22,11 +18,8 @@ class RoomScreen extends React.PureComponent {
 		const prevMessage = this.props.messages[index + 1];
 		let isFirstInRun = true;
 
-		const thisItemAuthorId = this.getAuthorId(item);
-		const prevItemAuthorId = this.getAuthorId(prevMessage);
-
-		// TODO: place this in reducer
-		if (prevItemAuthorId && prevItemAuthorId.toLowerCase() === thisItemAuthorId.toLowerCase()) {
+		// TODO: place this in reducer maybe?
+		if (prevMessage && prevMessage.author && prevMessage.author.toLowerCase() === item.author.toLowerCase()) {
 			isFirstInRun = false;
 		}
 
@@ -34,7 +27,7 @@ class RoomScreen extends React.PureComponent {
 				message={item}
 				isFirstInRun={isFirstInRun}
 				currentUserId={this.props.currentUser._id}
-				user={this.props.users && this.props.users[thisItemAuthorId]} />
+				user={this.props.users && this.props.users[item.author]} />
 	};
 
 	_itemSeperator = () => <View style={style.separator} />;

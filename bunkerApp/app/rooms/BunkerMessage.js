@@ -6,10 +6,6 @@ const iconSize = 24;
 
 export default class BunkerMessage extends React.PureComponent{
 
-	getAuthorId(message) {
-		return message && message.author && (_.isObject(message.author) ? message.author._id : message.author);
-	}
-
 	getGravatarUri = () => {
 		if (this.props.user) {
 			return `https://www.gravatar.com/avatar/${this.props.user.gravatarMd5}?r=pg&s=${iconSize}&d=identicon`;
@@ -21,8 +17,7 @@ export default class BunkerMessage extends React.PureComponent{
 	render(){
 		const {message, currentUserId, isFirstInRun} = this.props;
 
-		const messageAuthorId = this.getAuthorId(message);
-		const isCurrentUser = messageAuthorId && messageAuthorId.toLowerCase() === currentUserId.toLowerCase();
+		const isCurrentUser = message.author && message.author.toLowerCase() === currentUserId.toLowerCase();
 
 		let messageWrapperStyles = styles.left.messageWrapper;
 
