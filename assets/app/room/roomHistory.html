@@ -5,9 +5,9 @@
 			<h2 ng-if="room.ready && room.rawMessages.length == 0">No messages</h2>
 
 			<ol class="list-unstyled message-list">
-				<li class="message-container" id="{{::message.id}}" ng-switch="::!!message.author"
-						ng-repeat="message in room.messages track by message.id">
-					<div class="message" ng-class="::{ local: message.author.id == user.id, 'message-mention': message.$mentionsUser }">
+				<li class="message-container" id="{{::message._id}}" ng-switch="::!!message.author"
+						ng-repeat="message in room.messages track by message._id">
+					<div class="message" ng-class="::{ local: message.author._id == user._id, 'message-mention': message.$mentionsUser }">
 
 						<!-- standard message -->
 						<div ng-switch-when="true">
@@ -24,7 +24,7 @@
 								<span class="message-info text-muted">
 									<i class="fa fa-pencil" ng-if="message.edited"></i>
 									<span ng-if="::message.$firstInSeries">
-										<a ui-sref="roomHistory({roomId: room.current.id, date: message.createdAt, message: message.id})"
+										<a ui-sref="roomHistory({roomId: message.room, date: message.createdAt, message: message._id})"
 											 class="text-muted">
 											<small>{{::message.createdAt | date:'h:mm:ss a'}}</small>
 										</a>
@@ -55,7 +55,7 @@
 		<div class="col-md-2 hidden-sm hidden-xs no-gutter right-pane">
 			<ul class="list-group member-list">
 				<li class="list-group-item"
-						ng-repeat="user in room.members | orderBy:'nick' track by user.id">
+						ng-repeat="user in room.members track by user._id">
 					<img gravatar-src-once="user.email | lowercase" gravatar-size="20"/>
 					{{::user.nick}}
 				</li>

@@ -1,0 +1,16 @@
+NAME
+	/fight 				...start an asynchronous fighting challenge.
+	/f 				...Alias for /fight
+
+PARAMETERS
+	user nickname			...The user you are challenging or responding to a challenge for.  You must be in the same room, you cannot challenge others cross room.
+	(h,m,l) (h,m,l) (h,m,l)		...The 3 rounds of fight input.  h, m, l are the valid inputs describing the types of kicks used.
+	-list				...List outstanding challenges from and to you.
+
+LEGEND
+	h 				...High Kick; beats Mid Kick, loses to Low Kick.
+	m				...Mid Kick; beats Low Kick, loses to High Kick.
+	l				...Low Kick; beats High Kick, loses to Mid Kick.
+
+EXAMPLE
+	/f jpro h m l			...This will challenge jpro to a fight using round 1 play of h, round 2 of m, round 3 of l.

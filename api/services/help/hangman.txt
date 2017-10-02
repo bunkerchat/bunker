@@ -1,7 +1,0 @@
-NAME
-	/hangman - play a game of hangman
-	/h - alias
-
-COMMANDS
-	/hangman | /h ...Start a new game
-	/hangman [letter] | /h [letter] ...Guess 1 letter at a time or feel hangman's wrath.

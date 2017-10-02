@@ -8,35 +8,34 @@ window.addTweet = function (data) {
 	element.append(data.html);
 };
 
-app.filter('trusted', ['$sce', function ($sce) {
-	return function (url) {
-		return $sce.trustAsResourceUrl(url);
-	};
-}]);
+// jesus fucking christ why the god damn hell does regex have state!?
+function youtubeRegexp() {
+	return /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
+}
 
-var youtubeRegexp = /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
-
-app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunkerConstants, $timeout) {
+app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) {
 
 	function replaceAll(str, find, replace) {
 		return str.split(find).join(replace);
 	}
 
 	return {
-		template: '<span ng-bind-html="::formatted"></span>',
+		template: `<span></span>`,
 		scope: {
 			bunkerMessage: '=',
-			media: '@'
+			media: '@',
+			small: '@'
 		},
 		link: function (scope, elem) {
-
 			// since we are passing in a bunker message OR room, run the bunkerText on the correct property
-			if(scope.bunkerMessage && scope.bunkerMessage.text){
-				scope.formatted = parseText(scope.bunkerMessage.text);
+			if (scope.bunkerMessage && scope.bunkerMessage.text) {
+				elem.find('span').html(parseText(scope.bunkerMessage.text));
+				$compile(elem.contents())(scope);
 			}
-			else{
-				scope.$watch('bunkerMessage.topic', function(topic){
+			else {
+				scope.$watch('bunkerMessage.topic', function (topic) {
 					elem.html(parseText(topic));
+					$compile(elem.contents())(scope);
 				});
 			}
 
@@ -49,21 +48,42 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				else if (scope.bunkerMessage.type == 'hangman') {
 					text = parseHangman(text);
 				}
+				else if (scope.bunkerMessage.type == 'fight') {
+					// fight message can have custom images as well as block text
+					text = parseFight(text);
+				}
 				else if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
 					text = createQuotedBlock(text);
 				}
 				else {
-					text = parseFormatting(text);
-					if (bunkerData.userSettings.showEmoticons) {
-						text = parseEmoticons(text);
-					}
-					text = parseMedia(text);
+					text = parseOther(text);
 				}
 
 				return text;
 			}
 
+			function parseOther(text) {
+				var tokensSplitOnUrls = text.split(/(https?:\/\/\S+)/i); // split on urls
+				var parsedTokens = _.map(tokensSplitOnUrls, token => {
+					// Parse urls as media
+					if (token.match(/https?:\/\/\S+/i)) {
+						token = parseMedia(token);
+					}
+					else {
+						token = parseFormatting(token);
+						if (bunkerData.userSettings.showEmoticons) {
+							token = parseEmoticons(token);
+						}
+					}
+					return token;
+				});
+
+				return parsedTokens.join(' ');
+			}
+
 			function createQuotedBlock(text) {
+				scope.bunkerMessage.type = 'quote';
+
 				// Scan for overtabs
 				var lines = text.split('&#10;');
 				var firstLineSpacingMatch = _.first(lines).match(/^((&#9;)*)/);
@@ -81,12 +101,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 					text = parseEmoticons(text);
 				}
 
-				var attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media><pre>' + text + '</pre></div>');
-
-				angular.element(elem).append(attachedMedia);
-				$compile(attachedMedia)(scope.$new());
-
-				return '';
+				return `<div message="::bunkerMessage" bunker-quote><pre>${text}</pre></div>`;
 			}
 
 			function parseHangman(text) {
@@ -94,30 +109,58 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				var makeDictionaryLink = /\|(.*)\|/i.exec(text);
 				if (makeDictionaryLink) {
 					var word = makeDictionaryLink[1].split(' ').join('').toLowerCase();
-					text = text.replace(/\|(.*)\|/i, '<a href="https://www.wordnik.com/words/' + word + '" target="_blank">$1</a>');
+					text = text.replace(/\|(.*)\|/i, `<a href="https://www.wordnik.com/words/${word}" target="_blank">$1</a>`);
 				}
-				return text.replace(/:hangman(\d):/, '<img class="emoticon" src="/assets/images/hangman$1.png"/>');
+				return text.replace(/:hangman(\d):/, '<img class="emoticon" ng-src="/assets/images/hangman$1.png"/>');
+			}
+
+			function parseFight(text) {
+				var match = /:([^0-9:]*):/.exec(text);
+
+				while (match) {
+					text = text.replace(/:([^0-9:]*):/, '<img class="emoticon" ng-src="/assets/images/$1.png"/>');
+					match = /:([^0-9:]*):/.exec(text);
+				}
+
+				// check for a fatality
+				match = /:(\w*)*:/.exec(text);
+				if (match) {
+					var fatality = '<img class="fatality" ng-src="/assets/images/fatalities/' + match[1] + '.gif"/>';
+					text = text.replace(/:(\w*):/, '');
+					text = "<div class=\"fight-message\">" + text + "</div>" + fatality;
+				}
+				if (text.match(/&#10;/g)) {  // unicode 10 is tabs/whitespace
+					text = '<div message="::bunkerMessage" ><pre>' + text + '</pre></div>';
+					return text
+				}
+
+				return text;
 			}
 
 			function parseCode(text) {
-				var attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media><div hljs no-escape>' + text + '</div></div>');
-				angular.element(elem).append(attachedMedia);
-				$compile(attachedMedia)(scope.$new());
-				return '';
+				text = `<div message="::bunkerMessage" bunker-quote><div hljs no-escape>${text}</div></div>`;
+				return text;
 			}
 
 			function parseEmoticons(text) {
-				var replacedEmotes = {};
+				const replacedEmotes = {};
 
 				// Parse emoticons
-				_.each(text.match(/:\w+:/g), function (emoticonText) {
-					var knownEmoticon = _.find(emoticons.files, function (known) {
-						return known.replace(/\.\w{1,4}$/, '').toLowerCase() == emoticonText.replace(/:/g, '').toLowerCase();
+				_.each(text.match(/:[\w-]+:/g), emoticonText => {
+					const knownEmoticon = _.find(emoticons.all, known => {
+						return known.file.replace(/\.\w{1,4}$/, '').toLowerCase() === emoticonText.replace(/:/g, '').toLowerCase();
 					});
-					if (knownEmoticon && !replacedEmotes[knownEmoticon]) {
-						text = replaceAll(text, emoticonText,
-							'<img class="emoticon" title="' + emoticonText + '" src="/assets/images/emoticons/' + knownEmoticon + '"/>');
-						replacedEmotes[knownEmoticon] = true;
+					if (knownEmoticon && !replacedEmotes[knownEmoticon.file]) {
+						// if an image emoticon (more common)
+						if (!knownEmoticon.isIcon) {
+							text = replaceAll(text, emoticonText,
+								`<img class="emoticon" title="${emoticonText}" ng-src="/assets/images/emoticons/${knownEmoticon.file}"/>`);
+						}
+						else { // font-awesome icon emoticon
+							text = replaceAll(text, emoticonText,
+								`<i class="fa ${knownEmoticon.file} fa-lg" title=":${knownEmoticon.name}:"></i>`);
+						}
+						replacedEmotes[knownEmoticon.file] = true;
 					}
 				});
 				return text;
@@ -133,7 +176,7 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 				];
 
 				_.each(types, function (type) {
-					var lookup = new RegExp('(?:[^A-z0-9]|^)(\\' + type.marker + '[^\\' + type.marker + ']+\\' + type.marker + ')(?:[^A-z0-9]|$)', 'g');
+					var lookup = new RegExp('(\\' + type.marker + '[^\\' + type.marker + ']+\\' + type.marker + ')', 'g');
 
 					var match;
 					while ((match = lookup.exec(text)) !== null) {
@@ -145,71 +188,160 @@ app.directive('bunkerMessage', function ($compile, emoticons, bunkerData, bunker
 			}
 
 			function parseMedia(text) {
-				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
 				var replacedLinks = {};
+
+				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
+
+				// do no media on mobile
+				const onMobile = _.includes(navigator.appVersion, 'Android')
+					|| _.includes(navigator.appVersion, 'iPhone')
+
+				const linkMeta = scope.bunkerMessage.linkMeta || {}
 
 				// Parse links
 				var attachedMedia;
-				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
+				const links = [...text.match(/https?:\/\/\S+/gi)]
+				if (linkMeta.image) {
+					links.push(linkMeta.image)
+				}
 
-					// Only parse media (images, youtube) if asked to
-					if (shouldParseMedia) {
-						if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
-							// Image link
-							attachedMedia = angular.element('<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link +'"><img src="' + link + '"/></a></div>');
-						}
-						else if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
-							var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
-							var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
-							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="' + link + '"><a target="_blank" href="' + link +'"><video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop><source type="video/webm" src="' + imgurLinkWebm + '"><source type="video/mp4" src="' + imgurLinkMpeg + '"></video>' +
-								'</a></div>');
-						}
-						else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
-							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-								'<a target="_blank" href="' + link +'"><video autoplay loop muted><source type="video/mp4" src="' + link.toLowerCase().replace('gifv', 'mp4') + '"></video></a>' +
-								'</div>');
-						}
-						else if (youtubeRegexp.test(link) && !attachedMedia) {
-							attachedMedia = angular.element('' +
-								'<div class="default-video-height" message="::bunkerMessage" bunker-media="' + link + '">' +
-								'<youtube-video video-url="\'' + link + '\'"></youtube-video>' +
-								'</div>');
-						}
-						else if (/(www\.)?(twitter\.com\/)/i.test(link) && !attachedMedia) {
-							var id = link.substr(link.lastIndexOf('/') + 1);
-							if (id) { /* don't embed tweet if we can't get the id from the link */
-								attachedMedia = angular.element('' +
-									'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-									'<div class="tweet_' + id + '">' +
-									'<script src="https://api.twitter.com/1/statuses/oembed.json?id=' + id + '&amp;callback=addTweet&amp">' +
-									'</script></div></div>');
-							}
-						}
-						else if (/vimeo\.com(?:.*)?\/([A-z0-9]*)$/i.test(link) && !attachedMedia) {
-							var match = /vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.exec(link);
-							attachedMedia = angular.element('' +
-								'<div message="::bunkerMessage" bunker-media="' + link + '">' +
-								'<iframe src="https://player.vimeo.com/video/' + match[1] + '?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
-								'</div>');
-						}
+				_.each(links, function (link) {
+					if (!replacedLinks[link]) {
+						const target = _.includes(link, window.location.origin) ? '_self' : '_blank'
+
+						// remove query string noise from visible link
+						const linkWithoutQuerystring = link.split("?")[0]
+
+						text = replaceAll(text, link, `<a href="${link}" target="${target}">${linkWithoutQuerystring}</a>`);
+						replacedLinks[link] = true;
 					}
 
-					if (!replacedLinks[link]) {
-						text = replaceAll(text, link, '<a href="' + link + '" target="_blank">' + link + '</a>');
-						replacedLinks[link] = true;
+					if (!shouldParseMedia) return text;
+
+					// Only parse media (images, youtube) if asked to
+					if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
+						if (onMobile) return text
+
+						var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
+						var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
+						attachedMedia = `
+							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
+								<video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop>
+									<source type="video/webm" ng-src="${imgurLinkWebm}">
+									<source type="video/mp4" ng-src="${imgurLinkMpeg}">
+								</video>
+							</div>`;
+					}
+					else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
+						if (onMobile) return text
+
+						attachedMedia = `
+							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
+								<video autoplay loop muted>
+									<source type="video/mp4" ng-src="${link.toLowerCase().replace('gifv', 'mp4')}">
+								</video>
+							</div>`;
+					}
+					else if (youtubeRegexp().test(link) && !attachedMedia) {
+						// toggleLink(link);
+						attachedMedia = `
+							<div class="default-video-height" message="::bunkerMessage" bunker-media="${link}">
+								<youtube-video video-url="'${link}'"></youtube-video>
+							</div>`;
+					}
+					else if (/(www\.)?(twitter\.com\/)/i.test(link) && !attachedMedia) {
+						var id = link.substr(link.lastIndexOf('/') + 1);
+						if (id) { // don't embed tweet if we can't get the id from the link
+							attachedMedia = `
+								<div message="::bunkerMessage" bunker-media="${link}">
+									<div class="stupid-twitter tweet_${id}">
+										<script src="https://api.twitter.com/1/statuses/oembed.json?id=${id}&amp;callback=addTweet&amp"></script>
+									</div>
+								</div>`;
+						}
+					}
+					else if (/vimeo\.com(?:.*)?\/([A-z0-9]*)$/i.test(link) && !attachedMedia) {
+						var match = /vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.exec(link);
+						attachedMedia = `
+							<div message="::bunkerMessage" bunker-media="${link}">
+								<iframe ng-src="https://player.vimeo.com/video/${match[1]}?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+							</div>`;
+					}
+					else if (/^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.test(link) && !attachedMedia) {
+						var match = /^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.exec(link);
+						var uri = "spotify%3A" + replaceAll(match[1], '/', '%3A');
+
+						attachedMedia = `
+							<div message="::bunkerMessage" bunker-media="${link}">
+								<iframe ng-src="https://embed.spotify.com/?uri=${uri}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+							</div>`;
+					}
+					else if (/gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?|.gif)/gi.test(link) && !attachedMedia) {
+						var match = /gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?|.gif)/gi.exec(link);
+
+						attachedMedia = `
+							<div message="::bunkerMessage" bunker-media="${link}">
+								<div gfycat class="gfyitem" data-title=true data-autoplay=true data-controls=true data-expand=true data-id="${match[1]}" ></div>
+							</div>`;
+					}
+					// run this one last since it conflicts with the gifv check above
+					else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
+						const mobileParam = onMobile ? '?small=true' : ''
+
+						const wrappedLink = (onMobile || bunkerData.userSettings.bunkerServesImages)
+							? `/api/image/${encodeURIComponent(link)}${mobileParam}`
+							: link
+
+						const titleHtml = linkMeta.title ? `<h5>${linkMeta.title}</h5>` : ''
+						const previewImageCss = linkMeta.image ? 'image-preview' : ''
+
+						attachedMedia = `
+						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${wrappedLink}">
+							${titleHtml}
+							<img class="${previewImageCss}" ng-src="${wrappedLink}" imageonload/>
+						</div>`
+					}
+
+					if (attachedMedia) {
+						appendToggleLink(link);
+						appendToggleLink(linkMeta.url);
+					}
+
+					function appendToggleLink(link) {
+						// if toggle link already appended, skip
+						if(text.includes('fa-caret-square-o-left')) return
+
+						var toggleButton = `<a ng-click="bunkerMessage.$visible = !bunkerMessage.$visible">
+							<i class="fa fa-lg" ng-class="{'fa-caret-square-o-down': bunkerMessage.$visible, 'fa-caret-square-o-left': !bunkerMessage.$visible}"></i>
+						</a>`;
+
+						text = text.replace(`${link}</a>`, `${link}</a> ${toggleButton}`);
 					}
 				});
 
 				// If we made an image, attach it now
 				if (attachedMedia) {
-					angular.element(elem).append(attachedMedia);
-					$compile(attachedMedia)(scope.$new());
+					const element = angular.element(attachedMedia)
+					elem.append(element);
 				}
 
 				return text;
 			}
+		}
+	};
+});
+
+
+app.directive('imageonload', function ($rootScope) {
+	return {
+		restrict: 'A',
+		link: function (scope, element, attrs) {
+			element.bind('load', function () {
+				$rootScope.$broadcast('messageImageLoaded', {height: this.height})
+			});
+			element.bind('error', function () {
+				console.log('image could not be loaded');
+			});
 		}
 	};
 });

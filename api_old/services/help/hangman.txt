@@ -1,0 +1,8 @@
+NAME
+	/hangman - play a game of hangman
+	/h - alias
+
+COMMANDS
+	/hangman or /h			...Start a new public game; there can be only 1 public game per room.
+	/hangman [letter] or [word]	...Guess a letter or the whole word
+	/hangman [-p] or [-private]	...Start a private game; while playing a private game you cannot play a public game.

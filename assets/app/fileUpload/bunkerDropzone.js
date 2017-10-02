@@ -89,11 +89,11 @@ app.directive('bunkerDropzone', function ($document, $compile, DroppableItem) {
 			self.isImageFile = function (item) {
 				// TODO: can probably change this to just be a regex: /image.*/
 				return item.type && (
-					_.contains(item.type, '/jpeg') ||
-					_.contains(item.type, '/jpg') ||
-					_.contains(item.type, '/gif') ||
-					_.contains(item.type, '/bmp') ||
-					_.contains(item.type, '/png'));
+					_.includes(item.type, '/jpeg') ||
+					_.includes(item.type, '/jpg') ||
+					_.includes(item.type, '/gif') ||
+					_.includes(item.type, '/bmp') ||
+					_.includes(item.type, '/png'));
 			};
 
 			self.setModalClosed = function () {

@@ -1,191 +1,395 @@
-app.directive('inputBox', function ($rootScope, $stateParams, emoticons, bunkerData) {
-
-	var messageEditWindowSeconds = 60;
-
-	var searchStates = {
-		NONE: 'none',
-		EMOTE: 'emote',
-		NICK: 'nick'
-	};
-
+app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emoticons, keycode) {
 	return {
-		scope: true,
-		templateUrl: '/assets/app/input/inputBox.html',
+		template: `
+		<div>
+			<div class="container-fluid message-input" ng-show="$root.roomId">
+				<div class="row">
+					<form class="col-md-10 no-gutter">
+						<textarea rows="1" class="form-control"></textarea>
+						<button type="submit" class="btn btn-success visible-xs">Send</button>
+						<upload-button class="hidden-xs"></upload-button>
+					</form>
+				</div>
+			</div>
+			<div emoticon-menu class="message-popup container"></div>
+		</div>
+		`,
 		link: function (scope, elem) {
-			var searchState = searchStates.NONE;
-			var emoticonSearch = '';
-			var emoticonSearchIndex = -1;
-			var nickSearch = '';
-			var nickSearchIndex = -1;
+			var searchingFor, searchTerm, matches, suggestedTerm, matchingEmoticons, matchingUsers, matchIndex, hidden;
 
-			scope.$stateParams = $stateParams;
-			scope.messageText = '';
-			scope.submittedMessages = [];
-			scope.selectedMessageIndex = -1;
+			var editingMessage;
 
-			var previousText = null;
-			scope.editMode = false;
+			var inputBox = $('textarea', elem);
+			var container = $('.message-input', elem);
+			var send = container.find('button[type="submit"]');
+			var popup = $('.message-popup', elem);
+			resetMatchSearch();
+			resetMessageEditing();
 
-			// bind our keyup/down funcs to input box.
-			$('textarea', elem)
-				.keydown(keyDown)
-				.keyup(keyUp);
-
-			scope.sendMessage = function () {
-				if (!scope.messageText) return;
-
-				var newMessage = {
-					room: $rootScope.roomId,
-					text: scope.messageText
-				};
-
-				var chosenMessage = scope.selectedMessageIndex > -1 ? scope.submittedMessages[scope.selectedMessageIndex] : {createdAt: null};
-				var historicMessage = {text: scope.messageText, createdAt: Date.now(), history: ''};
-
-				if(scope.messageText.replace(/\s/g, '').length == 0) {
-					// Nothing to do! (but still reset things)
-				}
-				else if (!scope.editMode) {
-
-					bunkerData.createMessage(newMessage.room, newMessage.text)
-						.then(function (result) {
-							if (result && result.author) {
-								historicMessage.id = result.id;
-								scope.submittedMessages.unshift(historicMessage); // Save message for up/down keys to retrieve
-							}
-						});
-				}
-				else {
-					scope.submittedMessages[scope.selectedMessageIndex].text = scope.messageText;
-					newMessage.id = scope.submittedMessages[scope.selectedMessageIndex].id;
-					newMessage.edited = true;
-					chosenMessage.edited = true;
-					bunkerData.editMessage(newMessage);
-				}
-
-				// Reset all the things
-				scope.selectedMessageIndex = -1;
-				scope.messageText = '';
-				scope.editMode = false;
-				previousText = null;
-				emoticonSearch = '';
-				emoticonSearchIndex = -1;
+			// anchors are the special keys which define an emoticon or user
+			var anchors = {
+				'emoticons': ':',
+				'users': '@'
 			};
 
-			function keyDown(evt) {
-				if (evt.keyCode == 13) {
-					evt.preventDefault();
-					if(evt.shiftKey) {
-						scope.messageText = scope.messageText + '\n';
-					}
-					else {
-						scope.sendMessage();
-					}
-					scope.$digest();
+			// handlers are triggered when a specific key is pressed
+			var handlers = {
+				'enter': enter,
+				'backspace': backspace,
+				'esc': reset,
+				'tab': tab,
+				'space': space,
+				'up': up,
+				'down': down,
+				';': emoticon,
+				'2': user,
+
+				// ignore these keystrokes
+				'command': _.noop,
+				'alt': _.noop,
+				'ctrl': _.noop,
+				'shift': _.noop
+			};
+
+			// search functions which are triggered when an anchor is used
+			var searchers = {
+				'emoticons': searchForEmoticons,
+				'users': searchForUsers,
+				null: _.noop
+			};
+
+			// the functions to render the html in the popup
+			var render = {
+				'emoticons': renderEmoticons,
+				'users': renderUsers
+			};
+
+			// events
+
+			// every key press in the text area
+			inputBox.keydown(e => {
+				// gets a human readable keyboard value
+				var key = keycode(e);
+
+				var handler = handlers[key];
+				if (handler) {
+					handler(e);
 				}
-				else if (evt.keyCode == 9) { // tab
-					evt.preventDefault(); // prevent tabbing out of the text input
+				else {
+					bunkerData.broadcastTyping($rootScope.roomId);
+				}
 
-					if (searchState === searchStates.EMOTE) { // if we're in a search
+				if (searchingFor) {
+					searchers[searchingFor](key);
+					var html = render[searchingFor]();
+					popup.html(html);
 
-						var matchingEmoticons = _.filter(emoticons.names, function (emoticon) {
-							return emoticon.indexOf(emoticonSearch) == 0
-						});
-
-						if (matchingEmoticons.length == 0) return; // no matches, nothing to do
-
-						if (evt.shiftKey) { // shift modifier goes backwards through the matches
-							emoticonSearchIndex = emoticonSearchIndex > 0
-								? Math.max(emoticonSearchIndex - 1, 0)
-								: matchingEmoticons.length - 1;
-						}
-						else { // cycle
-							emoticonSearchIndex = emoticonSearchIndex < matchingEmoticons.length - 1
-								? Math.min(emoticonSearchIndex + 1, matchingEmoticons.length - 1)
-								: 0;
-						}
-
-						// Replace the last emoticon text with a match
-						scope.messageText = scope.messageText.replace(/:\w+:?$/, ':' + matchingEmoticons[emoticonSearchIndex] + ':');
-						scope.$digest();
+					if (hidden) {
+						popup.show();
+						popup.on("click", "li", popupClick);
 					}
-					else if (searchState === searchStates.NICK) {
-						var currentRoom = bunkerData.getRoom($rootScope.roomId);
-						var users = _.pluck(currentRoom.$members, 'user');
-						var matchingNames = _.filter(users, function (item) {
-							return item.nick.toLowerCase().slice(0, nickSearch.toLowerCase().length) === nickSearch.toLowerCase();
-						});
+				}
+			});
 
-						if (matchingNames.length == 0) return;
+			// Change the text if commanded to do so
+			scope.$on('inputText', function (evt, text) {
+				var val = inputBox.val();
+				var append = val.length ? ' ' : ''; // start with a space if message already started
+				append += text + ' ';
+				val += append;
+				inputBox.val(val);
+				inputBox.focus();
+			});
 
-						if (evt.shiftKey) { // shift modifier goes backwards through the matches
-							nickSearchIndex = nickSearchIndex > 0
-								? Math.max(nickSearchIndex - 1, 0)
-								: matchingNames.length - 1;
-						}
-						else { // cycle
-							nickSearchIndex = nickSearchIndex < matchingNames.length - 1
-								? Math.min(nickSearchIndex + 1, matchingNames.length - 1)
-								: 0;
-						}
+			$rootScope.$on('roomIdChanged', () => {
+				resetMatchSearch();
+				resetMessageEditing();
+				inputBox.focus();
+			});
+			$rootScope.$on('bunkerDataLoaded', () => inputBox.focus());
 
-						scope.messageText = scope.messageText.replace(/@[\w ]*?$/, '@' + matchingNames[nickSearchIndex].nick + ' ');
-						scope.$digest();
+			// the send button needs to be attached to the enter handler
+			send.on("click", enter);
+
+			function popupClick(e) {
+				e.stopPropagation();
+				e.preventDefault();
+
+				if (!searchingFor) return;
+
+				var item = $(e.currentTarget);
+				var value = item.data('value');
+				replaceMatch(searchTerm, value);
+				selectItem();
+				inputBox.focus();
+			}
+
+			function reset() {
+				if (searchingFor)return resetMatchSearch();
+				resetMessageEditing();
+			}
+
+			function resetMatchSearch() {
+				searchingFor = null;
+				searchTerm = "";
+				matches = null;
+				suggestedTerm = null;
+				matchingEmoticons = null;
+				matchingUsers = null;
+				matchIndex = -1;
+				hidden = true;
+				popup.unbind("click");
+				popup.html('');
+				popup.hide();
+			}
+
+			function resetMessageEditing() {
+				editingMessage = null;
+				container.removeClass('edit-mode');
+			}
+
+			function selectItem() {
+				if (searchingFor == 'emoticons') {
+					inputBox.val(inputBox.val() + ':');
+				}
+
+				inputBox.val(inputBox.val() + ' ');
+
+				resetMatchSearch();
+			}
+
+			function enter(e) {
+				e.preventDefault();
+
+				if (editingMessage) {
+					editMessage()
+				}
+				else if (suggestedTerm) {
+					selectItem();
+				}
+				else if (e.shiftKey && bunkerData.userSettings.multilineShiftEnter) {
+					inputBox.val(inputBox.val() + '\n');
+				}
+				else {
+					submitMessage();
+				}
+
+				reset();
+			}
+
+			function editMessage() {
+				var text = inputBox.val();
+				if (!/\S/.test(text)) return;
+
+				editingMessage.text = text;
+				editingMessage.edited = true;
+				inputBox.val('');
+				bunkerData.editMessage(editingMessage);
+			}
+
+			function submitMessage() {
+				var text = inputBox.val();
+				if (!/\S/.test(text)) return;
+
+				inputBox.val('');
+
+				if (/^\/clear/i.test(text)) {
+					// Special command to clear all messages or message from a user
+					var nickMatches = /\/clear\s+(.+)/i.exec(text);
+					var nick;
+					if(nickMatches && nickMatches.length === 2) {
+						nick = nickMatches[1].trim();
 					}
+					bunkerData.clearMessagesFromNick($stateParams.roomId, nick);
+				}
+				else {
+					// Default
+					bunkerData.createMessage($stateParams.roomId, text);
 				}
 			}
 
-			function keyUp(evt) {
-				if (evt.keyCode == 38 || evt.keyCode == 40) {// choose previous message to edit
-					scope.selectedMessageIndex += evt.keyCode == 38 ? 1 : -1;
-
-					if (scope.selectedMessageIndex < 0) {
-						scope.selectedMessageIndex = 0;
-					}
-					else if (scope.selectedMessageIndex >= scope.submittedMessages.length) {
-						scope.selectedMessageIndex = scope.submittedMessages.length - 1;
-					}
-
-					var chosenMessage = scope.submittedMessages[scope.selectedMessageIndex];
-					previousText = chosenMessage.text;
-
-					scope.messageText = chosenMessage.text;
-					scope.editMode = true;
-
-					scope.$digest();
+			function backspace(e) {
+				if (!searchTerm.length) {
+					return resetMatchSearch();
 				}
-				else if (evt.keyCode == 27) { // 'escape'
-					// Reset all the things
-					scope.selectedMessageIndex = -1;
-					scope.messageText = '';
-					scope.editMode = false;
-					previousText = null;
-					emoticonSearch = '';
-					emoticonSearchIndex = -1;
-					scope.$digest();
+
+				if (suggestedTerm) {
+					replaceMatch(suggestedTerm, searchTerm);
+					suggestedTerm = null;
+					matchIndex = -1;
+					e.preventDefault();
+					return;
 				}
-				else if (evt.keyCode != 9 && evt.keyCode != 16) {
-					if (/:\w+$/.test(scope.messageText)) {
-						searchState = searchStates.EMOTE;
-						// if an emoticon is at the end of the message, start the search
-						emoticonSearch = scope.messageText.match(/:(\w+)$/)[1];
-						emoticonSearchIndex = -1;
-					}
-					else if (/@\w*$/.test(scope.messageText)) {
-						searchState = searchStates.NICK;
-						nickSearch = scope.messageText.match(/@(\w*)$/)[1];
-						nickSearchIndex = -1;
-					}
-					else {
-						searchState = searchStates.NONE;
-					}
+
+				searchTerm = searchTerm.slice(0, -1);
+			}
+
+			function tab(e) {
+				e.preventDefault();
+				if (!searchingFor) return;
+
+				var oldSuggestion = suggestedTerm || searchTerm;
+				suggestedTerm = getNextMatch(e.shiftKey);
+
+				if (!suggestedTerm) return;
+				replaceMatch(oldSuggestion, suggestedTerm);
+			}
+
+			function space(e) {
+				if (suggestedTerm) {
+					e.preventDefault();
+					return selectItem();
+				}
+
+				if (searchingFor == 'emoticons') {
+					return resetMatchSearch();
 				}
 			}
 
-			function datesWithinSeconds(date1, seconds) {
-				var elapsed = Math.abs(date1 - Date.now()) / 1000;
-				return elapsed < seconds;
+			function up(e) {
+				e.preventDefault();
+				var messages = getMessages();
+
+				if (!editingMessage) {
+					editingMessage = _.last(messages);
+				}
+				else {
+					var currentIndex = _.findIndex(messages, {_id: editingMessage._id});
+					console.log(currentIndex);
+					if (currentIndex == 0) return;
+					editingMessage = messages[currentIndex - 1];
+				}
+
+				container.addClass('edit-mode');
+				inputBox.val(editingMessage.text);
+			}
+
+			function down(e) {
+				if (!editingMessage) return resetMessageEditing();
+
+				var messages = getMessages();
+				var currentIndex = _.findIndex(messages, {_id: editingMessage._id});
+				editingMessage = messages[currentIndex + 1];
+
+				// no more messages
+				if (!editingMessage) {
+					inputBox.val('');
+					return resetMessageEditing();
+				}
+
+				inputBox.val(editingMessage.text);
+			}
+
+			function getMessages() {
+				var currentRoom = bunkerData.getRoom($rootScope.roomId);
+				return currentRoom.$messages.filter(message => {
+					return message.author && message.author._id == bunkerData.user._id;
+				});
+			}
+
+			function replaceMatch(oldText, newText) {
+				var anchor = anchors[searchingFor];
+				var oldSuggestion = `${anchor}${oldText}${anchor}`;
+
+				var suggestionSearch = anchor + newText;
+
+				var currentText = inputBox.val();
+				var currentSearch = new RegExp(`${oldSuggestion}*$`);
+				currentText = currentText.replace(currentSearch, suggestionSearch);
+
+				inputBox.val(currentText);
+			}
+
+			function getNextMatch(shiftKey) {
+				matchIndex += shiftKey ? -1 : 1;
+
+				if (matchIndex >= matches.length) {
+					matchIndex = 0;
+				}
+
+				if (matchIndex < 0) {
+					matchIndex = matches.length - 1;
+				}
+
+				return matches[matchIndex];
+			}
+
+			function emoticon(e) {
+				if (!e.shiftKey) return;
+				if (searchingFor == 'emoticons') return resetMatchSearch();
+				searchingFor = 'emoticons';
+			}
+
+			function searchForEmoticons(key) {
+				// only allow single letters/numbers/underscores on search term
+				var singleLetterNumber = /^[\w\d\_]{1}$/g;
+				if (singleLetterNumber.test(key)) {
+					searchTerm += key;
+				}
+
+				matchingEmoticons = _.filter(emoticons.imageEmoticons, emoticon => emoticon.name.indexOf(searchTerm) == 0);
+				matches = _.map(matchingEmoticons, 'name');
+			}
+
+			function renderEmoticons() {
+				return `
+					<ol class="row list-unstyled ng-scope">
+						${_.map(matchingEmoticons, emoticon => `
+							<li class="col-xs-3 emoticonListItem ${emoticon.name == suggestedTerm ? 'emoticon-selected' : ''}"
+								data-value="${emoticon.name}">
+								<a>
+									<div class="emoticon-container">
+										<img class="emoticon" src="/assets/images/emoticons/${emoticon.file}">
+									</div>
+									:${emoticon.name}:
+								</a>
+							</li>
+						`).join('')}
+					</ol>
+				`
+			}
+
+			function user(e) {
+				if (!e.shiftKey) return;
+				if (searchingFor == 'users') return resetMatchSearch();
+				searchingFor = 'users';
+			}
+
+			function searchForUsers(key) {
+				// only allow single letters/numbers/underscores on search term
+				var singleLetterNumber = /^[\w\s\-\.]{1}$/g;
+				if (singleLetterNumber.test(key)) {
+					searchTerm += key;
+				}
+
+				// since the @ key is actually shift + 2, when the search term is this, ignore it
+				// since it is the start of looking for a specific user: eg @Jason == 2Jason
+				if (searchTerm == '2') {
+					searchTerm = '';
+				}
+
+				var currentRoom = bunkerData.getRoom($rootScope.roomId);
+				var users = _.map(currentRoom.$members, 'user');
+				var activeUsers = _.filter(users, user => moment().diff(user.lastConnected, 'days') < 45);
+
+				matchingUsers = _.filter(activeUsers, user => user.nick.toLowerCase().indexOf(searchTerm) == 0);
+				matches = _.map(matchingUsers, 'nick');
+			}
+
+			function renderUsers() {
+				return `
+					<ol class="row list-unstyled ng-scope">
+						${_.map(matchingUsers, user => `
+							<li class="col-xs-3 ${user.nick == suggestedTerm ? 'emoticon-selected' : ''}">
+								<a>
+									<img src="${user.$gravatar}" title="${user.email}"/>
+									${user.nick}
+								</a>
+							</li>
+						`).join('')}
+					</ol>
+				`
 			}
 		}
-	};
+	}
 });

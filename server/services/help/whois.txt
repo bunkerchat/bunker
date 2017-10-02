@@ -1,0 +1,10 @@
+NAME
+	/whois - display users email and info
+
+SYNOPSIS
+	/whois &lt;usersNick&gt;
+
+EXAMPLE
+	/whois amann
+	
+	

@@ -1,6 +1,6 @@
 <div bunker-dropzone>
-	<div room="{{room.id}}" ng-show="room.$selected" ng-repeat="room in chat.rooms track by room.id">
-	</div>
+	<lobby ng-show="!room.$selected"></lobby>
+	<div room="{{room._id}}" ng-show="room.$selected" ng-repeat="room in chat.rooms track by room._id"></div>
 </div>
-<div input-box></div>
+<input-box></input-box>
 <div image-pick></div>

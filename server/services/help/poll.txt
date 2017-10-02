@@ -1,0 +1,15 @@
+NAME
+	/poll - create a poll where users can vote
+
+COMMANDS
+	/poll 			....Will display the active poll for you
+	/poll Question  ....Will start a new poll if one is not active in the room for the question
+	/pollclose or /poll close ....Will close the active poll in the room. Room admins, moderators, or the creator of the poll are the only ones who may do this
+	
+EXAMPLE
+	/poll Does pete suck
+	
+See /help vote for help on how to vote
+	
+	
+	

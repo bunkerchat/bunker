@@ -1,84 +1,80 @@
 app.controller('RoomHistoryController', function ($scope, bunkerData, $stateParams, $state, $location, $anchorScroll, $timeout) {
-	var self = this;
-	this.roomId = $stateParams.roomId;
-	this.message = $stateParams.message;
-	this.user = bunkerData.user;
+	var room = this;
+	room.roomId = $stateParams.roomId;
+	room.user = bunkerData.user;
+
+	room.message = $stateParams.message;
+	$location.hash(room.message);
 
 	var startDate;
 	var endDate;
 
-	this.messages = [];
-	this.date; //need this for binding WHY?!!!!!!!!!!
-	this.members = {};
+	room.messages = [];
+	room.date; //need room for binding WHY?!!!!!!!!!!
+	room.members = {};
 
-	this.subDay = function () {
-		self.date = moment(self.date).add(-1, 'days').toDate();
+	room.subDay = function () {
+		room.date = moment(room.date).add(-1, 'days').hour(0).toDate();
 	};
 
-	this.addDay = function () {
-		self.date = moment(self.date).add(1, 'days').toDate();
+	room.addDay = function () {
+		room.date = moment(room.date).add(1, 'days').hour(23).minute(59).toDate();
 	};
 
 	// hack :-( ng-changed doesn't work
 	$scope.$watch('room.date', function (newVal, oldVal) {
 		if (!oldVal || newVal == oldVal) return;
 
-		setStartAndEnd(self.date);
+		setStartAndEnd(room.date);
 
-		// getMessages() will be triggered by this
+		// getMessages() will be triggered by room
 		//$location.search({date: startDate});
-		$state.go('roomHistory', {roomId: self.roomId, date: startDate});
+		$state.go('roomHistory', {roomId: room.roomId, date: startDate});
 	});
 
 	setStartAndEnd($stateParams.date);
 	getMessages();
 
 	function getMessages() {
-		bunkerData.getHistoryMessages(self.roomId, startDate, endDate)
+		bunkerData.getHistoryMessages(room.roomId, startDate, endDate)
 			.then(function(messages) {
-				self.ready = true;
-				self.rawMessages = messages;
+				room.ready = true;
+				room.rawMessages = messages;
 				_.each(messages, function (message) {
 					addMessage(message);
 					if (message.author) {
-						self.members[message.author.id] = message.author;
+						room.members[message.author._id] = message.author;
 					}
 				});
 
-				if (self.message) {
-					// scroll to message
-					$timeout(function () {
-						$location.hash(self.message);
-						$anchorScroll();
-					}, 1000);
-				}
+				$timeout($anchorScroll);
 			});
 	}
 
 	function addMessage(message) {
-		var lastMessage = _.last(self.messages);
-		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author.id != message.author.id;
+		var lastMessage = _.last(room.messages);
+		message.$firstInSeries = !lastMessage || !lastMessage.author || !message.author || lastMessage.author._id != message.author._id;
 		message.$mentionsUser = bunkerData.mentionsUser(message.text);
-		self.messages.push(message);
+		room.messages.push(message);
 	}
 
 	function setStartAndEnd(date) {
-		startDate = moment(date).format('YYYY-MM-DD');
-		endDate = moment(date).add(1, 'days').format('YYYY-MM-DD');
-		self.date = moment(date).toDate();
+		startDate = moment(date).hour(0).minute(0);
+		endDate = moment(date).hour(23).minute(59).second(59).toDate();
+		room.date = moment(date).toDate();
 	}
 
-	this.openCalendar = function ($event) {
+	room.openCalendar = function ($event) {
 		$event.preventDefault();
 		$event.stopPropagation();
 
-		self.calendarOpened = true;
+		room.calendarOpened = true;
 	};
 
-	this.dateOptions = {
+	room.dateOptions = {
 		formatYear: 'yy',
 		startingDay: 1
 	};
 
-	this.format = 'yyyy-MM-dd';
+	room.format = 'yyyy-MM-dd';
 });

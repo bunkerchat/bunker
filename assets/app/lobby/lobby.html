@@ -1,49 +1,76 @@
-<div class="container-fluid" ng-show="!$root.roomId">
+<div class="container-fluid lobby" ng-show="!$root.roomId">
 
-	<section class="row">
-		<div class="col-md-9">
-			<h3>Known rooms</h3>
-		</div>
-		<div class="col-md-3">
-			<form ng-submit="lobby.joinRoom(roomGuid)">
+	<div class="row">
+		<div ng-if="lobby.rooms.length > 0">
+			<div class="col-md-12">
+				<h3>Joined Rooms</h3>
+			</div>
 
-				<div class="input-group">
-					<input type="text" class="form-control" placeholder="Existing room guid"
-								 ng-model="roomGuid" ng-required="true"/>
-
-					<span class="input-group-btn">
-							<button class="btn btn-success">Join</button>
+			<ul class="list-group">
+				<li class="col-md-4 list-group-item"
+					ui-sref="chat.room({roomId: room._id})"
+					ng-if="room.$resolved"
+					ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
+					<h4 class="list-group-item-heading">
+						{{room.name}}
+						<small bunker-message="room" media="false"></small>
+					</h4>
+					<span class="lobby-room-users">
+						{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>
 					</span>
-				</div>
 
-			</form>
+					<p ng-if="room.$lastMessage">
+						<span am-time-ago="room.$lastMessage.createdAt"></span>
+						<img class="gravatar-md" gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="60"/>
+						{{room.$lastMessage.author.nick}}:
+						<span bunker-message="room.$lastMessage" media="false"></span>
+					</p>
+					<p ng-if="!room.$lastMessage">
+						No messages yet!
+					</p>
+
+				</li>
+			</ul>
+
 		</div>
-	</section>
+		<div ng-if="lobby.publicRooms.length > 0">
+			<div class="col-md-12">
+				<h3>Public Rooms</h3>
+			</div>
 
-	<table class="table">
-		<thead>
-		<tr>
-			<th>Name</th>
-			<th>Topic</th>
-			<th><i class="fa fa-user"></i> Online</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr ng-repeat="room in lobby.rooms | orderBy:'name' track by room.id" ng-if="room.$resolved">
-			<td>
-				<a ui-sref="chat.room({roomId: room.id})">{{room.name}}</a>
-			</td>
-			<td ng-bind-html="room.topic"></td>
-			<td>{{room.$members | connectedUsersCount}} / {{room.$members.length}}</td>
-		</tr>
-		</tbody>
-	</table>
+			<ul class="list-group">
+				<li class="col-md-4 list-group-item"
+					ui-sref="chat.room({roomId: room._id})"
+					ng-repeat="room in lobby.publicRooms track by room._id">
+					<h4 class="list-group-item-heading">
+						{{room.name}}
+					</h4>
+					<span class="lobby-room-users">
+						{{room.$memberCount}} <i class="fa fa-user"></i>
+					</span>
+					<p>
+						{{room.topic || 'No topic'}}
+					</p>
+				</li>
+			</ul>
+
+		</div>
+	</div>
+
+	<div ng-show="lobby.rooms.length == 0">
+		<h3>No Rooms Found</h3>
+		<p>
+			Why don't you create one or ask your buddy to join his awesomesauce room?
+		</p>
+	</div>
+
+	<hr/>
 
 	<form class="col-md-3" ng-submit="lobby.createRoom(newRoomName)">
 
 		<div class="input-group">
-			<input type="text" class="form-control" placeholder="New room name"
-						 ng-model="newRoomName" ng-required="true"/>
+			<input type="text" class="form-control" placeholder="Or create a new room"
+				   ng-model="newRoomName" ng-required="true"/>
 
 			<span class="input-group-btn">
 					<button class="btn btn-success">Create</button>

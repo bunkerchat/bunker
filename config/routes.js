@@ -33,6 +33,7 @@ module.exports.routes = {
 	 ***************************************************************************/
 
 	'/': 'ViewController.index',
+	'/debug': 'ViewController.indexDebug',
 	'/login': 'ViewController.login',
 	'/logout': 'AuthController.logout',
 	'/init': 'UserController.init',
@@ -46,6 +47,8 @@ module.exports.routes = {
 	'/room/:id/messages': 'RoomController.messages',
 	'/room/:id/history': 'RoomController.history',
 	'/room/:id/media': 'RoomController.media',
+	'post /room/:id/pins': 'RoomController.pinMessage',
+	'delete /room/:roomId/pins/:messageId': 'RoomController.unPinMessage',
 	'/message/emoticons': 'MessageController.emoticonCounts',
 
 	/***************************************************************************

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html ng-app="bunker" <%if (useJavascriptBundle) {%> ng-strict-di <%}%>>
+<head>
+	<title unread-messages>Bunker</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+	<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="/assets/vendor/highlightjs/styles/github.css"/>
+	<link rel="stylesheet" href="/node_modules/ng-sortable/dist/ng-sortable.min.css"/>
+
+	<!-- build:sass /assets/bundled/default.css -->
+	<link rel="stylesheet" href="/assets/styles/default.scss"/>
+	<!-- endbuild -->
+
+	<!-- build:remove -->
+	<link rel="stylesheet" href="/assets/bundled/default.css"/>
+	<!-- endbuild -->
+	<link rel="stylesheet" ng-href="{{ loadMinimal ? '/assets/bundled/minimalist.css' : '' }}" custom-stylesheet/>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+	<link rel="manifest" href="/assets/manifest.json">
+	<link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="msapplication-config" content="/assets/browserconfig.xml">
+	<meta name="theme-color" content="#ffffff">
+	<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+</head>
+<body>
+
+<div splash ng-show="loading">
+	<p class="loading-font">
+		<img src="/assets/images/emoticons/<%- loadingEmote %>"/> Loading...
+	</p>
+</div>
+
+<div ng-include="'/assets/app/header/header.html'"></div>
+<div ui-view></div>
+
+<script>
+	window.userId = '<%= userId %>';
+	window.useJavascriptBundle = <%= useJavascriptBundle %>;
+	window.emoticons = <%- JSON.stringify(emoticons) %>;
+	window.debugging = <%= debugging %>;
+</script>
+
+<!-- disabled for now cause it doesn't work with Dave's stupid minimalist ui thing
+love you dave
+future use: put <link>'s here that can be stream loaded
+<noscript id="deferred-styles">
+</noscript>
+<script>
+	// Inline CSS for max perf
+	// https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery
+	var loadDeferredStyles = function () {
+		var addStylesNode = document.getElementById("deferred-styles");
+		var replacement = document.createElement("div");
+		replacement.innerHTML = addStylesNode.textContent;
+		document.body.appendChild(replacement)
+		addStylesNode.parentElement.removeChild(addStylesNode);
+	};
+	var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+			webkitRequestAnimationFrame || msRequestAnimationFrame;
+	if (raf) raf(function () {
+		window.setTimeout(loadDeferredStyles, 0);
+	});
+	else window.addEventListener('load', loadDeferredStyles);
+</script>
+-->
+
+<!-- build:jsLib /assets/bundled/vendor.js -->
+<script src="/assets/vendor/youtube-iframe-api/youtube.iframe-api.js"></script>
+<script src="/node_modules/lodash/lodash.js"></script>
+<script src="/node_modules/moment/min/moment.min.js"></script>
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/node_modules/angular/angular.js"></script>
+<script src="/assets/vendor/angular-touch/angular-touch.min.js"></script>
+<script src="/assets/vendor/angular-sanitize/angular-sanitize.min.js"></script>
+<script src="/assets/vendor/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="/assets/vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="/assets/vendor/angular-gravatar/build/angular-gravatar.min.js"></script>
+<script src="/assets/vendor/angular-moment/angular-moment.min.js"></script>
+<script src="/assets/vendor/plangular/dist/plangular.min.js"></script>
+<script src="/assets/vendor/angular-youtube-mb/src/angular-youtube-embed.js"></script>
+<script src="/assets/vendor/angular-filter/dist/angular-filter.min.js"></script>
+<script src="/assets/vendor/highlightjs/highlight.pack.js"></script>
+<script src="/assets/vendor/angular-highlightjs/angular-highlightjs.min.js"></script>
+<script src="/assets/vendor/angular-notification/angular-notification.min.js"></script>
+<script src="/assets/vendor/ng-stats/dist/ng-stats.min.js"></script>
+<script src="/node_modules/ng-sortable/dist/ng-sortable.min.js"></script>
+<script src="/node_modules/favico.js/favico-0.3.10.min.js"></script>
+<!-- endbuild -->
+
+<!-- build:jsLibMin /assets/bundled/vendor.min.js -->
+<script src="/assets/vendor/jquery.dragbetter/jquery.dragbetter.js"></script>
+<script src="/assets/vendor/socket.io-client/socket.io.js"></script>
+<!-- endBuild -->
+
+<!-- build:jsApp /assets/bundled/bundle.js -->
+<script src="/assets/app/bunker.js"></script>
+<script src="/assets/app/bunkerData.js"></script>
+<script src="/assets/app/bunkerListener.js"></script>
+<script src="/assets/app/bunkerConstants.js"></script>
+<script src="/assets/app/messages/bunkerMessage.js"></script>
+<script src="/assets/app/messages/gfycat.js"></script>
+<script src="/assets/app/messages/bunkerMedia.js"></script>
+<script src="/assets/app/messages/bunkerQuote.js"></script>
+<script src="/assets/app/messages/mark.js"></script>
+<script src="/assets/app/messages/messageLogScroll.js"></script>
+<script src="/assets/app/messages/notifications.js"></script>
+<script src="/assets/app/directives/customStylesheet.js"></script>
+<script src="/assets/app/directives/splash.js"></script>
+<script src="/assets/app/directives/shortTimeAgo.js"></script>
+<script src="/assets/app/input/inputBox.js"></script>
+<script src="/assets/app/input/mobileInput.js"></script>
+<script src="/assets/app/input/keycode.js"></script>
+<script src="/assets/app/input/imagePick.js"></script>
+<script src="/assets/app/directives/unreadMessages.js"></script>
+<script src="/assets/app/directives/datepickerPopup.js"></script>
+<script src="/assets/app/fileUpload/loadingButton.js"></script>
+<script src="/assets/app/fileUpload/droppableItem.js"></script>
+<script src="/assets/app/fileUpload/bunkerDropzone.js"></script>
+<script src="/assets/app/fileUpload/fileError.js"></script>
+<script src="/assets/app/fileUpload/imageUploadController.js"></script>
+<script src="/assets/app/fileUpload/overlayContents.js"></script>
+<script src="/assets/app/fileUpload/imageUpload.js"></script>
+<script src="/assets/app/fileUpload/uploadButton.js"></script>
+<script src="/assets/app/emoticons.js"></script>
+<script src="/assets/app/header/HeaderController.js"></script>
+<script src="/assets/app/header/emoticonMenu.js"></script>
+<script src="/assets/app/header/inbox.js"></script>
+<script src="/assets/app/lobby/lobby.js"></script>
+<script src="/assets/app/chat/ChatController.js"></script>
+<script src="/assets/app/room/RoomHistoryController.js"></script>
+<script src="/assets/app/room/room.js"></script>
+<script src="/assets/app/room/animationControl.js"></script>
+<script src="/assets/app/help/HelpController.js"></script>
+<script src="/assets/app/pinBoard/pinBoard.js"></script>
+<script src="/assets/app/search/SearchController.js"></script>
+<!-- endbuild -->
+
+</body>
+</html>

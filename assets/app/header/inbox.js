@@ -18,39 +18,39 @@ app.directive('inbox', function (bunkerData, $state, $location, $anchorScroll) {
 			});
 		},
 		controller: function () {
-			var self = this;
+			var inbox = this;
 
-			this.messages = bunkerData.inbox;
+			inbox.messages = bunkerData.inbox;
 			bunkerData.markInboxRead();
 
-			this.clearInbox = function () {
+			inbox.clearInbox = function () {
 				bunkerData.clearInbox();
-				self.visible = false;
+				inbox.visible = false;
 			};
 
-			this.close = function () {
-				self.visible = false;
+			inbox.close = function () {
+				inbox.visible = false;
 			};
 
-			this.goToRoom = function (message) {
-				self.visible = false;
+			inbox.goToRoom = function (message) {
+				inbox.visible = false;
 
 				//check if room still has message loaded
-				var room = _.find(bunkerData.rooms, {id: message.room});
+				var room = _.find(bunkerData.rooms, {_id: message.room});
 
 				// go to loaded room's message
-				if(_.any(room.$messages, {id: message.id})){
+				if(_.some(room.$messages, {_id: message._id})){
 					return $state.go('chat.room', {roomId: message.room})
 						.then(function () {
 							// scroll to message
-							$location.hash(message.id);
+							$location.hash(message._id);
 							$anchorScroll();
 						});
 				}
 
 				// otherwise load room history view
 				var date = moment(message.createdAt).format('YYYY-MM-DD');
-				$state.go('roomHistory', {roomId: message.room, date: date, message: message.id});
+				$state.go('roomHistory', {roomId: message.room, date: date, message: message._id});
 			};
 		}
 	};

@@ -1,0 +1,15 @@
+GIF
+You want to use that moving image thingy?
+
+NAME
+	/gif - Display gif...let me Google that for you
+
+SYNOPSIS
+	/gif [string]
+
+COMMANDS
+	/gif smashing
+	/gif Suck It Trebek
+	
+REMARKS
+	Not every picture that google thinks is animated, actually is animated.

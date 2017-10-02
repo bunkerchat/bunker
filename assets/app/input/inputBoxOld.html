@@ -1,0 +1,17 @@
+<div class="container-fluid message-input"
+		 ng-class="{'edit-mode' : editMode}"
+		 ng-show="$root.roomId && !$stateParams.date">
+	<div class="row">
+		<form class="col-md-10 no-gutter" ng-submit="sendMessage()">
+			<textarea rows="1" class="form-control"
+								ng-model="messageText"
+								ng-trim="false"
+								bunker-input="messageText">
+			</textarea>
+			<button type="submit" class="btn btn-success visible-xs" ng-click="sendMessage()">Send</button>
+			<upload-button></upload-button>
+		</form>
+		<div class="col-md-2 right-pane hidden-xs hidden-sm">
+		</div>
+	</div>
+</div>

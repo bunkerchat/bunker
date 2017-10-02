@@ -1,35 +1,58 @@
 <nav class="navbar navbar-default navbar-fixed-top navbar-background" role="navigation"
-	 ng-controller="HeaderController as header">
+		 ng-controller="HeaderController as header">
 	<div class="container-fluid">
 		<div class="navbar-header">
-			<a class="navbar-brand" ui-sref="lobby">Bunker</a>
+			<a class="navbar-brand hidden-xs" ui-sref="chat.lobby">Bunker</a>
+			<a class="navbar-brand visible-xs" ui-sref="chat.lobby">
+				<i ng-show="roomId" class="fa fa-arrow-left"></i>
+				{{header.currentRoomName}}
+			</a>
+
+			<span class="mobile-upload-button visible-xs">
+				<upload-button></upload-button>
+			</span>
 		</div>
-		<ul class="nav navbar-nav hidden-xs" as-sortable="header.dragRoomListeners" ng-model="header.rooms">
-			<li ui-sref-active="active" ng-repeat="room in header.rooms track by room.id" as-sortable-item  ng-if="room.$resolved">
-				<a as-sortable-item-handle ui-sref="chat.room({roomId: room.id})" title="{{room.topic}}">{{room.name}}</a>
+		<ul class="nav navbar-nav navbar-rooms hidden-xs" as-sortable="header.dragRoomListeners" ng-model="header.rooms">
+			<li ui-sref-active="active" ng-repeat="room in header.rooms track by room._id" as-sortable-item
+					ng-if="room.$resolved">
+				<a as-sortable-item-handle ui-sref="chat.room({roomId: room._id})" title="{{room.topic}}">
+					<i class="fa fa-{{room.icon}}"></i>
+					{{room.name}}
+				</a>
 				<span class="badge" ng-class="{'badge-mention': room.$unreadMention}" ng-show="room.$unreadMessages > 0">
 					{{room.$unreadMessages}}
 				</span>
 			</li>
 		</ul>
-
 		<div ng-if="header.showOptions">
 
 			<ul class="nav navbar-nav navbar-right hidden-xs">
 				<li ng-class="{active: header.emoticonMenu}">
 					<a ng-click="header.toggleEmoticonMenu()" class="small-width">
-						<img src="/assets/images/emoticons/allthethings.png"/>
+						<img ng-src="/assets/images/emoticons/allthethings.png"/>
 					</a>
 				</li>
-				<li ng-class="{active: header.inboxOpened}" >
+				<li ng-class="{active: header.inboxOpened}">
 					<a ng-click="header.toggleInbox()" class="small-width">
 						<i class="fa fa-inbox fa-lg"></i>
 					</a>
 					<span class="badge" ng-show="header.inbox.unreadMessages > 0">{{header.inbox.unreadMessages}}</span>
 				</li>
 				<li class="dropdown">
-					<a href data-toggle="dropdown" class="small-width"><i class="fa fa-cog fa-lg"></i></a>
+					<a href data-toggle="dropdown" class="small-width" ng-click="header.toggleSettings()">
+						<i class="fa fa-cog fa-lg"
+							 ng-class="{'fa-spin':!header.bunkerData.connected, 'warning': !header.currentVersion}"></i>
+					</a>
 					<ul class="dropdown-menu" role="menu">
+						<li role="presentation">
+							<a role="menuitem" tabindex="-1" ui-sref="search">
+								<i class="fa fa-search"></i>
+								Search for messages...
+							</a>
+						</li>
+
+						<li role="presentation" class="divider"></li>
+
 						<li role="presentation">
 							<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('showImages')">
 								<i class="fa {{header.settings.showImages ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
@@ -55,15 +78,27 @@
 							</a>
 						</li>
 						<li role="presentation">
+							<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('bunkerServesImages')">
+								<i class="fa {{header.settings.bunkerServesImages ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+								Bunker serves all images
+							</a>
+						</li>
+						<li role="presentation">
 							<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('minimalView')">
 								<i class="fa {{header.settings.minimalView ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
 								Use Minimalist UI
 							</a>
 						</li>
+						<li role="presentation">
+							<a role="menuitem" tabindex="-1" ng-click="header.changeSetting('multilineShiftEnter')">
+								<i class="fa {{header.settings.multilineShiftEnter ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
+								Enable Multiline Messaging With Shift Enter
+							</a>
+						</li>
 						<li role="presentation" class="divider"></li>
 						<li role="presentation">
 							<a role="menuitem" tabindex="-1"
-							   ng-click="header.changeSetting('desktopMentionNotifications')">
+								 ng-click="header.changeSetting('desktopMentionNotifications')">
 								<i class="fa {{header.settings.desktopMentionNotifications ? 'fa-check-square-o' : 'fa-square-o'}}"></i>
 								Show Notifications (@Nick)
 							</a>
@@ -81,6 +116,19 @@
 						<!--</a>-->
 						<!--</li>-->
 						<li role="presentation" class="divider"></li>
+						<li ng-if="header.currentVersion" role="presentation">
+							<a role="menuitem" tabindex="-1">
+								<i class="fa {{header.bunkerData.connected ? 'fa-circle' : 'fa-circle-o'}}"></i>
+								Connected
+								<small class="text-muted">{{header.bunkerData.version.serverVersion}}</small>
+							</a>
+						</li>
+						<li ng-if="!header.currentVersion" role="presentation">
+							<a class="bg-warning" role="menuitem" tabindex="-1" ng-click="header.reloadPage()">
+								<i class="fa fa-exclamation-triangle text-warning"></i>
+								Bunker Update Available!
+							</a>
+						</li>
 						<li role="presentation">
 							<a role="menuitem" tabindex="-1" ng-click="header.showHelp()">
 								<i class="fa fa-question"></i> Help
