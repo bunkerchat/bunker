@@ -172,7 +172,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					{marker: '*', tag: 'strong'},
 					{marker: '_', tag: 'em'},
 					{marker: '~', tag: 'del'},
-					{marker: '|', tag: 'mark'}
+					{marker: '|', tag: 'mark'},
+					{marker: '`', tag: 'code'}
 				];
 
 				_.each(types, function (type) {
