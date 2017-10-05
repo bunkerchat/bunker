@@ -1,13 +1,13 @@
 import React from 'react'
 import _ from 'lodash'
-import {FlatList, StatusBar, StyleSheet, View, Text, Button, Image} from 'react-native'
+import {StyleSheet, View, Text, Image} from 'react-native'
 
 const iconSize = 24;
 
 export default class BunkerMessage extends React.PureComponent{
 
 	getGravatarUri = () => {
-		if (this.props.user) {
+		if (this.props.user && this.props.user.gravatarMd5) {
 			return `https://www.gravatar.com/avatar/${this.props.user.gravatarMd5}?r=pg&s=${iconSize}&d=identicon`;
 		}
 
@@ -32,6 +32,7 @@ export default class BunkerMessage extends React.PureComponent{
 				{isFirstInRun && !isCurrentUser && <Image style={sharedStyles.icon} source={{uri: this.getGravatarUri()}} />}
 				<View style={messageWrapperStyles}>
 					<Text style={sharedStyles.text}>{message.text}</Text>
+					{message.edited && <Text style={sharedStyles.edited}>edited</Text>}
 				</View>
 			</View>
 	}
@@ -46,6 +47,12 @@ const sharedStyles = StyleSheet.create({
 		marginLeft: 10,
 		marginRight: 10,
 		color: '#333333'
+	},
+	edited: {
+		marginLeft: 10,
+		fontSize: 10,
+		marginRight: 10,
+		color: '#888'
 	},
 	icon: {
 		width: iconSize,

@@ -42,6 +42,7 @@ const style = StyleSheet.create({
 		flexDirection: 'row',
 		borderTopWidth: 1,
 		borderTopColor: 'gray',
+		paddingLeft: 10,
 		backgroundColor: '#E5E5E5'
 	},
 	textBox: {
