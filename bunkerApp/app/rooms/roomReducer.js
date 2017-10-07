@@ -33,5 +33,18 @@ reducer['socketio-room-messaged'] = (state, {data}) => {
 	}
 }
 
+reducer['room/messagesFetched'] = (state, {roomId, messages}) => {
+
+	const room = state.rooms[roomId];
+
+	_.each(messages || [], message => message.author = message.author && message.author._id);
+
+	const $messages = [...room.$messages, ...messages];
+
+	return state.setIn(['rooms', roomId, '$messages'], $messages);
+};
+
+export const messagesFetched = (roomId, messages) => ({type: 'room/messagesFetched', roomId, messages});
+
 export default makeReducer(INITIAL_STATE, reducer)
 

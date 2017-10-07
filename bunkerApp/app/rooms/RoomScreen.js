@@ -3,6 +3,7 @@ import {FlatList, KeyboardAvoidingView, StyleSheet, View, TextInput, Button} fro
 import {connect} from 'react-redux'
 import BunkerMessage from './BunkerMessage'
 import MessageToolbar from './MessageToolbar'
+import {loadMessages} from './messageThunks'
 import _ from 'lodash'
 
 class RoomScreen extends React.PureComponent {
@@ -30,7 +31,10 @@ class RoomScreen extends React.PureComponent {
 				user={this.props.users && this.props.users[item.author]} />
 	};
 
-	_itemSeperator = () => <View style={style.separator} />;
+	// TODO: once flatlist has better support for inversion, change this to load messages when user scrolls to top.
+	componentWillMount() {
+		this.props.loadMessages(this.props.room._id, this.props.messages ? this.props.messages.length : 0);
+	}
 
 	render() {
 		const {messages, room} = this.props
@@ -47,6 +51,7 @@ class RoomScreen extends React.PureComponent {
 					data={messages}
 					keyExtractor={this._keyExtractor}
 					renderItem={this._renderItem}
+					// onEndReached={() => console.log('end reached')} // currently doesn't work for flatlist
 					// ItemSeparatorComponent = {this._itemSeperator}
 				/>
 			</View>
@@ -83,4 +88,4 @@ const mapStateToProps = (state, props) => {
 	}
 }
 
-export default connect(mapStateToProps, {})(RoomScreen)
+export default connect(mapStateToProps, {loadMessages})(RoomScreen)
