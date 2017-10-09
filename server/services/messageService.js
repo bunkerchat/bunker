@@ -261,10 +261,10 @@ function roll(roomMember, text) {
 			dieString.push('[' + die + ']');
 		}
 
-		rollOutcome = 'rolled ' + diceCount + 'd' + dieSides + ' for ' + total + ': ' + dieString.join(' ');
+		rollOutcome = `rolled ${diceCount}d${dieSides} for ${dieString.join(' ')}: ${total}`;
 	}
 	else { // Doesn't fit any of our cases
-		rollOutcome = 'rolled ' + Math.ceil(Math.random() * 100) + ' out of ' + 100;
+		rollOutcome = `rolled ${Math.ceil(Math.random() * 100)} out of 100`;
 	}
 
 	return message(roomMember, ':rolldice: ' + roomMember.user.nick + ' ' + rollOutcome, 'roll');
