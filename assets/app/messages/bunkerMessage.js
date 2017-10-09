@@ -224,7 +224,12 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						const target = _.includes(link, window.location.origin) ? '_self' : '_blank'
 
 						// remove query string noise from visible link
-						const linkWithoutQuerystring = link.split("?")[0]
+						let linkWithoutQuerystring = link.split("?")[0]
+
+						// much complaigning about "broken" youtube links, even though they obviously worked fucking fine, idiots
+						if (youtubeRegexp().test(link)) {
+							linkWithoutQuerystring = link
+						}
 
 						text = replaceAll(text, link, `<a href="${link}" target="${target}">${linkWithoutQuerystring}</a>`);
 						replacedLinks[link] = true;
@@ -323,7 +328,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 					function appendToggleLink(link) {
 						// if toggle link already appended, skip
-						if(text.includes('fa-caret-square-o-left')) return
+						if (text.includes('fa-caret-square-o-left')) return
 
 						var toggleButton = `<a ng-click="bunkerMessage.$visible = !bunkerMessage.$visible">
 							<i class="fa fa-lg" ng-class="{'fa-caret-square-o-down': bunkerMessage.$visible, 'fa-caret-square-o-left': !bunkerMessage.$visible}"></i>
