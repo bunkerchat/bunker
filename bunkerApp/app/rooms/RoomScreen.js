@@ -19,13 +19,14 @@ class RoomScreen extends React.PureComponent {
 		const prevMessage = this.props.messages[index + 1];
 		let isFirstInRun = true;
 
-		// TODO: place this in reducer maybe?
+		// TODO: place this in reducer
 		if (prevMessage && prevMessage.author && prevMessage.author.toLowerCase() === item.author.toLowerCase()) {
 			isFirstInRun = false;
 		}
 
 		return <BunkerMessage
 				message={item}
+				previousMessage={prevMessage}
 				isFirstInRun={isFirstInRun}
 				currentUserId={this.props.currentUser._id}
 				user={this.props.users && this.props.users[item.author]} />
@@ -33,7 +34,11 @@ class RoomScreen extends React.PureComponent {
 
 	// TODO: once flatlist has better support for inversion, change this to load messages when user scrolls to top.
 	componentWillMount() {
-		this.props.loadMessages(this.props.room._id, this.props.messages ? this.props.messages.length : 0);
+		const numberOfLoadedMessages = this.props.messages.length;
+
+		if (numberOfLoadedMessages < 150) {
+			this.props.loadMessages(this.props.room._id, numberOfLoadedMessages);
+		}
 	}
 
 	render() {

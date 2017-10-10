@@ -3371,9 +3371,9 @@ modify-filename@^1.0.0, modify-filename@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/modify-filename/-/modify-filename-1.1.0.tgz#9a2dec83806fbb2d975f22beec859ca26b393aa1"
 
-moment@2.10.6:
-  version "2.10.6"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.10.6.tgz#6cb21967c79cba7b0ca5e66644f173662b3efa77"
+moment@^2.18.1:
+  version "2.18.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
 
 mongodb-core@1.2.24:
   version "1.2.24"
@@ -4517,7 +4517,7 @@ socket.io-adapter@0.4.0:
     debug "2.2.0"
     socket.io-parser "2.2.2"
 
-"socket.io-adapter@github:automattic/socket.io-adapter#de5cba":
+socket.io-adapter@automattic/socket.io-adapter#de5cba:
   version "0.3.1"
   resolved "https://codeload.github.com/automattic/socket.io-adapter/tar.gz/de5cba"
   dependencies:

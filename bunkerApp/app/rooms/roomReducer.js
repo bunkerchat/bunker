@@ -7,7 +7,35 @@ const INITIAL_STATE = Immutable({
 })
 const reducer = {}
 
+const isSameDay = (message, previousMessage) => {
+	const currMessageDate = new Date(message.createdAt);
+
+	if (!previousMessage) {
+		console.log('no previous');
+		return false;
+	}
+
+	// TODO: use moment
+	const prevMessageDate = new Date(previousMessage.createdAt);
+	return currMessageDate.toDateString() === prevMessageDate.toDateString();
+};
+
+
+const reduceMessage = (message, previousMessage) => {
+
+	// full author object is populated, we just want ID.
+	message.author = _.isString(message.author) ? message.author : message.author && message.author._id;
+	message.isSameDay = isSameDay(message, previousMessage);
+
+	return message;
+};
+
 reducer['socketio-init'] = (state, {rooms}) => {
+	rooms.forEach((room) => {
+		// remap messages
+		room.$messages = room.$messages.map((message, index) => reduceMessage(message, room.$messages[index + 1]));
+	});
+
 	return state.merge({rooms: _.keyBy(rooms, '_id')})
 }
 
@@ -16,19 +44,16 @@ reducer['socketio-room-messaged'] = (state, {data}) => {
 	const roomId = message.room
 	const room = state.rooms[roomId]
 
-	// full author object is populated, we just want ID.
-	message.author = message.author && message.author._id;
-
 	if (message.edited) {
 		const index = _.findIndex(room.$messages, { _id: message._id });
 
 		if (index === -1) return state;
 
-		const $messages = [...room.$messages.slice(0, index), message, ...room.$messages.slice(index + 1)];
+		const $messages = [...room.$messages.slice(0, index), reduceMessage(message, room.$messages[index + 1]), ...room.$messages.slice(index + 1)];
 
 		return state.setIn(['rooms', roomId, '$messages'], $messages);
 	} else {
-		const $messages = [message, ...room.$messages]
+		const $messages = [reduceMessage(message, room.$messages[0]), ...room.$messages]
 		return state.setIn(['rooms',roomId,'$messages'], $messages)
 	}
 }
@@ -37,7 +62,9 @@ reducer['room/messagesFetched'] = (state, {roomId, messages}) => {
 
 	const room = state.rooms[roomId];
 
-	_.each(messages || [], message => message.author = message.author && message.author._id);
+	messages = messages.map((item, index) => {
+		return reduceMessage(item, messages[index + 1]);
+	});
 
 	const $messages = [...room.$messages, ...messages];
 

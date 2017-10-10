@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
+import Day from './Day';
 import {StyleSheet, View, Text, Image} from 'react-native'
 
 const iconSize = 24;
@@ -28,13 +29,17 @@ export default class BunkerMessage extends React.PureComponent{
 			messageWrapperStyles = [styles.left.messageWrapper, {marginLeft: 6}];
 		}
 
-		return <View style={(isCurrentUser ? styles.right.container : styles.left.container)}>
-				{isFirstInRun && !isCurrentUser && <Image style={sharedStyles.icon} source={{uri: this.getGravatarUri()}} />}
-				<View style={messageWrapperStyles}>
-					<Text style={sharedStyles.text}>{message.text}</Text>
-					{message.edited && <Text style={sharedStyles.edited}>edited</Text>}
+		return (
+			<View>
+				<Day currentMessage={message} />
+				<View style={(isCurrentUser ? styles.right.container : styles.left.container)}>
+					{isFirstInRun && !isCurrentUser && <Image style={sharedStyles.icon} source={{uri: this.getGravatarUri()}} />}
+					<View style={messageWrapperStyles}>
+						<Text style={sharedStyles.text}>{message.text}</Text>
+						{message.edited && <Text style={sharedStyles.edited}>edited</Text>}
+					</View>
 				</View>
-			</View>
+			</View>);
 	}
 }
 
