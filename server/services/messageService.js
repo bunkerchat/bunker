@@ -145,7 +145,7 @@ function stats(roomMember, text) {
 }
 
 function animation(roomMember, text) {
-	const {words, emoticon} = animationService.getWordsToAnimate(text)
+	const {words, emoticon} = animationService.getWordsToAnimate(text, roomMember)
 	RoomService.animateInRoom(roomMember, emoticon, words);
 }
 
