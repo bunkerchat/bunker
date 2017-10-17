@@ -11,11 +11,9 @@ const isSameDay = (message, previousMessage) => {
 	const currMessageDate = new Date(message.createdAt);
 
 	if (!previousMessage) {
-		console.log('no previous');
 		return false;
 	}
 
-	// TODO: use moment
 	const prevMessageDate = new Date(previousMessage.createdAt);
 	return currMessageDate.toDateString() === prevMessageDate.toDateString();
 };
@@ -23,7 +21,7 @@ const isSameDay = (message, previousMessage) => {
 
 const reduceMessage = (message, previousMessage) => {
 
-	// full author object is populated, we just want ID.
+	// full author object is populated sometimes, we just want ID.
 	message.author = _.isString(message.author) ? message.author : message.author && message.author._id;
 	message.isSameDay = isSameDay(message, previousMessage);
 

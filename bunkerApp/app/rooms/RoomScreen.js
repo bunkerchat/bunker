@@ -65,6 +65,19 @@ class RoomScreen extends React.PureComponent {
 	}
 }
 
+const mapStateToProps = (state, props) => {
+	const {roomId} = props.navigation.state.params
+
+	const room = state.room.rooms[roomId]
+
+	return {
+		room,
+		currentUser: state.user.currentBunkerUser,
+		users: state.user.users,
+		messages: room.$messages
+	}
+}
+
 const style = StyleSheet.create({
 	roomContainer: {
 		flex: 1,
@@ -79,18 +92,5 @@ const style = StyleSheet.create({
 		borderTopWidth: StyleSheet.hairlineWidth
 	}
 })
-
-const mapStateToProps = (state, props) => {
-	const {roomId} = props.navigation.state.params
-
-	const room = state.room.rooms[roomId]
-
-	return {
-		room,
-		currentUser: state.user.currentBunkerUser,
-		users: state.user.users,
-		messages: room.$messages
-	}
-}
 
 export default connect(mapStateToProps, {loadMessages})(RoomScreen)
