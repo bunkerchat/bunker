@@ -17,18 +17,10 @@ class RoomScreen extends React.PureComponent {
 
 	_renderItem = ({item, index, separators}) => {
 		const prevMessage = this.props.messages[index + 1];
-		let isFirstInRun = true;
-
-		// TODO: place this in reducer
-		if (prevMessage && prevMessage.author && prevMessage.author.toLowerCase() === item.author.toLowerCase()) {
-			isFirstInRun = false;
-		}
 
 		return <BunkerMessage
 				message={item}
 				previousMessage={prevMessage}
-				isFirstInRun={isFirstInRun}
-				currentUserId={this.props.currentUser._id}
 				user={this.props.users && this.props.users[item.author]} />
 	};
 

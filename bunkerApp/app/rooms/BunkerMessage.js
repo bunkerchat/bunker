@@ -16,24 +16,22 @@ export default class BunkerMessage extends React.PureComponent{
 	};
 
 	render(){
-		const {message, currentUserId, isFirstInRun} = this.props;
-
-		const isCurrentUser = message.author && message.author.toLowerCase() === currentUserId.toLowerCase();
+		const {message} = this.props;
 
 		let messageWrapperStyles = styles.left.messageWrapper;
 
-		if (isCurrentUser) {
+		if (message.isCurrentUser) {
 			messageWrapperStyles = styles.right.messageWrapper;
 		}
-		else if (isFirstInRun) {
+		else if (message.isFirstInRun) {
 			messageWrapperStyles = [styles.left.messageWrapper, {marginLeft: 6}];
 		}
 
 		return (
 			<View>
 				<Day currentMessage={message} />
-				<View style={(isCurrentUser ? styles.right.container : styles.left.container)}>
-					{isFirstInRun && !isCurrentUser && <Image style={sharedStyles.icon} source={{uri: this.getGravatarUri()}} />}
+				<View style={(message.isCurrentUser ? styles.right.container : styles.left.container)}>
+					{message.isFirstInRun && !message.isCurrentUser && <Image style={sharedStyles.icon} source={{uri: this.getGravatarUri()}} />}
 					<View style={messageWrapperStyles}>
 						<Text style={sharedStyles.text}>{message.text}</Text>
 						{message.edited && <Text style={sharedStyles.edited}>edited</Text>}
