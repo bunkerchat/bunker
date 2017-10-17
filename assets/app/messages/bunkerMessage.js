@@ -172,7 +172,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					{marker: '*', tag: 'strong'},
 					{marker: '_', tag: 'em'},
 					{marker: '~', tag: 'del'},
-					{marker: '|', tag: 'mark'}
+					{marker: '|', tag: 'mark'},
+					{marker: '`', tag: 'code'}
 				];
 
 				_.each(types, function (type) {
@@ -180,6 +181,19 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 					var match;
 					while ((match = lookup.exec(text)) !== null) {
+						var charBefore = match.index - 1;
+						if (text[charBefore] && text[charBefore] === '\\') {
+							var startIndex = match.index - 1 > 0 ? match.index - 1 : 0;
+							var newText = '';
+							if (startIndex > 0) {
+								newText += text.slice(0, startIndex);
+							}
+							var cleanMatch = match[0].substr(0, match[0].lastIndexOf('\\')) + match[0].substr(match[0].lastIndexOf('\\') + 1);
+							newText += cleanMatch;
+							newText += text.slice(match.index + match[0].length);
+							text = newText;
+							continue;
+						}
 						text = replaceAll(text, match[0].trim(), '<' + type.tag + '>' + replaceAll(match[0], type.marker, '') + '</' + type.tag + '>');
 					}
 				});
@@ -210,7 +224,12 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						const target = _.includes(link, window.location.origin) ? '_self' : '_blank'
 
 						// remove query string noise from visible link
-						const linkWithoutQuerystring = link.split("?")[0]
+						let linkWithoutQuerystring = link.split("?")[0]
+
+						// much complaigning about "broken" youtube links, even though they obviously worked fucking fine, idiots
+						if (youtubeRegexp().test(link)) {
+							linkWithoutQuerystring = link
+						}
 
 						text = replaceAll(text, link, `<a href="${link}" target="${target}">${linkWithoutQuerystring}</a>`);
 						replacedLinks[link] = true;
@@ -309,7 +328,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 					function appendToggleLink(link) {
 						// if toggle link already appended, skip
-						if(text.includes('fa-caret-square-o-left')) return
+						if (text.includes('fa-caret-square-o-left')) return
 
 						var toggleButton = `<a ng-click="bunkerMessage.$visible = !bunkerMessage.$visible">
 							<i class="fa fa-lg" ng-class="{'fa-caret-square-o-down': bunkerMessage.$visible, 'fa-caret-square-o-left': !bunkerMessage.$visible}"></i>

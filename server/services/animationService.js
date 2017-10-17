@@ -2,7 +2,7 @@ const animationService = module.exports
 const _ = require('lodash')
 const InvalidInputError = require('../errors/InvalidInputError');
 
-animationService.getWordsToAnimate = text =>{
+animationService.getWordsToAnimate = (text, roomMember)	 =>{
 	const emoticonMatches = /\/show\s+:?(\w+):?/.exec(text);
 	if (!emoticonMatches || emoticonMatches.length < 1) {
 		throw new InvalidInputError('Invalid show format — example: /show doge');
