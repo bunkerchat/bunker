@@ -220,18 +220,17 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				}
 
 				_.each(links, function (link) {
+					// remove query string noise from visible link
+					let linkWithoutQueryString = link.split("?")[0]
+
+					// much complaining about "broken" youtube links, even though they obviously worked fucking fine, idiots
+					if (youtubeRegexp().test(link)) {
+						linkWithoutQueryString = link
+					}
+
 					if (!replacedLinks[link]) {
 						const target = _.includes(link, window.location.origin) ? '_self' : '_blank'
-
-						// remove query string noise from visible link
-						let linkWithoutQuerystring = link.split("?")[0]
-
-						// much complaigning about "broken" youtube links, even though they obviously worked fucking fine, idiots
-						if (youtubeRegexp().test(link)) {
-							linkWithoutQuerystring = link
-						}
-
-						text = replaceAll(text, link, `<a href="${link}" target="${target}">${linkWithoutQuerystring}</a>`);
+						text = replaceAll(text, link, `<a href="${link}" target="${target}">${linkWithoutQueryString}</a>`);
 						replacedLinks[link] = true;
 					}
 
@@ -322,7 +321,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					}
 
 					if (attachedMedia) {
-						appendToggleLink(link);
+						appendToggleLink(linkWithoutQueryString);
 						appendToggleLink(linkMeta.url);
 					}
 
