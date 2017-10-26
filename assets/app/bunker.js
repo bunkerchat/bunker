@@ -11,8 +11,7 @@ window.app = angular.module('bunker', [
 	'plangular', /* soundcloud embed */
 	'notification',
 	'angularStats',
-	'as.sortable',
-	'angular-google-adsense'
+	'as.sortable'
 ])
 	.config(function ($stateProvider, $urlRouterProvider) {
 
