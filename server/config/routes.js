@@ -41,6 +41,8 @@ module.exports.http = function (app) {
 };
 
 module.exports.socketio = function (socket) {
+	log.info('socket connection', socket.id)
+
 	// init
 	socket.on('/init', socketToController(userController.init));
 
