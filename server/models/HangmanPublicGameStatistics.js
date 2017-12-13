@@ -3,11 +3,11 @@ var mongoose = require('mongoose');
 var schema = new mongoose.Schema({
 	winCount: {
 		type: Number,
-		defaults: zero
+		default: zero
 	},
 	lossCount: {
 		type: Number,
-		defaults: zero
+		default: zero
 	}
 });
 
