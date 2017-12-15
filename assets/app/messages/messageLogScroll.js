@@ -78,7 +78,8 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 
 			function scroll(waitTime) {
 				$timeout(() => {
-					elem.animate({ scrollTop: el.scrollHeight });
+					// elem.animate({ scrollTop: el.scrollHeight })
+					elem.scrollTop(el.scrollHeight);
 				}, waitTime || 0);
 			}
 		}
