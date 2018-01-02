@@ -380,7 +380,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 				return `
 					<ol class="row list-unstyled ng-scope">
 						${_.map(matchingUsers, user => `
-							<li class="col-xs-3 ${user.nick == suggestedTerm ? 'emoticon-selected' : ''}">
+							<li class="col-xs-3 ${user.nick == suggestedTerm ? 'emoticon-selected' : ''}" data-value="${user.nick}">
 								<a>
 									<img src="${user.$gravatar}" title="${user.email}"/>
 									${user.nick}
