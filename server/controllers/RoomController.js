@@ -346,4 +346,3 @@ module.exports.unPinMessage = function (req, res) {
 		.catch(res.serverError);
 };
 
-// derp comment
