@@ -128,13 +128,8 @@ app.directive('messagePin', ['pinBoard', function (pinBoard) {
 
 			var $messagePinIcon = element.find('.message-pin-icon');
 
-			if (attrs.userRole === 'moderator' || attrs.userRole === 'administrator') {
-				$messagePinIcon = $messagePinIcon.removeClass('disabled');
+
 				element.click(handlePinClick);
-			}
-			else {
-				$messagePinIcon[0].title = '';
-			}
 
 			if (pinBoard.isPinned(attrs.messagePin)) {
 				$messagePinIcon.removeClass('fa-bookmark-o').addClass('fa-bookmark');

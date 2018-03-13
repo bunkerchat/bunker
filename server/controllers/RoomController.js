@@ -283,8 +283,8 @@ module.exports.pinMessage = function (req, res) {
 		.populate('user')
 		.then(function (roomMember) {
 
-			if (!roomMember || (roomMember.role !== 'administrator' && roomMember.role !== 'moderator')) {
-				throw new ForbiddenError('Must be a member of this room with admin or mod privileges!');
+			if (!roomMember) {
+				throw new ForbiddenError('Must be a member of this room!');
 			}
 
 			return [PinnedMessage.create({message: messageId, room: roomId, user: userId}),
@@ -326,8 +326,8 @@ module.exports.unPinMessage = function (req, res) {
 	RoomMember.findOne({room: roomId, user: userId})
 		.then(function (roomMember) {
 
-			if (!roomMember || (roomMember.role !== 'administrator' && roomMember.role !== 'moderator')) {
-				throw new ForbiddenError('Must be a member of this room with admin or mod privileges!');
+			if (!roomMember) {
+				throw new ForbiddenError('Must be a member of this room!');
 			}
 
 			return PinnedMessage.remove({message: messageId});
