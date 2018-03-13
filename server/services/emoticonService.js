@@ -2,7 +2,7 @@ var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 var path = require('path');
 
-var cacheService = require('./cacheService');
+// var cacheService = require('./cacheService');
 var Message = require('../models/Message');
 var User = require('../models/User');
 

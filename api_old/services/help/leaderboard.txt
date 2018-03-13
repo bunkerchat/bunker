@@ -1,5 +1,0 @@
-NAME
-	/leaderboard - view the bunker games leaderboard
-
-COMMANDS
-	/leaderboard -losers	...View the bunkergames loserboard

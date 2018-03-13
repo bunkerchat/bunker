@@ -31,7 +31,7 @@ module.exports.http = function (app) {
 	app.post('/externalnotifications/serverStatus', externalNotificationsController.serverStatus);
 
 	// Api
-	app.get('/api/message/emoticoncounts', messageController.emoticonCounts);
+	// app.get('/api/message/emoticoncounts', messageController.emoticonCounts);
 
 	// Basic Login
 	app.post('/api/user/loginbasic', auth.authenicateLocal);

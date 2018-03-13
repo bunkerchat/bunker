@@ -22,7 +22,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		start: function () {
 			// Call start once we are finished connecting (bunker.js)
 			resolveBunkerData$Promise(bunkerData.init());
-			$timeout(bunkerData.refreshEmoticonCounts, 2000);
+			// $timeout(bunkerData.refreshEmoticonCounts, 2000);
 		},
 
 		// Initial data, also sets up subscriptions
@@ -277,7 +277,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// Emoticons
 
 		refreshEmoticonCounts: function () {
-			return io.socket.emitAsync('/message/emoticoncounts').then(decorateEmoticonCounts);
+			// return io.socket.emitAsync('/message/emoticoncounts').then(decorateEmoticonCounts);
+			return Promise.resolve()
 		},
 
 		// Inbox

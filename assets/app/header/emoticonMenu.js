@@ -56,7 +56,7 @@ app.directive('emoticonMenu', function ($rootScope, bunkerData, emoticons, fuzzy
 			}
 
 			$scope.$on('$destroy', function () {
-				bunkerData.refreshEmoticonCounts();
+				// bunkerData.refreshEmoticonCounts();
 			});
 		}
 	};

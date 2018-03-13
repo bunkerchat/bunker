@@ -1,7 +1,7 @@
 var Promise = require('bluebird');
 //var fs = Promise.promisifyAll(require('fs'));
 const request = require('request')
-const sharp = require('sharp')
+// const sharp = require('sharp')
 
 var config = require('../config/config');
 var UserSettings = require('../models/UserSettings');
