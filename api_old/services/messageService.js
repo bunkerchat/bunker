@@ -169,6 +169,9 @@ function animation(roomMember, text) {
 			words.push('all-knowing', 'omniscient', 'round', 'number 8', 'bawlz', 'predictions', 'shaking',
 				'future', 'revealing', 'how does it know?', 'not good 4 billiardz lol');
 			break;
+		case ':a_huge_algorithm:':
+			words.push('maths', 'equations', 'such number', 'very output', 'functoins', 'algorithm', 'so huge',
+				'computer crunching', 'parallel computing', 'in the cloud', 'distributed', 'algorithm');
 	}
 
 	RoomService.animateInRoom(roomMember, emoticon, _.sample(words, 10));
