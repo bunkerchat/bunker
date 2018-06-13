@@ -17,6 +17,10 @@ var userSettingsSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
+	bunkerServesImages: {
+		type: Boolean,
+		default: false
+	},
 	minimalView: {
 		type: Boolean,
 		default: false

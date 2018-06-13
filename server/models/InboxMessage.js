@@ -15,7 +15,7 @@ var inboxMessageSchema = new mongoose.Schema({
 	},
 	read: {
 		type: Boolean,
-		defaults: false
+		default: false
 	}
 });
 

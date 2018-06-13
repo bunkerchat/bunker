@@ -7,19 +7,19 @@ var schema = new mongoose.Schema({
 	},
 	privateGameWinCount: {
 		type: Number,
-		defaults: zero
+		default: zero
 	},
 	privateGameLossCount: {
 		type: Number,
-		defaults: zero
+		default: zero
 	},
 	guessMisses: {
 		type: Number,
-		defaults: zero
+		default: zero
 	},
 	guessHits: {
 		type: Number,
-		defaults: zero
+		default: zero
 	}
 });
 

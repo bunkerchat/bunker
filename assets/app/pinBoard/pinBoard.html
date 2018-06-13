@@ -9,7 +9,7 @@
 		<div>
 			<img class="pin-message-author" title="{{::pinnedMessage.message.author.nick}}" gravatar-src-once="pinnedMessage.message.author.email | lowercase" gravatar-size="20"/>
 			<span bunker-message="::pinnedMessage.message"></span>
-			<i title="Remove from pin board" class="fa fa-times pin-board-unpin" ng-if="userRole !== 'member'" ng-click="removePin(pinnedMessage)"></i>
+			<i title="Remove from pin board" class="fa fa-times pin-board-unpin" ng-click="removePin(pinnedMessage)"></i>
 		</div>
 	</div>
 

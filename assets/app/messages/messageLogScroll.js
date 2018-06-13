@@ -10,12 +10,12 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 			var clearMessageCounter = 0;
 
 			function atBottomOfPage(height) {
-				height = height || 0
+				height = height || 0;
 				return el.scrollTop + el.clientHeight + tolerance + height  >= el.scrollHeight;
 			}
 
 			$rootScope.$on('bunkerMessaged', function (evt, message) {
-				if (atBottomOfPage() || message.author._id == bunkerData.user._id) {
+				if (atBottomOfPage() || message.author._id === bunkerData.user._id) {
 					scroll();
 
 					// if the user is only watching new messages, trim the message log
@@ -78,6 +78,7 @@ app.directive('messageLogScroll', function ($timeout, $rootScope, bunkerData, an
 
 			function scroll(waitTime) {
 				$timeout(() => {
+					// elem.animate({ scrollTop: el.scrollHeight })
 					elem.scrollTop(el.scrollHeight);
 				}, waitTime || 0);
 			}

@@ -42,6 +42,7 @@ app.directive('room', function ($rootScope, $state, bunkerData, emoticons, $wind
 
 			$rootScope.$on('bunkerMessaged.animation', function (evt, message) {
 				if (!$scope.current.$selected) return;
+				if ($rootScope.roomId !== message.room) return;
 
 				const body = angular.element(document).find('body').eq(0);
 				const colors = ['red', 'green', 'blue', 'purple', 'brown', 'orange'];

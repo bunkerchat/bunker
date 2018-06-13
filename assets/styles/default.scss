@@ -540,7 +540,8 @@ li:not(:last-child) .message.last-read:after {
 
 // message type specific styles
 
-.message.message-type-8ball [bunker-message] {
+.message.message-type-8ball [bunker-message],
+.message.message-type-trump [bunker-message] {
 	-webkit-animation: fadein 2.5s; /* Safari, Chrome and Opera > 12.1 */
 	-moz-animation: fadein 2.5s; /* Firefox < 16 */
 	-o-animation: fadein 2.5s; /* Opera < 12.1 */
@@ -1049,6 +1050,33 @@ img.fatality {
 
 @media (max-width: 767px) { // xs is < 768px
 
+	[splash] {
+		position: fixed;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: white;
+		background-image: none;
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+		z-index: 1040; /* bootstrap sets z-index of navbar to 1030, so we need to be above that */
+
+		p {
+			position: absolute;
+			left: 15px;
+			bottom: 0;
+			color: black;
+			font-family: "Cabin", Arial, sans-serif;
+			font-size: 24px;
+			font-weight: bolder;
+
+			img {
+				height: 25px;
+			}
+		}
+	}
+
 	.splash-brand {
 		font-size: 56px;
 	}
@@ -1087,7 +1115,7 @@ img.fatality {
 		height: initial;
 	}
 
-	.animation-box, .topic, [bunker-media] {
+	.animation-box, .topic {
 		display: none;
 	}
 
@@ -1236,6 +1264,10 @@ img.fatality {
 	}
 }
 
+img.image-preview {
+	max-height: 200px
+}
+
 // animations
 
 @keyframes fadein {
@@ -1335,31 +1367,31 @@ img.fatality {
 }
 
 .mobile-upload-button {
-  float: right;
-  line-height: 42px;
-  position: relative;
+	float: right;
+	line-height: 42px;
+	position: relative;
 }
 
-.mobile-upload-button button{
-  height: 40px;
-  padding: 4px 12px;
-  display: inline-block;
-  float: right;
-  width: 60px;
-  border: 0;
-  outline: none;
-  font-size: 15px;
-  border-radius: 0px;
-  line-height: 36px;
-  background-color: transparent;
-  color: #eee;
+.mobile-upload-button button {
+	height: 40px;
+	padding: 4px 12px;
+	display: inline-block;
+	float: right;
+	width: 60px;
+	border: 0;
+	outline: none;
+	font-size: 15px;
+	border-radius: 0px;
+	line-height: 36px;
+	background-color: transparent;
+	color: #eee;
 }
 
-.mobile-upload-button input[type=file]{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
+.mobile-upload-button input[type=file] {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
 }

@@ -172,7 +172,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					{marker: '*', tag: 'strong'},
 					{marker: '_', tag: 'em'},
 					{marker: '~', tag: 'del'},
-					{marker: '|', tag: 'mark'}
+					{marker: '|', tag: 'mark'},
+					{marker: '`', tag: 'code'}
 				];
 
 				_.each(types, function (type) {
@@ -180,6 +181,19 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 					var match;
 					while ((match = lookup.exec(text)) !== null) {
+						var charBefore = match.index - 1;
+						if (text[charBefore] && text[charBefore] === '\\') {
+							var startIndex = match.index - 1 > 0 ? match.index - 1 : 0;
+							var newText = '';
+							if (startIndex > 0) {
+								newText += text.slice(0, startIndex);
+							}
+							var cleanMatch = match[0].substr(0, match[0].lastIndexOf('\\')) + match[0].substr(match[0].lastIndexOf('\\') + 1);
+							newText += cleanMatch;
+							newText += text.slice(match.index + match[0].length);
+							text = newText;
+							continue;
+						}
 						text = replaceAll(text, match[0].trim(), '<' + type.tag + '>' + replaceAll(match[0], type.marker, '') + '</' + type.tag + '>');
 					}
 				});
@@ -193,18 +207,30 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				var shouldParseMedia = typeof scope.media !== 'undefined' ? scope.$eval(scope.media) : true;
 
 				// do no media on mobile
-				const isAndroid = _.includes(navigator.appVersion, 'Android')
-				const isIphone = _.includes(navigator.appVersion, 'iPhone')
-				if (isAndroid || isIphone) {
-					shouldParseMedia = false
-				}
+				const onMobile = _.includes(navigator.appVersion, 'Android')
+					|| _.includes(navigator.appVersion, 'iPhone')
+
+				const linkMeta = scope.bunkerMessage.linkMeta || {}
 
 				// Parse links
 				var attachedMedia;
-				_.each(text.match(/https?:\/\/\S+/gi), function (link) {
+				const links = [...text.match(/https?:\/\/\S+/gi)]
+				if (linkMeta.image) {
+					links.push(linkMeta.image)
+				}
+
+				_.each(links, function (link) {
+					// remove query string noise from visible link
+					let linkWithoutQueryString = link.split("?")[0]
+
+					// much complaining about "broken" youtube links, even though they obviously worked fucking fine, idiots
+					if (youtubeRegexp().test(link)) {
+						linkWithoutQueryString = link
+					}
+
 					if (!replacedLinks[link]) {
 						const target = _.includes(link, window.location.origin) ? '_self' : '_blank'
-						text = replaceAll(text, link, `<a href="${link}" target="${target}">${link}</a>`);
+						text = replaceAll(text, link, `<a href="${link}" target="${target}">${linkWithoutQueryString}</a>`);
 						replacedLinks[link] = true;
 					}
 
@@ -212,9 +238,10 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 
 					// Only parse media (images, youtube) if asked to
 					if (/imgur.com\/\w*\.(gifv|webm|mp4)$/i.test(link) && !attachedMedia) {
+						if (onMobile) return text
+
 						var imgurLinkMpeg = link.replace('webm', 'mp4').replace('gifv', 'mp4');
 						var imgurLinkWebm = link.replace('mp4', 'webm').replace('gifv', 'webm');
-						toggleLink(link);
 						attachedMedia = `
 							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
 								<video class="imgur-gifv" preload="auto" autoplay muted webkit-playsinline loop>
@@ -224,7 +251,8 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 							</div>`;
 					}
 					else if (/\.(gifv|mp4|webm)$/i.test(link) && !attachedMedia) {
-						toggleLink(link);
+						if (onMobile) return text
+
 						attachedMedia = `
 							<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
 								<video autoplay loop muted>
@@ -233,7 +261,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 							</div>`;
 					}
 					else if (youtubeRegexp().test(link) && !attachedMedia) {
-						toggleLink(link);
+						// toggleLink(link);
 						attachedMedia = `
 							<div class="default-video-height" message="::bunkerMessage" bunker-media="${link}">
 								<youtube-video video-url="'${link}'"></youtube-video>
@@ -242,7 +270,6 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					else if (/(www\.)?(twitter\.com\/)/i.test(link) && !attachedMedia) {
 						var id = link.substr(link.lastIndexOf('/') + 1);
 						if (id) { // don't embed tweet if we can't get the id from the link
-							toggleLink(link);
 							attachedMedia = `
 								<div message="::bunkerMessage" bunker-media="${link}">
 									<div class="stupid-twitter tweet_${id}">
@@ -253,7 +280,6 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					}
 					else if (/vimeo\.com(?:.*)?\/([A-z0-9]*)$/i.test(link) && !attachedMedia) {
 						var match = /vimeo\.com(?:.*)?\/([a-zA-Z0-9]*)$/i.exec(link);
-						toggleLink(link);
 						attachedMedia = `
 							<div message="::bunkerMessage" bunker-media="${link}">
 								<iframe ng-src="https://player.vimeo.com/video/${match[1]}?title=0&byline=0&portrait=0" width="750" height="422" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
@@ -263,7 +289,6 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 						var match = /^https?:\/\/(?:play|open)\.spotify\.com\/(.*)/gi.exec(link);
 						var uri = "spotify%3A" + replaceAll(match[1], '/', '%3A');
 
-						toggleLink(link);
 						attachedMedia = `
 							<div message="::bunkerMessage" bunker-media="${link}">
 								<iframe ng-src="https://embed.spotify.com/?uri=${uri}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
@@ -272,7 +297,6 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					else if (/gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?|.gif)/gi.test(link) && !attachedMedia) {
 						var match = /gfycat\.com\/(?:detail\/)*(\w+)(?:$|\?|.gif)/gi.exec(link);
 
-						toggleLink(link);
 						attachedMedia = `
 							<div message="::bunkerMessage" bunker-media="${link}">
 								<div gfycat class="gfyitem" data-title=true data-autoplay=true data-controls=true data-expand=true data-id="${match[1]}" ></div>
@@ -280,12 +304,36 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					}
 					// run this one last since it conflicts with the gifv check above
 					else if (/\.(gif|png|jpg|jpeg)/i.test(link) && !attachedMedia) {
-						// Image link
-						toggleLink(link);
+						const mobileParam = onMobile ? '?small=true' : ''
+
+						const wrappedLink = (onMobile || bunkerData.userSettings.bunkerServesImages)
+							? `/api/image/${encodeURIComponent(link)}${mobileParam}`
+							: link
+
+						const titleHtml = linkMeta.title ? `<h5>${linkMeta.title}</h5>` : ''
+						const previewImageCss = linkMeta.image ? 'image-preview' : ''
+
 						attachedMedia = `
-						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${link}">
-							<img ng-src="${link}" imageonload/>
+						<div ng-click="bunkerMessage.$visible = false" message="::bunkerMessage" bunker-media="${wrappedLink}">
+							${titleHtml}
+							<img class="${previewImageCss}" ng-src="${wrappedLink}" imageonload/>
 						</div>`
+					}
+
+					if (attachedMedia) {
+						appendToggleLink(linkWithoutQueryString);
+						appendToggleLink(linkMeta.url);
+					}
+
+					function appendToggleLink(link) {
+						// if toggle link already appended, skip
+						if (text.includes('fa-caret-square-o-left')) return
+
+						var toggleButton = `<a ng-click="bunkerMessage.$visible = !bunkerMessage.$visible">
+							<i class="fa fa-lg" ng-class="{'fa-caret-square-o-down': bunkerMessage.$visible, 'fa-caret-square-o-left': !bunkerMessage.$visible}"></i>
+						</a>`;
+
+						text = text.replace(`${link}</a>`, `${link}</a> ${toggleButton}`);
 					}
 				});
 
@@ -296,28 +344,20 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 				}
 
 				return text;
-
-				function toggleLink(link) {
-					var toggleButton = `<a ng-click="bunkerMessage.$visible = !bunkerMessage.$visible">
-							<i class="fa fa-lg" ng-class="{'fa-caret-square-o-down': bunkerMessage.$visible, 'fa-caret-square-o-left': !bunkerMessage.$visible}"></i>
-						</a>`;
-
-					text = text.replace(`${link}</a>`, `${link}</a> ${toggleButton}`);
-				}
 			}
 		}
 	};
 });
 
 
-app.directive('imageonload', function($rootScope) {
+app.directive('imageonload', function ($rootScope) {
 	return {
 		restrict: 'A',
-		link: function(scope, element, attrs) {
-			element.bind('load', function() {
+		link: function (scope, element, attrs) {
+			element.bind('load', function () {
 				$rootScope.$broadcast('messageImageLoaded', {height: this.height})
 			});
-			element.bind('error', function(){
+			element.bind('error', function () {
 				console.log('image could not be loaded');
 			});
 		}
