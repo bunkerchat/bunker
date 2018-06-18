@@ -329,6 +329,12 @@ mark:hover {
 			height: 30px;
 			color: white;
 			overflow: hidden;
+
+		  img {
+			float: left;
+			height: 20px;
+			margin: 5px 3px;
+		  }
 		}
 		.inbox-message-content {
 			float: left;
