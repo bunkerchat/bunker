@@ -29,10 +29,12 @@
 </head>
 <body>
 
-<div splash ng-show="loading">
-	<p class="loading-font">
-		<img src="/assets/images/emoticons/<%- loadingEmote %>"/> Loading...
-	</p>
+<div class="splash-container" ng-show="loading">
+	<div splash>
+		<p class="loading-font">
+			<img src="/assets/images/emoticons/<%- loadingEmote %>"/> Loading...
+		</p>
+	</div>
 </div>
 
 <div ng-include="'/assets/app/header/header.html'"></div>
