@@ -49,6 +49,7 @@ module.exports.emoticonCounts = function () {
                             usedBy: _.omit(value, 'count')
                         };
                     })
+                    .reject({count: 1})
                     .sortBy('count')
                     .reverse()
                     .value();
