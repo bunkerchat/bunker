@@ -13,7 +13,7 @@ module.exports.emoticonCounts = function () {
 		.then(JSON.parse);
 
 	function lookup() {
-        const emoticonRegex = /:\w+:/g;
+        const emoticonRegex = /:\w+:/;
         const countMap = {};
 
         return Message.find({text: {$regex: emoticonRegex}})
@@ -49,7 +49,6 @@ module.exports.emoticonCounts = function () {
                             usedBy: _.omit(value, 'count')
                         };
                     })
-                    .reject({count: 1})
                     .sortBy('count')
                     .reverse()
                     .value();
