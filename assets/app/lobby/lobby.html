@@ -20,8 +20,8 @@
 			<hr>
 		</div>
 
-		<ul class="room-container">
-			<li class="col-xs-11 col-sm-6 col-md-4 room-list-item"
+		<ul class="room-container col-md-12">
+			<li class="col-xs-12 col-sm-6 col-md-4 room-list-item"
 				ng-if="room.$resolved"
 				ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
 				<div class="room"
@@ -57,8 +57,8 @@
 			<hr>
 		</div>
 
-		<ul class="room-container">
-			<li class="col-xs-11 col-sm-6 col-md-4 room-list-item"
+		<ul class="room-container col-md-12">
+			<li class="col-xs-12 col-sm-6 col-md-4 room-list-item"
 				ng-repeat="room in lobby.publicRooms track by room._id">
 				<div class="room"
 					 ui-sref="chat.room({roomId: room._id})">
