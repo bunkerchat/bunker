@@ -1,29 +1,29 @@
-var Promise = require('bluebird');
-var fs = Promise.promisifyAll(require('fs'));
-var path = require('path');
+const Promise = require('bluebird');
+const fs = Promise.promisifyAll(require('fs'));
 
-var cacheService = require('./cacheService');
-var Message = require('../models/Message');
-var User = require('../models/User');
+const cacheService = require('./cacheService');
+const Message = require('../models/Message');
+const User = require('../models/User');
 
 module.exports.emoticonCounts = function () {
-	var key = 'Message/emoticonCounts';
+    const key = 'Message/emoticonCounts';
 
 	return cacheService.fourHours.getAsync(key)
 		.then(result => result || lookup())
 		.then(JSON.parse);
 
 	function lookup() {
-		var emoticonRegex = /:\w+:/g;
-		var countMap = {};
+        const emoticonRegex = /:\w+:/;
+        const countMap = {};
 
-		return Message.find({text: {$regex: emoticonRegex}})
+        return Message.find({text: {$regex: emoticonRegex}})
+            .sort({createdAt: -1})
 			.limit(10000)
 			.then(messages => {
 				_.each(messages, message => {
-					var match = message.text.match(emoticonRegex);
+                    const match = message.text.match(emoticonRegex);
 
-					// Create total count for this emoticon
+                    // Create total count for this emoticon
 					if (!countMap[match]) {
 						countMap[match] = {count: 0};
 					}
@@ -40,32 +40,32 @@ module.exports.emoticonCounts = function () {
 			})
 			.then(() => {
 				// Map into a nice sorted object
-				var emoticonCounts = _(countMap)
-					.map(function (value, key) {
-						return {
-							count: value.count,
-							emoticon: key,
-							name: key.replace(/:/g, ''),
-							usedBy: _.omit(value, 'count')
-						};
-					})
-					.sortBy('count')
-					.reverse()
-					.value();
+                const emoticonCounts = _(countMap)
+                    .map((value, key) => {
+                        return {
+                            count: value.count,
+                            emoticon: key,
+                            name: key.replace(/:/g, ''),
+                            usedBy: _.omit(value, 'count')
+                        };
+                    })
+                    .sortBy('count')
+                    .reverse()
+                    .value();
 
-				// Replace the id's in the userBy section with nick + id
+                // Replace the id's in the userBy section with nick + id
 				return User.find({})
-					.then(function (users) {
-						var userHash = {};
+					.then(users => {
+                        const userHash = {};
 
-						_.each(users, function (user) {
+                        _.each(users, user => {
 							userHash[user._id.toString()] = user;
 						});
 
-						_.each(emoticonCounts, function (count) {
+						_.each(emoticonCounts, count => {
 							_.each(count.usedBy, function (usedByCount, id) {
-								var user = userHash[id];
-								count.usedBy[user.nick + ' (' + id + ')'] = usedByCount;
+                                const user = userHash[id];
+                                count.usedBy[user.nick + ' (' + id + ')'] = usedByCount;
 								delete count.usedBy[id];
 							});
 						});
@@ -77,10 +77,9 @@ module.exports.emoticonCounts = function () {
 			.then(JSON.stringify)
 			.then(results => cacheService.fourHours.setAsync(key, results))
 	}
-
 };
 
-var emoticonCache;
+let emoticonCache;
 
 module.exports.getEmoticonNamesFromDisk = function () {
 	if(emoticonCache) return Promise.resolve(emoticonCache);
@@ -126,6 +125,9 @@ module.exports.getLoadScreenEmoticon = function () {
 		'rolldice.gif',
 		'science.gif',
 		'woop.gif',
-		'words.gif'
+		'words.gif',
+        'heartstare.gif',
+        'angel.gif',
+        'toot.png'
 	]);
 };

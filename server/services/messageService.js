@@ -38,9 +38,9 @@ messageService.createMessage = function (roomMember, text) {
 	else if (/^\/help/i.test(text)) {
 		return getHelp(roomMember, text);
 	}
-	//else if (/^\/stats/i.test(text)) {
-	//	return stats(roomMember, text);
-	//}
+	else if (/^\/stats/i.test(text)) {
+		return stats(roomMember, text);
+	}
 	else if (/^\/(topic|name|privacy|icon)/i.test(text)) {
 		return RoomService.setRoomAttribute(roomMember, text);
 	}
