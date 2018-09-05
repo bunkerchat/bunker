@@ -1019,33 +1019,62 @@ img.fatality {
 
 .lobby {
 
-	.list-group-item {
-		height: 130px;
-		padding-bottom: 40px;
+	.margin-top {
+	  	margin-top: 16px;
 	}
-	.list-group-item-heading {
-		font-weight: 500;
-	}
-	.lobby-room-users {
-		position: absolute;
-		bottom: 5px;
-		right: 10px;
-		font-size: 20px;
-	}
+	.room-container {
+		.room-list-item {
+		  	list-style: none;
+			padding-right: 5px;
+			padding-left: 5px;
 
-	[am-time-ago] {
-		position: absolute;
-		top: 5px;
-		right: 10px;
-		font-size: 13px;
-	}
+			.room {
+				height: 130px;
+				border: 1px solid #ddd;
+				box-shadow: 2px 2px 3px #eee;
+				padding: 8px 8px 30px 8px;
+				border-radius: 4px;
+			  	margin-bottom: 10px;
 
-	p {
-		text-overflow: ellipsis;
-		max-width: 776px;
-		height: 30px;
-		overflow: hidden;
-		white-space: nowrap;
+			  	&:hover, &:focus {
+				  box-shadow: inset 0px 0px 3px #eee;
+				}
+
+				.room-title {
+				  	font-weight: 500;
+				  	font-size: 16px;
+				}
+
+				.room-topic {
+				  /* no styles */
+				}
+
+			  	.public-room-topic {
+				  margin-top: 12px;
+				}
+
+				.last-message {
+					max-width: 100%;
+					height: 50px;
+					overflow: hidden;
+					margin-top: 2px;
+
+					[am-time-ago] {
+					  position: absolute;
+					  top: 5px;
+					  right: 30px;
+					  font-size: 13px;
+					}
+				}
+
+				.lobby-room-users {
+				  	position: absolute;
+					bottom: 10px;
+					right: 12px;
+					font-size: 20px;
+				}
+			}
+		}
 	}
 }
 

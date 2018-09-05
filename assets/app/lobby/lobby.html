@@ -1,60 +1,79 @@
 <div class="container-fluid lobby" ng-show="!$root.roomId">
+	<div class="row margin-top">
+		<form class="col-sm-6" ng-submit="lobby.createRoom(newRoomName)">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="Room name"
+					   ng-model="newRoomName" ng-required="true"/>
 
-	<div class="row">
-		<div ng-if="lobby.rooms.length > 0">
-			<div class="col-md-12">
-				<h3>Joined Rooms</h3>
+				<span class="input-group-btn">
+						<button class="btn btn-success">Create Room</button>
+				</span>
 			</div>
+		</form>
+	</div>
 
-			<ul class="list-group">
-				<li class="col-md-4 list-group-item"
-					ui-sref="chat.room({roomId: room._id})"
-					ng-if="room.$resolved"
-					ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
-					<h4 class="list-group-item-heading">
+	<hr/>
+
+	<div class="row" ng-if="lobby.rooms.length > 0">
+		<div class="col-md-12">
+			<h3>Joined Rooms</h3>
+			<hr>
+		</div>
+
+		<ul class="room-container col-md-12">
+			<li class="col-xs-12 col-sm-6 col-md-4 room-list-item"
+				ng-if="room.$resolved"
+				ng-repeat="room in lobby.rooms | orderBy:'$lastMessage.createdAt':true track by room._id">
+				<div class="room"
+					 ui-sref="chat.room({roomId: room._id})">
+					<div class="room-title">
 						{{room.name}}
-						<small bunker-message="room" media="false"></small>
-					</h4>
-					<span class="lobby-room-users">
-						{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>
-					</span>
+					</div>
 
-					<p ng-if="room.$lastMessage">
+					<div class="room-topic">
+						<small bunker-message="room" media="false"></small>
+					</div>
+
+					<p class="last-message" ng-if="room.$lastMessage">
 						<span am-time-ago="room.$lastMessage.createdAt"></span>
 						<img class="gravatar-md" gravatar-src="room.$lastMessage.author.email | lowercase" gravatar-size="60"/>
 						{{room.$lastMessage.author.nick}}:
 						<span bunker-message="room.$lastMessage" media="false"></span>
 					</p>
-					<p ng-if="!room.$lastMessage">
+					<p class="last-message" ng-if="!room.$lastMessage">
 						No messages yet!
 					</p>
 
-				</li>
-			</ul>
-
+					<span class="lobby-room-users">
+						{{room.$members | connectedUsersCount}} <i class="fa fa-user"></i>
+					</span>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class="row" ng-if="lobby.publicRooms.length > 0">
+		<div class="col-md-12 margin-top">
+			<h3>Public Rooms</h3>
+			<hr>
 		</div>
-		<div ng-if="lobby.publicRooms.length > 0">
-			<div class="col-md-12">
-				<h3>Public Rooms</h3>
-			</div>
 
-			<ul class="list-group">
-				<li class="col-md-4 list-group-item"
-					ui-sref="chat.room({roomId: room._id})"
-					ng-repeat="room in lobby.publicRooms track by room._id">
-					<h4 class="list-group-item-heading">
+		<ul class="room-container col-md-12">
+			<li class="col-xs-12 col-sm-6 col-md-4 room-list-item"
+				ng-repeat="room in lobby.publicRooms track by room._id">
+				<div class="room"
+					 ui-sref="chat.room({roomId: room._id})">
+					<h4 class="room-title">
 						{{room.name}}
 					</h4>
 					<span class="lobby-room-users">
 						{{room.$memberCount}} <i class="fa fa-user"></i>
 					</span>
-					<p>
+					<p class="public-room-topic">
 						{{room.topic || 'No topic'}}
 					</p>
-				</li>
-			</ul>
-
-		</div>
+				</div>
+			</li>
+		</ul>
 	</div>
 
 	<div ng-show="lobby.rooms.length == 0">
@@ -63,20 +82,4 @@
 			Why don't you create one or ask your buddy to join his awesomesauce room?
 		</p>
 	</div>
-
-	<hr/>
-
-	<form class="col-md-3" ng-submit="lobby.createRoom(newRoomName)">
-
-		<div class="input-group">
-			<input type="text" class="form-control" placeholder="Or create a new room"
-				   ng-model="newRoomName" ng-required="true"/>
-
-			<span class="input-group-btn">
-					<button class="btn btn-success">Create</button>
-			</span>
-		</div>
-
-	</form>
-
 </div>
