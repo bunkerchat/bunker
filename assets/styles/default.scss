@@ -1035,6 +1035,7 @@ img.fatality {
 				padding: 8px 8px 30px 8px;
 				border-radius: 4px;
 			  	margin-bottom: 10px;
+			  	overflow: hidden;
 
 			  	&:hover, &:focus {
 				  box-shadow: inset 0px 0px 3px #eee;
@@ -1046,7 +1047,10 @@ img.fatality {
 				}
 
 				.room-topic {
-				  /* no styles */
+				  height: 20px;
+				  overflow: hidden;
+				  white-space: nowrap;
+				  text-overflow: ellipsis;
 				}
 
 			  	.public-room-topic {
