@@ -36,10 +36,9 @@ function generateStats(roomMember, template) {
 				Message.find({author: roomMember.user._id, type: 'standard'}).sort('createdAt ASC').limit(1),
 				Message.find({author: roomMember.user._id, type: 'standard'}).skip(_.random(0, messageCount)).limit(1),
 				getEmoticonCounts(roomMember),
-				getHangmanStats(roomMember.user._id),
-				// getFightStatistics(roomMember.user._id)
+				getHangmanStats(roomMember.user._id)
 			)
-				.spread(function (template, messageCount, editCount, /*activeDays,*/ firstMessage, randomMessage, emoticonCounts, hangmanStats, /*fightStats*/) {
+				.spread(function (template, messageCount, editCount, firstMessage, randomMessage, emoticonCounts, hangmanStats) {
 				    const activeDays = 0; // todo fix activedays and fightstats once mongo updated on server
 
 					firstMessage = firstMessage[0];
