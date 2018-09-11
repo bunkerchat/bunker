@@ -762,11 +762,12 @@ reaction-button {
 
 reaction-menu {
   z-index: 500;
+  background-color: white;
 
   ol {
 	position: absolute;
 	top: 0;
-	right: 50px;
+	right: 15px;
 	border: solid lightgray 2px;
 	width: 460px;
 	height: 107px;
