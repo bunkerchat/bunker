@@ -103,7 +103,7 @@ messageService.createMessage = function (roomMember, text) {
 
 function broadcastMessage(message) {
 	return Message.findById(message._id)
-		.populate('author')
+		.populate('author reactions')
 		.then(function (message) {
 			socketio.io.to('room_' + message.room)
 				.emit('room', {

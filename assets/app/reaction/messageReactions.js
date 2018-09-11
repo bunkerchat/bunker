@@ -1,12 +1,11 @@
 app.component('messageReactions', {
 	bindings: {
-		message: '<'
+		reactions: '<'
 	},
 	templateUrl: '/assets/app/reaction/messageReactions.html',
 	controllerAs: 'messageReactions',
 	controller: function (emoticons) {
-		// console.log(this.message)
-		this.reactions = _.reduce(this.message.reactions, (reactions, reaction) => {
+		this.emoticonReactions = _.reduce(this.reactions, (reactions, reaction) => {
 			const existing = _.find(reactions, {emoticonName: reaction.emoticonName});
 			if (existing) {
 				existing.count++;
@@ -20,6 +19,5 @@ app.component('messageReactions', {
 			}
 			return reactions;
 		}, []);
-		console.log(this.reactions)
 	}
 });
