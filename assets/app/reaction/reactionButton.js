@@ -3,9 +3,9 @@ app.component('reactionButton', {
 		messageId: '@'
 	},
 	template: `<i class="fa fa-smile-o" ng-click="$ctrl.reactionSelector()"></i>`,
-	controller: function ($rootScope) {
+	controller: function (bunkerData) {
 		this.reactionSelector = () => {
-			$rootScope.$broadcast('reactionMenuOpen', this.messageId);
+			bunkerData.reactionMenuMessageId = this.messageId;
 		};
 	}
 });

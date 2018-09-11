@@ -18,6 +18,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		memberships: [],
 		$resolved: false,
 		$promise: null,
+		reactionMenuMessageId: null,
 
 		start: function () {
 			// Call start once we are finished connecting (bunker.js)
@@ -133,6 +134,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		},
 
 		toggleReaction: (messageId, emoticonName) => {
+			if (!messageId) return;
 			io.socket.emitAsync('/message/reaction', {messageId, emoticonName});
 		},
 
@@ -178,8 +180,8 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		getHistoryMessages: function (roomId, startDate, endDate) {
 			return io.socket.emitAsync('/room/history', {roomId: roomId, startDate: startDate, endDate: endDate});
 		},
-		search: params =>{
-			if(!params.query) return Promise.resolve()
+		search: params => {
+			if (!params.query) return Promise.resolve()
 			return io.socket.emitAsync('/search', params);
 		},
 		decorateMessage: function (room, message) {

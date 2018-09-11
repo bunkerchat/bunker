@@ -1,29 +1,32 @@
 app.component('reactionMenu', {
 	templateUrl: '/assets/app/reaction/reactionMenu.html',
 	controller: function ($scope, emoticons, bunkerData) {
-		let currentMessageId = null;
 		this.imageEmoticons = emoticons.imageEmoticons;
 
 		this.toggleReaction = emoticonName => {
-			bunkerData.toggleReaction(currentMessageId, emoticonName);
+			bunkerData.toggleReaction(bunkerData.reactionMenuMessageId, emoticonName);
+			this.close();
 		};
 
 		this.close = () => {
-			this.reactionOpen = false;
+			bunkerData.reactionMenuMessageId = null;
 		};
 
-		$scope.$on('reactionMenuOpen', (event, messageId) => {
-			currentMessageId = messageId;
-
-			const top = $(`#${messageId}`).position().top + 30;
-			this.reactionOpen = true;
-			this.messageTop = `${top}px`;
+		$scope.$watch(() => bunkerData.reactionMenuMessageId, () => {
+			if(!bunkerData.reactionMenuMessageId) {
+				this.messageTop = `-40000px`;
+			}
+			else {
+				const top = $(`#${bunkerData.reactionMenuMessageId}`).position().top + 30;
+				if (top + 200 > $(window).height()) {
+					this.messageTop = `${top - 130}px`;
+				}
+				else {
+					this.messageTop = `${top}px`;
+				}
+			}
 		});
 
-		$scope.$on('$destroy', () => {
-			$(document).off('click.reactionMenu')
-		});
-
-		$(document).on('click.reactionMenu', this.close);
+		// todo make menu close when clicking anywhere else
 	}
 });

@@ -760,21 +760,24 @@ reaction-button {
   display: none;
 }
 
-reaction-menu ol {
-  z-index: 5000;
-  position: absolute;
-  top: 0;
-  right: 0;
-  border: solid lightgray 2px;
-  width: 460px;
-  height: 107px;
-  overflow-y: auto;
-  overflow-x: hidden;
+reaction-menu {
+  z-index: 500;
 
-  li {
-	display: inline-block;
-	width: 100px;
-	text-align: center;
+  ol {
+	position: absolute;
+	top: 0;
+	right: 50px;
+	border: solid lightgray 2px;
+	width: 460px;
+	height: 107px;
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	li {
+	  display: inline-block;
+	  width: 100px;
+	  text-align: center;
+	}
   }
 }
 
