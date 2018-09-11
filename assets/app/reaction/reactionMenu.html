@@ -1,6 +1,5 @@
-<ol class="row list-unstyled" ng-if="$ctrl.reactionOpen" ng-style="{top: $ctrl.messageTop}">
-	<li class="col-xs-3 emoticonListItem"
-		data-value="{{::emoticon.name}}" ng-repeat="emoticon in $ctrl.imageEmoticons">
+<ol class="list-unstyled" ng-if="$ctrl.reactionOpen" ng-style="{top: $ctrl.messageTop}">
+	<li ng-repeat="emoticon in $ctrl.imageEmoticons">
 		<a ng-click="$ctrl.toggleReaction(emoticon.name)">
 			<div class="emoticon-container">
 				<img class="emoticon" ng-src="/assets/images/emoticons/{{::emoticon.file}}">

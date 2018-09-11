@@ -770,6 +770,12 @@ reaction-menu ol {
   height: 107px;
   overflow-y: auto;
   overflow-x: hidden;
+
+  li {
+	display: inline-block;
+	width: 100px;
+	text-align: center;
+  }
 }
 
 message-reactions {
