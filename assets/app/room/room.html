@@ -41,11 +41,11 @@
 
 								<span bunker-message="::message"></span>
 
-								<message-reactions reactions="message.reactions"/>
+								<message-reactions reactions="message.reactions"></message-reactions>
 
 								<span class="message-info">
 
-									<reaction-button message-id="{{::message._id}}"/>
+									<reaction-button message-id="{{::message._id}}"></reaction-button>
 
 									<span ng-if="::(message.type == 'standard' || message.type == 'code' || message.type == 'quote')"
 										  data-user-role="{{::currentMembership.role}}"
@@ -85,7 +85,7 @@
 				</li>
 			</ol>
 
-			<reaction-menu/>
+			<reaction-menu></reaction-menu>
 
 		</div>
 
