@@ -1,0 +1,5 @@
+<span ng-repeat="reaction in messageReactions.reactions">
+	<img class="emoticon"
+		 ng-src="/assets/images/emoticons/{{::reaction.emoticonFile}}"/>
+	{{reaction.count > 1 ? reaction.count : ''}}
+</span>

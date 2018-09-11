@@ -61,7 +61,7 @@ module.exports.findOne = function (req, res) {
 	var pk = actionUtil.requirePk(req);
 	Promise.join(
 		Room.findOne(pk),
-		Message.find({room: pk}).limit(40).populate('author'),
+		Message.find({room: pk}).limit(40).populate('author reactions'),
 		RoomMember.find({room: pk}).populate('user')
 	)
 		.spread(function (room, messages, members) {
@@ -200,7 +200,7 @@ module.exports.messages = function (req, res) {
 
 	// find finds multiple instances of a model, using the where criteria (in this case the roomId
 	// we also want to sort in DESCing (latest) order and limit to 50
-	Message.find({room: roomId}).sort('-createdAt').skip(skip).limit(40).populate('author')
+	Message.find({room: roomId}).sort('-createdAt').skip(skip).limit(40).populate('author reactions')
 		.then(res.ok)
 		.catch(res.serverError);
 };
@@ -214,7 +214,7 @@ module.exports.history = function (req, res) {
 
 	Message.find({room: roomId, createdAt: {'$gte': startDate, '$lt': endDate}})
 		.sort('createdAt')
-		.populate('author')
+		.populate('author reactions')
 		.then(res.ok)
 		.catch(res.serverError);
 };
@@ -235,7 +235,7 @@ module.exports.search = function (req, res) {
 				score: {$meta: "textScore"}
 			})
 				.sort({score: {$meta: 'textScore'}})
-				.populate('author')
+				.populate('author reactions')
 		})
 		.then(res.ok)
 		.catch(res.serverError);
@@ -288,7 +288,7 @@ module.exports.pinMessage = function (req, res) {
 			}
 
 			return [PinnedMessage.create({message: messageId, room: roomId, user: userId}),
-				Message.findOne(messageId).populate('author').populate('room'),
+				Message.findOne(messageId).populate('author reactions').populate('room'),
 				roomMember.user];
 		})
 		.spread(function (pinnedMessage, message, user) {

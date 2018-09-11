@@ -772,6 +772,20 @@ reaction-menu ol {
   overflow-x: hidden;
 }
 
+message-reactions {
+  display: block;
+
+  span {
+	display: inline-block;
+	padding: 3px;
+	margin-right: 3px;
+	border: solid lightgray 1px;
+	border-radius: 2px;
+	background-color: #dbf6ff;
+	text-align: center;
+  }
+}
+
 .system-message {
 	min-height: 30px;
 	padding-left: 10px;

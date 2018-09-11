@@ -41,7 +41,7 @@ exports.update = function (req, res) {
 			return Message.findByIdAndUpdate(messageId, updates);
 		})
 		.then(function () {
-			return Message.findById(messageId).populate('author').lean();
+			return Message.findById(messageId).populate('author reactions').lean();
 		})
 		.then(messageService.broadcastMessage)
 		.then(res.ok)
@@ -59,7 +59,7 @@ exports.toggleReaction = (req, res) => {
 			return reactionService.toggleReaction(dbMessage._id, userId, req.body.emoticonName);
 		})
 		.then(function () {
-			return Message.findById(req.body.messageId).populate('author').lean();
+			return Message.findById(req.body.messageId).populate('author reactions').lean();
 		})
 		.then(messageService.broadcastMessage)
 		.then(res.ok)
