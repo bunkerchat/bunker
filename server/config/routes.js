@@ -71,6 +71,7 @@ module.exports.socketio = function (socket) {
 
 	// message
 	socket.on('/message/edit', socketToController(messageController.update));
+	socket.on('/message/reaction', socketToController(messageController.toggleReaction));
 	socket.on('/message/emoticoncounts', socketToController(messageController.emoticonCounts));
 
 	// pins

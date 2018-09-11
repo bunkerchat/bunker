@@ -41,6 +41,9 @@
 								<span bunker-message="::message"></span>
 
 								<span class="message-info">
+
+									<reaction-button message-id="{{::message._id}}"/>
+
 									<span ng-if="::(message.type == 'standard' || message.type == 'code' || message.type == 'quote')"
 										  data-user-role="{{::currentMembership.role}}"
 										  message-pin="{{::message._id}}"
@@ -78,6 +81,9 @@
 					</div>
 				</li>
 			</ol>
+
+			<reaction-menu/>
+
 		</div>
 
 		<!-- right pane -->

@@ -5,12 +5,12 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var moment = require('moment');
 var ForbiddenError = require('../errors/ForbiddenError');
 var Message = require('../models/Message');
 var User = require('../models/User');
 var messageService = require('../services/messageService');
 var emoticonService = require('../services/emoticonService');
+const reactionService = require('../services/reactionService');
 
 // PUT /message/:id
 // Update a message (the edit functionality)
@@ -42,6 +42,24 @@ exports.update = function (req, res) {
 		})
 		.then(function () {
 			return Message.findById(messageId).populate('author').lean();
+		})
+		.then(messageService.broadcastMessage)
+		.then(res.ok)
+		.catch(ForbiddenError, function (err) {
+			res.forbidden(err);
+		})
+		.catch(res.serverError);
+};
+
+exports.toggleReaction = (req, res) => {
+	const userId = req.session.userId;
+	return Message.findById(req.body.messageId)
+		.populate('author')
+		.then(function (dbMessage) {
+			return reactionService.toggleReaction(dbMessage._id, userId, req.body.emoticonName);
+		})
+		.then(function () {
+			return Message.findById(req.body.messageId).populate('author').lean();
 		})
 		.then(messageService.broadcastMessage)
 		.then(res.ok)

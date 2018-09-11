@@ -434,8 +434,9 @@ mark:hover {
 	}
 }
 
-.message:hover .fa-bookmark-o:not(.disabled) {
-	display: inline;
+.message:hover .fa-bookmark-o:not(.disabled),
+.message:hover reaction-button {
+	display: inline-block;
 }
 
 .message-info > .text-muted {
@@ -753,6 +754,22 @@ li:not(:last-child) .message.last-read:after {
 
 .popup-item {
 	display: inline-block;
+}
+
+reaction-button {
+  display: none;
+}
+
+reaction-menu ol {
+  z-index: 5000;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: solid lightgray 2px;
+  width: 460px;
+  height: 107px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .system-message {

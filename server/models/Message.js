@@ -1,7 +1,8 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const Reaction = require('./Reaction');
 
-var messageSchema = new mongoose.Schema({
-	createdAt:{
+const messageSchema = new mongoose.Schema({
+	createdAt: {
 		type: Date,
 		default: Date.now
 	},
@@ -49,7 +50,8 @@ var messageSchema = new mongoose.Schema({
 	},
 	linkMeta: {
 		type: Object
-	}
+	},
+	reactions: [Reaction]
 });
 
 messageSchema.index({ text: 'text'});
