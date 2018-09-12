@@ -788,16 +788,17 @@ message-reactions {
 
   span {
 	display: inline-block;
-	padding: 3px;
+	padding: 0 5px;
 	margin-right: 3px;
 	border: solid lightgray 1px;
 	border-radius: 2px;
 	background-color: #dbf6ff;
 	text-align: center;
+	vertical-align: middle;
   }
 
   img.emoticon {
-	max-height: 27px;
+	max-height: 21px;
   }
 }
 
