@@ -783,7 +783,8 @@ reaction-menu {
 }
 
 message-reactions {
-  display: block;
+  display: inline-block;
+  margin-left: 10px;
 
   span {
 	display: inline-block;
@@ -793,6 +794,10 @@ message-reactions {
 	border-radius: 2px;
 	background-color: #dbf6ff;
 	text-align: center;
+  }
+
+  img.emoticon {
+	max-height: 27px;
   }
 }
 
