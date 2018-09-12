@@ -41,7 +41,8 @@
 
 								<span bunker-message="::message"></span>
 
-								<message-reactions reactions="message.reactions"></message-reactions>
+								<message-reactions reactions="message.reactions" ng-if="::message.reactions.length > 0">
+								</message-reactions>
 
 								<span class="message-info">
 
