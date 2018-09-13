@@ -112,6 +112,10 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			});
 		},
 
+		getUser(userId) {
+			return users[userId];
+		},
+
 		// Messages
 
 		addMessage: function (room, message) {

@@ -4,20 +4,16 @@ app.component('messageReactions', {
 	},
 	templateUrl: '/assets/app/reaction/messageReactions.html',
 	controllerAs: 'messageReactions',
-	controller: function (emoticons) {
-		this.emoticonReactions = _.reduce(this.reactions, (reactions, reaction) => {
-			const existing = _.find(reactions, {emoticonName: reaction.emoticonName});
-			if (existing) {
-				existing.count++;
-			}
-			else {
-				reactions.push({
+	controller: function (emoticons, bunkerData) {
+		this.reactionsByAuthor = _(this.reactions)
+			.groupBy('author')
+			.map((reactions, authorId) => ({
+				author: bunkerData.getUser(authorId),
+				reactions: _.map(reactions, reaction => ({
 					emoticonName: reaction.emoticonName,
 					emoticonFile: _.find(emoticons.all, {name: reaction.emoticonName}).file,
-					count: 1
-				});
-			}
-			return reactions;
-		}, []);
+				}))
+			}))
+			.value();
 	}
 });
