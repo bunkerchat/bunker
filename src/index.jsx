@@ -1,8 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import Chat from "./components/chat/Chat.jsx";
 
 const Index = () => {
-	return <div>hello bunker my old friend</div>;
+	return <Chat/>
 };
 
 ReactDOM.render(<Index />, document.getElementById("index"));

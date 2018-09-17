@@ -10,6 +10,7 @@
     "bluebird": "3.2.1",
     "body-parser": "1.14.1",
     "bootstrap": "3.3.6",
+    "bootswatch": "4.1.3",
     "bower": "1.8.2",
     "cache-manager": "1.3.0",
     "cache-manager-mongodb": "0.1.6",
@@ -66,7 +67,7 @@
     "debug": "node debug app.js",
     "build": "node node_modules/gulp/bin/gulp.js sass && npm run build-react",
     "build-react": "webpack --mode production",
-	"watch": "webpack --mode development --watch",
+    "watch": "webpack --mode development --watch",
     "postinstall": "node node_modules/bower/bin/bower install && npm run build",
     "deploy": "npm prune && npm install && gulp && forever restart app.js"
   },
