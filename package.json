@@ -1,8 +1,8 @@
 {
   "name": "bunker",
   "private": true,
-  "version": "1.0.0",
-  "description": "socket.io chat application built on the MEAN stack",
+  "version": "2.0.0",
+  "description": "socket.io chat application built on the MERliN stack",
   "keywords": [],
   "dependencies": {
     "angular": "1.5.11",
@@ -17,6 +17,7 @@
     "cheerio": "1.0.0-rc.2",
     "compression": "1.6.0",
     "connect-mongo": "0.8.2",
+    "connected-react-router": "4.4.1",
     "crypto": "0.0.3",
     "ejs": "2.4.1",
     "ent": "2.2.0",
@@ -40,6 +41,7 @@
     "gulp-sourcemaps": "1.6.0",
     "gulp-uglify": "1.5.1",
     "gulp-usemin": "0.3.16",
+    "history": "4.7.2",
     "hookshot": "0.1.0",
     "jquery": "2.2.0",
     "lodash": "4.1.0",
@@ -54,6 +56,11 @@
     "password-hash": "1.2.2",
     "react": "16.5.1",
     "react-dom": "16.5.1",
+    "react-redux": "5.0.7",
+    "react-router": "4.3.1",
+    "react-router-dom": "4.3.1",
+    "redux": "4.0.0",
+    "redux-thunk": "2.3.0",
     "request": "2.69.0",
     "require-dir": "0.3.0",
     "sharp": "0.20.8",
@@ -65,8 +72,7 @@
   "scripts": {
     "start": "node app.js",
     "debug": "node debug app.js",
-    "build": "node node_modules/gulp/bin/gulp.js sass && npm run build-react",
-    "build-react": "webpack --mode production",
+    "build": "node node_modules/gulp/bin/gulp.js sass && webpack --mode production",
     "watch": "webpack --mode development --watch",
     "postinstall": "node node_modules/bower/bin/bower install && npm run build",
     "deploy": "npm prune && npm install && gulp && forever restart app.js"
