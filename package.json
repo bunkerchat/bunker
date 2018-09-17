@@ -66,6 +66,7 @@
     "debug": "node debug app.js",
     "build": "node node_modules/gulp/bin/gulp.js sass && npm run build-react",
     "build-react": "webpack --mode production",
+	"watch": "webpack --mode development --watch",
     "postinstall": "node node_modules/bower/bin/bower install && npm run build",
     "deploy": "npm prune && npm install && gulp && forever restart app.js"
   },

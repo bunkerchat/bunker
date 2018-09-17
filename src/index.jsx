@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 const Index = () => {
-	return <div>Hello React!</div>;
+	return <div>hello bunker my old friend</div>;
 };
 
 ReactDOM.render(<Index />, document.getElementById("index"));
