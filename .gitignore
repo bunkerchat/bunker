@@ -4,6 +4,7 @@ config/local.js
 node_modules
 bower_components
 assets/vendor
+dist
 
 .tmp
 dump.rdb

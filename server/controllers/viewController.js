@@ -29,6 +29,10 @@ viewController.index = function (req, res) {
 		.catch(res.serverError);
 };
 
+viewController.version2 = (req, res) => {
+	res.render('v2');
+};
+
 viewController.debug = function (req, res) {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
 
