@@ -38,7 +38,10 @@ module.exports.http = function (app) {
 	app.post('/api/user/loginbasic', auth.authenicateLocal);
 
 	// proxy images
-	app.get('/api/image/:imgurl', viewController.image)
+	app.get('/api/image/:imgurl', viewController.image);
+
+	// Catch all route
+	app.get('*', viewController.version2);
 };
 
 module.exports.socketio = function (socket) {
