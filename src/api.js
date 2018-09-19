@@ -1,6 +1,7 @@
-import io from "socket.io-client";
-import {dispatch} from "./store";
-import {connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse} from "./actions/socket";
+import io from 'socket.io-client';
+import {dispatch} from './store';
+import {connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse} from './actions/socket';
+import {receiveMessage} from './actions/room';
 
 const socket = io(`http://localhost:9002`);
 
@@ -12,6 +13,13 @@ socket.on('reconnect', () => {
 });
 socket.on('disconnect', () => {
 	dispatch(disconnected());
+});
+socket.on('room', socketMessage => {
+	switch(socketMessage.verb) {
+		case 'messaged':
+			dispatch(receiveMessage(socketMessage.data));
+			break;
+	}
 });
 
 // async emit function

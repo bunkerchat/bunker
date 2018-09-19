@@ -1,7 +1,11 @@
-import {emit} from "../api";
+import {emit} from '../api';
 
 export function sentMessage() {
-	return {type: "room/sent"};
+	return {type: 'message/sent'};
+}
+
+export function receiveMessage(message) {
+	return {type: 'message/receive', message}
 }
 
 export function sendRoomMessage(roomId, text) {
