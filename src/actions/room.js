@@ -9,10 +9,10 @@ export function receiveMessage(message) {
 }
 
 export function sendRoomMessage(roomId, text) {
-	return dipsatch => {
+	return dispatch => {
 		return emit('/room/message', {roomId, text})
 			.then(() => {
-				dipsatch(sentMessage());
+				dispatch(sentMessage());
 			});
 	}
 }
