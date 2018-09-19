@@ -1,5 +1,6 @@
 import React from "react";
 import MessageList from "../message/MessageList.jsx";
+import ChatInput from "../input/ChatInput.jsx";
 
 export default class Room extends React.Component {
 	render() {
@@ -7,6 +8,7 @@ export default class Room extends React.Component {
 		return (
 			<div>
 				<MessageList messages={room.$messages}/>
+				<ChatInput/>
 			</div>
 		)
 	}
