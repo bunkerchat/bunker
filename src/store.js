@@ -1,10 +1,14 @@
-import { combineReducers } from 'redux'
-import { createBrowserHistory } from 'history';
-import { applyMiddleware, compose, createStore } from 'redux'
-import { connectRouter, routerMiddleware } from 'connected-react-router'
+import { combineReducers } from "redux"
+import { createBrowserHistory } from "history";
+import { applyMiddleware, compose, createStore } from "redux"
+import { connectRouter, routerMiddleware } from "connected-react-router"
+import thunk from "redux-thunk";
 const history = createBrowserHistory();
 
+import rooms from "./reducers/rooms";
+
 const rootReducer = combineReducers({
+	rooms
 });
 
 const store = createStore(
@@ -12,9 +16,12 @@ const store = createStore(
 	compose(
 		applyMiddleware(
 			routerMiddleware(history), // for dispatching history actions
+			thunk
 			// ... other middlewares ...
 		),
 	),
 );
 
-export {store, history};
+const dispatch = store.dispatch;
+
+export {store, history, dispatch};

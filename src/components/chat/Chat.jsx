@@ -3,15 +3,27 @@ import Room from "../room/Room.jsx";
 import Lobby from "../lobby/Lobby.jsx";
 import Header from "../header/Header.jsx";
 import {connect} from "react-redux";
+import {getRooms} from "../../actions/rooms";
 
 const mapStateToProps = (state, ownProps) => {
 	const roomMatch = /room\/(\w+)/i.exec(ownProps.location.pathname);
 	return {
+		rooms: state.rooms,
 		roomId: roomMatch ? roomMatch[1] : null
 	};
 };
 
+const mapDispatchToProps = dispatch => ({
+	load: () => {
+		dispatch(getRooms());
+	}
+});
+
 class Chat extends React.Component {
+	componentWillMount() {
+		this.props.load();
+	}
+
 	render() {
 		const rooms = [{
 			_id: '1',
@@ -25,6 +37,10 @@ class Chat extends React.Component {
 		}];
 
 		const {roomId} = this.props;
+
+		if(this.props.rooms.length === 0) {
+			return <div>Loading...</div>;
+		}
 
 		return (
 			<div>
@@ -42,4 +58,4 @@ class Chat extends React.Component {
 	}
 }
 
-export default connect(mapStateToProps)(Chat);
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);
