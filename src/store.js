@@ -6,9 +6,11 @@ import thunk from "redux-thunk";
 const history = createBrowserHistory();
 
 import rooms from "./reducers/rooms";
+import log from "./reducers/log";
 
 const rootReducer = combineReducers({
-	rooms
+	rooms,
+	log
 });
 
 const store = createStore(

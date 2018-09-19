@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import MessageList from "../message/MessageList.jsx";
 
 export default class Room extends React.Component {
@@ -6,7 +6,7 @@ export default class Room extends React.Component {
 		const {room} = this.props;
 		return (
 			<div>
-				<MessageList messages={room.messages}/>
+				<MessageList messages={room.$messages}/>
 			</div>
 		)
 	}

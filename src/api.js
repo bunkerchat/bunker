@@ -26,7 +26,7 @@ export function emit(endpoint, data) {
 			if (response && response.error) {
 
 				dispatch(errorResponse(response));
-				dispatch(apiError(response));
+				// dispatch(apiError(response));
 
 				return reject(new Error(response.error));
 			}

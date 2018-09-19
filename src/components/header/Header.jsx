@@ -1,19 +1,29 @@
-import React from 'react';
+import React from "react";
 import {Link} from "react-router-dom";
+import {connect} from "react-redux";
 
-export default class Header extends React.Component {
+const mapStateToProps = (state) => ({
+	rooms: state.rooms
+});
+
+class Header extends React.Component {
 	render() {
+		const {rooms} = this.props;
 		return (
 			<div>
 				<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 					<Link className="navbar-brand" to={`/2/lobby`}>Bunker</Link>
 					<div className="navbar-nav">
-						<Link className="nav-item nav-link" to={`/2/room/1`}>Room 1</Link>
-						<Link className="nav-item nav-link" to={`/2/room/2`}>Room 2</Link>
-						<Link className="nav-item nav-link" to={`/2/room/3`}>Room 3</Link>
+						{_.map(rooms, room => (
+							<Link className="nav-item nav-link" to={`/2/room/${room._id}`}>
+								{room.name}
+							</Link>
+						))}
 					</div>
 				</nav>
 			</div>
 		)
 	}
 }
+
+export default connect(mapStateToProps)(Header);
