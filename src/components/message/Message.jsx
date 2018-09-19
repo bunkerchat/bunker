@@ -1,17 +1,23 @@
 import React from "react";
+import {connect} from "react-redux";
+import Author from "./Author.jsx";
+import MessageBody from "./MessageBody.jsx";
 
-export default class Message extends React.Component {
+const mapStateToProps = (state, ownProps) => ({
+	author: state.users[ownProps.message.author]
+});
+
+class Message extends React.Component {
 	render() {
-		const {message} = this.props;
+		const {message, previous, author} = this.props;
+		const firstInSeries = !previous || !previous.author || !message.author || previous.author !== message.author;
 		return (
-			<div className="row">
-				<div className="col-2">
-					{message.author}
-				</div>
-				<div className="col">
-					{message.text}
-				</div>
+			<div>
+				<Author author={author} firstInSeries={firstInSeries}/>
+				<MessageBody message={message} author={author} firstInSeries={firstInSeries}/>
 			</div>
 		)
 	}
 }
+
+export default connect(mapStateToProps)(Message);
