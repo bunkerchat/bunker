@@ -1,5 +1,13 @@
 const handlers = {
-	'init/receive': (state, action) => _.keyBy(action.data.rooms, '_id')
+	'init/receive': (state, action) => {
+		return _(action.data.rooms)
+			.map(room => {
+				room.$messages = _.reverse(room.$messages);
+				return room;
+			})
+			.keyBy('_id')
+			.value()
+	}
 };
 
 export default function (state = {}, action) {

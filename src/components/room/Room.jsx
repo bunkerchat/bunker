@@ -8,7 +8,7 @@ export default class Room extends React.Component {
 		return (
 			<div>
 				<MessageList messages={room.$messages}/>
-				<ChatInput/>
+				<ChatInput roomId={room._id}/>
 			</div>
 		)
 	}
