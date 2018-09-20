@@ -11,6 +11,12 @@ class Message extends React.Component {
 	render() {
 		const {message, previous, author} = this.props;
 		const firstInSeries = !previous || !previous.author || !message.author || previous.author !== message.author;
+
+		if (!author) {
+			console.error("couldnt render message because author could not be found :(", message);
+			return null;
+		}
+
 		return (
 			<div>
 				<Author author={author} firstInSeries={firstInSeries}/>
