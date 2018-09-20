@@ -48,7 +48,7 @@ gulp.task('usemin', ['clear-build-folder'], function () {
 				//}),
 				ngAnnotate(),
 				'concat',
-				babel({presets: ['es2015']}),
+				babel({presets: ['@babel/env']}),
 				//uglify({mangle:false, compress: false}),
 				rev(),
 				filenames('bundle')
