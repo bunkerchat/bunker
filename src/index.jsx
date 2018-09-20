@@ -6,7 +6,7 @@ import Chat from "./components/chat/Chat.jsx";
 
 import {history, store} from "./store.js";
 import {ConnectedRouter} from "connected-react-router";
-import {Route} from "react-router";
+import {Route, Redirect} from "react-router";
 import {Provider} from "react-redux";
 
 // Configure font-awesome
@@ -18,6 +18,9 @@ ReactDOM.render(
 	<Provider store={store}>
 		<ConnectedRouter history={history}>
 			<div>
+				<Route exact path="/2" render={() => (
+					<Redirect to="/2/lobby"/>
+				)}/>
 				<Route path="/" component={Chat}/>
 			</div>
 		</ConnectedRouter>

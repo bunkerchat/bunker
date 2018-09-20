@@ -15,7 +15,7 @@ const mapStateToProps = (state, ownProps) => {
 	const sectionMatch = /2\/(\w+)/.exec(ownProps.location.pathname);
 	const roomMatch = /room\/(\w+)/i.exec(ownProps.location.pathname);
 	return {
-		section: sectionMatch[1],
+		section: sectionMatch ? sectionMatch[1] : null,
 		rooms: state.rooms,
 		currentRoomId: roomMatch ? roomMatch[1] : null
 	};
