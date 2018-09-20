@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import MessageText from "./MessageText.jsx";
 
 const MessageBodyContainer = styled.div`
 	display: inline-block;
@@ -14,7 +15,7 @@ export default class MessageBody extends React.Component {
 		return (
 			<MessageBodyContainer>
 				{this.props.firstInSeries && <h6>{author.nick}</h6>}
-				<div dangerouslySetInnerHTML={{__html: message.text}}/>
+				<MessageText text={message.text}/>
 			</MessageBodyContainer>
 		)
 	}

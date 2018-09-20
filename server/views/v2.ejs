@@ -4,12 +4,13 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<link rel="stylesheet" href="/node_modules/bootswatch/dist/<%= theme || 'cerulean' %>/bootstrap.min.css"/>
+	<link rel="stylesheet" href="/node_modules/bootswatch/dist/<%= userSettings.theme || 'cerulean' %>/bootstrap.min.css"/>
 </head>
 <body>
 <section id="index"></section>
 <script>
 	window.url = '<%= config.url %>';
+	window.emoticons = <%- JSON.stringify(emoticons) %>;
 </script>
 <script src="/dist/main.js"></script>
 </body>

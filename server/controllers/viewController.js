@@ -31,11 +31,16 @@ viewController.index = function (req, res) {
 
 viewController.version2 = (req, res) => {
 	const userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
-	return UserSettings.findOne({user: userId})
-		.then(userSettings => {
+
+	return Promise.join(
+		UserSettings.findOne({user: userId}),
+		emoticonService.getEmoticonNamesFromDisk()
+	)
+		.spread((userSettings, emoticons) => {
 			res.render('v2', {
-				theme: userSettings.theme,
-				config
+				config,
+				userSettings,
+				emoticons
 			});
 		});
 };
