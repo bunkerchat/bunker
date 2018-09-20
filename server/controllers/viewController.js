@@ -30,7 +30,9 @@ viewController.index = function (req, res) {
 };
 
 viewController.version2 = (req, res) => {
-	res.render('v2');
+	res.render('v2', {
+		config
+	});
 };
 
 viewController.debug = function (req, res) {

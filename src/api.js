@@ -3,7 +3,7 @@ import {dispatch} from './store';
 import {connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse} from './actions/socket';
 import {receiveMessage} from './actions/room';
 
-const socket = io(`http://localhost:9002`);
+const socket = io(window.url);
 
 socket.on('connect', () => {
 	dispatch(connected());
