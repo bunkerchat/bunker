@@ -14,9 +14,7 @@ export default class MessageBody extends React.Component {
 		return (
 			<MessageBodyContainer>
 				{this.props.firstInSeries && <h6>{author.nick}</h6>}
-				<div>
-					{message.text}
-				</div>
+				<div dangerouslySetInnerHTML={{__html: message.text}}/>
 			</MessageBodyContainer>
 		)
 	}
