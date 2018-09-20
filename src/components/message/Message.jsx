@@ -13,7 +13,7 @@ class Message extends React.Component {
 		const firstInSeries = !previous || !previous.author || !message.author || previous.author !== message.author;
 
 		if (!author) {
-			console.error("couldnt render message because author could not be found :(", message);
+			// todo this would be a system message
 			return null;
 		}
 

@@ -1,15 +1,17 @@
-import { combineReducers } from "redux"
-import { createBrowserHistory } from "history";
-import { applyMiddleware, compose, createStore } from "redux"
-import { connectRouter, routerMiddleware } from "connected-react-router"
-import thunk from "redux-thunk";
+import { combineReducers } from 'redux'
+import { createBrowserHistory } from 'history';
+import { applyMiddleware, compose, createStore } from 'redux'
+import { connectRouter, routerMiddleware } from 'connected-react-router'
+import thunk from 'redux-thunk';
 const history = createBrowserHistory();
 
-import rooms from "./reducers/rooms";
-import users from "./reducers/users";
-import log from "./reducers/log";
+import userSettings from './reducers/userSettings';
+import rooms from './reducers/rooms';
+import users from './reducers/users';
+import log from './reducers/log';
 
 const rootReducer = combineReducers({
+	userSettings,
 	rooms,
 	users,
 	log

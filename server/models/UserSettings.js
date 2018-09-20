@@ -41,6 +41,7 @@ var userSettingsSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
+	theme: String,
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User'

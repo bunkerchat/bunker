@@ -30,9 +30,14 @@ viewController.index = function (req, res) {
 };
 
 viewController.version2 = (req, res) => {
-	res.render('v2', {
-		config
-	});
+	const userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
+	return UserSettings.findOne({user: userId})
+		.then(userSettings => {
+			res.render('v2', {
+				theme: userSettings.theme,
+				config
+			});
+		});
 };
 
 viewController.debug = function (req, res) {

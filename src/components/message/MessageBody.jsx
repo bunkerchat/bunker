@@ -12,7 +12,7 @@ export default class MessageBody extends React.Component {
 	render() {
 		const {message, author} = this.props;
 		return (
-			<MessageBodyContainer className="bg-white">
+			<MessageBodyContainer>
 				{this.props.firstInSeries && <h6>{author.nick}</h6>}
 				<div>
 					{message.text}
