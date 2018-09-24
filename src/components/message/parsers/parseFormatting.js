@@ -17,8 +17,8 @@ const parseFormatting = text => {
 		while ((match = lookup.exec(text)) !== null) {
 			const charBefore = match.index - 1;
 			if (text[charBefore] && text[charBefore] === '\\') {
-				var startIndex = match.index - 1 > 0 ? match.index - 1 : 0;
-				var newText = '';
+				const startIndex = match.index - 1 > 0 ? match.index - 1 : 0;
+				let newText = '';
 				if (startIndex > 0) {
 					newText += text.slice(0, startIndex);
 				}
