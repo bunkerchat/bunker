@@ -5,10 +5,11 @@ import Settings from '../settings/Settings.jsx';
 import Header from '../header/Header.jsx';
 import {connect} from 'react-redux';
 import {init} from '../../actions/init';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import theme from "../../constants/theme";
 
 const ChatContainer = styled.div`
-	padding-top: 80px;
+	padding-top: ${theme.top};
 `;
 
 const mapStateToProps = (state, ownProps) => {

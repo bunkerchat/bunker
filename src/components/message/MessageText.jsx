@@ -1,5 +1,5 @@
 import React from "react";
-import emoticonService from '../../services/emoticonService';
+import emoticons from '../../constants/emoticons';
 
 // Note I felt it was okay to use dangerouslySetInnerHTML since we escape everything on the server
 // todo could be improved?
@@ -17,11 +17,11 @@ const replaceAll = (str, find, replace) => str.split(find).join(replace);
 // todo we want to start doing this nonsense on the server? any advantages?
 const parseEmoticons = (text) => {
 	const replacedEmotes = {};
-	const emoticons = emoticonService.all;
+	const allEmoticons = emoticons.all;
 
 	// Parse emoticons
 	_.each(text.match(/:[\w-]+:/g), emoticonText => {
-		const knownEmoticon = _.find(emoticons, known => {
+		const knownEmoticon = _.find(allEmoticons, known => {
 			return known.file.replace(/\.\w{1,4}$/, '').toLowerCase() === emoticonText.replace(/:/g, '').toLowerCase();
 		});
 

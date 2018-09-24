@@ -17,7 +17,7 @@ export default class MessageList extends React.Component {
 	render() {
 		const {messages} = this.props;
 		return (
-			<MessageListContainer>
+			<MessageListContainer className="bg-light">
 				{messages.map((message, index) => (
 					<Message message={message}
 									 previous={messages[index - 1]}

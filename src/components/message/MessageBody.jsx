@@ -1,12 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import MessageText from "./MessageText.jsx";
+import theme from "../../constants/theme";
 
 const MessageBodyContainer = styled.div`
 	display: inline-block;
 	padding: 10px;
 	border: solid lightgray 1px;
 	border-radius: 2px;
+	background-color: ${theme.messageBackground};
 `;
 
 export default class MessageBody extends React.Component {

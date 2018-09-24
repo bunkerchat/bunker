@@ -8,11 +8,9 @@ const list = _.map(window.emoticons, emoticon => ({
 	isIcon: /^fa-/.test(emoticon)
 }));
 
-const emoticonService = {
+export default {
 	all: list,
 	imageEmoticons: _.filter(list, {isIcon: false}),
 	names: _.map(list, 'name'),
 	files: _.map(list, 'file')
 };
-
-export default emoticonService;
