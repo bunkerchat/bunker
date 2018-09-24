@@ -1,42 +1,34 @@
 import React from "react";
-import emoticons from '../../constants/emoticons';
+import parseEmoticons from './parsers/parseEmoticons';
+import parseMedia from "./parsers/parseMedia";
+import parseFormatting from "./parsers/parseFormatting";
 
 // Note I felt it was okay to use dangerouslySetInnerHTML since we escape everything on the server
 // todo could be improved?
 export default class MessageText extends React.Component {
 	render() {
 		let {text} = this.props;
-		text = parseEmoticons(text);
+		text = parseText(text);
 
 		return <div dangerouslySetInnerHTML={{__html: text}}/>;
 	}
 }
 
-const replaceAll = (str, find, replace) => str.split(find).join(replace);
-
-// todo we want to start doing this nonsense on the server? any advantages?
-const parseEmoticons = (text) => {
-	const replacedEmotes = {};
-	const allEmoticons = emoticons.all;
-
-	// Parse emoticons
-	_.each(text.match(/:[\w-]+:/g), emoticonText => {
-		const knownEmoticon = _.find(allEmoticons, known => {
-			return known.file.replace(/\.\w{1,4}$/, '').toLowerCase() === emoticonText.replace(/:/g, '').toLowerCase();
-		});
-
-		if (knownEmoticon && !replacedEmotes[knownEmoticon.file]) {
-			// if an image emoticon (more common)
-			if (!knownEmoticon.isIcon) {
-				text = replaceAll(text, emoticonText,
-					`<img class="emoticon" title="${emoticonText}" src="/assets/images/emoticons/${knownEmoticon.file}"/>`);
-			}
-			else { // font-awesome icon emoticon
-				text = replaceAll(text, emoticonText,
-					`<i class="fa ${knownEmoticon.file} fa-lg" title=":${knownEmoticon.name}:"></i>`);
-			}
-			replacedEmotes[knownEmoticon.file] = true;
+function parseText(text) {
+	const tokensSplitOnUrls = text.split(/(https?:\/\/\S+)/i); // split on urls
+	const parsedTokens = _.map(tokensSplitOnUrls, token => {
+		// Parse urls as media only
+		if (token.match(/https?:\/\/\S+/i)) {
+			token = parseMedia(token);
 		}
+		else {
+			token = parseFormatting(token);
+			// if (bunkerData.userSettings.showEmoticons) {
+				token = parseEmoticons(token);
+			// }
+		}
+		return token;
 	});
-	return text;
-};
+
+	return parsedTokens.join(' ');
+}
