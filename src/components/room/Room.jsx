@@ -7,7 +7,7 @@ export default class Room extends React.Component {
 		const {room} = this.props;
 		return (
 			<div>
-				<MessageList messages={room.$messages}/>
+				<MessageList roomId={room._id} messages={room.$messages}/>
 				<ChatInput roomId={room._id}/>
 			</div>
 		)

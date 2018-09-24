@@ -17,9 +17,11 @@ const rootReducer = combineReducers({
 	log
 });
 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 const store = createStore(
 	connectRouter(history)(rootReducer), // new root reducer with router state
-	compose(
+	composeEnhancers(
 		applyMiddleware(
 			routerMiddleware(history), // for dispatching history actions
 			thunk

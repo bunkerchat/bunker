@@ -1,3 +1,10 @@
+const parseMessage = (message) => {
+	// Existing bunker server code sends new & loaded messages with a full author object
+	// For consistency just make all message authors the same (_id only)
+	message.author = message.author._id;
+	return message;
+};
+
 const handlers = {
 	'init/receive': (state, action) => {
 		return _(action.data.rooms)
@@ -8,14 +15,34 @@ const handlers = {
 			.keyBy('_id')
 			.value()
 	},
-	'message/receive': (state, action) => {
-		// Existing bunker server code sends new messages with a full author object
-		// For consistency just make all message authors the same (_id only)
-		action.message.author = action.message.author._id;
-
-		const currentMessages = state[action.message.room].$messages;
+	'message/loadingMany': (state, action) => {
 		const updated = {...state};
-		updated[action.message.room].$messages = [...currentMessages, action.message];
+		updated[action.roomId].loading = true;
+		return updated;
+	},
+	'message/receive': (state, action) => {
+		action.message = parseMessage(action.message);
+
+		const updated = {...state};
+		const room = updated[action.message.room];
+		room.$messages = [...room.$messages, action.message];
+		return updated;
+	},
+	'message/receiveMany': (state, action) => {
+		action.messages = _.map(action.messages, parseMessage);
+
+		const updated = {...state};
+		const room = updated[action.roomId];
+		room.loading = false;
+
+		if (action.messages.length === 0) {
+			// todo handle this nicer?
+			console.log("no more messages");
+		}
+		else {
+			room.$messages = _.uniqBy([..._.reverse(action.messages), ...room.$messages], '_id');
+		}
+
 		return updated;
 	}
 };
