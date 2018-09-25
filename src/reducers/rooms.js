@@ -9,13 +9,16 @@ const parseMessage = message => {
 
 const handlers = {
 	"init/receive": (state, action) => {
-		return _(action.data.rooms)
-			.map(room => {
-				room.$messages = _.reverse(room.$messages);
-				return room;
-			})
-			.keyBy("_id")
-			.value();
+		return {
+			...state,
+			..._(action.data.rooms)
+				.map(room => {
+					room.$messages = _.reverse(room.$messages);
+					return room;
+				})
+				.keyBy("_id")
+				.value()
+		};
 	},
 	"message/loadingMany": (state, action) => {
 		const updated = { ...state };

@@ -5,12 +5,14 @@ import { connectRouter, routerMiddleware } from "connected-react-router";
 import thunk from "redux-thunk";
 const history = createBrowserHistory();
 
+import user from "./reducers/user";
 import userSettings from "./reducers/userSettings";
 import rooms from "./reducers/rooms";
 import users from "./reducers/users";
 import log from "./reducers/log";
 
 const rootReducer = combineReducers({
+	user,
 	userSettings,
 	rooms,
 	users,

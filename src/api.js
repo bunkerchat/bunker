@@ -2,14 +2,17 @@ import io from "socket.io-client";
 import { dispatch } from "./store";
 import { connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse } from "./actions/socket";
 import { receiveMessage } from "./actions/room";
+import { init } from "./actions/init";
 
 const socket = io(window.url);
 
 socket.on("connect", () => {
 	dispatch(connected());
+	dispatch(init());
 });
 socket.on("reconnect", () => {
 	dispatch(reconnected());
+	dispatch(init());
 });
 socket.on("disconnect", () => {
 	dispatch(disconnected());
