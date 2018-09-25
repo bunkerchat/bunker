@@ -8,6 +8,7 @@ const mapStateToProps = (state, ownProps) => {
 	const room = state.rooms[ownProps.roomId];
 	return {
 		loading: room.loading,
+		fullHistoryLoaded: room.fullHistoryLoaded,
 		messages: room.$messages
 	};
 };
@@ -59,13 +60,17 @@ class Room extends React.Component {
 	}
 
 	render() {
-		const { roomId, messages } = this.props;
+		const { roomId, fullHistoryLoaded, messages } = this.props;
 		return (
 			<div>
 				<div className="alert alert-info text-center mb-0">
-					<a className="alert-link" onClick={this.onLoadMessages}>
-						Load more messages
-					</a>
+					{fullHistoryLoaded ? (
+						<span>No more messages</span>
+					) : (
+						<a className="alert-link" onClick={this.onLoadMessages}>
+							Load more messages
+						</a>
+					)}
 				</div>
 				<MessageList roomId={roomId} messages={messages} />
 				<ChatInput roomId={roomId} />

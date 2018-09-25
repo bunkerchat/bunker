@@ -38,8 +38,7 @@ const handlers = {
 		room.loading = false;
 
 		if (action.messages.length === 0) {
-			// todo handle this nicer?
-			console.log("no more messages");
+			room.fullHistoryLoaded = true;
 		} else {
 			room.$messages = _.uniqBy([..._.reverse(action.messages), ...room.$messages], "_id");
 		}
@@ -49,6 +48,7 @@ const handlers = {
 	"message/clear": (state, action) => {
 		const updated = { ...state };
 		const room = updated[action.roomId];
+		room.fullHistoryLoaded = false;
 		room.$messages = _.takeRight(room.$messages, maxMessages);
 		return updated;
 	}
