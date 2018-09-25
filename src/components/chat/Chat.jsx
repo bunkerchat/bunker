@@ -52,7 +52,7 @@ class Chat extends React.Component {
 					}
 					{section === 'room' && _.map(rooms, (room, roomId) => (
 						<div className={currentRoomId === roomId ? 'd-block' : 'd-none'} key={roomId}>
-							<Room room={room}/>
+							<Room roomId={roomId} current={currentRoomId === roomId}/>
 						</div>
 					))}
 				</ChatContainer>
