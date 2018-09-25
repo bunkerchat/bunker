@@ -39,6 +39,7 @@ viewController.version2 = (req, res) => {
 		.spread((userSettings, emoticons) => {
 			res.render('v2', {
 				config,
+				userId,
 				userSettings,
 				emoticons
 			});
