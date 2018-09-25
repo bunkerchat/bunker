@@ -19,9 +19,14 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class Room extends React.Component {
+	onLoadMessages = () => {
+		this.props.loadMessages(this.props.roomId, this.props.messages.length);
+	};
+
 	onScroll = _.throttle(() => {
-		if (window.scrollY < 100 && !this.props.loading) {
-			this.props.loadMessages(this.props.roomId, this.props.messages.length);
+		const isSmallScreen = window.outerWidth < 768;
+		if (window.scrollY < 100 && !isSmallScreen && !this.props.loading) {
+			this.onLoadMessages();
 		}
 	}, 500);
 
@@ -57,6 +62,11 @@ class Room extends React.Component {
 		const { roomId, messages } = this.props;
 		return (
 			<div>
+				<div className="alert alert-info text-center mb-0">
+					<a className="alert-link" onClick={this.onLoadMessages}>
+						Load more messages
+					</a>
+				</div>
 				<MessageList roomId={roomId} messages={messages} />
 				<ChatInput roomId={roomId} />
 			</div>
