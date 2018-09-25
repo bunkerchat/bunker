@@ -4,6 +4,7 @@ import MessageText from "./MessageText.jsx";
 
 const MessageBodyContainer = styled.div`
 	display: inline-block;
+	width: calc(100% - 30px);
 	padding: 0 10px;
 	overflow: hidden;
 `;
