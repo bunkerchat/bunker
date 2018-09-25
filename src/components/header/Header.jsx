@@ -1,19 +1,21 @@
 import React from "react";
-import {Link} from "react-router-dom";
-import {connect} from "react-redux";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
 	rooms: state.rooms
 });
 
 class Header extends React.Component {
 	render() {
-		const {rooms} = this.props;
+		const { rooms } = this.props;
 		return (
 			<div>
 				<nav className="navbar navbar-expand navbar-dark bg-dark fixed-top">
-					<Link className="navbar-brand" to={`/2/lobby`}>Bunker</Link>
+					<Link className="navbar-brand" to={`/2/lobby`}>
+						Bunker
+					</Link>
 					<div className="navbar-nav d-none d-md-flex">
 						{_.map(rooms, room => (
 							<Link className="nav-item nav-link" to={`/2/room/${room._id}`} key={room._id}>
@@ -23,12 +25,12 @@ class Header extends React.Component {
 					</div>
 					<div className="ml-auto navbar-nav text-right">
 						<Link className="nav-item nav-link" to={`/2/settings`}>
-							<FontAwesomeIcon icon="cog"/>
+							<FontAwesomeIcon icon="cog" />
 						</Link>
 					</div>
 				</nav>
 			</div>
-		)
+		);
 	}
 }
 

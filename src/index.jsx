@@ -4,24 +4,22 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Chat from "./components/chat/Chat.jsx";
 
-import {history, store} from "./store.js";
-import {ConnectedRouter} from "connected-react-router";
-import {Route, Redirect} from "react-router";
-import {Provider} from "react-redux";
+import { history, store } from "./store.js";
+import { ConnectedRouter } from "connected-react-router";
+import { Route, Redirect } from "react-router";
+import { Provider } from "react-redux";
 
 // Configure font-awesome
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {faCog} from '@fortawesome/free-solid-svg-icons';
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faCog } from "@fortawesome/free-solid-svg-icons";
 library.add(faCog);
 
 ReactDOM.render(
 	<Provider store={store}>
 		<ConnectedRouter history={history}>
 			<div>
-				<Route exact path="/2" render={() => (
-					<Redirect to="/2/lobby"/>
-				)}/>
-				<Route path="/" component={Chat}/>
+				<Route exact path="/2" render={() => <Redirect to="/2/lobby" />} />
+				<Route path="/" component={Chat} />
 			</div>
 		</ConnectedRouter>
 	</Provider>,

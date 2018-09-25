@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-const emoticonName = (input) => input.replace(/\.\w+$/, '');
+const emoticonName = input => input.replace(/\.\w+$/, "");
 
 const list = _.map(window.emoticons, emoticon => ({
 	name: emoticonName(emoticon),
@@ -10,7 +10,7 @@ const list = _.map(window.emoticons, emoticon => ({
 
 export default {
 	all: list,
-	imageEmoticons: _.filter(list, {isIcon: false}),
-	names: _.map(list, 'name'),
-	files: _.map(list, 'file')
+	imageEmoticons: _.filter(list, { isIcon: false }),
+	names: _.map(list, "name"),
+	files: _.map(list, "file")
 };

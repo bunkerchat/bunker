@@ -1,5 +1,5 @@
 import React from "react";
-import parseEmoticons from './parsers/parseEmoticons';
+import parseEmoticons from "./parsers/parseEmoticons";
 import parseMedia from "./parsers/parseMedia";
 import parseFormatting from "./parsers/parseFormatting";
 
@@ -7,10 +7,10 @@ import parseFormatting from "./parsers/parseFormatting";
 // todo could be improved?
 export default class MessageText extends React.Component {
 	render() {
-		let {text} = this.props;
+		let { text } = this.props;
 		text = parseText(text);
 
-		return <div dangerouslySetInnerHTML={{__html: text}}/>;
+		return <div dangerouslySetInnerHTML={{ __html: text }} />;
 	}
 }
 
@@ -20,15 +20,14 @@ function parseText(text) {
 		// Parse urls as media only
 		if (token.match(/https?:\/\/\S+/i)) {
 			token = parseMedia(token);
-		}
-		else {
+		} else {
 			token = parseFormatting(token);
 			// if (bunkerData.userSettings.showEmoticons) {
-				token = parseEmoticons(token);
+			token = parseEmoticons(token);
 			// }
 		}
 		return token;
 	});
 
-	return parsedTokens.join(' ');
+	return parsedTokens.join(" ");
 }

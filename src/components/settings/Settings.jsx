@@ -1,6 +1,6 @@
-import React from 'react';
-import {connect} from 'react-redux';
-import {setTheme} from "../../actions/userSettings";
+import React from "react";
+import { connect } from "react-redux";
+import { setTheme } from "../../actions/userSettings";
 
 const mapStateToProps = state => ({
 	theme: state.userSettings.theme
@@ -11,8 +11,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class Settings extends React.Component {
-
-	onThemeChange = (event) => {
+	onThemeChange = event => {
 		this.props.setTheme(event.target.value);
 	};
 
@@ -21,9 +20,7 @@ class Settings extends React.Component {
 			<div className="container-fluid">
 				<form>
 					<div className="form-group">
-						<label>
-							Theme
-						</label>
+						<label>Theme</label>
 						<select className="form-control" onChange={this.onThemeChange} value={this.props.theme}>
 							<option value="cerulean">Cerulean</option>
 							<option value="cosmo">Cosmo</option>
@@ -54,4 +51,7 @@ class Settings extends React.Component {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Settings);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Settings);

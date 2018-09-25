@@ -1,11 +1,11 @@
-import React from 'react';
-import Room from '../room/Room.jsx';
-import Lobby from '../lobby/Lobby.jsx';
-import Settings from '../settings/Settings.jsx';
-import Header from '../header/Header.jsx';
-import {connect} from 'react-redux';
-import {init} from '../../actions/init';
-import styled from 'styled-components';
+import React from "react";
+import Room from "../room/Room.jsx";
+import Lobby from "../lobby/Lobby.jsx";
+import Settings from "../settings/Settings.jsx";
+import Header from "../header/Header.jsx";
+import { connect } from "react-redux";
+import { init } from "../../actions/init";
+import styled from "styled-components";
 import theme from "../../constants/theme";
 
 const ChatContainer = styled.div`
@@ -34,7 +34,7 @@ class Chat extends React.Component {
 	}
 
 	render() {
-		const {section, currentRoomId, rooms} = this.props;
+		const { section, currentRoomId, rooms } = this.props;
 
 		if (rooms.length === 0) {
 			return <div>Loading...</div>;
@@ -42,23 +42,23 @@ class Chat extends React.Component {
 
 		return (
 			<div>
-				<Header/>
+				<Header />
 				<ChatContainer>
-					{section === 'settings' &&
-					<Settings/>
-					}
-					{section === 'lobby' &&
-					<Lobby/>
-					}
-					{section === 'room' && _.map(rooms, (room, roomId) => (
-						<div className={currentRoomId === roomId ? 'd-block' : 'd-none'} key={roomId}>
-							<Room roomId={roomId} current={currentRoomId === roomId}/>
-						</div>
-					))}
+					{section === "settings" && <Settings />}
+					{section === "lobby" && <Lobby />}
+					{section === "room" &&
+						_.map(rooms, (room, roomId) => (
+							<div className={currentRoomId === roomId ? "d-block" : "d-none"} key={roomId}>
+								<Room roomId={roomId} current={currentRoomId === roomId} />
+							</div>
+						))}
 				</ChatContainer>
 			</div>
-		)
+		);
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Chat);

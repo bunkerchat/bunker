@@ -10,13 +10,11 @@ const AuthorContainer = styled.div`
 
 export default class Author extends React.Component {
 	render() {
-		const {author} = this.props;
+		const { author } = this.props;
 		return (
 			<AuthorContainer>
-				{this.props.firstInSeries &&
-				<Gravatar email={author.email} size={25} rating="pg" default="monsterid"/>
-				}
+				{this.props.firstInSeries && <Gravatar email={author.email} size={25} rating="pg" default="monsterid" />}
 			</AuthorContainer>
-		)
+		);
 	}
 }

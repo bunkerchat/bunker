@@ -13,12 +13,12 @@ const MessageBodyContainer = styled.div`
 
 export default class MessageBody extends React.Component {
 	render() {
-		const {message, author} = this.props;
+		const { message, author } = this.props;
 		return (
 			<MessageBodyContainer>
 				{this.props.firstInSeries && <h6>{author.nick}</h6>}
-				<MessageText text={message.text}/>
+				<MessageText text={message.text} />
 			</MessageBodyContainer>
-		)
+		);
 	}
 }

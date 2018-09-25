@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import {sendRoomMessage} from "../../actions/room";
-import {connect} from "react-redux";
+import { sendRoomMessage } from "../../actions/room";
+import { connect } from "react-redux";
 import ChatButtons from "./ChatButtons.jsx";
 
 const ChatInputContainer = styled.div`
@@ -25,36 +25,41 @@ class ChatInput extends React.Component {
 		super(props);
 		this.state = {
 			text: ""
-		}
+		};
 	}
 
-	onInputChange = (event) => {
-		this.setState({text: event.target.value});
+	onInputChange = event => {
+		this.setState({ text: event.target.value });
 	};
 
-	onKeyPress = (event) => {
-		if(event.key === 'Enter') {
+	onKeyPress = event => {
+		if (event.key === "Enter") {
 			this.onSend();
 		}
 	};
 
 	onSend = () => {
 		this.props.send(this.props.roomId, this.state.text);
-		this.setState({text: ""});
+		this.setState({ text: "" });
 	};
 
 	render() {
 		return (
 			<ChatInputContainer className="bg-white">
-				<InputBox type="text"
-							 className="form-control"
-							 value={this.state.text}
-							 onChange={this.onInputChange}
-							 onKeyPress={this.onKeyPress}/>
-				<ChatButtons onSend={this.onSend}/>
+				<InputBox
+					type="text"
+					className="form-control"
+					value={this.state.text}
+					onChange={this.onInputChange}
+					onKeyPress={this.onKeyPress}
+				/>
+				<ChatButtons onSend={this.onSend} />
 			</ChatInputContainer>
-		)
+		);
 	}
 }
 
-export default connect(null, mapDispatchToProps)(ChatInput);
+export default connect(
+	null,
+	mapDispatchToProps
+)(ChatInput);

@@ -1,22 +1,22 @@
-import io from 'socket.io-client';
-import {dispatch} from './store';
-import {connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse} from './actions/socket';
-import {receiveMessage} from './actions/room';
+import io from "socket.io-client";
+import { dispatch } from "./store";
+import { connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse } from "./actions/socket";
+import { receiveMessage } from "./actions/room";
 
 const socket = io(window.url);
 
-socket.on('connect', () => {
+socket.on("connect", () => {
 	dispatch(connected());
 });
-socket.on('reconnect', () => {
+socket.on("reconnect", () => {
 	dispatch(reconnected());
 });
-socket.on('disconnect', () => {
+socket.on("disconnect", () => {
 	dispatch(disconnected());
 });
-socket.on('room', socketMessage => {
-	switch(socketMessage.verb) {
-		case 'messaged':
+socket.on("room", socketMessage => {
+	switch (socketMessage.verb) {
+		case "messaged":
 			dispatch(receiveMessage(socketMessage.data));
 			break;
 	}
@@ -30,9 +30,8 @@ export function emit(endpoint, data) {
 
 	const payload = _.isObject(data) ? data : undefined;
 	return new Promise((resolve, reject) => {
-		socket.emit(endpoint, payload, (response) => {
+		socket.emit(endpoint, payload, response => {
 			if (response && response.error) {
-
 				dispatch(errorResponse(response));
 				// dispatch(apiError(response));
 
@@ -42,8 +41,7 @@ export function emit(endpoint, data) {
 			dispatch(successResponse(response));
 			resolve(response);
 		});
-	})
-		.catch(err => {
-			console.error('socket emit error', err);
-		});
+	}).catch(err => {
+		console.error("socket emit error", err);
+	});
 }

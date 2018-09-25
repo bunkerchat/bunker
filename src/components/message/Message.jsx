@@ -1,5 +1,5 @@
 import React from "react";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import Author from "./Author.jsx";
 import MessageBody from "./MessageBody.jsx";
 
@@ -9,7 +9,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 class Message extends React.Component {
 	render() {
-		const {message, previous, author} = this.props;
+		const { message, previous, author } = this.props;
 		const firstInSeries = !previous || !previous.author || !message.author || previous.author !== message.author;
 
 		if (!author) {
@@ -19,10 +19,10 @@ class Message extends React.Component {
 
 		return (
 			<div>
-				<Author author={author} firstInSeries={firstInSeries}/>
-				<MessageBody message={message} author={author} firstInSeries={firstInSeries}/>
+				<Author author={author} firstInSeries={firstInSeries} />
+				<MessageBody message={message} author={author} firstInSeries={firstInSeries} />
 			</div>
-		)
+		);
 	}
 }
 

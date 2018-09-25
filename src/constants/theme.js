@@ -2,49 +2,52 @@ import _ from "lodash";
 
 const overrides = {
 	cerulean: {
-		messageBackground: '#fff'
+		messageBackground: "#fff"
 	},
 	cosmo: {},
 	cyborg: {},
 	darkly: {
-		top: '70px'
+		top: "70px"
 	},
 	flatly: {
-		top: '70px'
+		top: "70px"
 	},
 	journal: {},
 	litera: {},
 	lumen: {
-		messageBackground: '#fff'
+		messageBackground: "#fff"
 	},
 	lux: {
-		top: '85px'
+		top: "85px"
 	},
 	materia: {},
 	minty: {
-		messageBackground: '#fff'
+		messageBackground: "#fff"
 	},
 	pulse: {
-		top: '75px'
+		top: "75px"
 	},
 	sandstone: {
-		messageBackground: '#fff'
+		messageBackground: "#fff"
 	},
 	simplex: {
-		top: '65px'
+		top: "65px"
 	},
 	sketchy: {},
 	slate: {},
 	solar: {},
 	spacelab: {
-		messageBackground: '#fff'
+		messageBackground: "#fff"
 	},
 	superhero: {},
 	united: {},
 	yeti: {}
 };
 
-export default _.assign({
-	top: '55px',
-	messageBackground: 'transparent'
-}, overrides[window.theme]);
+export default _.assign(
+	{
+		top: "55px",
+		messageBackground: "transparent"
+	},
+	overrides[window.theme]
+);

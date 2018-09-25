@@ -87,13 +87,17 @@
     "build": "node node_modules/gulp/bin/gulp.js sass && node node_modules/webpack/bin/webpack.js --mode production",
     "watch": "node node_modules/webpack/bin/webpack.js --mode development --watch",
     "postinstall": "node node_modules/bower/bin/bower install && npm run build",
-    "deploy": "npm prune && npm install && gulp && forever restart app.js"
+    "deploy": "npm prune && npm install && gulp && forever restart app.js",
+	"pretty": "node node_modules/prettier/bin-prettier.js --write \"./src/**/*.{js,jsx}\""
   },
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/anonymous node/sails user/bunker.git"
+    "url": "git://github.com/bunkerchat/bunker.git"
   },
-  "author": "anonymous node/sails user",
-  "license": ""
+  "author": "many",
+  "license": "",
+  "devDependencies": {
+    "prettier": "1.14.3"
+  }
 }
