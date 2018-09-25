@@ -54,7 +54,7 @@ class MessageList extends React.Component {
 	render() {
 		const { messages } = this.props;
 		return (
-			<MessageListContainer className="bg-light">
+			<MessageListContainer>
 				{messages.map(
 					(message, index) =>
 						message.author ? (

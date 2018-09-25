@@ -13,7 +13,7 @@ export default class Author extends React.Component {
 	render() {
 		const { author } = this.props;
 		return (
-			<AuthorContainer>
+			<AuthorContainer className="pl-1">
 				{this.props.firstInSeries && <Gravatar email={author.email} size={25} rating="pg" default="monsterid" />}
 			</AuthorContainer>
 		);
