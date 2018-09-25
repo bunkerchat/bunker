@@ -10,8 +10,10 @@ const ChatInputContainer = styled.div`
 	width: 100%;
 `;
 
-const InputBox = styled.input`
+const InputBox = styled.textarea`
 	border-radius: 0;
+	resize: none;
+	white-space: nowrap;
 `;
 
 const mapDispatchToProps = dispatch => ({
@@ -34,20 +36,23 @@ class ChatInput extends React.Component {
 
 	onKeyPress = event => {
 		if (event.key === "Enter") {
+			event.preventDefault();
 			this.onSend();
 		}
 	};
 
 	onSend = () => {
-		this.props.send(this.props.roomId, this.state.text);
-		this.setState({ text: "" });
+		if (this.state.text.trim().length > 0) {
+			this.props.send(this.props.roomId, this.state.text);
+			this.setState({ text: "" });
+		}
 	};
 
 	render() {
 		return (
 			<ChatInputContainer className="bg-white">
 				<InputBox
-					type="text"
+					rows="1"
 					className="form-control"
 					value={this.state.text}
 					onChange={this.onInputChange}
