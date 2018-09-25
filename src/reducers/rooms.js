@@ -1,3 +1,5 @@
+import {maxMessages} from "../constants/chat";
+
 const parseMessage = (message) => {
 	// Existing bunker server code sends new & loaded messages with a full author object
 	// For consistency just make all message authors the same (_id only)
@@ -43,6 +45,12 @@ const handlers = {
 			room.$messages = _.uniqBy([..._.reverse(action.messages), ...room.$messages], '_id');
 		}
 
+		return updated;
+	},
+	'message/clear': (state, action) => {
+		const updated = {...state};
+		const room = updated[action.roomId];
+		room.$messages = _.takeRight(room.$messages, maxMessages);
 		return updated;
 	}
 };

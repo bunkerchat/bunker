@@ -16,6 +16,10 @@ export function loadingMessages(roomId) {
 	return {type: 'message/loadingMany', roomId};
 }
 
+export function clearRoomMessages(roomId) {
+	return {type: 'message/clear', roomId};
+}
+
 export function sendRoomMessage(roomId, text) {
 	return dispatch => {
 		return emit('/room/message', {roomId, text})
