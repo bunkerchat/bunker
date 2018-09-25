@@ -12,7 +12,6 @@ socket.on("connect", () => {
 });
 socket.on("reconnect", () => {
 	dispatch(reconnected());
-	dispatch(init());
 });
 socket.on("disconnect", () => {
 	dispatch(disconnected());
