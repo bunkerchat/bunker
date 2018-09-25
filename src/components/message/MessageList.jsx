@@ -26,22 +26,22 @@ class MessageList extends React.Component {
 	}
 
 	getSnapshotBeforeUpdate(prevProps) {
-		// If adding messages: snapshot where we were scrolled prior to message getting added to DOM
+		// If adding messages: snapshot if we are at bottom prior to message getting added to DOM
 		if (this.props.messages.length > prevProps.messages.length) {
-			return window.innerHeight + window.scrollY;
+			return window.innerHeight + window.scrollY >= document.body.offsetHeight - 50;
 		}
-		return 0;
+		return false;
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		const previousScrollY = snapshot;
+		const wasPreviouslyAtBottom = snapshot;
 		const lastMessage = _.last(this.props.messages) || {};
 		const previousLastMessage = _.last(prevProps.messages) || {};
 		const lastMessageIsNewAndLocal =
 			lastMessage._id !== previousLastMessage._id && (lastMessage.author && lastMessage.author === userId);
 
 		// Scroll if new message from local user or if the message list is already scrolled to bottom
-		if (lastMessageIsNewAndLocal || previousScrollY >= document.body.offsetHeight - 50) {
+		if (lastMessageIsNewAndLocal || wasPreviouslyAtBottom) {
 			window.scrollTo(0, document.body.offsetHeight);
 
 			// Also, if we're at the bottom, continually prune messages
