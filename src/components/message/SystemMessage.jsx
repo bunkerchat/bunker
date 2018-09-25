@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const SystemMessageBodyContainer = styled.div`
+const SystemMessageContainer = styled.div`
 	display: inline-block;
 	padding: 10px;
 `;
@@ -9,6 +9,6 @@ const SystemMessageBodyContainer = styled.div`
 export default class SystemMessage extends React.Component {
 	render() {
 		const { message } = this.props;
-		return <SystemMessageBodyContainer>{message.text}</SystemMessageBodyContainer>;
+		return <SystemMessageContainer>{message.text}</SystemMessageContainer>;
 	}
 }

@@ -9,6 +9,8 @@ const MessageBodyContainer = styled.div`
 	border: solid lightgray 1px;
 	border-radius: 2px;
 	background-color: ${theme.messageBackground};
+	max-width: calc(100vw - 30px);
+	overflow: hidden;
 `;
 
 export default class MessageBody extends React.Component {
