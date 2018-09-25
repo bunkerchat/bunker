@@ -1,7 +1,6 @@
 import Gravatar from "react-gravatar";
 import React from "react";
 import styled from "styled-components";
-import userId from "../../constants/userId";
 
 const AuthorContainer = styled.div`
 	display: inline-block;
@@ -13,9 +12,8 @@ const AuthorContainer = styled.div`
 export default class Author extends React.Component {
 	render() {
 		const { author } = this.props;
-		const isLocalAuthor = author._id === userId;
 		return (
-			<AuthorContainer className={isLocalAuthor && "float-right float-md-none"}>
+			<AuthorContainer>
 				{this.props.firstInSeries && <Gravatar email={author.email} size={25} rating="pg" default="monsterid" />}
 			</AuthorContainer>
 		);

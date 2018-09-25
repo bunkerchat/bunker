@@ -2,11 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import Author from "./Author.jsx";
 import MessageBody from "./MessageBody.jsx";
-import styled from "styled-components";
-
-const MessageContainer = styled.div`
-	overflow: hidden;
-`;
 
 const mapStateToProps = (state, ownProps) => ({
 	author: state.users[ownProps.message.author]
@@ -23,10 +18,10 @@ class Message extends React.Component {
 		}
 
 		return (
-			<MessageContainer>
+			<div>
 				<Author author={author} firstInSeries={firstInSeries} />
 				<MessageBody message={message} author={author} firstInSeries={firstInSeries} />
-			</MessageContainer>
+			</div>
 		);
 	}
 }
