@@ -3,7 +3,7 @@ import { maxMessages } from "../constants/chat";
 const parseMessage = message => {
 	// Existing bunker server code sends new & loaded messages with a full author object
 	// For consistency just make all message authors the same (_id only)
-	message.author = message.author._id;
+	message.author = _.isObject(message.author) && message.author._id ? message.author._id : message.author;
 	return message;
 };
 
