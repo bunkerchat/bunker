@@ -14,14 +14,14 @@ class Header extends React.Component {
 			<div>
 				<nav className="navbar navbar-expand navbar-dark bg-dark fixed-top">
 					<Link className="navbar-brand" to={`/2/lobby`}>Bunker</Link>
-					<div className="navbar-nav mr-auto">
+					<div className="navbar-nav d-none d-md-flex">
 						{_.map(rooms, room => (
 							<Link className="nav-item nav-link" to={`/2/room/${room._id}`} key={room._id}>
 								{room.name}
 							</Link>
 						))}
 					</div>
-					<div className="navbar-nav text-right">
+					<div className="ml-auto navbar-nav text-right">
 						<Link className="nav-item nav-link" to={`/2/settings`}>
 							<FontAwesomeIcon icon="cog"/>
 						</Link>
