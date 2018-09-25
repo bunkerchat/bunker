@@ -6,6 +6,7 @@ import { clearRoomMessages } from "../../actions/room";
 import { maxMessages } from "../../constants/chat";
 import theme from "../../constants/theme";
 import { connect } from "react-redux";
+import SystemMessage from "./SystemMessage.jsx";
 
 const MessageListContainer = styled.div`
 	min-height: calc(100vh - 80px - ${theme.top} + 10px);
@@ -45,9 +46,14 @@ class MessageList extends React.Component {
 		const { messages } = this.props;
 		return (
 			<MessageListContainer className="bg-light">
-				{messages.map((message, index) => (
-					<Message message={message} previous={messages[index - 1]} key={message._id} />
-				))}
+				{messages.map(
+					(message, index) =>
+						message.author ? (
+							<Message message={message} previous={messages[index - 1]} key={message._id} />
+						) : (
+							<SystemMessage message={message} key={message._id} />
+						)
+				)}
 			</MessageListContainer>
 		);
 	}
