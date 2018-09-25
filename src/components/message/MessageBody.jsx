@@ -9,7 +9,7 @@ const MessageBodyContainer = styled.div`
 	border: solid lightgray 1px;
 	border-radius: 2px;
 	background-color: ${theme.messageBackground};
-	max-width: calc(100vw - 30px);
+	max-width: calc(100% - 30px);
 	overflow: hidden;
 `;
 
