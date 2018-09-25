@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import MessageText from "./MessageText.jsx";
 import theme from "../../constants/theme";
+import userId from "../../constants/userId";
 
 const MessageBodyContainer = styled.div`
 	display: inline-block;
@@ -16,8 +17,9 @@ const MessageBodyContainer = styled.div`
 export default class MessageBody extends React.Component {
 	render() {
 		const { message, author } = this.props;
+		const isLocalAuthor = author._id === userId;
 		return (
-			<MessageBodyContainer>
+			<MessageBodyContainer className={isLocalAuthor && "float-right float-md-none"}>
 				{this.props.firstInSeries && <h6>{author.nick}</h6>}
 				<MessageText text={message.text} />
 			</MessageBodyContainer>
