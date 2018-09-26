@@ -5,7 +5,6 @@ import MessageText from "./MessageText.jsx";
 const MessageBodyContainer = styled.div`
 	display: inline-block;
 	width: calc(100% - 30px);
-	padding: 0 10px;
 	overflow: hidden;
 `;
 
@@ -13,7 +12,7 @@ export default class MessageBody extends React.Component {
 	render() {
 		const { message, author } = this.props;
 		return (
-			<MessageBodyContainer>
+			<MessageBodyContainer className="px-2 pb-1">
 				{this.props.firstInSeries && <h6>{author.nick}</h6>}
 				<MessageText text={message.text} />
 			</MessageBodyContainer>
