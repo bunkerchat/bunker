@@ -11,11 +11,13 @@ class Lobby extends React.Component {
 		const { rooms } = this.props;
 		return (
 			<div className="container-fluid mt-3">
-				{_.map(rooms, (room, roomId) => (
-					<div key={roomId}>
-						<Link to={`/2/room/${roomId}`}>{room.name}</Link>
-					</div>
-				))}
+				<ul className="list-group">
+					{_.map(rooms, (room, roomId) => (
+						<Link className="list-group-item" to={`/2/room/${roomId}`} key={roomId}>
+							{room.name}
+						</Link>
+					))}
+				</ul>
 			</div>
 		);
 	}
