@@ -1,4 +1,5 @@
 module.exports = {
+	devtool: "source-map",
 	entry: './src/index.jsx',
 	module: {
 		rules: [
