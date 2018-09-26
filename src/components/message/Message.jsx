@@ -18,7 +18,7 @@ class Message extends React.Component {
 		}
 
 		return (
-			<div className={firstInSeries ? "d-flex mt-3" : "d-flex"}>
+			<div className={`d-flex ${firstInSeries ? "mt-3 mt-md-0 border-light border-top" : ""}`}>
 				<Author author={author} firstInSeries={firstInSeries} />
 				<MessageBody message={message} author={author} firstInSeries={firstInSeries} />
 			</div>
