@@ -3,6 +3,7 @@ import MessageList from "../message/MessageList.jsx";
 import ChatInput from "../input/ChatInput.jsx";
 import { loadRoomMessages } from "../../actions/room";
 import connect from "react-redux/es/connect/connect";
+import theme from "../../constants/theme";
 
 const mapStateToProps = (state, ownProps) => {
 	const room = state.rooms[ownProps.roomId];
@@ -41,21 +42,24 @@ class Room extends React.Component {
 		window.removeEventListener("scroll", this.onScroll);
 	}
 
-	componentDidUpdate(prevProps) {
-		// Room is no longer current room, remove scroll listener
-		if (prevProps.current) {
-			window.removeEventListener("scroll", this.onScroll);
-		}
+	getSnapshotBeforeUpdate() {
+		// Measure document height before update
+		return document.body.offsetHeight;
+	}
 
+	componentDidUpdate(prevProps, prevState, prevDocumentHeight) {
 		if (this.props.current) {
-			// If we're adding a messages and scrolled to top, scroll down 1 pixel to prevent
-			// browser behavior of sticky scrolling
-			if (this.props.messages.length > prevProps.messages.length && window.scrollY === 0) {
-				window.scrollTo(0, 1);
+			// If we're adding a lot of messages, use prevDocumentHeight to keep scroll at previous top message
+			if (this.props.messages.length - prevProps.messages.length > 1) {
+				const addedHeight = document.body.offsetHeight - prevDocumentHeight;
+				window.scrollTo(0, addedHeight + theme.top + 35);
 			}
 
 			// Room is now current room, add scroll listener
 			window.addEventListener("scroll", this.onScroll);
+		} else {
+			// Room is no longer current room, remove scroll listener
+			window.removeEventListener("scroll", this.onScroll);
 		}
 	}
 

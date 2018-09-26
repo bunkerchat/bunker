@@ -8,7 +8,7 @@ import styled from "styled-components";
 import theme from "../../constants/theme";
 
 const ChatContainer = styled.div`
-	padding-top: ${theme.top};
+	padding-top: ${theme.top}px;
 `;
 
 const mapStateToProps = (state, ownProps) => {

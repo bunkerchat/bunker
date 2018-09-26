@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import SystemMessage from "./SystemMessage.jsx";
 
 const MessageListContainer = styled.div`
-	min-height: calc(100vh - 80px - ${theme.top} + 10px);
+	min-height: calc(100vh - 80px - ${theme.top}px + 10px);
 	padding-bottom: 70px;
 `;
 
@@ -55,14 +55,15 @@ class MessageList extends React.Component {
 		const { messages } = this.props;
 		return (
 			<MessageListContainer>
-				{messages.map(
-					(message, index) =>
-						message.author ? (
-							<Message message={message} previous={messages[index - 1]} key={message._id} />
+				{messages.map((message, index) => (
+					<div id={message._id} key={message._id}>
+						{message.author ? (
+							<Message message={message} previous={messages[index - 1]} />
 						) : (
-							<SystemMessage message={message} key={message._id} />
-						)
-				)}
+							<SystemMessage message={message} />
+						)}
+					</div>
+				))}
 			</MessageListContainer>
 		);
 	}
