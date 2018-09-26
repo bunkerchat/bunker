@@ -12,7 +12,7 @@ const MemberListContainer = styled.div`
 `;
 
 const mapStateToProps = (state, ownProps) => ({
-	members: _.map(state.rooms[ownProps.roomId].$members, member => state.users[member.user])
+	members: _(state.rooms[ownProps.roomId].$members).map(member => state.users[member.user]).remove().value()
 });
 
 class MemberList extends React.Component {
