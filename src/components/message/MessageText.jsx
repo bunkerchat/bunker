@@ -2,11 +2,11 @@ import React from "react";
 import parseEmoticons from "./parsers/parseEmoticons";
 import parseMedia from "./parsers/parseMedia";
 import parseFormatting from "./parsers/parseFormatting";
-import styled from "styled-components"
+import styled from "styled-components";
 
 const MessageTextContainer = styled.div`
 	.emoticon {
-		height: 24px;
+		max-height: 24px;
 	}
 `;
 

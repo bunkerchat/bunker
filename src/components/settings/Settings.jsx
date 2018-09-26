@@ -17,7 +17,7 @@ class Settings extends React.Component {
 
 	render() {
 		return (
-			<div className="container-fluid">
+			<div className="container-fluid mt-3">
 				<form>
 					<div className="form-group">
 						<label>Theme</label>

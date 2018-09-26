@@ -10,7 +10,7 @@ class ChatButtons extends React.Component {
 				</div>
 				<div className="col text-right">
 					<button className="btn btn-link">Upload</button>
-					<button type="button" className="btn btn-success" onClick={onSend}>
+					<button type="button" className="btn btn-success rounded-0" onClick={onSend}>
 						Send
 					</button>
 				</div>

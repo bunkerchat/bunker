@@ -58,7 +58,7 @@ class ChatInput extends React.Component {
 
 	render() {
 		return (
-			<ChatInputContainer className="bg-white">
+			<ChatInputContainer>
 				<InputBox
 					rows="1"
 					className="form-control"
