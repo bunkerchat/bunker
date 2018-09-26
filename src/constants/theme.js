@@ -36,7 +36,8 @@ const overrides = {
 
 export default _.assign(
 	{
-		top: 55
+		top: 55,
+		memberList: 250
 	},
 	overrides[window.theme]
 );
