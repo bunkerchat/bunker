@@ -10,7 +10,7 @@ class Lobby extends React.Component {
 	render() {
 		const { rooms } = this.props;
 		return (
-			<div className="container-fluid">
+			<div className="container-fluid mt-3">
 				{_.map(rooms, (room, roomId) => (
 					<div key={roomId}>
 						<Link to={`/2/room/${roomId}`}>{room.name}</Link>

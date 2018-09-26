@@ -10,7 +10,7 @@ import SystemMessage from "./SystemMessage.jsx";
 
 const MessageListContainer = styled.div`
 	min-height: calc(100vh - 80px - ${theme.top}px + 10px);
-	padding-bottom: 70px;
+	padding-bottom: 75px;
 `;
 
 const mapDispatchToProps = dispatch => ({
