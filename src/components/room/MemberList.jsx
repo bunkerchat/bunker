@@ -12,7 +12,10 @@ const MemberListContainer = styled.div`
 `;
 
 const mapStateToProps = (state, ownProps) => ({
-	members: _(state.rooms[ownProps.roomId].$members).map(member => state.users[member.user]).remove().value()
+	members: _(state.rooms[ownProps.roomId].$members)
+		.map(member => state.users[member.user])
+		.remove()
+		.value()
 });
 
 class MemberList extends React.Component {
@@ -23,7 +26,7 @@ class MemberList extends React.Component {
 				<ul className="list-group list-group-flush">
 					{members.map(member => (
 						<li className="list-group-item" key={member._id}>
-							<Gravatar email={member.email} size={25} rating="pg" default="monsterid"/> {member.nick}
+							<Gravatar email={member.email} size={25} rating="pg" default="monsterid" /> {member.nick}
 						</li>
 					))}
 				</ul>
