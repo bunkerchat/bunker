@@ -30,7 +30,7 @@ viewController.index = function (req, res) {
 };
 
 viewController.version2 = (req, res) => {
-	const userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
+	const userId = req.session.userId;
 
 	return Promise.join(
 		UserSettings.findOne({user: userId}),
