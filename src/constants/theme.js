@@ -11,15 +11,19 @@ const overrides = {
 		top: 70
 	},
 	journal: {},
-	litera: {},
+	litera: {
+		inputBox: 85
+	},
 	lumen: {},
 	lux: {
-		top: 85
+		top: 85,
+		inputBox: 95
 	},
 	materia: {},
 	minty: {},
 	pulse: {
-		top: 75
+		top: 75,
+		inputBox: 70
 	},
 	sandstone: {},
 	simplex: {
@@ -37,6 +41,7 @@ const overrides = {
 export default _.assign(
 	{
 		top: 55,
+		inputBox: 75,
 		memberList: 250
 	},
 	overrides[window.theme]

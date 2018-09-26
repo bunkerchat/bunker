@@ -3,7 +3,7 @@ import styled from "styled-components";
 import MessageText from "./MessageText.jsx";
 
 const MessageBodyContainer = styled.div`
-	flex: 1
+	flex: 1;
 `;
 
 export default class MessageBody extends React.Component {

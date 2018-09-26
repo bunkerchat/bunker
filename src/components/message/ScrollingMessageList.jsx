@@ -9,7 +9,7 @@ import MessageList from "./MessageList.jsx";
 
 const MessageListContainer = styled.div`
 	flex: 1;
-	height: calc(100vh - ${theme.top}px - 75px);
+	height: calc(100vh - ${theme.top}px - ${theme.inputBox}px);
 	overflow-y: scroll;
 	overflow-x: hidden;
 `;

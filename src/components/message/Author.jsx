@@ -27,7 +27,7 @@ export default class Author extends React.Component {
 			<AuthorContainer className="pl-1">
 				{this.props.firstInSeries && (
 					<div className="d-flex">
-						<Gravatar email={author.email} size={25} rating="pg" default="monsterid"/>
+						<Gravatar email={author.email} size={25} rating="pg" default="monsterid" />
 						<AuthorNick className="d-none d-md-inline-block ml-2">{author.nick}</AuthorNick>
 					</div>
 				)}
