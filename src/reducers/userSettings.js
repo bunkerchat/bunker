@@ -1,11 +1,5 @@
 const handlers = {
-	"init/receive": (state, action) => action.data.userSettings,
-	"userSettings/theme": (state, action) => {
-		return {
-			...state,
-			theme: action.theme
-		};
-	}
+	"init/received": (state, action) => action.data.userSettings
 };
 
 export default function(state = {}, action) {

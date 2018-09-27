@@ -1,10 +1,12 @@
 const handlers = {
-	"init/receive": (state, action) => _.keyBy(action.data.users, "_id"),
-	"user/updated": (state, action) => {
-		const users = { ...state };
-		users[action.user._id] = { ...state[action.user._id], ...action.user };
-		return users;
-	}
+	"init/received": (state, action) => _.keyBy(action.data.users, "_id"),
+	"user/updated": (state, action) => ({
+		...state,
+		[action.user._id]: {
+			...state[action.user._id],
+			...action.user
+		}
+	})
 };
 
 export default function(state = {}, action) {

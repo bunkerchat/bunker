@@ -1,5 +1,5 @@
 const handlers = {
-	"init/receive": state => ({
+	"init/received": state => ({
 		...state,
 		loaded: true
 	})

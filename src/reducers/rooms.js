@@ -25,7 +25,7 @@ const setCurrentRoom = rooms => {
 };
 
 const handlers = {
-	"init/receive": (state, action) => {
+	"init/received": (state, action) => {
 		const updated = {
 			...state,
 			..._(action.data.rooms)
@@ -42,12 +42,14 @@ const handlers = {
 	"@@router/LOCATION_CHANGE": state => {
 		return setCurrentRoom({ ...state });
 	},
-	"message/loadingMany": (state, action) => {
-		const updated = { ...state };
-		updated[action.roomId].loading = true;
-		return updated;
-	},
-	"message/receive": (state, action) => {
+	"message/loadingMany": (state, action) => ({
+		...state,
+		[action.roomId]: {
+			...state[action.roomId],
+			loading: true
+		}
+	}),
+	"message/received": (state, action) => {
 		action.message = parseMessage(action.message);
 
 		const updated = { ...state };
@@ -63,7 +65,7 @@ const handlers = {
 
 		return updated;
 	},
-	"message/receiveMany": (state, action) => {
+	"message/receivedHistory": (state, action) => {
 		action.messages = _.map(action.messages, parseMessage);
 
 		const updated = { ...state };
@@ -84,6 +86,20 @@ const handlers = {
 		room.fullHistoryLoaded = false;
 		room.$messages = _.takeRight(room.$messages, maxMessages);
 		return updated;
+	},
+	"message/updated": (state, action) => {
+		const message = parseMessage(action.message);
+		const room = state[message.room];
+		return {
+			...state,
+			[room._id]: {
+				...room,
+				$messages: _.map(
+					room.$messages,
+					existing => (existing._id === message._id ? { ...existing, ...message } : existing)
+				)
+			}
+		};
 	}
 };
 

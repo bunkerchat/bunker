@@ -1,9 +1,9 @@
 import io from "socket.io-client";
 import { dispatch } from "./store";
 import { connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse } from "./actions/socket";
-import { receiveMessage } from "./actions/rooms";
+import { messageUpdated, messageReceived } from "./actions/rooms";
 import { init } from "./actions/init";
-import { updateUser } from "./actions/users";
+import { userUpdated } from "./actions/users";
 
 const socket = io(window.url);
 
@@ -20,7 +20,12 @@ socket.on("disconnect", () => {
 socket.on("room", socketMessage => {
 	switch (socketMessage.verb) {
 		case "messaged":
-			dispatch(receiveMessage(socketMessage.data));
+			const message = socketMessage.data;
+			if (message.edited) {
+				dispatch(messageUpdated(message));
+			} else {
+				dispatch(messageReceived(message));
+			}
 			break;
 	}
 });
@@ -32,7 +37,7 @@ socket.on("user", socketMessage => {
 			// todo work on those types of updates
 			if (socketMessage.data.nick) {
 				// Add in user's _id because for some reason it's not sent down by server
-				dispatch(updateUser({ ...socketMessage.data, _id: socketMessage._id }));
+				dispatch(userUpdated({ ...socketMessage.data, _id: socketMessage._id }));
 			}
 			break;
 	}
