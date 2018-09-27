@@ -7,18 +7,40 @@ const parseMessage = message => {
 	return message;
 };
 
+const setCurrentRoom = rooms => {
+	_.each(rooms, room => {
+		room.current = false;
+	});
+
+	const roomMatch = /room\/(\w+)/i.exec(window.location.pathname);
+	if (roomMatch) {
+		const room = rooms[roomMatch[1]];
+		if (room) {
+			room.current = true;
+			room.unreadMessageCount = 0;
+		}
+	}
+
+	return rooms;
+};
+
 const handlers = {
 	"init/receive": (state, action) => {
-		return {
+		const updated = {
 			...state,
 			..._(action.data.rooms)
 				.map(room => {
 					room.$messages = _.reverse(room.$messages);
+					room.unreadMessageCount = 0;
 					return room;
 				})
 				.keyBy("_id")
 				.value()
 		};
+		return setCurrentRoom(updated);
+	},
+	"@@router/LOCATION_CHANGE": state => {
+		return setCurrentRoom({ ...state });
 	},
 	"message/loadingMany": (state, action) => {
 		const updated = { ...state };
@@ -31,6 +53,14 @@ const handlers = {
 		const updated = { ...state };
 		const room = updated[action.message.room];
 		room.$messages = [...room.$messages, action.message];
+
+		if (!room.current) {
+			if (!_.isNumber(room.unreadMessageCount)) {
+				room.unreadMessageCount = 0;
+			}
+			room.unreadMessageCount++;
+		}
+
 		return updated;
 	},
 	"message/receiveMany": (state, action) => {

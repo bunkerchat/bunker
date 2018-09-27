@@ -18,9 +18,12 @@ class Header extends React.Component {
 					</Link>
 					<ul className="navbar-nav d-none d-md-flex">
 						{_.map(rooms, room => (
-							<li className={`nav-item ${this.props.currentRoomId === room._id ? "active" : ""}`} key={room._id}>
+							<li className={`nav-item ${room.current ? "active" : ""}`} key={room._id}>
 								<Link className="nav-link" to={`/2/room/${room._id}`}>
-									{room.name}
+									{room.name}{" "}
+									{room.unreadMessageCount > 0 && (
+										<span className="badge badge-primary">{room.unreadMessageCount}</span>
+									)}
 								</Link>
 							</li>
 						))}

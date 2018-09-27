@@ -13,18 +13,16 @@ const ChatContainer = styled.div`
 
 const mapStateToProps = (state, ownProps) => {
 	const sectionMatch = /2\/(\w+)/.exec(ownProps.location.pathname);
-	const roomMatch = /room\/(\w+)/i.exec(ownProps.location.pathname);
 	return {
 		loaded: state.user.loaded,
 		section: sectionMatch ? sectionMatch[1] : null,
-		rooms: state.rooms,
-		currentRoomId: roomMatch ? roomMatch[1] : null
+		rooms: state.rooms
 	};
 };
 
 class Chat extends React.Component {
 	render() {
-		const { loaded, section, currentRoomId, rooms } = this.props;
+		const { loaded, section, rooms } = this.props;
 
 		if (!loaded) {
 			return <div>Loading...</div>;
@@ -32,14 +30,14 @@ class Chat extends React.Component {
 
 		return (
 			<div>
-				<Header currentRoomId={currentRoomId} />
+				<Header />
 				<ChatContainer>
 					{section === "settings" && <Settings />}
 					{section === "lobby" && <Lobby />}
 					{section === "room" &&
 						_.map(rooms, (room, roomId) => (
-							<div className={currentRoomId === roomId ? "d-block" : "d-none"} key={roomId}>
-								<Room roomId={roomId} current={currentRoomId === roomId} />
+							<div className={room.current ? "d-block" : "d-none"} key={roomId}>
+								<Room roomId={roomId} current={room.current} />
 							</div>
 						))}
 				</ChatContainer>
