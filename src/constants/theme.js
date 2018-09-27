@@ -74,6 +74,8 @@ export default _.assign(
 		top: 55,
 		inputBox: 75,
 		memberList: 250,
+		messageAuthorBackground: colors.dark,
+		messageAuthorText: colors.white,
 		chatButtonBackground: colors.white
 	},
 	overrides[window.theme]

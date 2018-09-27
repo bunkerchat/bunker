@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import Author from "./Author.jsx";
+import MessageAuthor from "./MessageAuthor.jsx";
 import MessageBody from "./MessageBody.jsx";
 
 const mapStateToProps = (state, ownProps) => ({
@@ -18,8 +18,8 @@ class Message extends React.Component {
 		}
 
 		return (
-			<div className={`d-flex ${firstInSeries ? "mt-3 mt-md-0 border-light border-top" : ""}`}>
-				<Author author={author} firstInSeries={firstInSeries} />
+			<div className={`d-flex ${firstInSeries ? "mt-3 mt-md-0" : ""}`}>
+				<MessageAuthor author={author} firstInSeries={firstInSeries} />
 				<MessageBody message={message} author={author} firstInSeries={firstInSeries} />
 			</div>
 		);

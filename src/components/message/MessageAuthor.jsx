@@ -1,6 +1,7 @@
 import Gravatar from "react-gravatar";
 import React from "react";
 import styled from "styled-components";
+import theme from "../../constants/theme";
 
 const AuthorContainer = styled.div`
 	flex: 0 0 30px;
@@ -10,6 +11,8 @@ const AuthorContainer = styled.div`
 
 	@media (min-width: 768px) {
 		flex: 0 0 175px;
+		background-color: ${theme.messageAuthorBackground};
+		color: ${theme.messageAuthorText};
 	}
 `;
 
@@ -20,7 +23,7 @@ const AuthorNick = styled.div`
 	white-space: nowrap;
 `;
 
-export default class Author extends React.Component {
+export default class MessageAuthor extends React.Component {
 	render() {
 		const { author } = this.props;
 		return (
