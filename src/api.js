@@ -3,6 +3,7 @@ import { dispatch } from "./store";
 import { connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse } from "./actions/socket";
 import { receiveMessage } from "./actions/room";
 import { init } from "./actions/init";
+import { updateUser } from "./actions/user";
 
 const socket = io(window.url);
 
@@ -20,6 +21,13 @@ socket.on("room", socketMessage => {
 	switch (socketMessage.verb) {
 		case "messaged":
 			dispatch(receiveMessage(socketMessage.data));
+			break;
+	}
+});
+socket.on('user', socketMessage => {
+	switch(socketMessage.verb) {
+		case "updated":
+			dispatch(updateUser({...socketMessage.data, _id: socketMessage._id}));
 			break;
 	}
 });
