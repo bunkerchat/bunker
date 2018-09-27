@@ -1,20 +1,34 @@
 import React from "react";
+import styled from "styled-components";
+import theme from "../../constants/theme";
+
+const ChatButtonsContainer = styled.div`
+	background-color: ${theme.chatButtonBackground};
+`;
+
+const LookupButtons = styled.div`
+	flex: 1;
+`;
+
+const SubmitButtons = styled.div`
+	flex: 1;
+`;
 
 class ChatButtons extends React.Component {
 	render() {
 		const { onSend } = this.props;
 		return (
-			<div className="row">
-				<div className="col">
+			<ChatButtonsContainer className="d-flex">
+				<LookupButtons>
 					<button className="btn btn-link">Emoticons</button>
-				</div>
-				<div className="col text-right">
+				</LookupButtons>
+				<SubmitButtons className="text-right">
 					<button className="btn btn-link">Upload</button>
 					<button type="button" className="btn btn-success rounded-0" onClick={onSend}>
 						Send
 					</button>
-				</div>
-			</div>
+				</SubmitButtons>
+			</ChatButtonsContainer>
 		);
 	}
 }

@@ -9,9 +9,14 @@ import MessageList from "./MessageList.jsx";
 
 const MessageListContainer = styled.div`
 	flex: 1;
-	height: calc(100vh - ${theme.top}px - ${theme.inputBox}px);
 	overflow-y: scroll;
 	overflow-x: hidden;
+	padding-bottom: ${theme.inputBox}px;
+
+	@media (min-width: 768px) {
+		height: calc(100vh - ${theme.top}px - ${theme.inputBox}px);
+		padding-bottom: 0;
+	}
 `;
 
 const mapStateToProps = (state, ownProps) => {
