@@ -2,6 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styled from "styled-components";
+
+const RoomListItem = styled.li`
+	position: relative;
+`;
+
+const UnreadMessageBadge = styled.span`
+	position: absolute;
+	top: 0px;
+	right: -3px;
+`;
 
 const mapStateToProps = state => ({
 	rooms: state.rooms
@@ -18,14 +29,14 @@ class Header extends React.Component {
 					</Link>
 					<ul className="navbar-nav d-none d-md-flex">
 						{_.map(rooms, room => (
-							<li className={`nav-item ${room.current ? "active" : ""}`} key={room._id}>
+							<RoomListItem className={`nav-item px-3 ${room.current ? "active" : ""}`} key={room._id}>
 								<Link className="nav-link" to={`/2/room/${room._id}`}>
 									{room.name}{" "}
 									{room.unreadMessageCount > 0 && (
-										<span className="badge badge-primary">{room.unreadMessageCount}</span>
+										<UnreadMessageBadge className="badge badge-primary">{room.unreadMessageCount}</UnreadMessageBadge>
 									)}
 								</Link>
-							</li>
+							</RoomListItem>
 						))}
 					</ul>
 					<div className="ml-auto navbar-nav text-right">
