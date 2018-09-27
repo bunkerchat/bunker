@@ -58,6 +58,9 @@ class ScrollingMessageList extends React.Component {
 		this.ref.current.scrollTop = this.ref.current.scrollHeight;
 
 		if (this.props.current) {
+			// Mobile scroll to bottom on load
+			window.scrollTo(0, document.body.offsetHeight);
+
 			this.ref.current.addEventListener("scroll", this.onScroll);
 		}
 	}
@@ -123,7 +126,7 @@ class ScrollingMessageList extends React.Component {
 						</a>
 					)}
 				</div>
-				<MessageList messages={messages} />
+				<MessageList messages={messages}/>
 			</MessageListContainer>
 		);
 	}
