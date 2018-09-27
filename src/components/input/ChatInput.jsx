@@ -14,7 +14,8 @@ const ChatInputContainer = styled.div`
 	bottom: 0;
 	width: calc(100vw);
 	background-color: ${theme.chatButtonBackground};
-	
+	z-index: 2000;
+
 	@media (min-width: 768px) {
 		width: calc(100vw - ${theme.memberList}px);
 	}
