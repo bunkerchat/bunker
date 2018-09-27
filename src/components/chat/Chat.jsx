@@ -32,7 +32,7 @@ class Chat extends React.Component {
 
 		return (
 			<div>
-				<Header />
+				<Header currentRoomId={currentRoomId} />
 				<ChatContainer>
 					{section === "settings" && <Settings />}
 					{section === "lobby" && <Lobby />}

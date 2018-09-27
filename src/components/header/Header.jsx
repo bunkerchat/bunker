@@ -16,13 +16,15 @@ class Header extends React.Component {
 					<Link className="navbar-brand" to={`/2/lobby`}>
 						Bunker
 					</Link>
-					<div className="navbar-nav d-none d-md-flex">
+					<ul className="navbar-nav d-none d-md-flex">
 						{_.map(rooms, room => (
-							<Link className="nav-item nav-link" to={`/2/room/${room._id}`} key={room._id}>
-								{room.name}
-							</Link>
+							<li className={`nav-item ${this.props.currentRoomId === room._id ? "active" : ""}`} key={room._id}>
+								<Link className="nav-link" to={`/2/room/${room._id}`}>
+									{room.name}
+								</Link>
+							</li>
 						))}
-					</div>
+					</ul>
 					<div className="ml-auto navbar-nav text-right">
 						<Link className="nav-item nav-link" to={`/2/settings`}>
 							<FontAwesomeIcon icon="cog" />
