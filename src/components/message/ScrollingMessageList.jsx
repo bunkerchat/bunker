@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import userId from "../../constants/userId";
-import { clearRoomMessages, loadRoomMessages } from "../../actions/room";
+import { clearRoomMessages, loadRoomMessages } from "../../actions/rooms";
 import { maxMessages } from "../../constants/chat";
 import theme from "../../constants/theme";
 import { connect } from "react-redux";
@@ -14,7 +14,7 @@ const MessageListContainer = styled.div`
 	padding-bottom: ${theme.inputBox}px;
 
 	@media (min-width: 768px) {
-		height: calc(100vh - ${theme.top}px - ${theme.inputBox}px - 1px);
+		height: calc(100vh - ${theme.top}px - ${theme.inputBox}px);
 		padding-bottom: 0;
 	}
 `;

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { sendRoomMessage } from "../../actions/room";
+import { sendRoomMessage } from "../../actions/rooms";
 import { connect } from "react-redux";
 import ChatButtons from "./ChatButtons.jsx";
 import theme from "../../constants/theme";
@@ -25,7 +25,7 @@ const InputBox = styled.textarea`
 	border-radius: 0;
 	resize: none;
 	white-space: nowrap;
-	
+
 	&.form-control:focus {
 		outline: none;
 		box-shadow: none;

@@ -1,9 +1,9 @@
 import io from "socket.io-client";
 import { dispatch } from "./store";
 import { connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse } from "./actions/socket";
-import { receiveMessage } from "./actions/room";
+import { receiveMessage } from "./actions/rooms";
 import { init } from "./actions/init";
-import { updateUser } from "./actions/user";
+import { updateUser } from "./actions/users";
 
 const socket = io(window.url);
 
@@ -24,10 +24,11 @@ socket.on("room", socketMessage => {
 			break;
 	}
 });
-socket.on('user', socketMessage => {
-	switch(socketMessage.verb) {
+socket.on("user", socketMessage => {
+	switch (socketMessage.verb) {
 		case "updated":
-			dispatch(updateUser({...socketMessage.data, _id: socketMessage._id}));
+			// Add in user's _id because for some reason it's not sent down by server
+			dispatch(updateUser({ ...socketMessage.data, _id: socketMessage._id }));
 			break;
 	}
 });
