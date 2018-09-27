@@ -12,6 +12,7 @@ const MessageListContainer = styled.div`
 	overflow-y: scroll;
 	overflow-x: hidden;
 	padding-bottom: ${theme.inputBox}px;
+	-webkit-transform: translate3d(0, 0, 0); // really dumb hack for ios message list showing through input area
 
 	@media (min-width: 768px) {
 		height: calc(100vh - ${theme.top}px - ${theme.inputBox}px);
