@@ -25,7 +25,7 @@ class MemberList extends React.Component {
 			<MemberListContainer className="border-left d-none d-md-block">
 				<ul className="list-group list-group-flush">
 					{members.map(member => (
-						<li className="list-group-item" key={member._id}>
+						<li className="list-group-item p-2" key={member._id}>
 							<Gravatar email={member.email} size={25} rating="pg" default="monsterid" /> {member.nick}
 						</li>
 					))}

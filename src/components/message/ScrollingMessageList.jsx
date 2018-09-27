@@ -14,7 +14,7 @@ const MessageListContainer = styled.div`
 	padding-bottom: ${theme.inputBox}px;
 
 	@media (min-width: 768px) {
-		height: calc(100vh - ${theme.top}px - ${theme.inputBox}px);
+		height: calc(100vh - ${theme.top}px - ${theme.inputBox}px - 1px);
 		padding-bottom: 0;
 	}
 `;

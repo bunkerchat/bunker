@@ -25,6 +25,11 @@ const InputBox = styled.textarea`
 	border-radius: 0;
 	resize: none;
 	white-space: nowrap;
+	
+	&.form-control:focus {
+		outline: none;
+		box-shadow: none;
+	}
 `;
 
 const mapDispatchToProps = dispatch => ({
