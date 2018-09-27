@@ -1,10 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import theme from "../../constants/theme";
-
-const ChatButtonsContainer = styled.div`
-	background-color: ${theme.chatButtonBackground};
-`;
 
 const LookupButtons = styled.div`
 	flex: 1;
@@ -18,7 +13,7 @@ class ChatButtons extends React.Component {
 	render() {
 		const { onSend } = this.props;
 		return (
-			<ChatButtonsContainer className="d-flex">
+			<div className="d-flex">
 				<LookupButtons>
 					<button className="btn btn-link">Emoticons</button>
 				</LookupButtons>
@@ -28,7 +23,7 @@ class ChatButtons extends React.Component {
 						Send
 					</button>
 				</SubmitButtons>
-			</ChatButtonsContainer>
+			</div>
 		);
 	}
 }

@@ -13,6 +13,8 @@ const ChatInputContainer = styled.div`
 	position: fixed;
 	bottom: 0;
 	width: calc(100vw);
+	background-color: ${theme.chatButtonBackground};
+	
 	@media (min-width: 768px) {
 		width: calc(100vw - ${theme.memberList}px);
 	}
