@@ -27,8 +27,13 @@ socket.on("room", socketMessage => {
 socket.on("user", socketMessage => {
 	switch (socketMessage.verb) {
 		case "updated":
-			// Add in user's _id because for some reason it's not sent down by server
-			dispatch(updateUser({ ...socketMessage.data, _id: socketMessage._id }));
+			// Limiting updating to just nick for now
+			// A lot of perf problems with activeRoom and typingIn
+			// todo work on those types of updates
+			if (socketMessage.data.nick) {
+				// Add in user's _id because for some reason it's not sent down by server
+				dispatch(updateUser({ ...socketMessage.data, _id: socketMessage._id }));
+			}
 			break;
 	}
 });
