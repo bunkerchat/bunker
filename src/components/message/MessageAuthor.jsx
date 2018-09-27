@@ -2,6 +2,7 @@ import Gravatar from "react-gravatar";
 import React from "react";
 import styled from "styled-components";
 import theme from "../../constants/theme";
+import userId from "../../constants/userId";
 
 const AuthorContainer = styled.div`
 	flex: 0 0 30px;
@@ -13,6 +14,10 @@ const AuthorContainer = styled.div`
 		flex: 0 0 175px;
 		background-color: ${theme.messageAuthorBackground};
 		color: ${theme.messageAuthorText};
+
+		&.local {
+			background-color: ${theme.messageLocalAuthorBackground};
+		}
 	}
 `;
 
@@ -26,8 +31,9 @@ const AuthorNick = styled.div`
 export default class MessageAuthor extends React.Component {
 	render() {
 		const { author } = this.props;
+		const isLocalAuthor = author._id === userId;
 		return (
-			<AuthorContainer className="pl-1">
+			<AuthorContainer className={`pl-1 ${isLocalAuthor ? "local" : ""}`}>
 				{this.props.firstInSeries && (
 					<div className="d-flex">
 						<Gravatar email={author.email} size={25} rating="pg" default="monsterid" />

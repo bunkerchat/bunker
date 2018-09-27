@@ -126,7 +126,7 @@ class ScrollingMessageList extends React.Component {
 						</a>
 					)}
 				</div>
-				<MessageList messages={messages}/>
+				<MessageList messages={messages} />
 			</MessageListContainer>
 		);
 	}
