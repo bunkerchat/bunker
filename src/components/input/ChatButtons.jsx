@@ -1,12 +1,15 @@
 import React from "react";
 import styled from "styled-components";
+import theme from "../../constants/theme";
 
 const LookupButtons = styled.div`
 	flex: 1;
+	background-color: ${theme.chatButtonBackground};
 `;
 
 const SubmitButtons = styled.div`
 	flex: 1;
+	background-color: ${theme.chatButtonBackground};
 `;
 
 class ChatButtons extends React.Component {
