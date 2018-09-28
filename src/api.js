@@ -38,6 +38,13 @@ socket.on("user", socketMessage => {
 	}
 });
 
+// Ping server every 15 seconds so they know we're alive
+// This keeps the client 'active' in the member list
+// todo still have to do this? <--- I'm sure this todo will live here forever
+setInterval(() => {
+	emit('/user/current/ping');
+}, 15 * 1000);
+
 // async emit function
 // only accepts data as a JSON object
 // returns a promise

@@ -49,7 +49,8 @@ class MemberList extends React.Component {
 					))}
 					{offlineMembers.map(member => (
 						<li className="list-group-item p-2 disabled" key={member._id}>
-							<Gravatar email={member.email} size={25} rating="pg" default="monsterid" /> {member.nick}
+							<Gravatar email={member.email} size={25} rating="pg" default="monsterid" />
+							<span className="ml-2">{member.nick}</span>
 						</li>
 					))}
 				</ul>
