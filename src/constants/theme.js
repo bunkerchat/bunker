@@ -27,9 +27,13 @@ const overrides = {
 		inputBox: 85
 	},
 	minty: {},
-	sandstone: {},
+	sandstone: {
+		top: 53,
+		inputBox: 70
+	},
 	simplex: {
-		top: 65
+		top: 65,
+		inputBox: 65
 	},
 	sketchy: {
 		inputBox: 80
@@ -41,11 +45,15 @@ const overrides = {
 	},
 	spacelab: {},
 	superhero: {
+		top: 45,
 		chatButtonBackground: colors.dark,
 		mentionBackgroundColor: colors.info,
 		mentionForegroundColor: colors.white
 	},
-	yeti: {}
+	yeti: {
+		top: 53,
+		inputBox: 70
+	}
 };
 
 export default _.assign(
