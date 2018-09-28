@@ -8,6 +8,7 @@ const history = createBrowserHistory();
 import user from "./reducers/user";
 import userSettings from "./reducers/userSettings";
 import rooms from "./reducers/rooms";
+import messages from "./reducers/messages";
 import users from "./reducers/users";
 import log from "./reducers/log";
 
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
 	user,
 	userSettings,
 	rooms,
+	messages,
 	users,
 	log
 });

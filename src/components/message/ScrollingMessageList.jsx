@@ -23,7 +23,7 @@ const mapStateToProps = (state, ownProps) => {
 	const room = state.rooms[ownProps.roomId];
 	return {
 		fullHistoryLoaded: room.fullHistoryLoaded,
-		messages: room.$messages
+		messages: state.messages.byRoom[ownProps.roomId]
 	};
 };
 
