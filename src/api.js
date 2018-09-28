@@ -4,6 +4,7 @@ import { connected, disconnected, emitEndpoint, errorResponse, reconnected, succ
 import { messageUpdated, messageReceived } from "./actions/rooms";
 import { init } from "./actions/init";
 import { userUpdated } from "./actions/users";
+import { ping } from "./actions/user";
 
 const socket = io(window.url);
 
@@ -42,7 +43,7 @@ socket.on("user", socketMessage => {
 // This keeps the client 'active' in the member list
 // todo still have to do this? <--- I'm sure this todo will live here forever
 setInterval(() => {
-	emit('/user/current/ping');
+	dispatch(ping());
 }, 15 * 1000);
 
 // async emit function
