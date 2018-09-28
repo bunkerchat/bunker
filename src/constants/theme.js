@@ -23,11 +23,15 @@ const overrides = {
 	cerulean: {},
 	cosmo: {},
 	cyborg: {
-		chatButtonBackground: colors.dark
+		chatButtonBackground: colors.dark,
+		mentionBackgroundColor: colors.info,
+		mentionForegroundColor: colors.white,
 	},
 	darkly: {
 		top: 70,
-		chatButtonBackground: colors.dark
+		chatButtonBackground: colors.dark,
+		mentionBackgroundColor: colors.primary,
+		mentionForegroundColor: colors.white,
 	},
 	flatly: {
 		top: 70
@@ -59,14 +63,20 @@ const overrides = {
 	},
 	slate: {
 		chatButtonBackground: colors.dark,
+		mentionBackgroundColor: colors.warning,
+		mentionForegroundColor: colors.white,
 		inputBox: 95
 	},
 	solar: {
-		chatButtonBackground: colors.dark
+		chatButtonBackground: colors.dark,
+		mentionBackgroundColor: colors.warning,
+		mentionForegroundColor: colors.white,
 	},
 	spacelab: {},
 	superhero: {
-		chatButtonBackground: colors.dark
+		chatButtonBackground: colors.dark,
+		mentionBackgroundColor: colors.info,
+		mentionForegroundColor: colors.white,
 	},
 	united: {},
 	yeti: {}
