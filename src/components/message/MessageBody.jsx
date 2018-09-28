@@ -12,20 +12,26 @@ const MessageBodyContainer = styled.div`
 	}
 `;
 
-const mapStateToProps = state => ({
-	nick: state.user.nick
+const mapStateToProps = (state, ownProps) => ({
+	nick: state.users[ownProps.message.author].nick,
+	localNick: state.user.nick
 });
 
 class MessageBody extends React.PureComponent {
+	shouldComponentUpdate(nextProps) {
+		// Only reason we're updating is if text changes
+		return this.props.message.text !== nextProps.message.text;
+	}
+
 	render() {
-		const { message, author, firstInSeries, nick } = this.props;
-		const isUserMentioned = testTextForNick(message.text, nick);
+		const { message, firstInSeries, nick, localNick } = this.props;
+		const isUserMentioned = testTextForNick(message.text, localNick);
 
 		return (
 			<MessageBodyContainer
 				className={`px-2 pb-1 ${firstInSeries ? "border-light border-top" : ""} ${isUserMentioned ? "mention" : ""}`}
 			>
-				{firstInSeries && <h6 className="d-md-none">{author.nick}</h6>}
+				{firstInSeries && <h6 className="d-md-none">{nick}</h6>}
 				<MessageText text={message.text} />
 			</MessageBodyContainer>
 		);
@@ -36,6 +42,5 @@ export default connect(mapStateToProps)(MessageBody);
 
 function testTextForNick(text, nick) {
 	const mentionRegex = new RegExp(nick + "\\b|@[Aa]ll\\b", "i");
-
 	return mentionRegex.test(text);
 }

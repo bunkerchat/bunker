@@ -1,29 +1,17 @@
 import React from "react";
-import { connect } from "react-redux";
 import MessageAuthor from "./MessageAuthor.jsx";
 import MessageBody from "./MessageBody.jsx";
 
-const mapStateToProps = (state, ownProps) => ({
-	author: state.users[ownProps.message.author]
-});
-
-class Message extends React.PureComponent {
+export default class Message extends React.PureComponent {
 	render() {
-		const { message, previous, author } = this.props;
+		const { message, previous } = this.props;
 		const firstInSeries = !previous || !previous.author || !message.author || previous.author !== message.author;
-
-		if (!author) {
-			// todo this would be a system message
-			return null;
-		}
 
 		return (
 			<div className={`d-flex ${firstInSeries ? "mt-3 mt-md-0" : ""}`}>
-				<MessageAuthor author={author} firstInSeries={firstInSeries} />
-				<MessageBody message={message} author={author} firstInSeries={firstInSeries} />
+				<MessageAuthor authorId={message.author} firstInSeries={firstInSeries} />
+				<MessageBody message={message} firstInSeries={firstInSeries} />
 			</div>
 		);
 	}
 }
-
-export default connect(mapStateToProps)(Message);
