@@ -28,7 +28,7 @@ const AuthorNick = styled.div`
 	white-space: nowrap;
 `;
 
-export default class MessageAuthor extends React.Component {
+export default class MessageAuthor extends React.PureComponent {
 	render() {
 		const { author } = this.props;
 		const isLocalAuthor = author._id === userId;

@@ -37,13 +37,13 @@ const overrides = {
 	solar: {
 		chatButtonBackground: colors.dark,
 		mentionBackgroundColor: colors.warning,
-		mentionForegroundColor: colors.white,
+		mentionForegroundColor: colors.white
 	},
 	spacelab: {},
 	superhero: {
 		chatButtonBackground: colors.dark,
 		mentionBackgroundColor: colors.info,
-		mentionForegroundColor: colors.white,
+		mentionForegroundColor: colors.white
 	},
 	yeti: {}
 };
@@ -59,7 +59,7 @@ export default _.assign(
 			.toString(),
 		messageAuthorText: colors.white,
 		chatButtonBackground: colors.white,
-		mentionBackgroundColor: '#faf2cc',
+		mentionBackgroundColor: "#faf2cc"
 	},
 	overrides[window.theme]
 );

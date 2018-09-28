@@ -6,7 +6,7 @@ const MessageBodyContainer = styled.div`
 	flex: 1;
 `;
 
-export default class MessageBody extends React.Component {
+export default class MessageBody extends React.PureComponent {
 	render() {
 		const { message, author, firstInSeries } = this.props;
 		return (

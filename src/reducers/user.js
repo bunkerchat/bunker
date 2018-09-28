@@ -1,10 +1,10 @@
 const handlers = {
 	"init/received": (state, action) => {
-		const user = {...action.data.user, loaded: true};
+		const user = { ...action.data.user, loaded: true };
 
 		return {
 			...state,
-			...user,
+			...user
 		};
 	}
 };

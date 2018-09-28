@@ -12,26 +12,29 @@ const MessageTextContainer = styled.div`
 	}
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
-		${theme.mentionForegroundColor ? 'color:'+ theme.mentionForegroundColor : ''}
+		${theme.mentionForegroundColor ? "color:" + theme.mentionForegroundColor : ""};
 	}
 `;
 
-const mapStateToProps = (state, ownProps) => {
-	return {
-		nick: state.user.nick
-	}
-};
+const mapStateToProps = state => ({
+	nick: state.user.nick
+});
 
 // Note I felt it was okay to use dangerouslySetInnerHTML since we escape everything on the server
 // todo could be improved?
-class MessageText extends React.Component {
+class MessageText extends React.PureComponent {
 	render() {
-		const { nick }= this.props;
+		const { nick } = this.props;
 
 		let { text } = this.props;
 		text = parseText(text);
 
-		return <MessageTextContainer className={text.includes(nick) ? 'mention' : ''} dangerouslySetInnerHTML={{ __html: text }} />;
+		return (
+			<MessageTextContainer
+				className={text.includes(nick) ? "mention" : ""}
+				dangerouslySetInnerHTML={{ __html: text }}
+			/>
+		);
 	}
 }
 

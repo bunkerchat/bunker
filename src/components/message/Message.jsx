@@ -7,7 +7,7 @@ const mapStateToProps = (state, ownProps) => ({
 	author: state.users[ownProps.message.author]
 });
 
-class Message extends React.Component {
+class Message extends React.PureComponent {
 	render() {
 		const { message, previous, author } = this.props;
 		const firstInSeries = !previous || !previous.author || !message.author || previous.author !== message.author;
