@@ -14,7 +14,7 @@ const handlers = {
 			..._.reduce(
 				action.data.rooms,
 				(byRoom, room) => {
-					byRoom[room._id] = _.map(room.$messages, parseMessage);
+					byRoom[room._id] = _(room.$messages).reverse().map(parseMessage).value();
 					// todo preserve existing messages
 					return byRoom;
 				},
@@ -33,7 +33,7 @@ const handlers = {
 		};
 	},
 	"message/receivedHistory": (state, action) => {
-		const messages = _.map(action.messages, parseMessage);
+		const messages = _(action.messages).reverse().map(parseMessage).value();
 		return {
 			...state,
 			byRoom: {
