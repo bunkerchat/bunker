@@ -22,50 +22,17 @@ console.log("theme colors are:", colors);
 const overrides = {
 	cerulean: {},
 	cosmo: {},
-	cyborg: {
-		chatButtonBackground: colors.dark,
-		mentionBackgroundColor: colors.info,
-		mentionForegroundColor: colors.white,
-	},
-	darkly: {
-		top: 70,
-		chatButtonBackground: colors.dark,
-		mentionBackgroundColor: colors.primary,
-		mentionForegroundColor: colors.white,
-	},
-	flatly: {
-		top: 70
-	},
 	journal: {},
 	litera: {
 		inputBox: 85
 	},
-	lumen: {},
-	lux: {
-		top: 85,
-		inputBox: 95
-	},
-	materia: {
-		top: 80,
-		inputBox: 100
-	},
 	minty: {},
-	pulse: {
-		top: 75,
-		inputBox: 70
-	},
 	sandstone: {},
 	simplex: {
 		top: 65
 	},
 	sketchy: {
 		inputBox: 80
-	},
-	slate: {
-		chatButtonBackground: colors.dark,
-		mentionBackgroundColor: colors.warning,
-		mentionForegroundColor: colors.white,
-		inputBox: 95
 	},
 	solar: {
 		chatButtonBackground: colors.dark,
@@ -78,7 +45,6 @@ const overrides = {
 		mentionBackgroundColor: colors.info,
 		mentionForegroundColor: colors.white,
 	},
-	united: {},
 	yeti: {}
 };
 
