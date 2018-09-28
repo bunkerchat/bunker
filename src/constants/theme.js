@@ -23,10 +23,6 @@ const overrides = {
 	cerulean: {},
 	cosmo: {},
 	journal: {},
-	litera: {
-		inputBox: 85
-	},
-	minty: {},
 	sandstone: {
 		top: 53,
 		inputBox: 70

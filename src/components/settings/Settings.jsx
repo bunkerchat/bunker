@@ -25,8 +25,6 @@ class Settings extends React.Component {
 							<option value="cerulean">Cerulean</option>
 							<option value="cosmo">Cosmo</option>
 							<option value="journal">Journal</option>
-							<option value="litera">Litera</option>
-							<option value="minty">Minty</option>
 							<option value="sandstone">Sandstone</option>
 							<option value="simplex">Simplex</option>
 							<option value="sketchy">Sketchy</option>
