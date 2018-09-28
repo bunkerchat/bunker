@@ -41,7 +41,7 @@ const overrides = {
 	},
 	spacelab: {},
 	superhero: {
-		top: 45,
+		top: 50,
 		chatButtonBackground: colors.dark,
 		mentionBackgroundColor: colors.info,
 		mentionForegroundColor: colors.white
