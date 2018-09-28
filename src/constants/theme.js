@@ -92,7 +92,8 @@ export default _.assign(
 			.lighten(10)
 			.toString(),
 		messageAuthorText: colors.white,
-		chatButtonBackground: colors.white
+		chatButtonBackground: colors.white,
+		mentionBackgroundColor: '#faf2cc',
 	},
 	overrides[window.theme]
 );

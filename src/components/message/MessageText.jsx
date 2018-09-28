@@ -11,14 +11,16 @@ const MessageTextContainer = styled.div`
 		max-height: 24px;
 	}
 	&.mention {
-		background-color: ${theme.mentionBackgroundColor ? theme.mentionBackgroundColor : '#faf2cc'};
-		color: ${theme.mentionForegroundColor}
+		background-color: ${theme.mentionBackgroundColor};
+		${theme.mentionForegroundColor ? 'color:'+ theme.mentionForegroundColor : ''}
 	}
 `;
 
-const mapStateToProps = (state, ownProps) => ({
-	nick: state.users[state.userSettings.user].nick
-});
+const mapStateToProps = (state, ownProps) => {
+	return {
+		nick: state.user.nick
+	}
+};
 
 // Note I felt it was okay to use dangerouslySetInnerHTML since we escape everything on the server
 // todo could be improved?
