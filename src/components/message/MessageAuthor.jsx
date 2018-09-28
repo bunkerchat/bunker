@@ -31,7 +31,7 @@ const AuthorNick = styled.div`
 
 const mapStateToProps = (state, ownProps) => _.pick(state.users[ownProps.authorId], "nick", "email");
 
-class MessageAuthor extends React.PureComponent {
+class MessageAuthor extends React.Component {
 	shouldComponentUpdate() {
 		// As of right now message author just remains static, could change but watch for perf problems
 		return false;

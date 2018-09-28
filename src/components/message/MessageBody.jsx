@@ -17,7 +17,7 @@ const mapStateToProps = (state, ownProps) => ({
 	localNick: state.user.nick
 });
 
-class MessageBody extends React.PureComponent {
+class MessageBody extends React.Component {
 	shouldComponentUpdate(nextProps) {
 		// Only reason we're updating is if text changes
 		return this.props.message.text !== nextProps.message.text;
