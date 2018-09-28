@@ -1,6 +1,6 @@
 import React from "react";
 import ChatInput from "../input/ChatInput.jsx";
-import MemberList from "./MemberList.jsx";
+import RoomMemberList from "./RoomMemberList.jsx";
 import ScrollingMessageList from "../message/ScrollingMessageList.jsx";
 
 export default class Room extends React.Component {
@@ -9,7 +9,7 @@ export default class Room extends React.Component {
 		return (
 			<div className="d-flex">
 				<ScrollingMessageList roomId={roomId} current={current} />
-				<MemberList roomId={roomId} />
+				<RoomMemberList roomId={roomId} />
 				<ChatInput roomId={roomId} />
 			</div>
 		);
