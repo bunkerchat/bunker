@@ -3,12 +3,6 @@ import styled from "styled-components";
 import Gravatar from "react-gravatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const Container = styled.div`
-	&.disabled {
-		opacity: 0.25;
-	}
-`;
-
 const IconContainer = styled.div`
 	display: inline-block;
 	width: 25px;
@@ -21,7 +15,7 @@ export default class RoomMember extends React.PureComponent {
 	render() {
 		const { roomId, user } = this.props;
 		return (
-			<Container className={!user.connected ? "disabled" : ""}>
+			<div>
 				{user.connected && user.typingIn === roomId ? (
 					<IconContainer>
 						<FontAwesomeIcon icon="ellipsis-h" />
@@ -30,7 +24,7 @@ export default class RoomMember extends React.PureComponent {
 					<Gravatar email={user.email} size={25} rating="pg" default="monsterid" />
 				)}
 				<span className="ml-2">{user.nick}</span>
-			</Container>
+			</div>
 		);
 	}
 }
