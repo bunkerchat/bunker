@@ -23,7 +23,7 @@ class Header extends React.Component {
 		const { rooms } = this.props;
 		return (
 			<div>
-				<nav className="navbar navbar-expand navbar-dark bg-dark fixed-top">
+				<nav className="navbar navbar-expand navbar-dark bg-dark">
 					<Link className="navbar-brand" to={`/2/lobby`}>
 						Bunker
 					</Link>
