@@ -3,20 +3,17 @@ import styled from "styled-components";
 import userId from "../../constants/userId";
 import { clearRoomMessages, loadRoomMessages } from "../room/roomActions";
 import { maxMessages } from "../../constants/chat";
-import theme from "../../constants/theme";
 import { connect } from "react-redux";
 import MessageList from "./MessageList.jsx";
+import theme from "../../constants/theme";
 
 const MessageListContainer = styled.div`
 	flex: 1;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	padding-bottom: ${theme.inputBox}px;
 
-	@media (min-width: 768px) {
-		height: calc(100vh - ${theme.top}px - ${theme.inputBox}px);
-		padding-bottom: 0;
-	}
+	// todo this hack makes the scrolling box honor our overflow: scroll, not sure why this is needed and I'm sad it's here
+	height: calc(100vh - ${theme.inputBox}px - ${theme.top}px);
 `;
 
 const mapStateToProps = (state, ownProps) => {
