@@ -10,7 +10,7 @@ const mapDispatchToProps = dispatch => ({
 	setTheme: theme => dispatch(setTheme(theme))
 });
 
-class Settings extends React.Component {
+class Settings extends React.PureComponent {
 	onThemeChange = event => {
 		this.props.setTheme(event.target.value);
 	};

@@ -14,7 +14,7 @@ const MessagingContainer = styled.div`
 	flex-direction: column;
 `;
 
-export default class Room extends React.Component {
+export default class Room extends React.PureComponent {
 	render() {
 		const { roomId, current } = this.props;
 		return (

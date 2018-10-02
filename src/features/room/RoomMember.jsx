@@ -17,7 +17,7 @@ const IconContainer = styled.div`
 	vertical-align: middle;
 `;
 
-export default class RoomMember extends React.Component {
+export default class RoomMember extends React.PureComponent {
 	render() {
 		const { roomId, user } = this.props;
 		return (

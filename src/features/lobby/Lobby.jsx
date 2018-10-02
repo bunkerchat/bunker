@@ -6,7 +6,7 @@ const mapStateToProps = state => ({
 	rooms: state.rooms
 });
 
-class Lobby extends React.Component {
+class Lobby extends React.PureComponent {
 	render() {
 		const { rooms } = this.props;
 		return (

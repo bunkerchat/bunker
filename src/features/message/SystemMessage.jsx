@@ -6,7 +6,7 @@ const SystemMessageContainer = styled.div`
 	padding: 10px;
 `;
 
-export default class SystemMessage extends React.Component {
+export default class SystemMessage extends React.PureComponent {
 	render() {
 		const { message } = this.props;
 		return <SystemMessageContainer>{message.text}</SystemMessageContainer>;

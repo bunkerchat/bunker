@@ -6,7 +6,7 @@ const ButtonsContainer = styled.div`
 	flex: 1;
 `;
 
-class ChatButtons extends React.Component {
+class ChatButtons extends React.PureComponent {
 	render() {
 		const { onSend } = this.props;
 		return (

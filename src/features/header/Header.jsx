@@ -18,7 +18,7 @@ const mapStateToProps = state => ({
 	rooms: state.rooms
 });
 
-class Header extends React.Component {
+class Header extends React.PureComponent {
 	render() {
 		const { rooms } = this.props;
 		return (

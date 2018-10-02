@@ -24,7 +24,7 @@ const mapStateToProps = (state, ownProps) => ({
 		.value()
 });
 
-class RoomMemberList extends React.Component {
+class RoomMemberList extends React.PureComponent {
 	render() {
 		const { roomId, roomMemberUsers } = this.props;
 		const onlineUsers = _.filter(roomMemberUsers, { connected: true });

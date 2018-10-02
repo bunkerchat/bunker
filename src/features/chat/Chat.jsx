@@ -30,7 +30,7 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 
-class Chat extends React.Component {
+class Chat extends React.PureComponent {
 	render() {
 		const { loaded, section, rooms } = this.props;
 
