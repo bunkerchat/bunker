@@ -13,7 +13,10 @@ const MemberListContainer = styled.div`
 
 const mapStateToProps = (state, ownProps) => ({
 	roomMemberUsers: _(state.rooms[ownProps.roomId].$members)
-		.map(roomMember => ({ roomMember, user: state.users[roomMember.user] }))
+		.map(roomMember => {
+			const user = state.users[roomMember.user];
+			return user ? { roomMember, user } : null;
+		})
 		.remove()
 		.value()
 });
