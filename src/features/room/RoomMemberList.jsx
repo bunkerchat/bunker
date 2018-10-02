@@ -2,7 +2,7 @@ import React from "react";
 import connect from "react-redux/es/connect/connect";
 import theme from "../../constants/theme";
 import styled from "styled-components";
-import RoomMember from "./RoomMember.jsx";
+import RoomMemberListItem from "./RoomMemberListItem.jsx";
 
 const MemberListContainer = styled.div`
 	flex: 0 0 ${theme.memberList}px;
@@ -11,15 +11,9 @@ const MemberListContainer = styled.div`
 	overflow-y: auto;
 `;
 
-const RoomMemberListItem = ({ roomId, user }) => (
-	<li className="list-group-item p-2">
-		<RoomMember roomId={roomId} user={user} />
-	</li>
-);
-
 const mapStateToProps = (state, ownProps) => ({
 	roomMemberUsers: _(state.rooms[ownProps.roomId].$members)
-		.map(member => state.users[member.user])
+		.map(roomMember => ({ roomMember, user: state.users[roomMember.user] }))
 		.remove()
 		.value()
 });
@@ -27,16 +21,26 @@ const mapStateToProps = (state, ownProps) => ({
 class RoomMemberList extends React.PureComponent {
 	render() {
 		const { roomId, roomMemberUsers } = this.props;
-		const onlineUsers = _.filter(roomMemberUsers, { connected: true });
-		const offlineUsers = _.filter(roomMemberUsers, { connected: false });
+		const online = _.filter(roomMemberUsers, roomMemberUser => roomMemberUser.user.connected);
+		const offline = _.filter(roomMemberUsers, roomMemberUser => !roomMemberUser.user.connected);
 		return (
 			<MemberListContainer className="border-left d-none d-md-block">
 				<ul className="list-group list-group-flush">
-					{onlineUsers.map(user => (
-						<RoomMemberListItem roomId={roomId} user={user} key={user._id} />
+					{online.map(roomMemberUser => (
+						<RoomMemberListItem
+							roomId={roomId}
+							roomMember={roomMemberUser.roomMember}
+							user={roomMemberUser.user}
+							key={roomMemberUser.roomMember._id}
+						/>
 					))}
-					{offlineUsers.map(user => (
-						<RoomMemberListItem roomId={roomId} user={user} key={user._id} />
+					{offline.map(roomMemberUser => (
+						<RoomMemberListItem
+							roomId={roomId}
+							roomMember={roomMemberUser.roomMember}
+							user={roomMemberUser.user}
+							key={roomMemberUser.roomMember._id}
+						/>
 					))}
 				</ul>
 			</MemberListContainer>

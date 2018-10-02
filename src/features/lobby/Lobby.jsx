@@ -13,11 +13,11 @@ class Lobby extends React.PureComponent {
 		return (
 			<div className="container-fluid mt-3">
 				<ul className="list-group">
-					{_.map(roomsSortedByUnread, (room, roomId) => (
+					{_.map(roomsSortedByUnread, room => (
 						<Link
 							className="list-group-item p-3 d-flex justify-content-between align-items-center"
-							to={`/2/room/${roomId}`}
-							key={roomId}
+							to={`/2/room/${room._id}`}
+							key={room._id}
 						>
 							{room.name}
 							{room.unreadMessageCount > 0 && (
