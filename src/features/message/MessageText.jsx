@@ -5,6 +5,8 @@ import parseFormatting from "./parsers/parseFormatting";
 import styled from "styled-components";
 
 const MessageTextContainer = styled.div`
+	word-break: break-word;
+	
 	.emoticon {
 		max-height: 24px;
 	}
