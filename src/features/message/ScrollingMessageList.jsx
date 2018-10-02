@@ -37,7 +37,7 @@ const mapDispatchToProps = dispatch => ({
 	}
 });
 
-class ScrollingMessageList extends React.Component {
+class ScrollingMessageList extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.ref = React.createRef();

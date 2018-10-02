@@ -2,7 +2,7 @@ import React from "react";
 import Message from "./Message.jsx";
 import SystemMessage from "./SystemMessage.jsx";
 
-export default class MessageList extends React.Component {
+export default class MessageList extends React.PureComponent {
 	render() {
 		const { messages } = this.props;
 		return (
