@@ -15,17 +15,21 @@ const UnreadMessageBadge = styled.span`
 `;
 
 const mapStateToProps = state => ({
-	rooms: state.rooms
+	rooms: state.rooms,
+	totalUnreadMessageCount: _.reduce(state.rooms, (count, room) => count + (room.unreadMessageCount || 0), 0)
 });
 
 class Header extends React.PureComponent {
 	render() {
-		const { rooms } = this.props;
+		const { rooms, totalUnreadMessageCount } = this.props;
 		return (
 			<div>
 				<nav className="navbar navbar-expand navbar-dark bg-dark">
 					<Link className="navbar-brand" to={`/2/lobby`}>
-						Bunker
+						Bunker{" "}
+						{totalUnreadMessageCount > 0 && (
+							<span className="badge badge-primary d-md-none">{totalUnreadMessageCount}</span>
+						)}
 					</Link>
 					<ul className="navbar-nav d-none d-md-flex">
 						{_.map(rooms, room => (
