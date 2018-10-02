@@ -9,11 +9,16 @@ const mapStateToProps = state => ({
 class Lobby extends React.PureComponent {
 	render() {
 		const { rooms } = this.props;
+		const roomsSortedByUnread = _.sortBy(rooms, room => room.unreadMessageCount === 0);
 		return (
 			<div className="container-fluid mt-3">
 				<ul className="list-group">
-					{_.map(rooms, (room, roomId) => (
-						<Link className="list-group-item p-3 d-flex justify-content-between align-items-center" to={`/2/room/${roomId}`} key={roomId}>
+					{_.map(roomsSortedByUnread, (room, roomId) => (
+						<Link
+							className="list-group-item p-3 d-flex justify-content-between align-items-center"
+							to={`/2/room/${roomId}`}
+							key={roomId}
+						>
 							{room.name}
 							{room.unreadMessageCount > 0 && (
 								<span className="badge badge-primary d-md-none">{room.unreadMessageCount}</span>

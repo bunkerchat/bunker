@@ -11,11 +11,11 @@ const MessageListContainer = styled.div`
 	flex: 1;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	
+
 	// todo this hack makes the scrolling box honor our overflow: scroll, not sure why this is needed and I'm sad it's here
 	height: calc(100vh - ${theme.inputBox}px - ${theme.top}px);
-	
-	// these enable touch scrolling on iOS / Android 
+
+	// these enable touch scrolling on iOS / Android
 	-webkit-overflow-scrolling: touch;
 	z-index: 0;
 `;
