@@ -14,7 +14,7 @@ const ChatContainer = styled.div`
 const mapStateToProps = (state, ownProps) => {
 	const sectionMatch = /2\/(\w+)/.exec(ownProps.location.pathname);
 	return {
-		loaded: state.user.loaded,
+		loaded: state.localUser.loaded,
 		section: sectionMatch ? sectionMatch[1] : null,
 		rooms: state.rooms
 	};

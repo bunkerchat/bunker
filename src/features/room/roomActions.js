@@ -1,4 +1,4 @@
-import { emit } from "../api";
+import { emit } from "../../api";
 
 export function loadingMessages(roomId) {
 	return { type: "message/loadingMany", roomId };

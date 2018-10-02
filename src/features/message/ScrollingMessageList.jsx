@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import userId from "../../constants/userId";
-import { clearRoomMessages, loadRoomMessages } from "../../actions/rooms";
+import { clearRoomMessages, loadRoomMessages } from "../room/roomActions";
 import { maxMessages } from "../../constants/chat";
 import theme from "../../constants/theme";
 import { connect } from "react-redux";

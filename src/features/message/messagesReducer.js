@@ -1,4 +1,4 @@
-import { maxMessages } from "../constants/chat";
+import { maxMessages } from "../../constants/chat";
 
 const parseMessage = message => {
 	// Existing bunker server code sends new & loaded messages with a full author object

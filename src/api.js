@@ -1,16 +1,16 @@
 import io from "socket.io-client";
 import { dispatch } from "./store";
-import { connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse } from "./actions/socket";
-import { messageUpdated, messageReceived } from "./actions/rooms";
-import { init } from "./actions/init";
-import { userUpdated } from "./actions/users";
-import { ping } from "./actions/user";
+import { connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse } from "./features/socket/socketActions";
+import { messageUpdated, messageReceived } from "./features/room/roomActions";
+import { chatActions } from "./features/chat/chatActions";
+import { userUpdated } from "./features/users/userActions";
+import { ping } from "./features/users/localUserActions";
 
 const socket = io(window.url);
 
 socket.on("connect", () => {
 	dispatch(connected());
-	dispatch(init());
+	dispatch(chatActions());
 });
 socket.on("reconnect", () => {
 	dispatch(reconnected());

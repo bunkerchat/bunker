@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { setTheme } from "../../actions/userSettings";
+import { setTheme } from "./userSettingsActions";
 
 const mapStateToProps = state => ({
 	theme: state.userSettings.theme

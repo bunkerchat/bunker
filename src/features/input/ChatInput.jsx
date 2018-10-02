@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { sendRoomMessage } from "../../actions/rooms";
+import { sendRoomMessage } from "../room/roomActions";
 import { connect } from "react-redux";
 import ChatButtons from "./ChatButtons.jsx";
 import theme from "../../constants/theme";

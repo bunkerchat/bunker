@@ -14,7 +14,7 @@ const MessageBodyContainer = styled.div`
 
 const mapStateToProps = (state, ownProps) => ({
 	nick: state.users[ownProps.message.author].nick,
-	localNick: state.user.nick
+	localNick: state.localUser.nick
 });
 
 class MessageBody extends React.Component {
