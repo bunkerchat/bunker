@@ -1,6 +1,13 @@
 import io from "socket.io-client";
 import { dispatch } from "./store";
-import { connected, disconnected, emitEndpoint, errorResponse, reconnected, successResponse } from "./features/socket/socketActions";
+import {
+	connected,
+	disconnected,
+	emitEndpoint,
+	errorResponse,
+	reconnected,
+	successResponse
+} from "./features/socket/socketActions";
 import { messageUpdated, messageReceived } from "./features/room/roomActions";
 import { chatActions } from "./features/chat/chatActions";
 import { userUpdated } from "./features/users/userActions";
