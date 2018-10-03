@@ -21,18 +21,20 @@ console.log("theme colors are:", colors);
 
 const overrides = {
 	cerulean: {},
-	cosmo: {},
+	cosmo: {
+		inputBox: 36
+	},
 	journal: {},
 	sandstone: {
 		top: 53,
-		inputBox: 70
+		inputBox: 35
 	},
 	simplex: {
 		top: 65,
-		inputBox: 65
+		inputBox: 33
 	},
 	sketchy: {
-		inputBox: 80
+		inputBox: 40
 	},
 	solar: {
 		chatButtonBackground: colors.dark,
@@ -41,21 +43,21 @@ const overrides = {
 	},
 	spacelab: {},
 	superhero: {
-		top: 50,
+		top: 48,
 		chatButtonBackground: colors.dark,
 		mentionBackgroundColor: colors.info,
 		mentionForegroundColor: colors.white
 	},
 	yeti: {
 		top: 53,
-		inputBox: 70
+		inputBox: 36
 	}
 };
 
 export default _.assign(
 	{
 		top: 55,
-		inputBox: 75,
+		inputBox: 38,
 		memberList: 250,
 		messageAuthorBackground: colors.dark,
 		messageLocalAuthorBackground: tinycolor(colors.dark)
