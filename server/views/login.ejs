@@ -60,10 +60,16 @@
 				type: 'POST',
 				url: '/auth/googleCallback',
 				contentType: 'application/json',
-				data: JSON.stringify({code: authResult.code})
+				data: JSON.stringify({ code: authResult.code })
 			})
-					.done(function (data) {
-						window.location = '/' + window.location.hash;
+					.done(function () {
+						var match = /\?directTo=(.+)/.exec(window.location.search);
+						if (match) {
+							window.location = match[1];
+						}
+						else {
+							window.location = '/' + window.location.hash;
+						}
 					});
 		} else if (authResult.error) {
 			console.log('There was an error: ' + authResult.error);
