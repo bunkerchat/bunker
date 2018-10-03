@@ -15,11 +15,11 @@ const mapStateToProps = state => ({
 class Lobby extends React.PureComponent {
 	render() {
 		const { rooms } = this.props;
-		const roomsSortedByUnread = _.sortBy(rooms, room => room.unreadMessageCount === 0);
+		// const roomsSortedByUnread = _.sortBy(rooms, room => room.unreadMessageCount === 0);
 		return (
 			<Container className="container-fluid mt-3">
 				<ul className="list-group">
-					{_.map(roomsSortedByUnread, room => (
+					{_.map(rooms, room => (
 						<Link
 							className="list-group-item p-3 d-flex justify-content-between align-items-center"
 							to={`/2/room/${room._id}`}
