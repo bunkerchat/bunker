@@ -47,10 +47,6 @@ const overrides = {
 		chatButtonBackground: colors.dark,
 		mentionBackgroundColor: colors.info,
 		mentionForegroundColor: colors.white
-	},
-	yeti: {
-		top: 53,
-		inputBox: 36
 	}
 };
 

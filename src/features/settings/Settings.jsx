@@ -37,7 +37,6 @@ class Settings extends React.PureComponent {
 							<option value="solar">Solar</option>
 							<option value="spacelab">Spacelab</option>
 							<option value="superhero">Superhero</option>
-							<option value="yeti">Yeti</option>
 						</select>
 					</div>
 				</form>
