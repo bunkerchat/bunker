@@ -1,6 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+
+const Container = styled.div`
+	flex: 1;
+	overflow: auto;
+`;
 
 const mapStateToProps = state => ({
 	rooms: state.rooms
@@ -11,7 +17,7 @@ class Lobby extends React.PureComponent {
 		const { rooms } = this.props;
 		const roomsSortedByUnread = _.sortBy(rooms, room => room.unreadMessageCount === 0);
 		return (
-			<div className="container-fluid mt-3">
+			<Container className="container-fluid mt-3">
 				<ul className="list-group">
 					{_.map(roomsSortedByUnread, room => (
 						<Link
@@ -26,7 +32,7 @@ class Lobby extends React.PureComponent {
 						</Link>
 					))}
 				</ul>
-			</div>
+			</Container>
 		);
 	}
 }

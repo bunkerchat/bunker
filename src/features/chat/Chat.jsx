@@ -6,19 +6,11 @@ import Header from "../header/Header.jsx";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
-const FullScreenContainer = styled.div`
-	width: 100vw;
-	height: 100vh;
-	overflow: hidden;
-`;
-
-const ChatContainer = styled.div`
+const Container = styled.div`
 	display: flex;
 	flex-direction: column;
-`;
-
-const MainContainer = styled.div`
-	flex: 1;
+	width: 100vw;
+	height: 100vh;
 `;
 
 const mapStateToProps = (state, ownProps) => {
@@ -39,21 +31,13 @@ class Chat extends React.PureComponent {
 		}
 
 		return (
-			<FullScreenContainer>
-				<ChatContainer>
-					<Header />
-					<MainContainer>
-						{section === "settings" && <Settings />}
-						{section === "lobby" && <Lobby />}
-						{section === "room" &&
-							_.map(rooms, (room, roomId) => (
-								<div className={room.current ? "d-block" : "d-none"} key={roomId}>
-									<Room roomId={roomId} current={room.current} />
-								</div>
-							))}
-					</MainContainer>
-				</ChatContainer>
-			</FullScreenContainer>
+			<Container>
+				<Header />
+				{section === "settings" && <Settings />}
+				{section === "lobby" && <Lobby />}
+				{section === "room" &&
+					_.map(rooms, (room, roomId) => <Room roomId={roomId} current={room.current} key={roomId} />)}
+			</Container>
 		);
 	}
 }

@@ -1,6 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
 import { setTheme } from "./userSettingsActions";
+import styled from "styled-components";
+
+const Container = styled.div`
+	flex: 1;
+	overflow: auto;
+`;
 
 const mapStateToProps = state => ({
 	theme: state.userSettings.theme
@@ -17,7 +23,7 @@ class Settings extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="container-fluid mt-3">
+			<Container className="container-fluid mt-3">
 				<form>
 					<div className="form-group">
 						<label>Theme</label>
@@ -35,7 +41,7 @@ class Settings extends React.PureComponent {
 						</select>
 					</div>
 				</form>
-			</div>
+			</Container>
 		);
 	}
 }

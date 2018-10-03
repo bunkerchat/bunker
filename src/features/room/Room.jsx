@@ -4,8 +4,8 @@ import RoomMemberList from "./RoomMemberList.jsx";
 import ScrollingMessageList from "../message/ScrollingMessageList.jsx";
 import styled from "styled-components";
 
-const RoomContainer = styled.div`
-	display: flex;
+const Container = styled.div`
+	overflow: hidden;
 `;
 
 const MessagingContainer = styled.div`
@@ -18,13 +18,13 @@ export default class Room extends React.PureComponent {
 	render() {
 		const { roomId, current } = this.props;
 		return (
-			<RoomContainer>
+			<Container className={`${current ? "d-flex" : "d-none"}`}>
 				<MessagingContainer>
 					<ScrollingMessageList roomId={roomId} current={current} />
 					<ChatInput roomId={roomId} />
 				</MessagingContainer>
 				<RoomMemberList roomId={roomId} />
-			</RoomContainer>
+			</Container>
 		);
 	}
 }
