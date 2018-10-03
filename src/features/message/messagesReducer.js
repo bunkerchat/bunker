@@ -31,7 +31,7 @@ const handlers = {
 			...state,
 			byRoom: {
 				...state.byRoom,
-				[message.room]: [...state.byRoom[message.room], message]
+				[message.room]: _.uniqBy([...state.byRoom[message.room], message], '_id')
 			}
 		};
 	},
