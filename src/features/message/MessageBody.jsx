@@ -3,13 +3,18 @@ import styled from "styled-components";
 import MessageText from "./MessageText.jsx";
 import connect from "react-redux/es/connect/connect";
 import theme from "../../constants/theme";
+import MessageTimeAgo from "./MessageTimeAgo.jsx";
 
 const MessageBodyContainer = styled.div`
 	flex: 1;
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
-		${theme.mentionForegroundColor ? "color:" + theme.mentionForegroundColor : ""};
+		${theme.mentionForegroundColor ? `color: ${theme.mentionForegroundColor}` : ""};
 	}
+`;
+
+const MessageTime = styled.div`
+	width: 100px;
 `;
 
 const mapStateToProps = (state, ownProps) => ({
@@ -31,8 +36,31 @@ class MessageBody extends React.Component {
 			<MessageBodyContainer
 				className={`px-2 pb-1 ${firstInSeries ? "border-light border-top" : ""} ${isUserMentioned ? "mention" : ""}`}
 			>
-				{firstInSeries && <h6 className="d-md-none">{nick}</h6>}
-				<MessageText text={message.text} />
+				{firstInSeries && (
+					<div className="row d-md-none">
+						<div className="col">
+							<h6>{nick}</h6>
+						</div>
+						<div className="col text-right">
+							<small>
+								<MessageTimeAgo date={message.createdAt} />
+							</small>
+						</div>
+					</div>
+				)}
+
+				<div className="row no-gutters">
+					<div className="col">
+						<MessageText text={message.text} />
+					</div>
+					{firstInSeries && (
+						<MessageTime className="d-none d-md-block text-right">
+							<small>
+								<MessageTimeAgo date={message.createdAt} />
+							</small>
+						</MessageTime>
+					)}
+				</div>
 			</MessageBodyContainer>
 		);
 	}
