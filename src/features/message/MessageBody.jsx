@@ -14,7 +14,7 @@ const MessageBodyContainer = styled.div`
 `;
 
 const MessageTime = styled.div`
-	width: 100px;
+	width: 120px;
 `;
 
 const mapStateToProps = (state, ownProps) => ({
