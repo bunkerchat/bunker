@@ -16,12 +16,26 @@ const UnreadMessageBadge = styled.span`
 
 const mapStateToProps = state => ({
 	rooms: state.rooms,
-	totalUnreadMessageCount: _.reduce(state.rooms, (count, room) => count + (room.unreadMessageCount || 0), 0)
+	localRoomMembersByRoom: state.localRoomMembers.byRoom,
+	totalUnreadMessageCount: _.reduce(
+		state.localRoomMembers.byRoom,
+		(count, roomMember) => count + (roomMember.unreadMessageCount || 0),
+		0
+	)
 });
+
+const RoomLink = ({ room, roomMember }) => (
+	<Link className="nav-link" to={`/2/room/${room._id}`}>
+		{room.name}{" "}
+		{roomMember.unreadMessageCount > 0 && (
+			<UnreadMessageBadge className="badge badge-primary">{roomMember.unreadMessageCount}</UnreadMessageBadge>
+		)}
+	</Link>
+);
 
 class Header extends React.PureComponent {
 	render() {
-		const { rooms, totalUnreadMessageCount } = this.props;
+		const { rooms, localRoomMembersByRoom, totalUnreadMessageCount } = this.props;
 		return (
 			<div>
 				<nav className="navbar navbar-expand navbar-dark bg-dark">
@@ -34,12 +48,7 @@ class Header extends React.PureComponent {
 					<ul className="navbar-nav d-none d-md-flex">
 						{_.map(rooms, room => (
 							<RoomListItem className={`nav-item px-3 ${room.current ? "active" : ""}`} key={room._id}>
-								<Link className="nav-link" to={`/2/room/${room._id}`}>
-									{room.name}{" "}
-									{room.unreadMessageCount > 0 && (
-										<UnreadMessageBadge className="badge badge-primary">{room.unreadMessageCount}</UnreadMessageBadge>
-									)}
-								</Link>
+								<RoomLink room={room} roomMember={localRoomMembersByRoom[room._id]} />
 							</RoomListItem>
 						))}
 					</ul>

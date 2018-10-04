@@ -12,6 +12,7 @@ import { messageUpdated, messageReceived } from "./features/room/roomActions";
 import { chatActions } from "./features/chat/chatActions";
 import { userUpdated } from "./features/users/userActions";
 import { ping } from "./features/users/localUserActions";
+import { localRoomMemberUpdated } from "./features/users/localRoomMembersActions";
 
 const socket = io(window.url);
 
@@ -42,6 +43,14 @@ socket.on("user", socketMessage => {
 		case "updated":
 			// Add in user's _id because for some reason it's not sent down by server
 			dispatch(userUpdated({ ...socketMessage.data, _id: socketMessage._id }));
+			break;
+	}
+});
+socket.on("user_roommember", socketMessage => {
+	switch (socketMessage.verb) {
+		case "updated":
+			// Add in room member's _id because for some reason it's not sent down by server
+			dispatch(localRoomMemberUpdated({ ...socketMessage.data, _id: socketMessage._id }));
 			break;
 	}
 });

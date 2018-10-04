@@ -6,6 +6,7 @@ import thunk from "redux-thunk";
 const history = createBrowserHistory();
 
 import localUser from "./features/users/localUserReducer";
+import localRoomMembers from "./features/users/localRoomMembersReducer";
 import userSettings from "./features/settings/userSettingsReducer";
 import users from "./features/users/usersReducer";
 import rooms from "./features/room/roomReducer";
@@ -14,6 +15,7 @@ import log from "./features/chat/logReducer";
 
 const rootReducer = combineReducers({
 	localUser,
+	localRoomMembers,
 	userSettings,
 	users,
 	rooms,

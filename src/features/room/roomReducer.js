@@ -8,7 +8,6 @@ const setCurrentRoom = rooms => {
 		const room = rooms[roomMatch[1]];
 		if (room) {
 			room.current = true;
-			room.unreadMessageCount = 0;
 		}
 	}
 
@@ -34,8 +33,7 @@ const handlers = {
 		return {
 			...state,
 			[room._id]: {
-				...state[room._id],
-				unreadMessageCount: !room.current ? (!_.isNumber(room.unreadMessageCount) ? 1 : room.unreadMessageCount + 1) : 0
+				...state[room._id]
 			}
 		};
 	},

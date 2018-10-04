@@ -1,12 +1,13 @@
 const handlers = {
-	"init/received": (state, action) => {
-		const user = { ...action.data.user, loaded: true };
-
-		return {
-			...state,
-			...user
-		};
-	}
+	"init/received": (state, action) => ({
+		...state,
+		...action.data.user,
+		loaded: true
+	}),
+	"localUser/activeRoom": (state, action) => ({
+		...state,
+		activeRoom: action.roomId
+	})
 };
 
 export default function(state = {}, action) {

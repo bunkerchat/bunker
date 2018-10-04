@@ -5,6 +5,7 @@ import Settings from "../settings/Settings.jsx";
 import Header from "../header/Header.jsx";
 import { connect } from "react-redux";
 import styled from "styled-components";
+import { changeActiveRoom } from "../users/localUserActions";
 
 const Container = styled.div`
 	display: flex;
@@ -22,7 +23,18 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 
+const mapDispatchToProps = dispatch => ({
+	changeActiveRoom: roomId => {
+		dispatch(changeActiveRoom(roomId));
+	}
+});
+
 class Chat extends React.PureComponent {
+	componentDidUpdate() {
+		const activeRoom = _.find(this.props.rooms, { current: true });
+		this.props.changeActiveRoom(activeRoom ? activeRoom._id : null);
+	}
+
 	render() {
 		const { loaded, section, rooms } = this.props;
 
@@ -42,4 +54,7 @@ class Chat extends React.PureComponent {
 	}
 }
 
-export default connect(mapStateToProps)(Chat);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Chat);

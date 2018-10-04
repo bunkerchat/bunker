@@ -9,27 +9,30 @@ const Container = styled.div`
 `;
 
 const mapStateToProps = state => ({
-	rooms: state.rooms
+	rooms: state.rooms,
+	localRoomMembersByRoom: state.localRoomMembers.byRoom
 });
+
+const RoomLink = ({ room, roomMember }) => (
+	<Link
+		className="list-group-item p-3 d-flex justify-content-between align-items-center"
+		to={`/2/room/${room._id}`}
+	>
+		{room.name}
+		{roomMember.unreadMessageCount > 0 && (
+			<span className="badge badge-primary d-md-none">{roomMember.unreadMessageCount}</span>
+		)}
+	</Link>
+);
 
 class Lobby extends React.PureComponent {
 	render() {
-		const { rooms } = this.props;
-		// const roomsSortedByUnread = _.sortBy(rooms, room => room.unreadMessageCount === 0);
+		const { rooms, localRoomMembersByRoom } = this.props;
 		return (
 			<Container className="container-fluid mt-3">
 				<ul className="list-group">
 					{_.map(rooms, room => (
-						<Link
-							className="list-group-item p-3 d-flex justify-content-between align-items-center"
-							to={`/2/room/${room._id}`}
-							key={room._id}
-						>
-							{room.name}
-							{room.unreadMessageCount > 0 && (
-								<span className="badge badge-primary d-md-none">{room.unreadMessageCount}</span>
-							)}
-						</Link>
+						<RoomLink room={room} roomMember={localRoomMembersByRoom[room._id]} key={room._id} />
 					))}
 				</ul>
 			</Container>

@@ -168,14 +168,14 @@ module.exports.activity = (req, res) => {
 
 			return RoomMember.findOneAndUpdate(
 				{user: userId, room: activeRoom},
-				{lastReadMessage: lastMessageId});
+				{lastReadMessage: lastMessageId, unreadMessageCount: 0});
 		})
 		.then(roomMember => {
 			if (!roomMember) return;
 			req.io.to(`userself_${userId}`).emit('user_roommember', {
 				_id: roomMember._id,
 				verb: 'updated',
-				data: {lastReadMessage: lastMessageId}
+				data: {lastReadMessage: lastMessageId, unreadMessageCount: 0}
 			});
 		})
 		.catch(log.error);

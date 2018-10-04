@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var roomMemberSchema = new mongoose.Schema({
+const roomMemberSchema = new mongoose.Schema({
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User'
@@ -29,6 +29,10 @@ var roomMemberSchema = new mongoose.Schema({
 	showMessageDesktopNotification: {
 		type: Boolean,
 		default: false
+	},
+	unreadMessageCount: {
+		type: Number,
+		 default: 0
 	}
 });
 
