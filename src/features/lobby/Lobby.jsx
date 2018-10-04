@@ -14,10 +14,7 @@ const mapStateToProps = state => ({
 });
 
 const RoomLink = ({ room, roomMember }) => (
-	<Link
-		className="list-group-item p-3 d-flex justify-content-between align-items-center"
-		to={`/2/room/${room._id}`}
-	>
+	<Link className="list-group-item p-3 d-flex justify-content-between align-items-center" to={`/2/room/${room._id}`}>
 		{room.name}
 		{roomMember.unreadMessageCount > 0 && (
 			<span className="badge badge-primary d-md-none">{roomMember.unreadMessageCount}</span>

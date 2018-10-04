@@ -45,10 +45,15 @@ class Chat extends React.PureComponent {
 		return (
 			<Container>
 				<Header />
-				{section === "settings" && <Settings />}
-				{section === "lobby" && <Lobby />}
-				{section === "room" &&
-					_.map(rooms, (room, roomId) => <Room roomId={roomId} current={room.current} key={roomId} />)}
+				<div className={`${section === "lobby" ? "d-block" : "d-none"}`}>
+					<Lobby />
+				</div>
+				<div className={`${section === "settings" ? "d-block" : "d-none"}`}>
+					<Settings />
+				</div>
+				{_.map(rooms, (room, roomId) => (
+					<Room roomId={roomId} current={room.current} key={roomId} />
+				))}
 			</Container>
 		);
 	}
