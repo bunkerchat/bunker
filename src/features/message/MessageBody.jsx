@@ -69,6 +69,6 @@ class MessageBody extends React.Component {
 export default connect(mapStateToProps)(MessageBody);
 
 function testTextForNick(text, nick) {
-	const mentionRegex = new RegExp(nick + "\\b|@[Aa]ll\\b", "i");
+	const mentionRegex = new RegExp(`${nick}\\b|@[Aa]ll\\b`, "i");
 	return mentionRegex.test(text);
 }
