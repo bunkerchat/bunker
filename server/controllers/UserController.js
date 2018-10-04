@@ -32,18 +32,18 @@ module.exports.init = (req, res) => {
 	socket.join('userself_' + userId);
 
 	// find user sockets
-	User.findById(userId, {sockets: 1}).then(user => {
+	User.findById(userId, { sockets: 1 }).then(user => {
 
 		const sockets = user.sockets || [];
-		_.remove(sockets, {socketId: req.socket.id});
-		sockets.push({socketId: req.socket.id, updatedAt: new Date()});
+		_.remove(sockets, { socketId: req.socket.id });
+		sockets.push({ socketId: req.socket.id, updatedAt: new Date() });
 
 		return User.findByIdAndUpdate(userId, {
 			sockets: sockets,
 			connected: true,
 			lastConnected: new Date().toISOString(),
 			typingIn: null
-		}, {'new': true});
+		}, { 'new': true });
 	})
 		.then(updatedUser => {
 			req.io.to('user_' + updatedUser._id).emit('user', {
@@ -54,9 +54,9 @@ module.exports.init = (req, res) => {
 
 			return Promise.join(
 				User.findById(userId).lean(),
-				UserSettings.findOne({user: userId}).lean(),
-				RoomMember.find({user: userId}).sort('roomOrder').populate('room').lean(),
-				InboxMessage.find({user: req.session.userId}).sort('-createdAt').limit(20).populate('message').lean(),
+				UserSettings.findOne({ user: userId }).lean(),
+				RoomMember.find({ user: userId }).sort('roomOrder').populate('room').lean(),
+				InboxMessage.find({ user: req.session.userId }).sort('-createdAt').limit(20).populate('message').lean(),
 				versionService.version()
 			);
 		})
@@ -95,9 +95,9 @@ module.exports.init = (req, res) => {
 
 			return Promise.map(rooms, room => {
 				return Promise.join(
-					Message.find({room: room._id}).sort('-createdAt').limit(40).populate('reactions').lean(),
-					RoomMember.find({room: room._id}).lean(),
-					PinnedMessage.find({room: room._id}).sort('-createdAt').populate('message')
+					Message.find({ room: room._id }).sort('-createdAt').limit(40).populate('reactions').lean(),
+					RoomMember.find({ room: room._id }).lean(),
+					PinnedMessage.find({ room: room._id }).sort('-createdAt').populate('message')
 				)
 					.spread((messages, members, pinnedMessages) => {
 						userIds.pushAll(_.map(messages, 'author'), _.map(members, 'user'));
@@ -126,10 +126,10 @@ module.exports.init = (req, res) => {
 			//const userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
 			return Promise.join(
 				User.find(userIds).select('-plaintextpassword -sockets').lean(),
-				Room.find({_id: {$nin: _.map(memberships, 'room')}, isPrivate: false}).lean()
+				Room.find({ _id: { $nin: _.map(memberships, 'room') }, isPrivate: false }).lean()
 					.then(rooms => {
 						return Promise.map(rooms, room => {
-							return RoomMember.count({room: room._id})
+							return RoomMember.count({ room: room._id })
 								.then(memberCount => {
 									room.$memberCount = memberCount;
 									return room;
@@ -143,7 +143,7 @@ module.exports.init = (req, res) => {
 		.spread((users, publicRooms) => {
 			// don't return users who have not connected in the last 45 days
 			users = _.filter(users, user => moment().diff(user.lastConnected, 'days') < 45);
-			res.ok({user, userSettings, memberships, publicRooms, inbox, rooms, version, users})
+			res.ok({ user, userSettings, memberships, publicRooms, inbox, rooms, version, users })
 		})
 		.catch(res.serverError);
 };
@@ -156,10 +156,10 @@ module.exports.activity = (req, res) => {
 
 	var lastMessageId;
 
-	userActivity(req, {activeRoom})
+	userActivity(req, { activeRoom })
 		.then(user => {
-			return Message.findOne({room: user.activeRoom}, {_id: 1}, {
-				sort: {$natural: -1},
+			return Message.findOne({ room: user.activeRoom }, { _id: 1 }, {
+				sort: { $natural: -1 },
 				limit: 1
 			}).lean()
 		})
@@ -167,28 +167,28 @@ module.exports.activity = (req, res) => {
 			lastMessageId = (lastMessage || {})._id;
 
 			return RoomMember.findOneAndUpdate(
-				{user: userId, room: activeRoom},
-				{lastReadMessage: lastMessageId, unreadMessageCount: 0});
+				{ user: userId, room: activeRoom },
+				{ lastReadMessage: lastMessageId, unreadMessageCount: 0 });
 		})
 		.then(roomMember => {
 			if (!roomMember) return;
 			req.io.to(`userself_${userId}`).emit('user_roommember', {
 				_id: roomMember._id,
 				verb: 'updated',
-				data: {lastReadMessage: lastMessageId, unreadMessageCount: 0}
+				data: { lastReadMessage: lastMessageId, unreadMessageCount: 0 }
 			});
 		})
 		.catch(log.error);
 };
 
 module.exports.typing = (req, res) => {
-	userActivity(req, {typingIn: req.body.typingIn})
+	userActivity(req, { typingIn: req.body.typingIn })
 		.then(() => res.ok())
 		.catch(res.serverError)
 };
 
 module.exports.present = (req, res) => {
-	userActivity(req, {present: req.body.present})
+	userActivity(req, { present: req.body.present })
 		.then(res.ok)
 		.catch(res.serverError)
 };
@@ -198,19 +198,20 @@ function userActivity(req, updates) {
 
 	return User.findByIdAndUpdate(userId, updates)
 		.then((user) => {
-			req.io.to(`user_${userId}`).emit('user', {_id: userId, verb: 'updated', data: updates});
+			// todo
+			req.io.to(`user_${userId}`).emit('user', { _id: userId, verb: 'updated', data: updates });
 			return user;
 		});
 }
 
 module.exports.markInboxRead = (req, res) => {
-	InboxMessage.update({user: req.session.userId.toObjectId()}, {read: true})
+	InboxMessage.update({ user: req.session.userId.toObjectId() }, { read: true })
 		.then(res.ok)
 		.catch(res.serverError);
 };
 
 module.exports.clearInbox = (req, res) => {
-	InboxMessage.remove({user: req.session.userId.toObjectId()})
+	InboxMessage.remove({ user: req.session.userId.toObjectId() })
 		.then(res.ok)
 		.catch(res.serverError);
 };
@@ -224,7 +225,7 @@ module.exports.ping = (req, res) => {
 			return User.findByIdAndUpdate(userId,
 				{
 					$pull: {
-						sockets: {socketId: req.socket.id}
+						sockets: { socketId: req.socket.id }
 					}
 				}
 			)
@@ -232,7 +233,7 @@ module.exports.ping = (req, res) => {
 					return User.findByIdAndUpdate(userId,
 						{
 							$push: {
-								sockets: {socketId: req.socket.id, updatedAt: new Date()}
+								sockets: { socketId: req.socket.id, updatedAt: new Date() }
 							}
 						}
 					)
@@ -253,12 +254,12 @@ setInterval(function () {
 			{
 				sockets: {
 					$elemMatch: {
-						updatedAt: {"$lte": expiredSocketDate}
+						updatedAt: { "$lte": expiredSocketDate }
 					}
 				}
 			},
 			{
-				sockets: {$size: 0}
+				sockets: { $size: 0 }
 			}
 		]
 	})
