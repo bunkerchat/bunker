@@ -20,15 +20,12 @@ const RoomLink = ({ room, roomMember }) => (
 	</Link>
 );
 
-const RoomList = ({ title, rooms, roomMembers }) => (
-	<div className="mb-3">
-		<h6>{title}</h6>
-		<ul className="list-group list-group-flush">
-			{_.map(roomMembers, roomMember => (
-				<RoomLink room={_.find(rooms, { _id: roomMember.room })} roomMember={roomMember} key={roomMember._id} />
-			))}
-		</ul>
-	</div>
+const RoomList = ({ rooms, roomMembers }) => (
+	<ul className="list-group mb-3">
+		{_.map(roomMembers, roomMember => (
+			<RoomLink room={_.find(rooms, { _id: roomMember.room })} roomMember={roomMember} key={roomMember._id} />
+		))}
+	</ul>
 );
 
 class Lobby extends React.PureComponent {
@@ -46,8 +43,8 @@ class Lobby extends React.PureComponent {
 
 		return (
 			<Container className="container-fluid mt-3">
-				{unreadRoomMembers.length > 0 && <RoomList title="Unread" rooms={rooms} roomMembers={unreadRoomMembers} />}
-				{readRoomMembers.length > 0 && <RoomList title="Rooms" rooms={rooms} roomMembers={readRoomMembers} />}
+				{unreadRoomMembers.length > 0 && <RoomList rooms={rooms} roomMembers={unreadRoomMembers} />}
+				{readRoomMembers.length > 0 && <RoomList rooms={rooms} roomMembers={readRoomMembers} />}
 			</Container>
 		);
 	}

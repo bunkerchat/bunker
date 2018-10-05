@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
+import { totalUnreadMessageCount } from "../../selectors/selectors";
 
 const RoomListItem = styled.li`
 	position: relative;
@@ -17,11 +18,7 @@ const UnreadMessageBadge = styled.span`
 const mapStateToProps = state => ({
 	rooms: state.rooms,
 	localRoomMembersByRoom: state.localRoomMembers.byRoom,
-	totalUnreadMessageCount: _.reduce(
-		state.localRoomMembers.byRoom,
-		(count, roomMember) => count + (roomMember.unreadMessageCount || 0),
-		0
-	)
+	totalUnreadMessageCount: totalUnreadMessageCount(state)
 });
 
 const RoomLink = ({ room, roomMember }) => (

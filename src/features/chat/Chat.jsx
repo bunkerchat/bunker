@@ -6,6 +6,7 @@ import Header from "../header/Header.jsx";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { changeActiveRoom } from "../users/localUserActions";
+import {totalUnreadMessageCount} from "../../selectors/selectors";
 
 const Container = styled.div`
 	display: flex;
@@ -19,7 +20,8 @@ const mapStateToProps = (state, ownProps) => {
 	return {
 		loaded: state.localUser.loaded,
 		section: sectionMatch ? sectionMatch[1] : null,
-		rooms: state.rooms
+		rooms: state.rooms,
+		totalUnreadMessageCount: totalUnreadMessageCount(state)
 	};
 };
 
@@ -34,16 +36,18 @@ class Chat extends React.PureComponent {
 		const activeRoom = _.find(this.props.rooms, { current: true });
 		this.props.changeActiveRoom(activeRoom ? activeRoom._id : null);
 
+		const unread = this.props.totalUnreadMessageCount > 0 ? `(${this.props.totalUnreadMessageCount}) ` : "";
+
 		// Set title
 		switch (this.props.section) {
 			case "settings":
-				document.title = "Settings - Bunker";
+				document.title = `${unread}Settings - Bunker`;
 				break;
 			case "room":
-				document.title = `${activeRoom.name} - Bunker`;
+				document.title = `${unread}${activeRoom.name} - Bunker`;
 				break;
 			default:
-				document.title = "Bunker";
+				document.title = `${unread}Bunker`;
 				break;
 		}
 	}
