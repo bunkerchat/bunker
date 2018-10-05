@@ -33,6 +33,19 @@ class Chat extends React.PureComponent {
 	componentDidUpdate() {
 		const activeRoom = _.find(this.props.rooms, { current: true });
 		this.props.changeActiveRoom(activeRoom ? activeRoom._id : null);
+
+		// Set title
+		switch (this.props.section) {
+			case "settings":
+				document.title = "Settings - Bunker";
+				break;
+			case "room":
+				document.title = `${activeRoom.name} - Bunker`;
+				break;
+			default:
+				document.title = "Bunker";
+				break;
+		}
 	}
 
 	render() {
