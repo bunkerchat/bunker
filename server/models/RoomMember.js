@@ -33,7 +33,10 @@ const roomMemberSchema = new mongoose.Schema({
 	unreadMessageCount: {
 		type: Number,
 		 default: 0
-	}
+	},
+	// Date that unread messages began to accumulate
+	// This allow a sort of lobby rooms by how long ago unread messages accumulated
+	unreadStart: Date
 });
 
 module.exports = mongoose.model('RoomMember', roomMemberSchema, 'roommember');

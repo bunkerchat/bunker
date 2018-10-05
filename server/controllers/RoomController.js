@@ -54,14 +54,20 @@ module.exports.message = function (req, res) {
 					return !user.connected || !user.activeRoom || user.activeRoom.toString() !== roomId.toString()
 				})
 				.each(roomMember => {
+
+					// Set unreadStart to now if this is the first message the user has not read
+					const unreadStart = roomMember.unreadMessageCount > 0 ? roomMember.unreadStart : Date.now();
 					const unreadMessageCount = (roomMember.unreadMessageCount || 0) + 1;
+
+					roomMember.unreadStart = unreadStart;
 					roomMember.unreadMessageCount = unreadMessageCount;
+
 					return roomMember.save()
 						.then(() => {
 							req.io.to(`userself_${roomMember.user._id}`).emit('user_roommember', {
 								_id: roomMember._id,
 								verb: 'updated',
-								data: { unreadMessageCount }
+								data: { unreadStart, unreadMessageCount }
 							});
 						})
 				});

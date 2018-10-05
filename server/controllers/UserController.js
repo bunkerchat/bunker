@@ -4,7 +4,6 @@ const moment = require('moment');
 const Promise = require('bluebird');
 
 const log = require('../config/log');
-const emoticonService = require('./../services/emoticonService');
 const userService = require('../services/userService');
 const versionService = require('../services/versionService');
 const User = require('./../models/User');
@@ -13,14 +12,13 @@ const RoomMember = require('./../models/RoomMember');
 const InboxMessage = require('./../models/InboxMessage');
 const Room = require('./../models/Room');
 const Message = require('./../models/Message');
-const RoomController = require('./RoomController');
 const PinnedMessage = require('./../models/PinnedMessage');
 
 // A connecting client will call this endpoint. It should subscribe them to all relevant data and
 // return all rooms and user data necessary to run the application.
 module.exports.init = (req, res) => {
 
-	var user, userSettings, memberships, inbox, rooms, version;
+	let user, userSettings, memberships, inbox, rooms, version;
 	const userIds = [];
 
 	if (!req.session.userId) return res.ok();
@@ -151,12 +149,13 @@ module.exports.init = (req, res) => {
 module.exports.activity = (req, res) => {
 	const activeRoom = req.body.room;
 	const userId = req.session.userId;
+	
+	if (!activeRoom) {
+		return userActivity(req, { activeRoom: null })
+	}
 
-	if (!activeRoom) return;
-
-	var lastMessageId;
-
-	userActivity(req, { activeRoom })
+	let lastMessageId;
+	return userActivity(req, { activeRoom })
 		.then(user => {
 			return Message.findOne({ room: user.activeRoom }, { _id: 1 }, {
 				sort: { $natural: -1 },
