@@ -3,43 +3,58 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
-import { totalUnreadMessageCount } from "../../selectors/selectors";
+import { anyUnreadMention, totalUnreadMessageCount } from "../../selectors/selectors";
+import theme from "../../constants/theme";
 
 const RoomListItem = styled.li`
 	position: relative;
 `;
 
-const UnreadMessageBadge = styled.span`
+const FloatingRightBadge = styled.div`
 	position: absolute;
 	top: 0px;
 	right: -3px;
 `;
 
+const UnreadMessageBadge = styled.span`
+	&.mention {
+		background-color: ${theme.mentionBackgroundColor};
+		color: ${theme.mentionHeaderForegroundColor};
+	}
+`;
+
 const mapStateToProps = state => ({
 	rooms: state.rooms,
 	localRoomMembersByRoom: state.localRoomMembers.byRoom,
-	totalUnreadMessageCount: totalUnreadMessageCount(state)
+	totalUnreadMessageCount: totalUnreadMessageCount(state),
+	anyUnreadMention: anyUnreadMention(state)
 });
 
 const RoomLink = ({ room, roomMember }) => (
 	<Link className="nav-link" to={`/2/room/${room._id}`}>
 		{room.name}{" "}
 		{roomMember.unreadMessageCount > 0 && (
-			<UnreadMessageBadge className="badge badge-primary">{roomMember.unreadMessageCount}</UnreadMessageBadge>
+			<FloatingRightBadge>
+				<UnreadMessageBadge className={`badge badge-primary ${roomMember.unreadMention ? "mention" : ""}`}>
+					{roomMember.unreadMessageCount}
+				</UnreadMessageBadge>
+			</FloatingRightBadge>
 		)}
 	</Link>
 );
 
 class Header extends React.PureComponent {
 	render() {
-		const { rooms, localRoomMembersByRoom, totalUnreadMessageCount } = this.props;
+		const { rooms, localRoomMembersByRoom, totalUnreadMessageCount, anyUnreadMention } = this.props;
 		return (
 			<div>
 				<nav className="navbar navbar-expand navbar-dark bg-dark">
 					<Link className="navbar-brand" to={`/2/lobby`}>
 						Bunker{" "}
 						{totalUnreadMessageCount > 0 && (
-							<span className="badge badge-primary d-md-none">{totalUnreadMessageCount}</span>
+							<UnreadMessageBadge className={`badge badge-primary d-md-none ${anyUnreadMention ? "mention" : ""}`}>
+								{totalUnreadMessageCount}
+							</UnreadMessageBadge>
 						)}
 					</Link>
 					<ul className="navbar-nav d-none d-md-flex">

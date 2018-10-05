@@ -6,7 +6,7 @@ import Header from "../header/Header.jsx";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { changeActiveRoom } from "../users/localUserActions";
-import {totalUnreadMessageCount} from "../../selectors/selectors";
+import { anyUnreadMention, totalUnreadMessageCount } from "../../selectors/selectors";
 
 const Container = styled.div`
 	display: flex;
@@ -21,7 +21,8 @@ const mapStateToProps = (state, ownProps) => {
 		loaded: state.localUser.loaded,
 		section: sectionMatch ? sectionMatch[1] : null,
 		rooms: state.rooms,
-		totalUnreadMessageCount: totalUnreadMessageCount(state)
+		totalUnreadMessageCount: totalUnreadMessageCount(state),
+		anyUnreadMention: anyUnreadMention(state)
 	};
 };
 
@@ -36,7 +37,10 @@ class Chat extends React.PureComponent {
 		const activeRoom = _.find(this.props.rooms, { current: true });
 		this.props.changeActiveRoom(activeRoom ? activeRoom._id : null);
 
-		const unread = this.props.totalUnreadMessageCount > 0 ? `(${this.props.totalUnreadMessageCount}) ` : "";
+		const unread =
+			this.props.totalUnreadMessageCount > 0
+				? `(${this.props.anyUnreadMention ? "*" : ""}${this.props.totalUnreadMessageCount}) `
+				: "";
 
 		// Set title
 		switch (this.props.section) {

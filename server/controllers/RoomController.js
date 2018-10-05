@@ -58,16 +58,22 @@ module.exports.message = function (req, res) {
 					// Set unreadStart to now if this is the first message the user has not read
 					const unreadStart = roomMember.unreadMessageCount > 0 ? roomMember.unreadStart : Date.now();
 					const unreadMessageCount = (roomMember.unreadMessageCount || 0) + 1;
+					const mentioned = testTextForNick(message.text, roomMember.user.nick);
 
 					roomMember.unreadStart = unreadStart;
 					roomMember.unreadMessageCount = unreadMessageCount;
+
+					// Covering two cases here:
+					// If this is the first unread and it's not a mention, set unreadMention to false (reset it basically)
+					// If this is not the first unread then leave unreadMention true if it already was or set it to true if mentioned
+					roomMember.unreadMention = unreadMessageCount === 1 && !mentioned ? false : roomMember.unreadMention || mentioned;
 
 					return roomMember.save()
 						.then(() => {
 							req.io.to(`userself_${roomMember.user._id}`).emit('user_roommember', {
 								_id: roomMember._id,
 								verb: 'updated',
-								data: { unreadStart, unreadMessageCount }
+								data: { unreadStart, unreadMessageCount, unreadMention: roomMember.unreadMention }
 							});
 						})
 				});
@@ -375,3 +381,7 @@ module.exports.unPinMessage = function (req, res) {
 		.catch(res.serverError);
 };
 
+const testTextForNick = (text, nick) => {
+	const mentionRegex = new RegExp(`${nick}\\b|@[Aa]ll\\b`, "i");
+	return mentionRegex.test(text);
+};

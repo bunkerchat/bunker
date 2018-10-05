@@ -2,10 +2,18 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import theme from "../../constants/theme";
 
 const Container = styled.div`
 	flex: 1;
 	overflow: auto;
+`;
+
+const UnreadMessageBadge = styled.span`
+	&.mention {
+		background-color: ${theme.mentionBackgroundColor};
+		color: ${theme.mentionHeaderForegroundColor};
+	}
 `;
 
 const mapStateToProps = state => ({
@@ -16,7 +24,11 @@ const mapStateToProps = state => ({
 const RoomLink = ({ room, roomMember }) => (
 	<Link className="list-group-item p-3 d-flex justify-content-between align-items-center" to={`/2/room/${room._id}`}>
 		{room.name}
-		{roomMember.unreadMessageCount > 0 && <span className="badge badge-primary">{roomMember.unreadMessageCount}</span>}
+		{roomMember.unreadMessageCount > 0 && (
+			<UnreadMessageBadge className={`badge badge-primary ${roomMember.unreadMention ? "mention" : ""}`}>
+				{roomMember.unreadMessageCount}
+			</UnreadMessageBadge>
+		)}
 	</Link>
 );
 

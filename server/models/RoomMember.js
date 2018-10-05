@@ -34,6 +34,9 @@ const roomMemberSchema = new mongoose.Schema({
 		type: Number,
 		 default: 0
 	},
+	// true/false is one of the unread messages had the user mentioned in it
+	// In this case we'll highlight the count badge
+	unreadMention: Boolean,
 	// Date that unread messages began to accumulate
 	// This allow a sort of lobby rooms by how long ago unread messages accumulated
 	unreadStart: Date

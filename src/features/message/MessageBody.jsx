@@ -9,7 +9,7 @@ const MessageBodyContainer = styled.div`
 	flex: 1;
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
-		${theme.mentionForegroundColor ? `color: ${theme.mentionForegroundColor}` : ""};
+		color: ${theme.mentionForegroundColor};
 	}
 `;
 
