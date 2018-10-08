@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var roomSchema = new mongoose.Schema({
 	name: {
@@ -20,4 +20,4 @@ var roomSchema = new mongoose.Schema({
 	}
 });
 
-module.exports = mongoose.model('Room', roomSchema, 'room');
+module.exports = mongoose.model("Room", roomSchema, "room");

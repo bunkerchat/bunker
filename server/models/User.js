@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var userSchema = new mongoose.Schema({
 	nick: {
@@ -38,11 +38,11 @@ var userSchema = new mongoose.Schema({
 	},
 	settings: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'UserSettings'
+		ref: "UserSettings"
 	},
 	activeRoom: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Room'
+		ref: "Room"
 	},
 	plaintextpassword: {
 		type: String
@@ -52,7 +52,7 @@ var userSchema = new mongoose.Schema({
 	}
 });
 
-userSchema.set('toJSON', {
+userSchema.set("toJSON", {
 	transform: function(doc, ret, options) {
 		delete ret.sockets;
 		delete ret.plaintextpassword;
@@ -61,4 +61,4 @@ userSchema.set('toJSON', {
 	}
 });
 
-module.exports = mongoose.model('User', userSchema, 'user');
+module.exports = mongoose.model("User", userSchema, "user");

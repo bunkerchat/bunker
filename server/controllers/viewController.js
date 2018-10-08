@@ -1,24 +1,21 @@
-var Promise = require('bluebird');
+var Promise = require("bluebird");
 //var fs = Promise.promisifyAll(require('fs'));
-const request = require('request')
-const sharp = require('sharp')
+const request = require("request");
+const sharp = require("sharp");
 
-var config = require('../config/config');
-var UserSettings = require('../models/UserSettings');
-var emoticonService = require('../services/emoticonService');
-var versionService = require('../services/versionService');
+var config = require("../config/config");
+var UserSettings = require("../models/UserSettings");
+var emoticonService = require("../services/emoticonService");
+var versionService = require("../services/versionService");
 
 var viewController = module.exports;
 
-viewController.index = function (req, res) {
+viewController.index = function(req, res) {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
 
-	Promise.join(
-		emoticonService.getEmoticonNamesFromDisk(),
-		UserSettings.findOne({user: userId})
-	)
-		.spread(function (emoticons, settings) {
-			res.render(config.useJavascriptBundle ? 'index-prod' : 'index', {
+	Promise.join(emoticonService.getEmoticonNamesFromDisk(), UserSettings.findOne({ user: userId }))
+		.spread(function(emoticons, settings) {
+			res.render(config.useJavascriptBundle ? "index-prod" : "index", {
 				userId: userId,
 				useJavascriptBundle: config.useJavascriptBundle,
 				emoticons: emoticons,
@@ -32,29 +29,24 @@ viewController.index = function (req, res) {
 viewController.version2 = (req, res) => {
 	const userId = req.session.userId;
 
-	return Promise.join(
-		UserSettings.findOne({user: userId}),
-		emoticonService.getEmoticonNamesFromDisk()
-	)
-		.spread((userSettings, emoticons) => {
-			res.render('v2', {
+	return Promise.join(UserSettings.findOne({ user: userId }), emoticonService.getEmoticonNamesFromDisk()).spread(
+		(userSettings, emoticons) => {
+			res.render("v2", {
 				config,
 				userId,
 				userSettings,
 				emoticons
 			});
-		});
+		}
+	);
 };
 
-viewController.debug = function (req, res) {
+viewController.debug = function(req, res) {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
 
-	Promise.join(
-		emoticonService.getEmoticonNamesFromDisk(),
-		UserSettings.findOne({user: userId})
-	)
-		.spread(function (emoticons, settings) {
-			res.render('index', {
+	Promise.join(emoticonService.getEmoticonNamesFromDisk(), UserSettings.findOne({ user: userId }))
+		.spread(function(emoticons, settings) {
+			res.render("index", {
 				userId: userId,
 				useJavascriptBundle: false,
 				emoticons: emoticons,
@@ -65,34 +57,34 @@ viewController.debug = function (req, res) {
 		.catch(res.serverError);
 };
 
-viewController.login = function (req, res) {
-	res.render('login', {
+viewController.login = function(req, res) {
+	res.render("login", {
 		clientID: config.google.clientID
 	});
 };
 
-viewController.loginBasic = function (req, res) {
-	res.render('LoginBasic');
+viewController.loginBasic = function(req, res) {
+	res.render("LoginBasic");
 };
 
-viewController.logout = function (req, res) {
+viewController.logout = function(req, res) {
 	req.session.destroy();
-	res.redirect('/login');
+	res.redirect("/login");
 };
 
 viewController.image = (req, res) => {
-	if (!req.params.imgurl) return res.ok()
+	if (!req.params.imgurl) return res.ok();
 
 	const resize = sharp()
-	// don't crash server on error
-		.on('error', err => res.ok())
-		.resize(400)
+		// don't crash server on error
+		.on("error", err => res.ok())
+		.resize(400);
 
-	let requestPipe = req.pipe(request(decodeURIComponent(req.params.imgurl)))
+	let requestPipe = req.pipe(request(decodeURIComponent(req.params.imgurl)));
 
 	if (req.query.small) {
-		requestPipe = requestPipe.pipe(resize)
+		requestPipe = requestPipe.pipe(resize);
 	}
 
-	requestPipe.pipe(res)
-}
+	requestPipe.pipe(res);
+};

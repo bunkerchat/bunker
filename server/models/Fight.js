@@ -1,26 +1,26 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var schema = new mongoose.Schema({
 	room: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Room'
+		ref: "Room"
 	},
 	challenger: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	},
 	opponent: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	},
 	winningUser: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	},
 	resultMessage: {
 		type: String,
-		default: ''
+		default: ""
 	}
 });
 
-module.exports = mongoose.model('Fight', schema, 'fight');
+module.exports = mongoose.model("Fight", schema, "fight");

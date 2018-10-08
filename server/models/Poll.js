@@ -1,21 +1,21 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var schema = new mongoose.Schema({
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User',
+		ref: "User"
 	},
 	room: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Room',
+		ref: "Room"
 	},
 	question: {
 		type: String,
-		required: true,
+		required: true
 	},
 	createdAt: {
 		type: Date,
-		default: Date.now,
+		default: Date.now
 	},
 	respondees: {
 		type: Array,
@@ -23,20 +23,20 @@ var schema = new mongoose.Schema({
 	},
 	totalNumVotes: {
 		type: Number,
-		default: 0,
+		default: 0
 	},
 	isOpen: {
 		type: Boolean,
-		default: true,
+		default: true
 	},
 	options: {
 		type: Array,
-		default: [],
+		default: []
 	},
 	optionVotes: {
 		type: Array,
-		default: [],
-	},
+		default: []
+	}
 });
 
-module.exports = mongoose.model('Poll', schema, 'poll');
+module.exports = mongoose.model("Poll", schema, "poll");

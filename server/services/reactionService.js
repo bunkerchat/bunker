@@ -1,9 +1,9 @@
 const reactionService = module.exports;
-const Message = require('../models/Message');
+const Message = require("../models/Message");
 
-reactionService.toggleReaction = function (messageId, userId, emoticonName) {
+reactionService.toggleReaction = function(messageId, userId, emoticonName) {
 	return Message.findById(messageId)
-		.populate('reactions')
+		.populate("reactions")
 		.then(message => {
 			message.reactions = message.reactions || [];
 
@@ -13,8 +13,7 @@ reactionService.toggleReaction = function (messageId, userId, emoticonName) {
 
 			if (existing.length > 0) {
 				message.reactions = _.difference(message.reactions, existing);
-			}
-			else {
+			} else {
 				message.reactions.push({
 					author: userId,
 					emoticonName

@@ -1,23 +1,22 @@
-'use strict';
+"use strict";
 
-const moment = require('moment');
-const Promise = require('bluebird');
+const moment = require("moment");
+const Promise = require("bluebird");
 
-const log = require('../config/log');
-const userService = require('../services/userService');
-const versionService = require('../services/versionService');
-const User = require('./../models/User');
-const UserSettings = require('./../models/UserSettings');
-const RoomMember = require('./../models/RoomMember');
-const InboxMessage = require('./../models/InboxMessage');
-const Room = require('./../models/Room');
-const Message = require('./../models/Message');
-const PinnedMessage = require('./../models/PinnedMessage');
+const log = require("../config/log");
+const userService = require("../services/userService");
+const versionService = require("../services/versionService");
+const User = require("./../models/User");
+const UserSettings = require("./../models/UserSettings");
+const RoomMember = require("./../models/RoomMember");
+const InboxMessage = require("./../models/InboxMessage");
+const Room = require("./../models/Room");
+const Message = require("./../models/Message");
+const PinnedMessage = require("./../models/PinnedMessage");
 
 // A connecting client will call this endpoint. It should subscribe them to all relevant data and
 // return all rooms and user data necessary to run the application.
 module.exports.init = (req, res) => {
-
 	let user, userSettings, memberships, inbox, rooms, version;
 	const userIds = [];
 
@@ -27,51 +26,70 @@ module.exports.init = (req, res) => {
 	const socket = req.socket;
 
 	// allows sending async messages back to connected client from server
-	socket.join('userself_' + userId);
+	socket.join("userself_" + userId);
 
 	// find user sockets
-	User.findById(userId, { sockets: 1 }).then(user => {
+	User.findById(userId, { sockets: 1 })
+		.then(user => {
+			const sockets = user.sockets || [];
+			_.remove(sockets, { socketId: req.socket.id });
+			sockets.push({ socketId: req.socket.id, updatedAt: new Date() });
 
-		const sockets = user.sockets || [];
-		_.remove(sockets, { socketId: req.socket.id });
-		sockets.push({ socketId: req.socket.id, updatedAt: new Date() });
-
-		return User.findByIdAndUpdate(userId, {
-			sockets: sockets,
-			connected: true,
-			present: _.isBoolean(req.body.present) ? req.body.present : true,
-			lastConnected: new Date().toISOString(),
-			typingIn: null
-		}, { 'new': true });
-	})
+			return User.findByIdAndUpdate(
+				userId,
+				{
+					sockets: sockets,
+					connected: true,
+					present: _.isBoolean(req.body.present) ? req.body.present : true,
+					lastConnected: new Date().toISOString(),
+					typingIn: null
+				},
+				{ new: true }
+			);
+		})
 		.then(updatedUser => {
-			req.io.to('user_' + updatedUser._id).emit('user', {
+			req.io.to("user_" + updatedUser._id).emit("user", {
 				_id: updatedUser._id,
-				verb: 'updated',
+				verb: "updated",
 				data: updatedUser
 			});
 
 			return Promise.join(
 				User.findById(userId).lean(),
 				UserSettings.findOne({ user: userId }).lean(),
-				RoomMember.find({ user: userId }).sort('roomOrder').populate('room').lean(),
-				InboxMessage.find({ user: req.session.userId }).sort('-createdAt').limit(20).populate('message').lean(),
+				RoomMember.find({ user: userId })
+					.sort("roomOrder")
+					.populate("room")
+					.lean(),
+				InboxMessage.find({ user: req.session.userId })
+					.sort("-createdAt")
+					.limit(20)
+					.populate("message")
+					.lean(),
 				versionService.version()
 			);
 		})
 		.spread((_user, _userSettings, _memberships, _inboxMessages, _version) => {
-
 			user = _user;
 			userSettings = _userSettings;
 			memberships = _memberships;
 			inbox = _inboxMessages;
 			version = _version;
 
-			const rooms = _(memberships).map('room').compact().value();
+			const rooms = _(memberships)
+				.map("room")
+				.compact()
+				.value();
 
 			// build up a list of userids to fetch from the database
-			userIds.pushAll(_(inbox).map('message').map('author').uniq().value());
-			userIds.pushAll(_.map(memberships, 'user'));
+			userIds.pushAll(
+				_(inbox)
+					.map("message")
+					.map("author")
+					.uniq()
+					.value()
+			);
+			userIds.pushAll(_.map(memberships, "user"));
 
 			// de-associate a room from a membership since we set rooms above
 			// and fix bad room order data
@@ -83,40 +101,45 @@ module.exports.init = (req, res) => {
 				});
 
 			// Setup subscriptions
-			socket.join('user_' + userId);
-			socket.join('inboxmessage_' + userId);
+			socket.join("user_" + userId);
+			socket.join("inboxmessage_" + userId);
 
-			_.each(memberships, membership => socket.join('roommember_' + membership._id));
+			_.each(memberships, membership => socket.join("roommember_" + membership._id));
 			_.each(rooms, room => {
-				socket.join('room_' + room._id);
-				socket.join('pinnedMessage_' + room._id);
+				socket.join("room_" + room._id);
+				socket.join("pinnedMessage_" + room._id);
 			});
 
 			return Promise.map(rooms, room => {
 				return Promise.join(
-					Message.find({ room: room._id }).sort('-createdAt').limit(40).populate('reactions').lean(),
+					Message.find({ room: room._id })
+						.sort("-createdAt")
+						.limit(40)
+						.populate("reactions")
+						.lean(),
 					RoomMember.find({ room: room._id }).lean(),
-					PinnedMessage.find({ room: room._id }).sort('-createdAt').populate('message')
-				)
-					.spread((messages, members, pinnedMessages) => {
-						userIds.pushAll(_.map(messages, 'author'), _.map(members, 'user'));
+					PinnedMessage.find({ room: room._id })
+						.sort("-createdAt")
+						.populate("message")
+				).spread((messages, members, pinnedMessages) => {
+					userIds.pushAll(_.map(messages, "author"), _.map(members, "user"));
 
-						// Setup subscriptions
-						_.each(members, member => socket.join('roommember_' + member._id));
-						_.each(_.map(members, 'user'), user => socket.join('user_' + user));
+					// Setup subscriptions
+					_.each(members, member => socket.join("roommember_" + member._id));
+					_.each(_.map(members, "user"), user => socket.join("user_" + user));
 
-						room.$messages = messages;
-						room.$pinnedMessages = [];
-						room.$members = members;
+					room.$messages = messages;
+					room.$pinnedMessages = [];
+					room.$members = members;
 
-						const uniquePinnedMessages = _.uniq(pinnedMessages, 'message.id');
+					const uniquePinnedMessages = _.uniq(pinnedMessages, "message.id");
 
-						_.each(uniquePinnedMessages, message => {
-							room.$pinnedMessages.push(message);
-						});
-
-						return room;
+					_.each(uniquePinnedMessages, message => {
+						room.$pinnedMessages.push(message);
 					});
+
+					return room;
+				});
 			});
 		})
 		.then(_rooms => {
@@ -124,15 +147,17 @@ module.exports.init = (req, res) => {
 			// Populate authors
 			//const userIdStrings = _(userIds).filter().map(userId=> userId.toString()).unique().value();
 			return Promise.join(
-				User.find(userIds).select('-plaintextpassword -sockets').lean(),
-				Room.find({ _id: { $nin: _.map(memberships, 'room') }, isPrivate: false }).lean()
+				User.find(userIds)
+					.select("-plaintextpassword -sockets")
+					.lean(),
+				Room.find({ _id: { $nin: _.map(memberships, "room") }, isPrivate: false })
+					.lean()
 					.then(rooms => {
 						return Promise.map(rooms, room => {
-							return RoomMember.count({ room: room._id })
-								.then(memberCount => {
-									room.$memberCount = memberCount;
-									return room;
-								});
+							return RoomMember.count({ room: room._id }).then(memberCount => {
+								room.$memberCount = memberCount;
+								return room;
+							});
 						});
 					})
 			);
@@ -141,8 +166,8 @@ module.exports.init = (req, res) => {
 		// compose all the data into an object matching the original consts and return them to the client
 		.spread((users, publicRooms) => {
 			// don't return users who have not connected in the last 45 days
-			users = _.filter(users, user => moment().diff(user.lastConnected, 'days') < 45);
-			res.ok({ user, userSettings, memberships, publicRooms, inbox, rooms, version, users })
+			users = _.filter(users, user => moment().diff(user.lastConnected, "days") < 45);
+			res.ok({ user, userSettings, memberships, publicRooms, inbox, rooms, version, users });
 		})
 		.catch(res.serverError);
 };
@@ -152,15 +177,19 @@ module.exports.activity = (req, res) => {
 	const userId = req.session.userId;
 
 	if (!activeRoom) {
-		return userActivity(req, { activeRoom: null })
+		return userActivity(req, { activeRoom: null });
 	}
 
 	return userActivity(req, { activeRoom })
 		.then(user => {
-			return Message.findOne({ room: user.activeRoom }, { _id: 1 }, {
-				sort: { $natural: -1 },
-				limit: 1
-			}).lean()
+			return Message.findOne(
+				{ room: user.activeRoom },
+				{ _id: 1 },
+				{
+					sort: { $natural: -1 },
+					limit: 1
+				}
+			).lean();
 		})
 		.then(lastMessage => {
 			const update = { lastReadMessage: (lastMessage || {})._id, unreadMessageCount: 0 };
@@ -172,7 +201,7 @@ module.exports.activity = (req, res) => {
 module.exports.typing = (req, res) => {
 	userActivity(req, { typingIn: req.body.typingIn })
 		.then(() => res.ok())
-		.catch(res.serverError)
+		.catch(res.serverError);
 };
 
 module.exports.present = (req, res) => {
@@ -183,38 +212,38 @@ module.exports.present = (req, res) => {
 					const update = { unreadMessageCount: 0 };
 					return updateRoomMember(req, user._id, user.activeRoom, update);
 				}
-			})
-				.then(() => user)
+			}).then(() => user);
 		})
 		.then(res.ok)
-		.catch(res.serverError)
+		.catch(res.serverError);
 };
 
 function userActivity(req, update) {
 	const userId = req.session.userId;
 
-	return User.findByIdAndUpdate(userId, update, {new: true})
-		.then((user) => {
-			// todo
-			req.io.to(`user_${userId}`).emit('user', { _id: userId, verb: 'updated', data: update });
-			return user;
-		});
+	return User.findByIdAndUpdate(userId, update, { new: true }).then(user => {
+		// todo
+		req.io.to(`user_${userId}`).emit("user", { _id: userId, verb: "updated", data: update });
+		return user;
+	});
 }
 
 function updateRoomMember(req, userId, activeRoom, update) {
-	return RoomMember.findOneAndUpdate({
-			user: userId, room: activeRoom
+	return RoomMember.findOneAndUpdate(
+		{
+			user: userId,
+			room: activeRoom
 		},
 		update,
-		{ new: true })
-		.then(roomMember => {
-			if (!roomMember) return;
-			req.io.to(`userself_${userId}`).emit('user_roommember', {
-				_id: roomMember._id,
-				verb: 'updated',
-				data: { lastReadMessage: roomMember.lastReadMessage, unreadMessageCount: roomMember.unreadMessageCount }
-			});
+		{ new: true }
+	).then(roomMember => {
+		if (!roomMember) return;
+		req.io.to(`userself_${userId}`).emit("user_roommember", {
+			_id: roomMember._id,
+			verb: "updated",
+			data: { lastReadMessage: roomMember.lastReadMessage, unreadMessageCount: roomMember.unreadMessageCount }
 		});
+	});
 }
 
 module.exports.markInboxRead = (req, res) => {
@@ -235,22 +264,17 @@ module.exports.ping = (req, res) => {
 			const userId = req.session.userId.toObjectId();
 
 			// remove currently connected socket from array
-			return User.findByIdAndUpdate(userId,
-				{
-					$pull: {
-						sockets: { socketId: req.socket.id }
-					}
+			return User.findByIdAndUpdate(userId, {
+				$pull: {
+					sockets: { socketId: req.socket.id }
 				}
-			)
-				.then(() => {
-					return User.findByIdAndUpdate(userId,
-						{
-							$push: {
-								sockets: { socketId: req.socket.id, updatedAt: new Date() }
-							}
-						}
-					)
-				})
+			}).then(() => {
+				return User.findByIdAndUpdate(userId, {
+					$push: {
+						sockets: { socketId: req.socket.id, updatedAt: new Date() }
+					}
+				});
+			});
 		}
 	})
 		.then(() => res.ok())
@@ -258,8 +282,10 @@ module.exports.ping = (req, res) => {
 };
 
 // clear inactive users from list
-setInterval(function () {
-	const expiredSocketDate = moment().subtract(30, 'seconds').toDate();
+setInterval(function() {
+	const expiredSocketDate = moment()
+		.subtract(30, "seconds")
+		.toDate();
 
 	User.find({
 		connected: true,
@@ -267,7 +293,7 @@ setInterval(function () {
 			{
 				sockets: {
 					$elemMatch: {
-						updatedAt: { "$lte": expiredSocketDate }
+						updatedAt: { $lte: expiredSocketDate }
 					}
 				}
 			},
@@ -280,11 +306,11 @@ setInterval(function () {
 			return Promise.each(users, user => {
 				const sockets = _(user.sockets)
 					.filter(socket => moment(socket.updatedAt).isBefore(expiredSocketDate))
-					.map('socketId')
+					.map("socketId")
 					.value();
 
 				return userService.disconnectUser(user, sockets);
 			});
 		})
-		.catch(log.error)
+		.catch(log.error);
 }, 10000);

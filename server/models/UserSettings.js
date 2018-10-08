@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var userSettingsSchema = new mongoose.Schema({
 	showImages: {
@@ -30,10 +30,10 @@ var userSettingsSchema = new mongoose.Schema({
 		default: false
 	},
 	playSoundOnMention: {
-		type:Boolean,
-		default:false
+		type: Boolean,
+		default: false
 	},
-	desktopMentionNotifications:{
+	desktopMentionNotifications: {
 		type: Boolean,
 		default: false
 	},
@@ -44,8 +44,8 @@ var userSettingsSchema = new mongoose.Schema({
 	theme: String,
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	}
 });
 
-module.exports = mongoose.model('UserSettings', userSettingsSchema, 'usersettings');
+module.exports = mongoose.model("UserSettings", userSettingsSchema, "usersettings");

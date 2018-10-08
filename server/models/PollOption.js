@@ -1,23 +1,23 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var schema = new mongoose.Schema({
 	poll: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Poll',
+		ref: "Poll"
 	},
 	optionString: {
 		type: String,
-		required: true,
+		required: true
 	},
 	optionNumber: {
 		type: Number,
-		default: 0,
+		default: 0
 	},
 	numberOfVotes: {
 		type: Number,
 		required: true,
-		default: 0,
-	},
+		default: 0
+	}
 });
 
-module.exports = mongoose.model('PollOption', schema, 'polloption');
+module.exports = mongoose.model("PollOption", schema, "polloption");

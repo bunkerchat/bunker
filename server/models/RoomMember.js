@@ -1,26 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const roomMemberSchema = new mongoose.Schema({
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	},
 	room: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Room',
+		ref: "Room",
 		index: true
 	},
 	role: {
 		type: String,
-		enum: ['member', 'moderator', 'administrator'],
-		default: 'member'
+		enum: ["member", "moderator", "administrator"],
+		default: "member"
 	},
 	roomOrder: {
 		type: Number
 	},
 	lastReadMessage: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Message'
+		ref: "Message"
 	},
 	playSoundOnMessage: {
 		type: Boolean,
@@ -32,7 +32,7 @@ const roomMemberSchema = new mongoose.Schema({
 	},
 	unreadMessageCount: {
 		type: Number,
-		 default: 0
+		default: 0
 	},
 	// true/false is one of the unread messages had the user mentioned in it
 	// In this case we'll highlight the count badge
@@ -42,4 +42,4 @@ const roomMemberSchema = new mongoose.Schema({
 	unreadStart: Date
 });
 
-module.exports = mongoose.model('RoomMember', roomMemberSchema, 'roommember');
+module.exports = mongoose.model("RoomMember", roomMemberSchema, "roommember");
