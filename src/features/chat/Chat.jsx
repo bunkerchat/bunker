@@ -52,7 +52,7 @@ class Chat extends React.PureComponent {
 
 		const unread =
 			this.props.totalUnreadMessageCount > 0
-				? `(${this.props.anyUnreadMention ? "*" : ""}${this.props.totalUnreadMessageCount}) `
+				? `${this.props.anyUnreadMention ? "*" : ""}(${this.props.totalUnreadMessageCount}) `
 				: "";
 
 		// Set title
