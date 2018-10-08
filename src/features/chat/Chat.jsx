@@ -6,7 +6,7 @@ import Header from "../header/Header.jsx";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { changeActiveRoom, changePresent } from "../users/localUserActions";
-import { anyUnreadMention, totalUnreadMessageCount } from "../../selectors/selectors";
+import { hasAnyUnreadMention, getActiveRoom, getTotalUnreadMessageCount } from "../../selectors/selectors";
 
 const Container = styled.div`
 	display: flex;
@@ -21,9 +21,9 @@ const mapStateToProps = (state, ownProps) => {
 		loaded: state.localUser.loaded,
 		section: sectionMatch ? sectionMatch[1] : null,
 		rooms: state.rooms,
-		activeRoom: _.find(state.rooms, { current: true }),
-		totalUnreadMessageCount: totalUnreadMessageCount(state),
-		anyUnreadMention: anyUnreadMention(state)
+		activeRoom: getActiveRoom(state),
+		totalUnreadMessageCount: getTotalUnreadMessageCount(state),
+		anyUnreadMention: hasAnyUnreadMention(state)
 	};
 };
 

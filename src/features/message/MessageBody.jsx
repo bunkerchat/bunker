@@ -4,6 +4,7 @@ import MessageText from "./MessageText.jsx";
 import connect from "react-redux/es/connect/connect";
 import theme from "../../constants/theme";
 import MessageTimeAgo from "./MessageTimeAgo.jsx";
+import { getMessageAuthor } from "../../selectors/selectors";
 
 const MessageBodyContainer = styled.div`
 	flex: 1;
@@ -17,8 +18,8 @@ const MessageTime = styled.div`
 	width: 120px;
 `;
 
-const mapStateToProps = (state, ownProps) => ({
-	nick: state.users[ownProps.message.author].nick,
+const mapStateToProps = (state, props) => ({
+	nick: getMessageAuthor(state, props).nick,
 	localNick: state.localUser.nick
 });
 

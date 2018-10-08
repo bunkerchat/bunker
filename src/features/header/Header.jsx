@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
-import { anyUnreadMention, totalUnreadMessageCount } from "../../selectors/selectors";
+import { hasAnyUnreadMention, getTotalUnreadMessageCount } from "../../selectors/selectors";
 import theme from "../../constants/theme";
 
 const RoomListItem = styled.li`
@@ -26,8 +26,8 @@ const UnreadMessageBadge = styled.span`
 const mapStateToProps = state => ({
 	rooms: state.rooms,
 	localRoomMembersByRoom: state.localRoomMembers.byRoom,
-	totalUnreadMessageCount: totalUnreadMessageCount(state),
-	anyUnreadMention: anyUnreadMention(state)
+	totalUnreadMessageCount: getTotalUnreadMessageCount(state),
+	anyUnreadMention: hasAnyUnreadMention(state)
 });
 
 const RoomLink = ({ room, roomMember }) => (
