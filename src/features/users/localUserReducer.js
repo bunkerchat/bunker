@@ -7,6 +7,10 @@ const handlers = {
 	"localUser/activeRoom": (state, action) => ({
 		...state,
 		activeRoom: action.roomId
+	}),
+	"localUser/present": (state, action) => ({
+		...state,
+		present: action.present
 	})
 };
 

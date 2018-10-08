@@ -5,7 +5,7 @@ import Settings from "../settings/Settings.jsx";
 import Header from "../header/Header.jsx";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { changeActiveRoom } from "../users/localUserActions";
+import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import { anyUnreadMention, totalUnreadMessageCount } from "../../selectors/selectors";
 
 const Container = styled.div`
@@ -29,13 +29,25 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => ({
 	changeActiveRoom: roomId => {
 		dispatch(changeActiveRoom(roomId));
+	},
+	changePresent: present => {
+		dispatch(changePresent(present));
 	}
 });
 
 class Chat extends React.PureComponent {
-	componentDidUpdate() {
-		const activeRoom = _.find(this.props.rooms, { current: true });
-		this.props.changeActiveRoom(activeRoom ? activeRoom._id : null);
+	componentDidMount() {
+		window.document.addEventListener("visibilitychange", () => {
+			this.props.changePresent(document.visibilityState === "visible");
+		});
+	}
+
+	componentDidUpdate(prevProps) {
+		const previousActiveRoom = _.find(prevProps.rooms, { current: true }) || { _id: "prevlobby" };
+		const activeRoom = _.find(this.props.rooms, { current: true }) || { _id: "currlobby" };
+		if (previousActiveRoom._id !== activeRoom._id) {
+			this.props.changeActiveRoom(activeRoom ? activeRoom._id : null);
+		}
 
 		const unread =
 			this.props.totalUnreadMessageCount > 0

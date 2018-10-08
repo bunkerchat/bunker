@@ -149,12 +149,11 @@ module.exports.init = (req, res) => {
 module.exports.activity = (req, res) => {
 	const activeRoom = req.body.room;
 	const userId = req.session.userId;
-	
+
 	if (!activeRoom) {
 		return userActivity(req, { activeRoom: null })
 	}
 
-	let lastMessageId;
 	return userActivity(req, { activeRoom })
 		.then(user => {
 			return Message.findOne({ room: user.activeRoom }, { _id: 1 }, {
@@ -163,19 +162,8 @@ module.exports.activity = (req, res) => {
 			}).lean()
 		})
 		.then(lastMessage => {
-			lastMessageId = (lastMessage || {})._id;
-
-			return RoomMember.findOneAndUpdate(
-				{ user: userId, room: activeRoom },
-				{ lastReadMessage: lastMessageId, unreadMessageCount: 0 });
-		})
-		.then(roomMember => {
-			if (!roomMember) return;
-			req.io.to(`userself_${userId}`).emit('user_roommember', {
-				_id: roomMember._id,
-				verb: 'updated',
-				data: { lastReadMessage: lastMessageId, unreadMessageCount: 0 }
-			});
+			const update = { lastReadMessage: (lastMessage || {})._id, unreadMessageCount: 0 };
+			return updateRoomMember(req, userId, activeRoom, update);
 		})
 		.catch(log.error);
 };
@@ -188,18 +176,43 @@ module.exports.typing = (req, res) => {
 
 module.exports.present = (req, res) => {
 	userActivity(req, { present: req.body.present })
+		.then(user => {
+			return Promise.try(() => {
+				if (user.present && user.activeRoom) {
+					const update = { unreadMessageCount: 0 };
+					return updateRoomMember(req, user._id, user.activeRoom, update);
+				}
+			})
+				.then(() => user)
+		})
 		.then(res.ok)
 		.catch(res.serverError)
 };
 
-function userActivity(req, updates) {
+function userActivity(req, update) {
 	const userId = req.session.userId;
 
-	return User.findByIdAndUpdate(userId, updates)
+	return User.findByIdAndUpdate(userId, update, {new: true})
 		.then((user) => {
 			// todo
-			req.io.to(`user_${userId}`).emit('user', { _id: userId, verb: 'updated', data: updates });
+			req.io.to(`user_${userId}`).emit('user', { _id: userId, verb: 'updated', data: update });
 			return user;
+		});
+}
+
+function updateRoomMember(req, userId, activeRoom, update) {
+	return RoomMember.findOneAndUpdate({
+			user: userId, room: activeRoom
+		},
+		update,
+		{ new: true })
+		.then(roomMember => {
+			if (!roomMember) return;
+			req.io.to(`userself_${userId}`).emit('user_roommember', {
+				_id: roomMember._id,
+				verb: 'updated',
+				data: { lastReadMessage: roomMember.lastReadMessage, unreadMessageCount: roomMember.unreadMessageCount }
+			});
 		});
 }
 

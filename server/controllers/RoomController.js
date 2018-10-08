@@ -51,7 +51,7 @@ module.exports.message = function (req, res) {
 			_(roomMembers)
 				.filter(roomMember => {
 					const user = roomMember.user;
-					return !user.connected || !user.activeRoom || user.activeRoom.toString() !== roomId.toString()
+					return !user.connected || !user.present || !user.activeRoom || user.activeRoom.toString() !== roomId.toString()
 				})
 				.each(roomMember => {
 
