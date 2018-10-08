@@ -39,6 +39,7 @@ module.exports.init = (req, res) => {
 		return User.findByIdAndUpdate(userId, {
 			sockets: sockets,
 			connected: true,
+			present: true,
 			lastConnected: new Date().toISOString(),
 			typingIn: null
 		}, { 'new': true });

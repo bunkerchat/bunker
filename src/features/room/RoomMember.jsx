@@ -2,6 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import Gravatar from "react-gravatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import UserStatus from "../users/UserStatus.jsx";
+
+const Container = styled.div`
+	display: flex;
+`;
 
 const IconContainer = styled.div`
 	display: inline-block;
@@ -11,20 +16,28 @@ const IconContainer = styled.div`
 	vertical-align: middle;
 `;
 
+const UserContainer = styled.div`
+	flex: 1;
+	display: flex;
+`;
+
 export default class RoomMember extends React.PureComponent {
 	render() {
 		const { roomId, user } = this.props;
 		return (
-			<div>
+			<Container>
 				{user.connected && user.typingIn === roomId ? (
 					<IconContainer>
-						<FontAwesomeIcon icon="ellipsis-h" />
+						<FontAwesomeIcon icon="ellipsis-h"/>
 					</IconContainer>
 				) : (
-					<Gravatar email={user.email} size={25} rating="pg" default="monsterid" />
+					<UserContainer>
+						<UserStatus user={user}/>
+						<Gravatar email={user.email} size={25} rating="pg" default="monsterid"/>
+					</UserContainer>
 				)}
-				<span className="ml-2">{user.nick}</span>
-			</div>
+				<div className="ml-2">{user.nick}</div>
+			</Container>
 		);
 	}
 }

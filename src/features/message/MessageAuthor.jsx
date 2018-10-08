@@ -4,6 +4,7 @@ import styled from "styled-components";
 import theme from "../../constants/theme";
 import userId from "../../constants/userId";
 import { connect } from "react-redux";
+import UserStatus from "../users/UserStatus.jsx";
 
 const AuthorContainer = styled.div`
 	flex: 0 0 30px;
@@ -29,21 +30,19 @@ const AuthorNick = styled.div`
 	white-space: nowrap;
 `;
 
-const mapStateToProps = (state, ownProps) => _.pick(state.users[ownProps.authorId], "nick", "email");
+const mapStateToProps = (state, ownProps) => ({
+	user: state.users[ownProps.authorId]
+});
 
-class MessageAuthor extends React.Component {
-	shouldComponentUpdate() {
-		// As of right now message author just remains static, could change but watch for perf problems
-		return false;
-	}
-
+class MessageAuthor extends React.PureComponent {
 	render() {
-		const { nick, email } = this.props;
+		const { nick, email } = this.props.user;
 		const isLocalAuthor = this.props.authorId === userId;
 		return (
 			<AuthorContainer className={`pl-1 ${isLocalAuthor ? "local" : ""}`}>
 				{this.props.firstInSeries && (
 					<div className="d-flex">
+						<UserStatus user={this.props.user}/>
 						<Gravatar email={email} size={25} rating="pg" default="monsterid" />
 						<AuthorNick className="d-none d-md-inline-block ml-2">{nick}</AuthorNick>
 					</div>
