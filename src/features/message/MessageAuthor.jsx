@@ -1,10 +1,9 @@
-import Gravatar from "react-gravatar";
 import React from "react";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 import userId from "../../constants/userId";
 import { connect } from "react-redux";
-import UserStatus from "../users/UserStatus.jsx";
+import UserImage from "../users/UserImage.jsx";
 
 const AuthorContainer = styled.div`
 	flex: 0 0 30px;
@@ -36,15 +35,14 @@ const mapStateToProps = (state, ownProps) => ({
 
 class MessageAuthor extends React.PureComponent {
 	render() {
-		const { nick, email } = this.props.user;
+		const { user } = this.props;
 		const isLocalAuthor = this.props.authorId === userId;
 		return (
 			<AuthorContainer className={`pl-1 ${isLocalAuthor ? "local" : ""}`}>
 				{this.props.firstInSeries && (
 					<div className="d-flex">
-						<UserStatus user={this.props.user}/>
-						<Gravatar email={email} size={25} rating="pg" default="monsterid" />
-						<AuthorNick className="d-none d-md-inline-block ml-2">{nick}</AuthorNick>
+						<UserImage user={user} />
+						<AuthorNick className="d-none d-md-inline-block ml-2">{user.nick}</AuthorNick>
 					</div>
 				)}
 			</AuthorContainer>
