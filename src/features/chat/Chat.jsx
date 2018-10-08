@@ -21,6 +21,7 @@ const mapStateToProps = (state, ownProps) => {
 		loaded: state.localUser.loaded,
 		section: sectionMatch ? sectionMatch[1] : null,
 		rooms: state.rooms,
+		activeRoom: _.find(state.rooms, { current: true }),
 		totalUnreadMessageCount: totalUnreadMessageCount(state),
 		anyUnreadMention: anyUnreadMention(state)
 	};
@@ -43,8 +44,8 @@ class Chat extends React.PureComponent {
 	}
 
 	componentDidUpdate(prevProps) {
-		const previousActiveRoom = _.find(prevProps.rooms, { current: true }) || { _id: "prevlobby" };
-		const activeRoom = _.find(this.props.rooms, { current: true }) || { _id: "currlobby" };
+		const previousActiveRoom = prevProps.activeRoom || { _id: "prevlobby" };
+		const activeRoom = this.props.activeRoom || { _id: "currlobby" };
 		if (previousActiveRoom._id !== activeRoom._id) {
 			this.props.changeActiveRoom(activeRoom ? activeRoom._id : null);
 		}
