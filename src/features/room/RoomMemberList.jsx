@@ -3,6 +3,7 @@ import connect from "react-redux/es/connect/connect";
 import theme from "../../constants/theme";
 import styled from "styled-components";
 import RoomMemberListItem from "./RoomMemberListItem.jsx";
+import { makeGetRoomMemberUsers } from "../../selectors/selectors";
 
 const MemberListContainer = styled.div`
 	flex: 0 0 ${theme.memberList}px;
@@ -11,15 +12,14 @@ const MemberListContainer = styled.div`
 	overflow-y: auto;
 `;
 
-const mapStateToProps = (state, ownProps) => ({
-	roomMemberUsers: _(state.rooms[ownProps.roomId].$members)
-		.map(roomMember => {
-			const user = state.users[roomMember.user];
-			return user ? { roomMember, user } : null;
-		})
-		.remove()
-		.value()
-});
+const makeMapStateToProps = () => {
+	const getRoomMemberUsers = makeGetRoomMemberUsers();
+	return (state, props) => {
+		return {
+			roomMemberUsers: getRoomMemberUsers(state, props)
+		};
+	};
+};
 
 class RoomMemberList extends React.PureComponent {
 	render() {
@@ -50,4 +50,4 @@ class RoomMemberList extends React.PureComponent {
 	}
 }
 
-export default connect(mapStateToProps)(RoomMemberList);
+export default connect(makeMapStateToProps)(RoomMemberList);

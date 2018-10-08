@@ -9,7 +9,7 @@ const Container = styled.div`
 
 const IconContainer = styled.div`
 	display: inline-block;
-	width: 25px;
+	width: 28px;
 	height: 25px;
 	text-align: center;
 	vertical-align: middle;
