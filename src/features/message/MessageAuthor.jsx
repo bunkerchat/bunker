@@ -34,7 +34,13 @@ const mapStateToProps = (state, props) => ({
 	user: getAuthorUser(state, props)
 });
 
-class MessageAuthor extends React.PureComponent {
+class MessageAuthor extends React.Component {
+
+	shouldComponentUpdate(prevProps) {
+		const {user} = this.props;
+		return user.connected !== prevProps.user.connected || user.present !== prevProps.user.present;
+	}
+
 	render() {
 		const { user } = this.props;
 		const isLocalAuthor = this.props.authorId === userId;
