@@ -42,7 +42,7 @@ class MessageBody extends React.Component {
 							<h6>{nick}</h6>
 						</div>
 						<div className="col text-right">
-							<small>
+							<small className="text-muted">
 								<MessageTimeAgo date={message.createdAt} />
 							</small>
 						</div>
@@ -55,7 +55,7 @@ class MessageBody extends React.Component {
 					</div>
 					{firstInSeries && (
 						<MessageTime className="d-none d-md-block text-right">
-							<small>
+							<small className="text-muted">
 								<MessageTimeAgo date={message.createdAt} />
 							</small>
 						</MessageTime>

@@ -47,7 +47,7 @@ class Chat extends React.PureComponent {
 		const previousActiveRoom = prevProps.activeRoom || { _id: "prevlobby" };
 		const activeRoom = this.props.activeRoom || { _id: "currlobby" };
 		if (previousActiveRoom._id !== activeRoom._id) {
-			this.props.changeActiveRoom(activeRoom ? activeRoom._id : null);
+			this.props.changeActiveRoom(activeRoom._id || null);
 		}
 
 		const unread =
