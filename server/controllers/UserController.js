@@ -39,7 +39,7 @@ module.exports.init = (req, res) => {
 		return User.findByIdAndUpdate(userId, {
 			sockets: sockets,
 			connected: true,
-			present: true,
+			present: _.isBoolean(req.body.present) ? req.body.present : true,
 			lastConnected: new Date().toISOString(),
 			typingIn: null
 		}, { 'new': true });

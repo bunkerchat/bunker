@@ -4,9 +4,9 @@ export function initialDataReceived(data) {
 	return { type: "init/received", data };
 }
 
-export function chatActions() {
+export function init() {
 	return dispatch => {
-		return emit("/init").then(data => {
+		return emit("/init", { present: window.document.visibilityState === "visible" }).then(data => {
 			dispatch(initialDataReceived(data));
 		});
 	};

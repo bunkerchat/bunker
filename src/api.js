@@ -9,7 +9,7 @@ import {
 	successResponse
 } from "./features/socket/socketActions";
 import { messageUpdated, messageReceived } from "./features/room/roomActions";
-import { chatActions } from "./features/chat/chatActions";
+import { init } from "./features/chat/chatActions";
 import { userUpdated } from "./features/users/userActions";
 import { ping } from "./features/users/localUserActions";
 import { localRoomMemberUpdated } from "./features/users/localRoomMembersActions";
@@ -18,7 +18,7 @@ const socket = io(window.url);
 
 socket.on("connect", () => {
 	dispatch(connected());
-	dispatch(chatActions());
+	dispatch(init());
 });
 socket.on("reconnect", () => {
 	dispatch(reconnected());
