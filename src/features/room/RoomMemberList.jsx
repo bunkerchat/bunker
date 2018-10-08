@@ -24,20 +24,19 @@ const mapStateToProps = (state, ownProps) => ({
 class RoomMemberList extends React.PureComponent {
 	render() {
 		const { roomId, roomMemberUsers } = this.props;
-		const online = _.filter(roomMemberUsers, roomMemberUser => roomMemberUser.user.connected);
-		const offline = _.filter(roomMemberUsers, roomMemberUser => !roomMemberUser.user.connected);
+		const sortedRoomMemberUsers = _.orderBy(
+			roomMemberUsers,
+			[
+				roomMember => roomMember.user.connected,
+				roomMember => roomMember.user.present,
+				roomMember => roomMember.user.nick.toLowerCase()
+			],
+			["desc", "desc", "asc"]
+		);
 		return (
 			<MemberListContainer className="border-left d-none d-md-block">
 				<ul className="list-group list-group-flush">
-					{online.map(roomMemberUser => (
-						<RoomMemberListItem
-							roomId={roomId}
-							roomMember={roomMemberUser.roomMember}
-							user={roomMemberUser.user}
-							key={roomMemberUser.roomMember._id}
-						/>
-					))}
-					{offline.map(roomMemberUser => (
+					{sortedRoomMemberUsers.map(roomMemberUser => (
 						<RoomMemberListItem
 							roomId={roomId}
 							roomMember={roomMemberUser.roomMember}
