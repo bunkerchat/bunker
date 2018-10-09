@@ -23,6 +23,7 @@ const MessageListContainer = styled.div`
 const mapStateToProps = (state, ownProps) => {
 	const room = state.rooms[ownProps.roomId];
 	return {
+		loading: room.loading,
 		fullHistoryLoaded: room.fullHistoryLoaded,
 		messages: state.messages.byRoom[ownProps.roomId]
 	};
@@ -115,19 +116,23 @@ class ScrollingMessageList extends React.PureComponent {
 	}
 
 	render() {
-		const { messages, fullHistoryLoaded } = this.props;
+		const { messages, loading, fullHistoryLoaded } = this.props;
 		return (
 			<MessageListContainer innerRef={this.ref}>
-				<div className="alert alert-info text-center mb-0 rounded-0">
-					{fullHistoryLoaded ? (
-						<span>No more messages</span>
-					) : (
-						<a className="alert-link" onClick={this.onLoadMessages}>
-							Load more messages
-						</a>
-					)}
-				</div>
-				<MessageList messages={messages} />
+				{loading ? (
+					<div className="alert alert-info text-center mb-0 rounded-0">
+						<strong>Loading...</strong>
+					</div>
+				) : fullHistoryLoaded ? (
+					<div className="alert alert-info text-center mb-0 rounded-0">
+						<strong>No more messages</strong>
+					</div>
+				) : (
+					<div className="alert alert-info text-center mb-0 rounded-0" onClick={this.onLoadMessages}>
+						<a className="alert-link">Load more messages</a>
+					</div>
+				)}
+				<MessageList messages={messages}/>
 			</MessageListContainer>
 		);
 	}

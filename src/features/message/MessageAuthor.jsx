@@ -35,9 +35,8 @@ const mapStateToProps = (state, props) => ({
 });
 
 class MessageAuthor extends React.Component {
-
 	shouldComponentUpdate(prevProps) {
-		const {user} = this.props;
+		const { user } = this.props;
 		return user.connected !== prevProps.user.connected || user.present !== prevProps.user.present;
 	}
 

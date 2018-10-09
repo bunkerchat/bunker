@@ -44,7 +44,7 @@ const handlers = {
 			...state,
 			byRoom: {
 				...state.byRoom,
-				[action.roomId]: [...messages, ...state.byRoom[action.roomId]]
+				[action.roomId]: _.uniqBy([...messages, ...state.byRoom[action.roomId]], "_id")
 			}
 		};
 	},

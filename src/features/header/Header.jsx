@@ -19,7 +19,7 @@ const FloatingRightBadge = styled.div`
 const UnreadMessageBadge = styled.span`
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
-		color: ${theme.mentionHeaderForegroundColor} !important;
+		color: ${theme.mentionHeaderForegroundColor};
 	}
 `;
 
