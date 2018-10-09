@@ -12,7 +12,7 @@ const Container = styled.div`
 const UnreadMessageBadge = styled.span`
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
-		color: ${theme.mentionHeaderForegroundColor};
+		color: ${theme.mentionHeaderForegroundColor} !important;
 	}
 `;
 
