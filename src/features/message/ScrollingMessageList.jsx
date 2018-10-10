@@ -132,7 +132,7 @@ class ScrollingMessageList extends React.PureComponent {
 						<a className="alert-link">Load more messages</a>
 					</div>
 				)}
-				<MessageList messages={messages}/>
+				<MessageList messages={messages} />
 			</MessageListContainer>
 		);
 	}
