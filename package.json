@@ -90,7 +90,7 @@
     "build": "node node_modules/gulp/bin/gulp.js sass && node node_modules/webpack/bin/webpack.js --mode development",
     "watch": "node node_modules/webpack/bin/webpack.js --mode development --watch",
     "postinstall": "node node_modules/bower/bin/bower install && npm run build",
-    "deploy": "npm prune && npm install && gulp && forever restart app.js",
+    "deploy": "npm prune && npm ci && gulp && forever restart app.js",
     "pretty": "node node_modules/prettier/bin-prettier.js --write \"./src/**/*.{js,jsx}\""
   },
   "main": "app.js",
