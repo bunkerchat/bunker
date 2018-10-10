@@ -33,7 +33,7 @@ module.exports.message = function(req, res) {
 			if (!currentRoomMember) throw new ForbiddenError("Must be a member of this room");
 
 			// Inform clients that use is not busy and typing has ceased
-			const notTypingUpdate = { busy: false, typingIn: null, connected: true };
+			const notTypingUpdate = { busy: false, typingIn: null, connected: true, activeRoom: roomId, present: true };
 			req.io.to(`user_${userId}`).emit("user", { _id: userId, verb: "updated", data: notTypingUpdate });
 
 			return Promise.join(
