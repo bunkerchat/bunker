@@ -10,7 +10,7 @@ class RoomTopic extends React.PureComponent {
 	render() {
 		const { topic } = this.props;
 		return topic ? (
-			<div className="p-2">
+			<div className="p-2 border-dark border-top-0 border-bottom border-left-0 border-right-0">
 				<MessageText className="p-2" text={topic} />
 			</div>
 		) : null;
