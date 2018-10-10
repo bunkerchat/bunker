@@ -1,5 +1,9 @@
 import { emit } from "../../api";
 
+export function roomUpdated(room) {
+	return { type: "room/updated", room };
+}
+
 export function loadingMessages(roomId) {
 	return { type: "message/loadingMany", roomId };
 }

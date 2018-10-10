@@ -183,12 +183,13 @@ RoomService.setRoomAttribute = (roomMember, text) => {
 			return Promise.join(room.save(), message);
 		})
 		.spread((room, message) => {
-			socketio.io.to("room_" + room._id).emit("room", {
+			socketio.io.to(`room_${room._id}`).emit("room", {
 				_id: room._id,
 				verb: "updated",
 				data: room
 			});
 			RoomService.messageRoom(room._id, message);
+			return message;
 		})
 		.catch(ValidationError, err => {
 			const message = _.sample(err.errors).message;

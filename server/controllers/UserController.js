@@ -228,11 +228,11 @@ function userActivity(req, update) {
 	});
 }
 
-function updateRoomMember(req, userId, activeRoom, update) {
+function updateRoomMember(req, userId, activeRoomId, update) {
 	return RoomMember.findOneAndUpdate(
 		{
 			user: userId,
-			room: activeRoom
+			room: activeRoomId
 		},
 		update,
 		{ new: true }

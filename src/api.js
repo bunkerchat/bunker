@@ -8,7 +8,7 @@ import {
 	reconnected,
 	successResponse
 } from "./features/socket/socketActions";
-import { messageUpdated, messageReceived } from "./features/room/roomActions";
+import { messageUpdated, messageReceived, roomUpdated } from "./features/room/roomActions";
 import { init } from "./features/chat/chatActions";
 import { userUpdated } from "./features/users/userActions";
 import { ping } from "./features/users/localUserActions";
@@ -35,6 +35,9 @@ socket.on("room", socketMessage => {
 			} else {
 				dispatch(messageReceived(message));
 			}
+			break;
+		case "updated":
+			dispatch(roomUpdated({ ...socketMessage.data, _id: socketMessage._id }));
 			break;
 	}
 });

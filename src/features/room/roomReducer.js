@@ -20,6 +20,13 @@ const handlers = {
 			...state,
 			..._.keyBy(action.data.rooms, "_id")
 		}),
+	"room/updated": (state, action) => ({
+		...state,
+		[action.room._id]: {
+			...state[action.room._id],
+			...action.room
+		}
+	}),
 	"@@router/LOCATION_CHANGE": state => setCurrentRoom({ ...state }),
 	"message/loadingMany": (state, action) => ({
 		...state,
