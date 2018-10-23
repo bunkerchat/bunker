@@ -9,3 +9,11 @@ export const hideEmoticonPicker = () => {
 export const searchEmoticonPicker = text => {
 	return { type: "emoticonPicker/search", text };
 };
+
+export const selectLeftInEmoticonPicker = () => {
+	return { type: "emoticonPicker/selectLeft" };
+};
+
+export const selectRightInEmoticonPicker = () => {
+	return { type: "emoticonPicker/selectRight" };
+};

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { hideEmoticonPicker } from "./emoticonPickerActions";
 import emoticon from "../../constants/emoticons";
 import styled from "styled-components";
+import theme from "../../constants/theme";
 
 const EmoticonCategory = styled.div`
 	width: 300px;
@@ -11,9 +12,13 @@ const EmoticonCategory = styled.div`
 	flex-wrap: wrap;
 	overflow-y: auto;
 	overflow-x: hidden;
+`;
 
-	& > div {
-		flex: 1 0 10%;
+const Emoticon = styled.div`
+	flex: 1 0 10%;
+
+	&.selected {
+		background: ${theme.mentionBackgroundColor};
 	}
 
 	img {
@@ -23,7 +28,8 @@ const EmoticonCategory = styled.div`
 
 const mapStateToProps = state => ({
 	target: state.emoticonPicker.target,
-	searchValue: state.emoticonPicker.search
+	searchValue: state.emoticonPicker.search,
+	selected: state.emoticonPicker.selected
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -55,7 +61,7 @@ class EmoticonPicker extends React.Component {
 	}
 
 	render() {
-		const { target, searchValue } = this.props;
+		const { target, searchValue, selected } = this.props;
 
 		const style = {
 			position: "fixed"
@@ -68,7 +74,9 @@ class EmoticonPicker extends React.Component {
 			style.left = "-10000px"; // hide off screen
 		}
 
-		const imageEmoticons = _.filter(emoticon.imageEmoticons, emoticon => (new RegExp(searchValue, "i").test(emoticon.name)));
+		const imageEmoticons = _.filter(emoticon.imageEmoticons, emoticon =>
+			new RegExp(searchValue, "i").test(emoticon.name)
+		);
 
 		return (
 			<div ref={this.state.ref} className="card p-1" style={style}>
@@ -77,9 +85,9 @@ class EmoticonPicker extends React.Component {
 				</div>
 				<EmoticonCategory>
 					{imageEmoticons.map(emoticon => (
-						<div key={emoticon.name} className="p-1">
+						<Emoticon key={emoticon.name} className={`p-1 ${selected === emoticon.name ? "selected" : ""}`}>
 							<img src={`/assets/images/emoticons/${emoticon.file}`} />
-						</div>
+						</Emoticon>
 					))}
 				</EmoticonCategory>
 			</div>

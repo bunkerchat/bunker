@@ -2,7 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import { sendRoomMessage } from "../room/roomActions";
 import { connect } from "react-redux";
-import { searchEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
+import {
+	hideEmoticonPicker,
+	selectRightInEmoticonPicker,
+	searchEmoticonPicker,
+	showEmoticonPicker,
+	selectLeftInEmoticonPicker
+} from "../emoticon/emoticonPickerActions";
 
 const InputBox = styled.textarea`
 	border-radius: 0;
@@ -16,7 +22,8 @@ const InputBox = styled.textarea`
 `;
 
 const mapStateToProps = state => ({
-	emoticonPickerVisible: !!state.emoticonPicker.target
+	emoticonPickerVisible: !!state.emoticonPicker.target,
+	emoticonPickerSearchText: state.emoticonPicker.search
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -25,6 +32,15 @@ const mapDispatchToProps = dispatch => ({
 	},
 	showEmoticonPicker: target => {
 		dispatch(showEmoticonPicker(target));
+	},
+	hideEmoticonPicker: () => {
+		dispatch(hideEmoticonPicker());
+	},
+	selectLeftEmoticonPicker: () => {
+		dispatch(selectLeftInEmoticonPicker());
+	},
+	selectRightEmoticonPicker: () => {
+		dispatch(selectRightInEmoticonPicker());
 	},
 	send: (roomId, text) => {
 		dispatch(sendRoomMessage(roomId, text));
@@ -36,7 +52,6 @@ class ChatInput extends React.PureComponent {
 		super(props);
 		this.state = {
 			ref: React.createRef(),
-			emoticonSearching: false,
 			text: ""
 		};
 	}
@@ -46,29 +61,39 @@ class ChatInput extends React.PureComponent {
 	};
 
 	onKeyDown = event => {
-		if (event.key === ":") {
-			if (!this.state.emoticonSearching) {
-				this.setState({ emoticonSearching: true });
-
-				if (!this.props.emoticonPickerVisible) {
-					// Do a timeout here so emoticon picker doesn't prevent : from being typed
-					setTimeout(() => {
-						this.props.showEmoticonPicker(this.state.ref);
-					});
-				}
-			}
-		} else if (event.key === "Enter") {
+		console.log(event.key);
+		if (event.key === "Enter") {
 			event.preventDefault();
 			this.onSend();
-		} else {
-			this.props.searchEmoticonPicker(this.state.text);
+		} else if (this.props.emoticonPickerVisible && /Arrow/.test(event.key)) {
+			// Move around within emoticon picker
+			if (event.key === "ArrowLeft") {
+				this.props.selectLeftEmoticonPicker();
+			} else if (event.key === "ArrowRight") {
+				this.props.selectRightEmoticonPicker();
+			}
+		}
+	};
+
+	onKeyPress = event => {
+		if (event.key === ":") {
+			// Do a timeout here so emoticon picker doesn't prevent : from being typed
+			setTimeout(() => {
+				if (this.props.emoticonPickerVisible) {
+					this.props.hideEmoticonPicker();
+				} else {
+					this.props.showEmoticonPicker(this.state.ref);
+				}
+			});
+		} else if (this.props.emoticonPickerVisible) {
+			this.props.searchEmoticonPicker(`${this.props.emoticonPickerSearchText || ""}${event.key}`);
 		}
 	};
 
 	onSend = () => {
 		if (this.state.text.trim().length > 0) {
 			this.props.send(this.props.roomId, this.state.text);
-			this.setState({ text: "", emoticonSearching: false });
+			this.setState({ text: "" });
 		}
 	};
 
@@ -81,6 +106,7 @@ class ChatInput extends React.PureComponent {
 					value={this.state.text}
 					onChange={this.onInputChange}
 					onKeyDown={this.onKeyDown}
+					onKeyPress={this.onKeyPress}
 				/>
 			</div>
 		);
