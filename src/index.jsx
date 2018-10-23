@@ -14,7 +14,6 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCog, faEllipsisH, faGavel, faComments } from "@fortawesome/free-solid-svg-icons";
 library.add(faCog, faEllipsisH, faGavel, faComments);
 
-// ReactDOM.render(
 const root = ReactDOM.unstable_createRoot(document.getElementById('index'));
 root.render(
 	<Provider store={store}>
@@ -26,7 +25,3 @@ root.render(
 		</ConnectedRouter>
 	</Provider>,
 );
-	// document.getElementById("index")
-// );
-
-
