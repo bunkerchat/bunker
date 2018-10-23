@@ -57,6 +57,7 @@ class ChatInput extends React.PureComponent {
 					onChange={this.onInputChange}
 					onKeyPress={this.onKeyPress}
 				/>
+				<ChatButtons />
 			</div>
 		);
 	}

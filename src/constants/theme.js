@@ -50,7 +50,7 @@ const overrides = {
 		mentionBackgroundColor: colors.info,
 		mentionForegroundColor: colors.white,
 		mentionHeaderForegroundColor: colors.white,
-		spoilerHoverForegroundColor: '#ebebeb'
+		spoilerHoverForegroundColor: "#ebebeb"
 	}
 };
 

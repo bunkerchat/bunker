@@ -11,14 +11,14 @@ const MessageTextContainer = styled.div`
 	.emoticon {
 		max-height: 24px;
 	}
-	
+
 	mark {
 		padding: 0;
 		background: black;
-		
+
 		&:hover {
 			background: transparent;
-			${theme.spoilerHoverForegroundColor ? `color: ${theme.spoilerHoverForegroundColor}`: ''}
+			${theme.spoilerHoverForegroundColor ? `color: ${theme.spoilerHoverForegroundColor}` : ""};
 		}
 	}
 `;

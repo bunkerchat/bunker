@@ -14,7 +14,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCog, faEllipsisH, faGavel, faComments } from "@fortawesome/free-solid-svg-icons";
 library.add(faCog, faEllipsisH, faGavel, faComments);
 
-const root = ReactDOM.unstable_createRoot(document.getElementById('index'));
+const root = ReactDOM.unstable_createRoot(document.getElementById("index"));
 root.render(
 	<Provider store={store}>
 		<ConnectedRouter history={history}>
@@ -23,5 +23,5 @@ root.render(
 				<Route path="/" component={Chat} />
 			</div>
 		</ConnectedRouter>
-	</Provider>,
+	</Provider>
 );
