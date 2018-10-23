@@ -6,6 +6,10 @@ const handlers = {
 	"emoticonPicker/hide": state => ({
 		...state,
 		target: null
+	}),
+	"emoticonPicker/search": (state, action) => ({
+		...state,
+		search: action.text
 	})
 };
 

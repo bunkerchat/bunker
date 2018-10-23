@@ -1,14 +1,16 @@
 import React from "react";
-import { Picker } from "emoji-mart";
 import { connect } from "react-redux";
-import styled from "styled-components";
-
-const Container = styled.div`
-	position: fixed;
-`;
+import { hideEmoticonPicker } from "./emoticonPickerActions";
 
 const mapStateToProps = state => ({
-	target: state.emoticonPicker.target
+	target: state.emoticonPicker.target,
+	searchValue: state.emoticonPicker.search
+});
+
+const mapDispatchToProps = dispatch => ({
+	hideEmoticonPicker: () => {
+		dispatch(hideEmoticonPicker());
+	}
 });
 
 class EmoticonPicker extends React.Component {
@@ -19,10 +21,27 @@ class EmoticonPicker extends React.Component {
 		};
 	}
 
+	onKeyDown = event => {
+		if (event.keyCode === 27) {
+			this.props.hideEmoticonPicker();
+		}
+	};
+
+	componentDidMount() {
+		document.addEventListener("keydown", this.onKeyDown, false);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener("keydown", this.onKeyDown, false);
+	}
+
 	render() {
 		const { target } = this.props;
 
-		const style = {};
+		const style = {
+			position: "fixed"
+		};
+
 		if (target) {
 			style.top = `${target.current.offsetTop - this.state.ref.current.offsetHeight}px`;
 			style.left = `${target.current.offsetLeft}px`;
@@ -31,11 +50,18 @@ class EmoticonPicker extends React.Component {
 		}
 
 		return (
-			<Container innerRef={this.state.ref} style={style}>
-				<Picker />
-			</Container>
+			<div ref={this.state.ref} style={style}>
+				<div className="card">
+					<div className="card-body">
+						I'm the emoticon picker
+					</div>
+				</div>
+			</div>
 		);
 	}
 }
 
-export default connect(mapStateToProps)(EmoticonPicker);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(EmoticonPicker);
