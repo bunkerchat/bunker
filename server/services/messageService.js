@@ -18,10 +18,12 @@ const fightService = require("./fightService");
 const animationService = require("./animationService");
 const userService = require("./userService");
 const linkMetaService = require("./linkMetaService");
+const tokenService = require("./tokenService");
 
 const InvalidInputError = require("../errors/InvalidInputError");
 
 messageService.createMessage = function(roomMember, text) {
+	const tokens = tokenService.tokenize(text);
 	text = ent.encode(text);
 
 	if (!text || !text.length) {
