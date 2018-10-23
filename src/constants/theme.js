@@ -40,7 +40,8 @@ const overrides = {
 		chatButtonBackground: colors.dark,
 		mentionBackgroundColor: colors.warning,
 		mentionForegroundColor: colors.white,
-		mentionHeaderForegroundColor: colors.white
+		mentionHeaderForegroundColor: colors.white,
+		spoilerHoverForegroundColor: colors.secondary
 	},
 	spacelab: {},
 	superhero: {
@@ -48,7 +49,8 @@ const overrides = {
 		chatButtonBackground: colors.dark,
 		mentionBackgroundColor: colors.info,
 		mentionForegroundColor: colors.white,
-		mentionHeaderForegroundColor: colors.white
+		mentionHeaderForegroundColor: colors.white,
+		spoilerHoverForegroundColor: '#ebebeb'
 	}
 };
 
