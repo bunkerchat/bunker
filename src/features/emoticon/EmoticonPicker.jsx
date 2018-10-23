@@ -1,6 +1,25 @@
 import React from "react";
 import { connect } from "react-redux";
 import { hideEmoticonPicker } from "./emoticonPickerActions";
+import emoticon from "../../constants/emoticons";
+import styled from "styled-components";
+
+const EmoticonCategory = styled.div`
+	width: 300px;
+	height: 250px;
+	display: flex;
+	flex-wrap: wrap;
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	& > div {
+		flex: 1 0 10%;
+	}
+
+	img {
+		max-height: 24px;
+	}
+`;
 
 const mapStateToProps = state => ({
 	target: state.emoticonPicker.target,
@@ -36,7 +55,7 @@ class EmoticonPicker extends React.Component {
 	}
 
 	render() {
-		const { target } = this.props;
+		const { target, searchValue } = this.props;
 
 		const style = {
 			position: "fixed"
@@ -49,13 +68,20 @@ class EmoticonPicker extends React.Component {
 			style.left = "-10000px"; // hide off screen
 		}
 
+		const imageEmoticons = _.filter(emoticon.imageEmoticons, emoticon => (new RegExp(searchValue, "i").test(emoticon.name)));
+
 		return (
-			<div ref={this.state.ref} style={style}>
-				<div className="card">
-					<div className="card-body">
-						I'm the emoticon picker
-					</div>
+			<div ref={this.state.ref} className="card p-1" style={style}>
+				<div className="form-group-sm">
+					<input className="form-control" type="text" value={searchValue} />
 				</div>
+				<EmoticonCategory>
+					{imageEmoticons.map(emoticon => (
+						<div key={emoticon.name} className="p-1">
+							<img src={`/assets/images/emoticons/${emoticon.file}`} />
+						</div>
+					))}
+				</EmoticonCategory>
 			</div>
 		);
 	}

@@ -57,12 +57,10 @@ class ChatInput extends React.PureComponent {
 					});
 				}
 			}
-
 		} else if (event.key === "Enter") {
 			event.preventDefault();
 			this.onSend();
-		}
-		else {
+		} else {
 			this.props.searchEmoticonPicker(this.state.text);
 		}
 	};

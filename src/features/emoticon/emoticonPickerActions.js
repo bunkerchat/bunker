@@ -7,5 +7,5 @@ export const hideEmoticonPicker = () => {
 };
 
 export const searchEmoticonPicker = text => {
-	return { type: "emoticonPicker/search", text }
+	return { type: "emoticonPicker/search", text };
 };
