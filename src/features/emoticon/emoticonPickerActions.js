@@ -17,3 +17,11 @@ export const selectLeftInEmoticonPicker = () => {
 export const selectRightInEmoticonPicker = () => {
 	return { type: "emoticonPicker/selectRight" };
 };
+
+export const selectUpInEmoticonPicker = () => {
+	return { type: "emoticonPicker/selectUp" };
+};
+
+export const selectDownInEmoticonPicker = () => {
+	return { type: "emoticonPicker/selectDown" };
+};

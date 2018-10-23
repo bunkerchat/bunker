@@ -36,6 +36,26 @@ const handlers = {
 			...state,
 			selected: emoticons.imageEmoticons[nextIndex].name
 		};
+	},
+	"emoticonPicker/selectUp": state => {
+		let previousIndex = _.findIndex(emoticons.imageEmoticons, { name: state.selected }) - 5;
+		if (previousIndex < 0) {
+			previousIndex = 0;
+		}
+		return {
+			...state,
+			selected: emoticons.imageEmoticons[previousIndex].name
+		};
+	},
+	"emoticonPicker/selectDown": state => {
+		let nextIndex = _.findIndex(emoticons.imageEmoticons, { name: state.selected }) + 5;
+		if (nextIndex > emoticons.imageEmoticons.length) {
+			nextIndex = emoticons.imageEmoticons.length;
+		}
+		return {
+			...state,
+			selected: emoticons.imageEmoticons[nextIndex].name
+		};
 	}
 };
 

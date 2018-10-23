@@ -7,7 +7,9 @@ import {
 	selectRightInEmoticonPicker,
 	searchEmoticonPicker,
 	showEmoticonPicker,
-	selectLeftInEmoticonPicker
+	selectLeftInEmoticonPicker,
+	selectDownInEmoticonPicker,
+	selectUpInEmoticonPicker
 } from "../emoticon/emoticonPickerActions";
 
 const InputBox = styled.textarea`
@@ -42,6 +44,12 @@ const mapDispatchToProps = dispatch => ({
 	selectRightEmoticonPicker: () => {
 		dispatch(selectRightInEmoticonPicker());
 	},
+	selectUpEmoticonPicker: () => {
+		dispatch(selectUpInEmoticonPicker());
+	},
+	selectDownEmoticonPicker: () => {
+		dispatch(selectDownInEmoticonPicker());
+	},
 	send: (roomId, text) => {
 		dispatch(sendRoomMessage(roomId, text));
 	}
@@ -71,6 +79,10 @@ class ChatInput extends React.PureComponent {
 				this.props.selectLeftEmoticonPicker();
 			} else if (event.key === "ArrowRight") {
 				this.props.selectRightEmoticonPicker();
+			} else if (event.key === "ArrowUp") {
+				this.props.selectUpEmoticonPicker();
+			} else if (event.key === "ArrowDown") {
+				this.props.selectDownEmoticonPicker();
 			}
 		}
 	};

@@ -15,7 +15,7 @@ const EmoticonCategory = styled.div`
 `;
 
 const Emoticon = styled.div`
-	flex: 1 0 10%;
+	flex: 1 0 50px;
 
 	&.selected {
 		background: ${theme.mentionBackgroundColor};
@@ -23,6 +23,7 @@ const Emoticon = styled.div`
 
 	img {
 		max-height: 24px;
+		max-width: 50px;
 	}
 `;
 
