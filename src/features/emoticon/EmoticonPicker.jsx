@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { hideEmoticonPicker } from "./emoticonPickerActions";
+import { hideEmoticonPicker, searchEmoticonPicker } from "./emoticonPickerActions";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 
@@ -44,6 +44,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
 	hideEmoticonPicker: () => {
 		dispatch(hideEmoticonPicker());
+	},
+	searchEmoticonPicker: text => {
+		dispatch(searchEmoticonPicker(text));
 	}
 });
 
@@ -55,12 +58,6 @@ class EmoticonPicker extends React.Component {
 		};
 	}
 
-	onKeyDown = event => {
-		if (event.keyCode === 27) {
-			this.props.hideEmoticonPicker();
-		}
-	};
-
 	componentDidMount() {
 		document.addEventListener("keydown", this.onKeyDown, false);
 	}
@@ -68,6 +65,20 @@ class EmoticonPicker extends React.Component {
 	componentWillUnmount() {
 		document.removeEventListener("keydown", this.onKeyDown, false);
 	}
+
+	onKeyDown = event => {
+		if (event.keyCode === 27) {
+			this.props.hideEmoticonPicker();
+		}
+	};
+
+	onSearchChange = event => {
+		this.props.searchEmoticonPicker(event.target.value);
+	};
+
+	onSubmit = event => {
+		console.log("todo: not sure how to get event over to chat input");
+	};
 
 	render() {
 		const { target, filteredEmoticons, searchValue, selected } = this.props;
@@ -86,7 +97,7 @@ class EmoticonPicker extends React.Component {
 		return (
 			<Container innerRef={this.state.ref} className="card p-1" style={style}>
 				<div className="form-group-sm">
-					<input className="form-control" type="text" value={searchValue} />
+					{/*<input className="form-control" type="text" value={searchValue} onChange={this.onSearchChange} onSubmit={this.onSubmit}/>*/}
 				</div>
 				<EmoticonCategory>
 					{filteredEmoticons.map(emoticon => (

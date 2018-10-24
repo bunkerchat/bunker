@@ -25,7 +25,7 @@ const InputBox = styled.textarea`
 
 const mapStateToProps = state => ({
 	emoticonPickerVisible: !!state.emoticonPicker.target,
-	emoticonPickerSearchText: state.emoticonPicker.search
+	selectedEmoticon: state.emoticonPicker.selected
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -80,12 +80,20 @@ class ChatInput extends React.PureComponent {
 	onKeyDown = event => {
 		if (event.key === "Enter") {
 			event.preventDefault();
-			this.onSend();
-		} else if (this.props.emoticonPickerVisible && /Arrow/.test(event.key)) {
+
+			if (this.props.emoticonPickerVisible) {
+				this.setState({ text: this.state.text.replace(/:\w*$/, `:${this.props.selectedEmoticon}:`) });
+				this.props.hideEmoticonPicker();
+			} else {
+				this.onSend();
+			}
+		} else if (/Arrow|Tab/.test(event.key) && this.props.emoticonPickerVisible) {
+			event.preventDefault();
+
 			// Move around within emoticon picker
 			if (event.key === "ArrowLeft") {
 				this.props.selectLeftEmoticonPicker();
-			} else if (event.key === "ArrowRight") {
+			} else if (event.key === "ArrowRight" || event.key === "Tab") {
 				this.props.selectRightEmoticonPicker();
 			} else if (event.key === "ArrowUp") {
 				this.props.selectUpEmoticonPicker();
