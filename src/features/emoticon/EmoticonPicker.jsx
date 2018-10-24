@@ -2,43 +2,18 @@ import React from "react";
 import { connect } from "react-redux";
 import { hideEmoticonPicker, searchEmoticonPicker } from "./emoticonPickerActions";
 import styled from "styled-components";
-import theme from "../../constants/theme";
+import EmoticonCategory from "./EmoticonCategory.jsx";
 
 const Container = styled.div`
 	width: 300px;
 	height: 250px;
 `;
 
-const EmoticonCategory = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-	overflow-y: auto;
-	overflow-x: hidden;
-`;
-
-const Emoticon = styled.div`
-	flex: 0 0 50px;
-	height: 30px;
-
-	&.selected {
-		background: ${theme.mentionBackgroundColor};
-	}
-`;
-
-const EmoticonImage = styled.span`
-	display: inline-block;
-	height: 100%;
-	width: 100%;
-	background-repeat: no-repeat;
-	background-size: contain;
-	background-position-x: center;
-`;
-
 const mapStateToProps = state => ({
 	target: state.emoticonPicker.target,
 	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
-	searchValue: state.emoticonPicker.search,
-	selected: state.emoticonPicker.selected
+	selectedEmoticon: state.emoticonPicker.selected,
+	searchValue: state.emoticonPicker.search
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -50,7 +25,7 @@ const mapDispatchToProps = dispatch => ({
 	}
 });
 
-class EmoticonPicker extends React.Component {
+class EmoticonPicker extends React.PureComponent {
 	constructor() {
 		super();
 		this.state = {
@@ -81,7 +56,7 @@ class EmoticonPicker extends React.Component {
 	};
 
 	render() {
-		const { target, filteredEmoticons, searchValue, selected } = this.props;
+		const { target, filteredEmoticons, selectedEmoticon } = this.props;
 
 		const style = {
 			position: "fixed"
@@ -99,13 +74,7 @@ class EmoticonPicker extends React.Component {
 				<div className="form-group-sm">
 					{/*<input className="form-control" type="text" value={searchValue} onChange={this.onSearchChange} onSubmit={this.onSubmit}/>*/}
 				</div>
-				<EmoticonCategory>
-					{filteredEmoticons.map(emoticon => (
-						<Emoticon key={emoticon.name} className={`p-1 ${selected === emoticon.name ? "selected" : ""}`}>
-							<EmoticonImage style={{ backgroundImage: `url(/assets/images/emoticons/${emoticon.file})` }} />
-						</Emoticon>
-					))}
-				</EmoticonCategory>
+				<EmoticonCategory emoticons={filteredEmoticons} selected={selectedEmoticon} />
 			</Container>
 		);
 	}

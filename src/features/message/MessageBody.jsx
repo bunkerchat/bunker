@@ -8,6 +8,7 @@ import { getMessageAuthor } from "../../selectors/selectors";
 
 const MessageBodyContainer = styled.div`
 	flex: 1;
+	min-height: 30px;
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
 		color: ${theme.mentionForegroundColor};

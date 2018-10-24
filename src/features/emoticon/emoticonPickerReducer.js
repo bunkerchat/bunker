@@ -10,21 +10,27 @@ const handlers = {
 	}),
 	"emoticonPicker/hide": state => ({
 		...state,
-		target: null,
-		search: "",
-		filteredEmoticons: state.allEmoticons,
-		selected: null
+		target: null
 	}),
 	"emoticonPicker/search": (state, action) => {
 		const filteredEmoticons = _.filter(state.allEmoticons, emoticon =>
 			new RegExp(action.text, "i").test(emoticon.name)
 		);
-		return {
-			...state,
-			search: action.text,
-			filteredEmoticons,
-			selected: _.first(filteredEmoticons).name
-		};
+
+		if (filteredEmoticons.length > 0) {
+			return {
+				...state,
+				search: action.text,
+				filteredEmoticons,
+				selected: _.first(filteredEmoticons).name
+			};
+		} else {
+			// Nothing found, close picker
+			return {
+				...state,
+				target: null
+			};
+		}
 	},
 	"emoticonPicker/selectLeft": state => {
 		let previousIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) - 1;
@@ -70,7 +76,7 @@ const handlers = {
 
 const initialState = {
 	allEmoticons: emoticons.imageEmoticons,
-	filteredEmoticons: emoticons.imageEmoticons,
+	filteredEmoticons: [], // make picker load with no gifs rendered on load to reduce lag
 	search: ""
 };
 
