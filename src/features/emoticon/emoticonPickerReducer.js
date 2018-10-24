@@ -3,7 +3,10 @@ import emoticons from "../../constants/emoticons";
 const handlers = {
 	"emoticonPicker/show": (state, action) => ({
 		...state,
-		target: action.target,
+		visible: true,
+		x: action.x,
+		y: action.y,
+		direction: action.direction,
 		onPick: action.onPick,
 		search: "",
 		filteredEmoticons: state.allEmoticons,
@@ -11,7 +14,7 @@ const handlers = {
 	}),
 	"emoticonPicker/hide": state => ({
 		...state,
-		target: null
+		visible: false
 	}),
 	"emoticonPicker/search": (state, action) => {
 		const filteredEmoticons = _.filter(state.allEmoticons, emoticon =>
@@ -29,7 +32,7 @@ const handlers = {
 			// Nothing found, close picker
 			return {
 				...state,
-				target: null
+				visible: false
 			};
 		}
 	},

@@ -4,13 +4,42 @@ import { hideEmoticonPicker, searchEmoticonPicker } from "./emoticonPickerAction
 import styled from "styled-components";
 import EmoticonCategory from "./EmoticonCategory.jsx";
 
+// full screen container that always renders
+// hidden state is off screen
 const Container = styled.div`
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 1000;
+	
+	&.hidden {
+		left: -10000px;
+	}
+`;
+
+// full screen backdrop to intercept clicking away from picker
+const Backdrop = styled.div`
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+`;
+
+// picker has highest z-index
+const Picker = styled.div`
 	width: 300px;
 	height: 250px;
+	z-index: 1001;
 `;
 
 const mapStateToProps = state => ({
-	target: state.emoticonPicker.target,
+	visible: state.emoticonPicker.visible,
+	x: state.emoticonPicker.x,
+	y: state.emoticonPicker.y,
+	direction: state.emoticonPicker.direction,
 	onPick: state.emoticonPicker.onPick,
 	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
 	selectedEmoticon: state.emoticonPicker.selected,
@@ -44,8 +73,12 @@ class EmoticonPicker extends React.PureComponent {
 
 	onKeyDown = event => {
 		if (event.keyCode === 27) {
-			this.props.hideEmoticonPicker();
+			this.hide();
 		}
+	};
+
+	hide = () => {
+		this.props.hideEmoticonPicker();
 	};
 
 	onSearchChange = event => {
@@ -53,25 +86,36 @@ class EmoticonPicker extends React.PureComponent {
 	};
 
 	render() {
-		const { target, filteredEmoticons, selectedEmoticon, onPick } = this.props;
+		const { visible, x, y, direction, filteredEmoticons, selectedEmoticon, onPick } = this.props;
 
 		const style = {
 			position: "fixed"
 		};
 
-		if (target) {
-			style.top = `${target.current.offsetTop - this.state.ref.current.offsetHeight}px`;
-			style.left = `${target.current.offsetLeft}px`;
-		} else {
-			style.left = "-10000px"; // hide off screen
+		if (visible) {
+			const top = y - this.state.ref.current.offsetHeight;
+			if (top > 0) {
+				style.top = `${y - this.state.ref.current.offsetHeight}px`;
+			} else {
+				style.top = `${y}px`;
+			}
+
+			if (direction === "left") {
+				style.left = `${x - this.state.ref.current.offsetWidth}px`;
+			} else {
+				style.left = `${x}px`;
+			}
 		}
 
 		return (
-			<Container innerRef={this.state.ref} className="card p-1" style={style}>
-				<div className="form-group-sm">
-					{/*<input className="form-control" type="text" value={searchValue} onChange={this.onSearchChange} onSubmit={this.onSubmit}/>*/}
-				</div>
-				<EmoticonCategory emoticons={filteredEmoticons} selected={selectedEmoticon} onPick={onPick} />
+			<Container className={`${!visible ? "hidden" : ""}`}>
+				<Backdrop onClick={this.hide} />
+				<Picker innerRef={this.state.ref} className="card p-1" style={style}>
+					<div className="form-group-sm">
+						{/*<input className="form-control" type="text" value={searchValue} onChange={this.onSearchChange} onSubmit={this.onSubmit}/>*/}
+					</div>
+					<EmoticonCategory emoticons={filteredEmoticons} selected={selectedEmoticon} onPick={onPick} />
+				</Picker>
 			</Container>
 		);
 	}

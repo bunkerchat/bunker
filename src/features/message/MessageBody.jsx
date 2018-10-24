@@ -5,18 +5,34 @@ import connect from "react-redux/es/connect/connect";
 import theme from "../../constants/theme";
 import MessageTimeAgo from "./MessageTimeAgo.jsx";
 import { getMessageAuthor } from "../../selectors/selectors";
+import MessageControls from "./MessageControls.jsx";
 
 const MessageBodyContainer = styled.div`
+	position: relative;
 	flex: 1;
 	min-height: 30px;
+
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
 		color: ${theme.mentionForegroundColor};
 	}
+
+	&:hover {
+		.message-controls {
+			display: block;
+		}
+	}
+
+	.message-controls {
+		display: none;
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
 `;
 
 const MessageTime = styled.div`
-	width: 110px;
+	width: 90px;
 `;
 
 const mapStateToProps = (state, props) => ({
@@ -54,6 +70,9 @@ class MessageBody extends React.Component {
 				<div className="row no-gutters">
 					<div className="col">
 						<MessageText text={message.text} />
+					</div>
+					<div className="message-controls">
+						<MessageControls />
 					</div>
 					{firstInSeries && (
 						<MessageTime className="d-none d-md-block text-right">

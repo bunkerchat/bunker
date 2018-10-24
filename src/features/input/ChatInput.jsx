@@ -24,7 +24,7 @@ const InputBox = styled.textarea`
 `;
 
 const mapStateToProps = state => ({
-	emoticonPickerVisible: !!state.emoticonPicker.target,
+	emoticonPickerVisible: !!state.emoticonPicker.visible,
 	selectedEmoticon: state.emoticonPicker.selected
 });
 
@@ -32,8 +32,8 @@ const mapDispatchToProps = dispatch => ({
 	searchEmoticonPicker: text => {
 		dispatch(searchEmoticonPicker(text));
 	},
-	showEmoticonPicker: (ref, onEmotionPick) => {
-		dispatch(showEmoticonPicker(ref, onEmotionPick));
+	showEmoticonPicker: (x, y, onEmotionPick) => {
+		dispatch(showEmoticonPicker(x, y, "right", onEmotionPick));
 	},
 	hideEmoticonPicker: () => {
 		dispatch(hideEmoticonPicker());
@@ -83,7 +83,11 @@ class ChatInput extends React.PureComponent {
 			if (this.props.emoticonPickerVisible) {
 				this.props.hideEmoticonPicker();
 			} else {
-				this.props.showEmoticonPicker(this.state.ref, this.onEmoticonPick);
+				this.props.showEmoticonPicker(
+					this.state.ref.current.offsetLeft,
+					this.state.ref.current.offsetTop,
+					this.onEmoticonPick
+				);
 			}
 		} else if (/Arrow|Tab/.test(event.key) && this.props.emoticonPickerVisible) {
 			event.preventDefault();
@@ -98,8 +102,7 @@ class ChatInput extends React.PureComponent {
 			} else if (event.key === "ArrowDown") {
 				this.props.selectDownEmoticonPicker();
 			}
-		}
-		else if (event.key === "Enter") {
+		} else if (event.key === "Enter") {
 			event.preventDefault();
 
 			if (this.props.emoticonPickerVisible) {

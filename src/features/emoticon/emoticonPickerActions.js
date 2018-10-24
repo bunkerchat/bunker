@@ -1,5 +1,5 @@
-export const showEmoticonPicker = (target, onPick) => {
-	return { type: "emoticonPicker/show", target, onPick };
+export const showEmoticonPicker = (x, y, direction, onPick) => {
+	return { type: "emoticonPicker/show", x, y, direction, onPick };
 };
 
 export const hideEmoticonPicker = () => {

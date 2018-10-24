@@ -67,7 +67,8 @@ export default _.assign(
 		chatButtonBackground: colors.white,
 		mentionBackgroundColor: "#faf2cc",
 		mentionForegroundColor: "inherit",
-		mentionHeaderForegroundColor: colors.dark
+		mentionHeaderForegroundColor: colors.dark,
+		messageControlsBackground: colors.white
 	},
 	overrides[window.theme]
 );
