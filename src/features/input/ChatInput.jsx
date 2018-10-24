@@ -68,7 +68,7 @@ class ChatInput extends React.PureComponent {
 		const text = event.target.value;
 
 		if (this.props.emoticonPickerVisible) {
-			const match = /:(\w+)$/.exec(text);
+			const match = /:(.+)$/.exec(text);
 			if (match) {
 				this.props.searchEmoticonPicker(match[1]);
 			}
