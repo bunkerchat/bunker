@@ -5,61 +5,72 @@ const handlers = {
 		...state,
 		target: action.target,
 		search: "",
-		selected: _.first(emoticons.imageEmoticons).name
+		filteredEmoticons: state.allEmoticons,
+		selected: _.first(state.allEmoticons).name
 	}),
 	"emoticonPicker/hide": state => ({
 		...state,
 		target: null,
 		search: "",
+		filteredEmoticons: state.allEmoticons,
 		selected: null
 	}),
-	"emoticonPicker/search": (state, action) => ({
-		...state,
-		search: action.text
-	}),
+	"emoticonPicker/search": (state, action) => {
+		const filteredEmoticons = _.filter(state.allEmoticons, emoticon =>
+			new RegExp(action.text, "i").test(emoticon.name)
+		);
+		return {
+			...state,
+			search: action.text,
+			filteredEmoticons,
+			selected: _.first(filteredEmoticons).name
+		};
+	},
 	"emoticonPicker/selectLeft": state => {
-		let previousIndex = _.findIndex(emoticons.imageEmoticons, { name: state.selected }) - 1;
+		let previousIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) - 1;
 		if (previousIndex < 0) {
 			previousIndex = 0;
 		}
 		return {
 			...state,
-			selected: emoticons.imageEmoticons[previousIndex].name
+			selected: state.filteredEmoticons[previousIndex].name
 		};
 	},
 	"emoticonPicker/selectRight": state => {
-		let nextIndex = _.findIndex(emoticons.imageEmoticons, { name: state.selected }) + 1;
-		if (nextIndex > emoticons.imageEmoticons.length) {
-			nextIndex = emoticons.imageEmoticons.length;
+		let nextIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) + 1;
+		if (nextIndex > state.filteredEmoticons.length) {
+			nextIndex = state.filteredEmoticons.length;
 		}
 		return {
 			...state,
-			selected: emoticons.imageEmoticons[nextIndex].name
+			selected: state.filteredEmoticons[nextIndex].name
 		};
 	},
 	"emoticonPicker/selectUp": state => {
-		let previousIndex = _.findIndex(emoticons.imageEmoticons, { name: state.selected }) - 5;
+		let previousIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) - 5;
 		if (previousIndex < 0) {
 			previousIndex = 0;
 		}
 		return {
 			...state,
-			selected: emoticons.imageEmoticons[previousIndex].name
+			selected: state.filteredEmoticons[previousIndex].name
 		};
 	},
 	"emoticonPicker/selectDown": state => {
-		let nextIndex = _.findIndex(emoticons.imageEmoticons, { name: state.selected }) + 5;
-		if (nextIndex > emoticons.imageEmoticons.length) {
-			nextIndex = emoticons.imageEmoticons.length;
+		let nextIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) + 5;
+		if (nextIndex > state.filteredEmoticons.length) {
+			nextIndex = state.filteredEmoticons.length;
 		}
 		return {
 			...state,
-			selected: emoticons.imageEmoticons[nextIndex].name
+			selected: state.filteredEmoticons[nextIndex].name
 		};
 	}
 };
 
 const initialState = {
+	allEmoticons: emoticons.imageEmoticons,
+	filteredEmoticons: emoticons.imageEmoticons,
 	search: ""
 };
 

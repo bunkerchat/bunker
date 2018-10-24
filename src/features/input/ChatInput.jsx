@@ -65,11 +65,19 @@ class ChatInput extends React.PureComponent {
 	}
 
 	onInputChange = event => {
-		this.setState({ text: event.target.value });
+		const text = event.target.value;
+
+		if (this.props.emoticonPickerVisible) {
+			const match = /:(\w+)$/.exec(text);
+			if (match) {
+				this.props.searchEmoticonPicker(match[1]);
+			}
+		}
+
+		this.setState({ text });
 	};
 
 	onKeyDown = event => {
-		console.log(event.key);
 		if (event.key === "Enter") {
 			event.preventDefault();
 			this.onSend();
@@ -97,8 +105,6 @@ class ChatInput extends React.PureComponent {
 					this.props.showEmoticonPicker(this.state.ref);
 				}
 			});
-		} else if (this.props.emoticonPickerVisible) {
-			this.props.searchEmoticonPicker(`${this.props.emoticonPickerSearchText || ""}${event.key}`);
 		}
 	};
 
