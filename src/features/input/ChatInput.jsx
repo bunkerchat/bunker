@@ -32,8 +32,8 @@ const mapDispatchToProps = dispatch => ({
 	searchEmoticonPicker: text => {
 		dispatch(searchEmoticonPicker(text));
 	},
-	showEmoticonPicker: target => {
-		dispatch(showEmoticonPicker(target));
+	showEmoticonPicker: (ref, onEmotionPick) => {
+		dispatch(showEmoticonPicker(ref, onEmotionPick));
 	},
 	hideEmoticonPicker: () => {
 		dispatch(hideEmoticonPicker());
@@ -60,6 +60,7 @@ class ChatInput extends React.PureComponent {
 		super(props);
 		this.state = {
 			ref: React.createRef(),
+			inputRef: React.createRef(),
 			text: ""
 		};
 	}
@@ -68,7 +69,7 @@ class ChatInput extends React.PureComponent {
 		const text = event.target.value;
 
 		if (this.props.emoticonPickerVisible) {
-			const match = /:(.+)$/.exec(text);
+			const match = /:([A-z0-9\s]*)$/.exec(text);
 			if (match) {
 				this.props.searchEmoticonPicker(match[1]);
 			}
@@ -78,14 +79,11 @@ class ChatInput extends React.PureComponent {
 	};
 
 	onKeyDown = event => {
-		if (event.key === "Enter") {
-			event.preventDefault();
-
+		if (event.key === ":") {
 			if (this.props.emoticonPickerVisible) {
-				this.setState({ text: this.state.text.replace(/:\w*$/, `:${this.props.selectedEmoticon}:`) });
 				this.props.hideEmoticonPicker();
 			} else {
-				this.onSend();
+				this.props.showEmoticonPicker(this.state.ref, this.onEmoticonPick);
 			}
 		} else if (/Arrow|Tab/.test(event.key) && this.props.emoticonPickerVisible) {
 			event.preventDefault();
@@ -101,18 +99,14 @@ class ChatInput extends React.PureComponent {
 				this.props.selectDownEmoticonPicker();
 			}
 		}
-	};
+		else if (event.key === "Enter") {
+			event.preventDefault();
 
-	onKeyPress = event => {
-		if (event.key === ":") {
-			// Do a timeout here so emoticon picker doesn't prevent : from being typed
-			setTimeout(() => {
-				if (this.props.emoticonPickerVisible) {
-					this.props.hideEmoticonPicker();
-				} else {
-					this.props.showEmoticonPicker(this.state.ref);
-				}
-			});
+			if (this.props.emoticonPickerVisible) {
+				this.onEmoticonPick(this.props.selectedEmoticon);
+			} else {
+				this.onSend();
+			}
 		}
 	};
 
@@ -123,16 +117,22 @@ class ChatInput extends React.PureComponent {
 		}
 	};
 
+	onEmoticonPick = selected => {
+		this.setState({ text: this.state.text.replace(/:\w*$/, `:${selected}:`) });
+		this.props.hideEmoticonPicker();
+		this.state.inputRef.current.focus();
+	};
+
 	render() {
 		return (
 			<div ref={this.state.ref}>
 				<InputBox
+					innerRef={this.state.inputRef}
 					rows="1"
 					className="form-control"
 					value={this.state.text}
 					onChange={this.onInputChange}
 					onKeyDown={this.onKeyDown}
-					onKeyPress={this.onKeyPress}
 				/>
 			</div>
 		);

@@ -11,6 +11,7 @@ const Container = styled.div`
 
 const mapStateToProps = state => ({
 	target: state.emoticonPicker.target,
+	onPick: state.emoticonPicker.onPick,
 	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
 	selectedEmoticon: state.emoticonPicker.selected,
 	searchValue: state.emoticonPicker.search
@@ -51,12 +52,8 @@ class EmoticonPicker extends React.PureComponent {
 		this.props.searchEmoticonPicker(event.target.value);
 	};
 
-	onSubmit = event => {
-		console.log("todo: not sure how to get event over to chat input");
-	};
-
 	render() {
-		const { target, filteredEmoticons, selectedEmoticon } = this.props;
+		const { target, filteredEmoticons, selectedEmoticon, onPick } = this.props;
 
 		const style = {
 			position: "fixed"
@@ -74,7 +71,7 @@ class EmoticonPicker extends React.PureComponent {
 				<div className="form-group-sm">
 					{/*<input className="form-control" type="text" value={searchValue} onChange={this.onSearchChange} onSubmit={this.onSubmit}/>*/}
 				</div>
-				<EmoticonCategory emoticons={filteredEmoticons} selected={selectedEmoticon} />
+				<EmoticonCategory emoticons={filteredEmoticons} selected={selectedEmoticon} onPick={onPick} />
 			</Container>
 		);
 	}

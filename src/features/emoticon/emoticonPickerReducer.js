@@ -4,6 +4,7 @@ const handlers = {
 	"emoticonPicker/show": (state, action) => ({
 		...state,
 		target: action.target,
+		onPick: action.onPick,
 		search: "",
 		filteredEmoticons: state.allEmoticons,
 		selected: _.first(state.allEmoticons).name
