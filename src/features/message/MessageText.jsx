@@ -6,6 +6,7 @@ import styled from "styled-components";
 import theme from "../../constants/theme";
 
 const MessageTextContainer = styled.div`
+	display: inline-block;
 	word-break: break-word;
 
 	.emoticon {

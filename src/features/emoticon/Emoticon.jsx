@@ -18,6 +18,7 @@ const EmoticonImage = styled.span`
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position-x: center;
+	cursor: pointer;
 `;
 
 export default class Emoticon extends React.PureComponent {

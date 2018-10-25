@@ -3,7 +3,8 @@ import styled from "styled-components";
 import connect from "react-redux/es/connect/connect";
 import theme from "../../constants/theme";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { showEmoticonPicker } from "../emoticon/emoticonPickerActions";
+import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
+import { toggleReaction } from "./messageActions";
 
 const Container = styled.div`
 	background-color: ${theme.messageControlsBackground};
@@ -12,6 +13,12 @@ const Container = styled.div`
 const mapDispatchToProps = dispatch => ({
 	showEmoticonPicker: (x, y, onEmotionPick) => {
 		dispatch(showEmoticonPicker(x, y, "left", onEmotionPick));
+	},
+	hideEmoticonPicker: () => {
+		dispatch(hideEmoticonPicker());
+	},
+	toggleReaction: (messageId, emoticonName) => {
+		dispatch(toggleReaction(messageId, emoticonName));
 	}
 });
 
@@ -24,8 +31,9 @@ class MessageControls extends React.Component {
 		this.props.showEmoticonPicker(event.clientX, event.clientY, this.onEmoticonPick);
 	};
 
-	onEmoticonPick = selection => {
-		console.log("picked", selection);
+	onEmoticonPick = emoticonName => {
+		this.props.hideEmoticonPicker();
+		this.props.toggleReaction(this.props.messageId, emoticonName);
 	};
 
 	render() {

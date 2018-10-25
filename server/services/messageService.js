@@ -76,13 +76,13 @@ messageService.createMessage = function(roomMember, text) {
 	}
 };
 
-function broadcastMessage(message) {
+function broadcastMessage(message, verb = "messaged") {
 	return Message.findById(message._id)
 		.populate("author reactions")
 		.then(function(message) {
 			socketio.io.to("room_" + message.room).emit("room", {
 				_id: message.room,
-				verb: "messaged",
+				verb,
 				data: message
 			});
 		});
