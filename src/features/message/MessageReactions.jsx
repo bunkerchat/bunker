@@ -20,13 +20,15 @@ export default class MessageReactions extends React.PureComponent {
 
 		if (reactions.length === 0) return null;
 
+		const reactionGroups = _.groupBy(reactions, "emoticonName");
 		return (
 			<Container className="ml-1">
-				{reactions.map(reaction => {
-					const emoticon = _.find(emoticons.imageEmoticons, { name: reaction.emoticonName });
+				{_.map(reactionGroups, (reactionGroup, emoticonName) => {
+					const emoticon = _.find(emoticons.imageEmoticons, { name: emoticonName });
 					return (
-						<Emoticon key={reaction._id}>
-							<img src={`/assets/images/emoticons/${emoticon.file}`}/>
+						<Emoticon key={emoticonName} className="px-1">
+							<img src={`/assets/images/emoticons/${emoticon.file}`} />
+							<span>{reactionGroup.length > 1 ? reactionGroup.length : ""}</span>
 						</Emoticon>
 					);
 				})}

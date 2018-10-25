@@ -44,7 +44,10 @@ const mapStateToProps = (state, props) => ({
 class MessageBody extends React.Component {
 	shouldComponentUpdate(nextProps) {
 		// Only reason we're updating is if text changes
-		return this.props.message.text !== nextProps.message.text || this.props.message.reactions.length !== nextProps.message.reactions.length;
+		return (
+			this.props.message.text !== nextProps.message.text ||
+			this.props.message.reactions.length !== nextProps.message.reactions.length
+		);
 	}
 
 	render() {
