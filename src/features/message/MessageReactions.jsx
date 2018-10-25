@@ -16,7 +16,7 @@ const Emoticon = styled.span`
 export default class MessageReactions extends React.PureComponent {
 	render() {
 		const { message } = this.props;
-		const reactions = message.reactions;
+		const reactions = message.reactions || [];
 
 		if (reactions.length === 0) return null;
 
