@@ -3,12 +3,24 @@ import parseEmoticons from "./parsers/parseEmoticons";
 import parseMedia from "./parsers/parseMedia";
 import parseFormatting from "./parsers/parseFormatting";
 import styled from "styled-components";
+import theme from "../../constants/theme";
 
 const MessageTextContainer = styled.div`
+	display: inline-block;
 	word-break: break-word;
 
 	.emoticon {
 		max-height: 24px;
+	}
+
+	mark {
+		padding: 0;
+		background: black;
+
+		&:hover {
+			background: transparent;
+			${theme.spoilerHoverForegroundColor ? `color: ${theme.spoilerHoverForegroundColor}` : ""};
+		}
 	}
 `;
 

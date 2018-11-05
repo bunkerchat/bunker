@@ -3,7 +3,7 @@ import TimeAgo from "react-timeago";
 
 const formatter = (value, unit, suffix) => {
 	if (unit === "second") {
-		value = "a few";
+		return "now";
 	}
 	if (value !== 1) {
 		unit += "s";

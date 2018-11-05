@@ -36,6 +36,9 @@ socket.on("room", socketMessage => {
 				dispatch(messageReceived(message));
 			}
 			break;
+		case "reacted":
+			dispatch(messageUpdated(socketMessage.data));
+			break;
 		case "updated":
 			dispatch(roomUpdated({ ...socketMessage.data, _id: socketMessage._id }));
 			break;

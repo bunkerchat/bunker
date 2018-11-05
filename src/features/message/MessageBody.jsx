@@ -5,17 +5,35 @@ import connect from "react-redux/es/connect/connect";
 import theme from "../../constants/theme";
 import MessageTimeAgo from "./MessageTimeAgo.jsx";
 import { getMessageAuthor } from "../../selectors/selectors";
+import MessageControls from "./MessageControls.jsx";
+import MessageReactions from "./MessageReactions.jsx";
 
 const MessageBodyContainer = styled.div`
+	position: relative;
 	flex: 1;
+	min-height: 30px;
+
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
 		color: ${theme.mentionForegroundColor};
 	}
+
+	&:hover {
+		.message-controls {
+			display: block;
+		}
+	}
+
+	.message-controls {
+		display: none;
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
 `;
 
 const MessageTime = styled.div`
-	width: 120px;
+	width: 90px;
 `;
 
 const mapStateToProps = (state, props) => ({
@@ -26,7 +44,10 @@ const mapStateToProps = (state, props) => ({
 class MessageBody extends React.Component {
 	shouldComponentUpdate(nextProps) {
 		// Only reason we're updating is if text changes
-		return this.props.message.text !== nextProps.message.text;
+		return (
+			this.props.message.text !== nextProps.message.text ||
+			this.props.message.reactions.length !== nextProps.message.reactions.length
+		);
 	}
 
 	render() {
@@ -53,6 +74,10 @@ class MessageBody extends React.Component {
 				<div className="row no-gutters">
 					<div className="col">
 						<MessageText text={message.text} />
+						<MessageReactions message={message} />
+					</div>
+					<div className="message-controls">
+						<MessageControls messageId={message._id} />
 					</div>
 					{firstInSeries && (
 						<MessageTime className="d-none d-md-block text-right">

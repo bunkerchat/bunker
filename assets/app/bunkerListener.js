@@ -9,6 +9,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 
 		switch (evt.verb) {
 			case 'messaged':
+			case 'reacted':
 				if (otherMessage) {
 					bunkerData.decorateMessage(room, message);
 

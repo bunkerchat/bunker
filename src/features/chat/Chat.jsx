@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import { hasAnyUnreadMention, getActiveRoom, getTotalUnreadMessageCount } from "../../selectors/selectors";
+import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
 
 const Container = styled.div`
 	display: flex;
@@ -88,6 +89,8 @@ class Chat extends React.PureComponent {
 				{_.map(rooms, (room, roomId) => (
 					<Room roomId={roomId} current={room.current} key={roomId} />
 				))}
+
+				<EmoticonPicker />
 			</Container>
 		);
 	}

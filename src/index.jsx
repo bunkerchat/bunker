@@ -12,7 +12,8 @@ import { Provider } from "react-redux";
 // Configure font-awesome
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCog, faEllipsisH, faGavel, faComments } from "@fortawesome/free-solid-svg-icons";
-library.add(faCog, faEllipsisH, faGavel, faComments);
+import { faSmile } from "@fortawesome/free-regular-svg-icons";
+library.add(faCog, faEllipsisH, faGavel, faComments, faSmile);
 
 ReactDOM.render(
 	<Provider store={store}>

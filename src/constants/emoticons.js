@@ -2,7 +2,7 @@ import _ from "lodash";
 
 const emoticonName = input => input.replace(/\.\w+$/, "");
 
-const list = _.map(window.emoticons, emoticon => ({
+const list = _.map(window.emoticonNames, emoticon => ({
 	name: emoticonName(emoticon),
 	file: emoticon,
 	isIcon: /^fa-/.test(emoticon)

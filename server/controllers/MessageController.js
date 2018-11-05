@@ -65,7 +65,7 @@ exports.toggleReaction = (req, res) => {
 				.populate("author reactions")
 				.lean();
 		})
-		.then(messageService.broadcastMessage)
+		.then(message => messageService.broadcastMessage(message, "reacted"))
 		.then(res.ok)
 		.catch(ForbiddenError, function(err) {
 			res.forbidden(err);
