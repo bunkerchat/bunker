@@ -17,30 +17,50 @@ const Lexer = require("flex-js");
 // lexer.setSource('abcd');
 // lexer.lex();
 
+/*
+	How rules work, in the following order
+	1. Longest match wins
+	2. Assuming a tie, order in which rules are added wins
+ */
 tokenService.tokenize = text => {
 	// lexer.setSource(text);
 	// lexer.lex();
 
 	const output = [];
-	const lexer = new Lexer();
+	const lexerInstance = new Lexer();
+
+	// ** code
+	lexerInstance.addState("code");
+
+	// start by finding a ` that is followed by anything and another `
+	lexerInstance.addRule(/`(?=.+`)/, lexer => {
+		lexer.begin("code");
+	});
+
+	// put everything into this state called code
+	lexerInstance.addStateRule("code", /.+`/, lexer => {
+		// remove any  backticks in code for now
+		const text = lexer.text.replace("`", "");
+		output.push({ type: "code", text });
+	});
+
+	// turn off by finding code using a ` that has ` and code behind it
+	lexerInstance.addStateRule("code", /(?<=`.+)/, lexer => {
+		lexer.begin(Lexer.STATE_INITIAL);
+	});
 
 	// word
-	lexer.addRule(/\w+/, lexer => {
+	lexerInstance.addRule(/\w*\s*/, lexer => {
 		output.push({ type: "word", text: lexer.text });
 	});
 
-	// white space
-	lexer.addRule(/\s+/, lexer => {
-		output.push({ type: "space", text: lexer.text });
-	});
-
 	// catch all
-	lexer.addRule(/./, lexer => {
+	lexerInstance.addRule(/./, lexer => {
 		output.push({ type: "unknown", text: lexer.text });
 	});
 
-	lexer.setSource(text);
-	lexer.lex();
+	lexerInstance.setSource(text);
+	lexerInstance.lex();
 
 	return output;
 };
