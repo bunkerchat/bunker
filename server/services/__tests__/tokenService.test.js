@@ -260,5 +260,24 @@ Array [
 ]
 `);
 		});
+
+		it("quote", () => {
+			const ipsum = `Lorem ipsum dolor sit amet,
+consectetur adipiscing elit,
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`;
+
+			const tokens = tokenService.tokenize(ipsum);
+
+			expect(tokens).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "text": "Lorem ipsum dolor sit amet,
+consectetur adipiscing elit,
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "type": "quote",
+  },
+]
+`);
+		});
 	});
 });

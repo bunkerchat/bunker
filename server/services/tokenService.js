@@ -17,15 +17,15 @@ const Lexer = require("flex-js");
 // lexer.setSource('abcd');
 // lexer.lex();
 
+// chop off leading and trailing characters
+const chopEnds = text => text.slice(1, text.length - 1);
+
 /*
 	How rules work, in the following order
 	1. Longest match wins
 	2. Assuming a tie, order in which rules are added wins
  */
-tokenService.tokenize = text => {
-	// lexer.setSource(text);
-	// lexer.lex();
-
+tokenService.tokenize = textToTokenize => {
 	const output = [];
 	const lexerInstance = new Lexer();
 
@@ -49,8 +49,11 @@ tokenService.tokenize = text => {
 	// 	lexer.begin(Lexer.STATE_INITIAL);
 	// });
 
-	// chop off leading and trailing characters
-	const chopEnds = text => text.slice(1, text.length -1);
+	// contains at least one line break
+	lexerInstance.addRule(/.*(\r|\n)+.*/, lexer => {
+		output.push({ type: "quote", text: textToTokenize });
+		lexer.terminate()
+	});
 
 	lexerInstance.addRule(/`.+`/, lexer => {
 		output.push({ type: "code", text: chopEnds(lexer.text) });
@@ -90,7 +93,7 @@ tokenService.tokenize = text => {
 		output.push({ type: "unknown", text: lexer.text });
 	});
 
-	lexerInstance.setSource(text);
+	lexerInstance.setSource(textToTokenize);
 	lexerInstance.lex();
 
 	return output;
