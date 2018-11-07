@@ -35,7 +35,7 @@ Array [
     "type": "word",
   },
   Object {
-    "text": "<foo> bar </foo>",
+    "text": "&#60;foo&#62; bar &#60;/foo&#62;",
     "type": "code",
   },
   Object {
@@ -103,7 +103,7 @@ Array [
     "type": "word",
   },
   Object {
-    "text": "<foo> _bar_ </foo>",
+    "text": "&#60;foo&#62; _bar_ &#60;/foo&#62;",
     "type": "code",
   },
   Object {
@@ -271,9 +271,7 @@ sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`;
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "Lorem ipsum dolor sit amet,
-consectetur adipiscing elit,
-sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "text": "Lorem ipsum dolor sit amet,&#10;consectetur adipiscing elit,&#10;sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "type": "quote",
   },
 ]

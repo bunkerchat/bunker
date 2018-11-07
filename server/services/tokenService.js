@@ -1,5 +1,7 @@
 const tokenService = module.exports;
 const Lexer = require("flex-js");
+const encode = require("ent").encode;
+
 // const lexer = new Lexer();
 
 // // options
@@ -51,46 +53,46 @@ tokenService.tokenize = textToTokenize => {
 
 	// contains at least one line break
 	lexerInstance.addRule(/.*(\r|\n)+.*/, lexer => {
-		output.push({ type: "quote", text: textToTokenize });
+		output.push({ type: "quote", text: encode(textToTokenize) });
 		lexer.terminate()
 	});
 
 	lexerInstance.addRule(/`.+`/, lexer => {
-		output.push({ type: "code", text: chopEnds(lexer.text) });
+		output.push({ type: "code", text: encode(chopEnds(lexer.text)) });
 	});
 
 	lexerInstance.addRule(/https?:\/\/\S+/, lexer => {
-		output.push({ type: "url", text: lexer.text });
+		output.push({ type: "url", text: encode(lexer.text) });
 	});
 
 	// ** italics
 	lexerInstance.addRule(/_.+?_/, lexer => {
-		output.push({ type: "italics", text: chopEnds(lexer.text) });
+		output.push({ type: "italics", text: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** bold
 	lexerInstance.addRule(/\*.+?\*/, lexer => {
-		output.push({ type: "bold", text: chopEnds(lexer.text) });
+		output.push({ type: "bold", text: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** spoiler
 	lexerInstance.addRule(/\|.+?\|/, lexer => {
-		output.push({ type: "spoiler", text: chopEnds(lexer.text) });
+		output.push({ type: "spoiler", text: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** strikethrough
 	lexerInstance.addRule(/~.+?~/, lexer => {
-		output.push({ type: "strikethrough", text: chopEnds(lexer.text) });
+		output.push({ type: "strikethrough", text: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** words and letters
 	lexerInstance.addRule(/[A-Za-z0-9,.'"!]*\s*/, lexer => {
-		output.push({ type: "word", text: lexer.text });
+		output.push({ type: "word", text: encode(lexer.text) });
 	});
 
 	// ** catch all
 	lexerInstance.addRule(/./, lexer => {
-		output.push({ type: "unknown", text: lexer.text });
+		output.push({ type: "unknown", text: encode(lexer.text) });
 	});
 
 	lexerInstance.setSource(textToTokenize);
