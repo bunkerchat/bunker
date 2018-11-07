@@ -46,7 +46,7 @@ class MessageBody extends React.Component {
 		// Only reason we're updating is if text changes
 		return (
 			this.props.message.text !== nextProps.message.text ||
-			this.props.message.reactions.length !== nextProps.message.reactions.length
+			(this.props.message.reactions || []).length !== (nextProps.message.reactions || []).length
 		);
 	}
 
