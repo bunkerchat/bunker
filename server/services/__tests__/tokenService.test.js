@@ -144,5 +144,61 @@ Array [
 ]
 `);
 		});
+
+		it("spoiler", () => {
+			const tokens = tokenService.tokenize("My dogs |eat fish|.");
+			expect(tokens).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "text": "My ",
+    "type": "word",
+  },
+  Object {
+    "text": "dogs ",
+    "type": "word",
+  },
+  Object {
+    "text": "eat fish",
+    "type": "spoiler",
+  },
+  Object {
+    "text": ".",
+    "type": "word",
+  },
+]
+`);
+		});
+
+		it("strikethrough", () => {
+			const tokens = tokenService.tokenize("My ~dogs~ cats eat fish.");
+			expect(tokens).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "text": "My ",
+    "type": "word",
+  },
+  Object {
+    "text": "dogs",
+    "type": "strikethrough",
+  },
+  Object {
+    "text": " ",
+    "type": "word",
+  },
+  Object {
+    "text": "cats ",
+    "type": "word",
+  },
+  Object {
+    "text": "eat ",
+    "type": "word",
+  },
+  Object {
+    "text": "fish.",
+    "type": "word",
+  },
+]
+`);
+		});
 	});
 });

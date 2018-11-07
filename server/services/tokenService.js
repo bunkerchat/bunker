@@ -66,6 +66,16 @@ tokenService.tokenize = text => {
 		output.push({ type: "bold", text: chopEnds(lexer.text) });
 	});
 
+	// ** spoiler
+	lexerInstance.addRule(/\|.+?\|/, lexer => {
+		output.push({ type: "spoiler", text: chopEnds(lexer.text) });
+	});
+
+	// ** strikethrough
+	lexerInstance.addRule(/~.+?~/, lexer => {
+		output.push({ type: "strikethrough", text: chopEnds(lexer.text) });
+	});
+
 	// ** words and letters
 	lexerInstance.addRule(/[A-Za-z0-9,.'"]*\s*/, lexer => {
 		output.push({ type: "word", text: lexer.text });
