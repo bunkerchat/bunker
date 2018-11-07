@@ -30,31 +30,48 @@ tokenService.tokenize = text => {
 	const lexerInstance = new Lexer();
 
 	// ** code
-	lexerInstance.addState("code");
+	// lexerInstance.addState("code");
+	//
+	// // start by finding a ` that is followed by anything and another `
+	// lexerInstance.addRule(/`(?=.+`)/, lexer => {
+	// 	lexer.begin("code");
+	// });
+	//
+	// // put everything into this state called code
+	// lexerInstance.addStateRule("code", /.+`/, lexer => {
+	// 	// remove any  backticks in code for now
+	// 	const text = lexer.text.replace("`", "");
+	// 	output.push({ type: "code", text });
+	// });
+	//
+	// // turn off by finding code using a ` that has ` and code behind it
+	// lexerInstance.addStateRule("code", /(?<=`.+)/, lexer => {
+	// 	lexer.begin(Lexer.STATE_INITIAL);
+	// });
 
-	// start by finding a ` that is followed by anything and another `
-	lexerInstance.addRule(/`(?=.+`)/, lexer => {
-		lexer.begin("code");
-	});
-
-	// put everything into this state called code
-	lexerInstance.addStateRule("code", /.+`/, lexer => {
-		// remove any  backticks in code for now
-		const text = lexer.text.replace("`", "");
+	lexerInstance.addRule(/`.+`/, lexer => {
+		// chop off leading and trailing backticks
+		const text = lexer.text.slice(1, lexer.text.length -1);
 		output.push({ type: "code", text });
 	});
 
-	// turn off by finding code using a ` that has ` and code behind it
-	lexerInstance.addStateRule("code", /(?<=`.+)/, lexer => {
-		lexer.begin(Lexer.STATE_INITIAL);
+	// ** italics
+	// hack: put the space \s in because otherwise it seemed to get lost
+	lexerInstance.addRule(/_.+?_\s*/, lexer => {
+		output.push({ type: "italics", text: lexer.text });
 	});
 
-	// word
-	lexerInstance.addRule(/\w*\s*/, lexer => {
+	// ** bold
+	lexerInstance.addRule(/\*.+?\*/, lexer => {
+		output.push({ type: "bold", text: lexer.text });
+	});
+
+	// ** words and letters
+	lexerInstance.addRule(/[A-Za-z0-9,.'"]*\s*/, lexer => {
 		output.push({ type: "word", text: lexer.text });
 	});
 
-	// catch all
+	// ** catch all
 	lexerInstance.addRule(/./, lexer => {
 		output.push({ type: "unknown", text: lexer.text });
 	});
