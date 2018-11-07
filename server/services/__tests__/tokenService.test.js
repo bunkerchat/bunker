@@ -71,8 +71,12 @@ Array [
     "type": "word",
   },
   Object {
-    "text": "_simply_ ",
+    "text": "simply",
     "type": "italics",
+  },
+  Object {
+    "text": " ",
+    "type": "word",
   },
   Object {
     "text": "hank ",
@@ -130,7 +134,7 @@ Array [
     "type": "word",
   },
   Object {
-    "text": "*mediocre*",
+    "text": "mediocre",
     "type": "bold",
   },
   Object {

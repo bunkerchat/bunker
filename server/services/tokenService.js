@@ -49,21 +49,21 @@ tokenService.tokenize = text => {
 	// 	lexer.begin(Lexer.STATE_INITIAL);
 	// });
 
+	// chop off leading and trailing characters
+	const chopEnds = text => text.slice(1, text.length -1);
+
 	lexerInstance.addRule(/`.+`/, lexer => {
-		// chop off leading and trailing backticks
-		const text = lexer.text.slice(1, lexer.text.length -1);
-		output.push({ type: "code", text });
+		output.push({ type: "code", text: chopEnds(lexer.text) });
 	});
 
 	// ** italics
-	// hack: put the space \s in because otherwise it seemed to get lost
-	lexerInstance.addRule(/_.+?_\s*/, lexer => {
-		output.push({ type: "italics", text: lexer.text });
+	lexerInstance.addRule(/_.+?_/, lexer => {
+		output.push({ type: "italics", text: chopEnds(lexer.text) });
 	});
 
 	// ** bold
 	lexerInstance.addRule(/\*.+?\*/, lexer => {
-		output.push({ type: "bold", text: lexer.text });
+		output.push({ type: "bold", text: chopEnds(lexer.text) });
 	});
 
 	// ** words and letters
