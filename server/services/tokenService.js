@@ -56,6 +56,10 @@ tokenService.tokenize = text => {
 		output.push({ type: "code", text: chopEnds(lexer.text) });
 	});
 
+	lexerInstance.addRule(/https?:\/\/\S+/, lexer => {
+		output.push({ type: "url", text: lexer.text });
+	});
+
 	// ** italics
 	lexerInstance.addRule(/_.+?_/, lexer => {
 		output.push({ type: "italics", text: chopEnds(lexer.text) });
@@ -77,7 +81,7 @@ tokenService.tokenize = text => {
 	});
 
 	// ** words and letters
-	lexerInstance.addRule(/[A-Za-z0-9,.'"]*\s*/, lexer => {
+	lexerInstance.addRule(/[A-Za-z0-9,.'"!]*\s*/, lexer => {
 		output.push({ type: "word", text: lexer.text });
 	});
 

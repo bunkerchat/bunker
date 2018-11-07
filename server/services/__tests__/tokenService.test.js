@@ -200,5 +200,65 @@ Array [
 ]
 `);
 		});
+
+		it("url", () => {
+			const tokens = tokenService.tokenize("Yo! Plz visit https://www.bunkerchat.net !");
+			expect(tokens).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "text": "Yo! ",
+    "type": "word",
+  },
+  Object {
+    "text": "Plz ",
+    "type": "word",
+  },
+  Object {
+    "text": "visit ",
+    "type": "word",
+  },
+  Object {
+    "text": "https://www.bunkerchat.net",
+    "type": "url",
+  },
+  Object {
+    "text": " ",
+    "type": "word",
+  },
+  Object {
+    "text": "!",
+    "type": "word",
+  },
+]
+`);
+		});
+
+		it("url contains underscores", () => {
+			const tokens = tokenService.tokenize("Plz visit https://www.somesite.derp/foo_bar_derptown !");
+			expect(tokens).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "text": "Plz ",
+    "type": "word",
+  },
+  Object {
+    "text": "visit ",
+    "type": "word",
+  },
+  Object {
+    "text": "https://www.somesite.derp/foo_bar_derptown",
+    "type": "url",
+  },
+  Object {
+    "text": " ",
+    "type": "word",
+  },
+  Object {
+    "text": "!",
+    "type": "word",
+  },
+]
+`);
+		});
 	});
 });
