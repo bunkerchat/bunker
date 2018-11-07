@@ -15,7 +15,7 @@ const ColoredStatus = styled.div`
 	}
 `;
 
-export default class MessageAuthor extends React.Component {
+export default class UserStatus extends React.Component {
 	render() {
 		const { user } = this.props;
 		const presentClass = user.connected ? (user.present ? "present" : "away") : "";

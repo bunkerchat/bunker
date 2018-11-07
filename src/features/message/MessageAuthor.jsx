@@ -37,11 +37,18 @@ const mapStateToProps = (state, props) => ({
 class MessageAuthor extends React.Component {
 	shouldComponentUpdate(prevProps) {
 		const { user } = this.props;
-		return user.connected !== prevProps.user.connected || user.present !== prevProps.user.present;
+		return user && (user.connected !== prevProps.user.connected || user.present !== prevProps.user.present);
 	}
 
 	render() {
 		const { user } = this.props;
+
+		if (!user) {
+			// Not sure how this happens, but it does
+			console.error(`couldn't find user for message author ${this.props.authorId}`);
+			return null;
+		}
+
 		const isLocalAuthor = this.props.authorId === userId;
 		return (
 			<AuthorContainer className={`pl-1 ${isLocalAuthor ? "local" : ""}`}>
