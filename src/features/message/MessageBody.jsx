@@ -37,7 +37,7 @@ const MessageTime = styled.div`
 `;
 
 const mapStateToProps = (state, props) => ({
-	nick: getMessageAuthor(state, props).nick,
+	author: getMessageAuthor(state, props),
 	localNick: state.localUser.nick
 });
 
@@ -51,7 +51,7 @@ class MessageBody extends React.Component {
 	}
 
 	render() {
-		const { message, firstInSeries, nick, localNick } = this.props;
+		const { message, firstInSeries, author, localNick } = this.props;
 		const isUserMentioned = testTextForNick(message.text, localNick);
 
 		return (
@@ -61,7 +61,7 @@ class MessageBody extends React.Component {
 				{firstInSeries && (
 					<div className="row d-md-none">
 						<div className="col">
-							<h6>{nick}</h6>
+							<h6>{author ? author.nick : "Unknown"}</h6>
 						</div>
 						<div className="col text-right">
 							<small className="text-muted">

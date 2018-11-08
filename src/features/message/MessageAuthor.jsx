@@ -41,13 +41,10 @@ class MessageAuthor extends React.Component {
 	}
 
 	render() {
-		const { user } = this.props;
-
-		if (!user) {
-			// Not sure how this happens, but it does
-			console.error(`couldn't find user for message author ${this.props.authorId}`);
-			return null;
-		}
+		// Currently ignoring if the user wasn't returned
+		// This happens when a user hasn't logged in in over 45 days
+		// todo handle this better?
+		const user = this.props.user || {};
 
 		const isLocalAuthor = this.props.authorId === userId;
 		return (
