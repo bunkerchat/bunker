@@ -35,7 +35,7 @@
     "express": "4.13.3",
     "express-session": "1.12.1",
     "favico.js": "0.3.10",
-    "flex-js": "1.0.4",
+    "flex-js": "git+https://github.com/JasonMore/flex-js.git",
     "font-awesome": "4.5.0",
     "fs-extra": "0.26.5",
     "git-rev": "0.2.1",
