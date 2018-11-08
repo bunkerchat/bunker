@@ -24,38 +24,36 @@ const MessageTextContainer = styled.div`
 	}
 `;
 
-const Quote = ({token}) => (
-	<MessageTextContainer dangerouslySetInnerHTML={{ __html: token.text }} />
-
-	const Code = ({token}) => <MessageTextContainer dangerouslySetInnerHTML={{ __html: token.text }} />
-	const Url = ({token}) => <MessageTextContainer dangerouslySetInnerHTML={{ __html: token.text }} />
-	const Italics = ({token}) => <MessageTextContainer dangerouslySetInnerHTML={{ __html: token.text }} />
-	const Bold = ({token}) => <MessageTextContainer dangerouslySetInnerHTML={{ __html: token.text }} />
-	const Spoiler = ({token}) => <MessageTextContainer dangerouslySetInnerHTML={{ __html: token.text }} />
-	const Strikethrough = ({token}) => <MessageTextContainer dangerouslySetInnerHTML={{ __html: token.text }} />
-	const Word = ({token}) => <MessageTextContainer dangerouslySetInnerHTML={{ __html: token.text }} />
-
+const Quote = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Code = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Url = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Italics = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Bold = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Spoiler = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Strikethrough = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Word = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
 
 const tokenMap = {
-	quote: token => <Quote token={token} />,
-	code: token => <Code token={token} />,
-	url: token => <Url token={token} />,
-	italics: token => <Italics token={token} />,
-	bold: token => <Bold token={token} />,
-	spoiler: token => <Spoiler token={token} />,
-	strikethrough: token => <Strikethrough token={token} />,
-	word: token => <Word token={token} />,
-	unknown: token => <Word token={token} />
+	quote: Quote,
+	code: Code,
+	url: Url,
+	italics: Italics,
+	bold: Bold,
+	spoiler: Spoiler,
+	strikethrough: Strikethrough,
+	word: Word,
+	unknown: Word
 };
 
+const mapToMessage = (token, index) => {
+	const Derp = tokenMap[token.type];
+	return <Derp token={token} key={index+token.type+token.value} />
+};
 
-
-class MessageTokens extends React.Component {
+export default class MessageTokens extends React.Component {
 	render() {
 		const { message } = this.props;
-		const tokens = message.tokens;
-		return tokens.map(tokenMap);
+		const tokens = message.tokens || [{ type: "unknown", value: message.text }];
+		return <MessageTextContainer>{tokens.map(mapToMessage)}</MessageTextContainer>;
 	}
 }
-
-export default connect(mapStateToProps)(MessageTokens);

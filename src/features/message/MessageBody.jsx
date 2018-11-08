@@ -7,7 +7,7 @@ import MessageTimeAgo from "./MessageTimeAgo.jsx";
 import { getMessageAuthor } from "../../selectors/selectors";
 import MessageControls from "./MessageControls.jsx";
 import MessageReactions from "./MessageReactions.jsx";
-import MessageTokens from "./MessageTokens";
+import MessageTokens from "./MessageTokens.jsx";
 
 const MessageBodyContainer = styled.div`
 	position: relative;
@@ -74,7 +74,8 @@ class MessageBody extends React.Component {
 
 				<div className="row no-gutters">
 					<div className="col">
-						(messageTokens ? <MessageTokens message={message} /> : <MessageText text={message.text} />)
+						{/*(messageTokens ? <MessageTokens message={message} /> : <MessageText text={message.text} />)*/}
+						<MessageTokens message={message} />
 						<MessageReactions message={message} />
 					</div>
 					<div className="message-controls">
