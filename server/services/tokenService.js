@@ -28,75 +28,63 @@ const chopEnds = text => text.slice(1, text.length - 1);
 	2. Assuming a tie, order in which rules are added wins
  */
 tokenService.tokenize = textToTokenize => {
-	const output = [];
+	let output = [];
 	const lexerInstance = new Lexer();
-
-	// ** code
-	// lexerInstance.addState("code");
-	//
-	// // start by finding a ` that is followed by anything and another `
-	// lexerInstance.addRule(/`(?=.+`)/, lexer => {
-	// 	lexer.begin("code");
-	// });
-	//
-	// // put everything into this state called code
-	// lexerInstance.addStateRule("code", /.+`/, lexer => {
-	// 	// remove any  backticks in code for now
-	// 	const text = lexer.text.replace("`", "");
-	// 	output.push({ type: "code", text });
-	// });
-	//
-	// // turn off by finding code using a ` that has ` and code behind it
-	// lexerInstance.addStateRule("code", /(?<=`.+)/, lexer => {
-	// 	lexer.begin(Lexer.STATE_INITIAL);
-	// });
 
 	// contains at least one line break
 	lexerInstance.addRule(/.*(\r|\n)+.*/, lexer => {
-		output.push({ type: "quote", text: encode(textToTokenize) });
-		lexer.terminate()
+		output.push({ type: "quote", value: encode(textToTokenize) });
+		lexer.terminate();
 	});
 
+	// ** code
 	lexerInstance.addRule(/`.+`/, lexer => {
-		output.push({ type: "code", text: encode(chopEnds(lexer.text)) });
+		output.push({ type: "code", value: encode(chopEnds(lexer.text)) });
 	});
 
+	// ** urls
 	lexerInstance.addRule(/https?:\/\/\S+/, lexer => {
-		output.push({ type: "url", text: encode(lexer.text) });
+		output.push({ type: "url", value: encode(lexer.text) });
 	});
 
 	// ** italics
 	lexerInstance.addRule(/_.+?_/, lexer => {
-		output.push({ type: "italics", text: encode(chopEnds(lexer.text)) });
+		output.push({ type: "italics", value: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** bold
 	lexerInstance.addRule(/\*.+?\*/, lexer => {
-		output.push({ type: "bold", text: encode(chopEnds(lexer.text)) });
+		output.push({ type: "bold", value: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** spoiler
 	lexerInstance.addRule(/\|.+?\|/, lexer => {
-		output.push({ type: "spoiler", text: encode(chopEnds(lexer.text)) });
+		output.push({ type: "spoiler", value: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** strikethrough
 	lexerInstance.addRule(/~.+?~/, lexer => {
-		output.push({ type: "strikethrough", text: encode(chopEnds(lexer.text)) });
+		output.push({ type: "strikethrough", value: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** words and letters
 	lexerInstance.addRule(/[A-Za-z0-9,.'"!]*\s*/, lexer => {
-		output.push({ type: "word", text: encode(lexer.text) });
+		output.push({ type: "word", value: encode(lexer.text) });
 	});
 
 	// ** catch all
 	lexerInstance.addRule(/./, lexer => {
-		output.push({ type: "unknown", text: encode(lexer.text) });
+		output.push({ type: "unknown", value: encode(lexer.text) });
 	});
 
 	lexerInstance.setSource(textToTokenize);
+
+	// try {
 	lexerInstance.lex();
+	// } catch (e) {
+	// 	console.error("tokenService error", e);
+	// 	output = [{ type: "unknown", value: encode(textToTokenize) }];
+	// }
 
 	return output;
 };

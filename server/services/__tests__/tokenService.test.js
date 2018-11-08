@@ -7,20 +7,20 @@ describe("tokenService", () => {
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "The ",
     "type": "word",
+    "value": "The ",
   },
   Object {
-    "text": "Quick ",
     "type": "word",
+    "value": "Quick ",
   },
   Object {
-    "text": "Brown ",
     "type": "word",
+    "value": "Brown ",
   },
   Object {
-    "text": "Fox.",
     "type": "word",
+    "value": "Fox.",
   },
 ]
 `);
@@ -31,24 +31,24 @@ Array [
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "code ",
     "type": "word",
+    "value": "code ",
   },
   Object {
-    "text": "&#60;foo&#62; bar &#60;/foo&#62;",
     "type": "code",
+    "value": "&#60;foo&#62; bar &#60;/foo&#62;",
   },
   Object {
-    "text": " ",
     "type": "word",
+    "value": " ",
   },
   Object {
-    "text": "is ",
     "type": "word",
+    "value": "is ",
   },
   Object {
-    "text": "awesome",
     "type": "word",
+    "value": "awesome",
   },
 ]
 `);
@@ -59,36 +59,36 @@ Array [
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "One ",
     "type": "word",
+    "value": "One ",
   },
   Object {
-    "text": "does ",
     "type": "word",
+    "value": "does ",
   },
   Object {
-    "text": "not ",
     "type": "word",
+    "value": "not ",
   },
   Object {
-    "text": "simply",
     "type": "italics",
+    "value": "simply",
   },
   Object {
-    "text": " ",
     "type": "word",
+    "value": " ",
   },
   Object {
-    "text": "hank ",
     "type": "word",
+    "value": "hank ",
   },
   Object {
-    "text": "a ",
     "type": "word",
+    "value": "a ",
   },
   Object {
-    "text": "hankerson.",
     "type": "word",
+    "value": "hankerson.",
   },
 ]
 `);
@@ -99,24 +99,24 @@ Array [
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "code ",
     "type": "word",
+    "value": "code ",
   },
   Object {
-    "text": "&#60;foo&#62; _bar_ &#60;/foo&#62;",
     "type": "code",
+    "value": "&#60;foo&#62; _bar_ &#60;/foo&#62;",
   },
   Object {
-    "text": " ",
     "type": "word",
+    "value": " ",
   },
   Object {
-    "text": "is ",
     "type": "word",
+    "value": "is ",
   },
   Object {
-    "text": "awesome",
     "type": "word",
+    "value": "awesome",
   },
 ]
 `);
@@ -126,20 +126,20 @@ Array [
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "Bunker ",
     "type": "word",
+    "value": "Bunker ",
   },
   Object {
-    "text": "is ",
     "type": "word",
+    "value": "is ",
   },
   Object {
-    "text": "mediocre",
     "type": "bold",
+    "value": "mediocre",
   },
   Object {
-    "text": ".",
     "type": "word",
+    "value": ".",
   },
 ]
 `);
@@ -150,20 +150,20 @@ Array [
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "My ",
     "type": "word",
+    "value": "My ",
   },
   Object {
-    "text": "dogs ",
     "type": "word",
+    "value": "dogs ",
   },
   Object {
-    "text": "eat fish",
     "type": "spoiler",
+    "value": "eat fish",
   },
   Object {
-    "text": ".",
     "type": "word",
+    "value": ".",
   },
 ]
 `);
@@ -174,28 +174,28 @@ Array [
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "My ",
     "type": "word",
+    "value": "My ",
   },
   Object {
-    "text": "dogs",
     "type": "strikethrough",
+    "value": "dogs",
   },
   Object {
-    "text": " ",
     "type": "word",
+    "value": " ",
   },
   Object {
-    "text": "cats ",
     "type": "word",
+    "value": "cats ",
   },
   Object {
-    "text": "eat ",
     "type": "word",
+    "value": "eat ",
   },
   Object {
-    "text": "fish.",
     "type": "word",
+    "value": "fish.",
   },
 ]
 `);
@@ -206,28 +206,28 @@ Array [
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "Yo! ",
     "type": "word",
+    "value": "Yo! ",
   },
   Object {
-    "text": "Plz ",
     "type": "word",
+    "value": "Plz ",
   },
   Object {
-    "text": "visit ",
     "type": "word",
+    "value": "visit ",
   },
   Object {
-    "text": "https://www.bunkerchat.net",
     "type": "url",
+    "value": "https://www.bunkerchat.net",
   },
   Object {
-    "text": " ",
     "type": "word",
+    "value": " ",
   },
   Object {
-    "text": "!",
     "type": "word",
+    "value": "!",
   },
 ]
 `);
@@ -238,24 +238,24 @@ Array [
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "Plz ",
     "type": "word",
+    "value": "Plz ",
   },
   Object {
-    "text": "visit ",
     "type": "word",
+    "value": "visit ",
   },
   Object {
-    "text": "https://www.somesite.derp/foo_bar_derptown",
     "type": "url",
+    "value": "https://www.somesite.derp/foo_bar_derptown",
   },
   Object {
-    "text": " ",
     "type": "word",
+    "value": " ",
   },
   Object {
-    "text": "!",
     "type": "word",
+    "value": "!",
   },
 ]
 `);
@@ -271,8 +271,20 @@ sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`;
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
-    "text": "Lorem ipsum dolor sit amet,&#10;consectetur adipiscing elit,&#10;sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "type": "quote",
+    "value": "Lorem ipsum dolor sit amet,&#10;consectetur adipiscing elit,&#10;sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  },
+]
+`);
+		});
+
+		it("derp", () => {
+			const tokens = tokenService.tokenize("derp");
+			expect(tokens).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "type": "word",
+    "value": "derp",
   },
 ]
 `);
