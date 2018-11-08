@@ -67,6 +67,12 @@ tokenService.tokenize = textToTokenize => {
 		output.push({ type: "strikethrough", value: encode(chopEnds(lexer.text)) });
 	});
 
+	// ** emoticons
+	lexerInstance.addRule(/:.+?:/, lexer => {
+		output.push({ type: "emoticon", value: encode(chopEnds(lexer.text)) });
+	});
+
+
 	// ** words and letters
 	lexerInstance.addRule(/[A-Za-z0-9,.'"!]*\s*/, lexer => {
 		output.push({ type: "word", value: encode(lexer.text) });

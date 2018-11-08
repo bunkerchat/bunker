@@ -1,9 +1,7 @@
 import React from "react";
-import { createStructuredSelector } from "reselect";
 import styled from "styled-components";
 import theme from "../../constants/theme";
-
-const mapStateToProps = createStructuredSelector({});
+import Emoticon from "./tokens/Emoticon.jsx";
 
 const MessageTextContainer = styled.div`
 	display: inline-block;
@@ -33,6 +31,7 @@ const Spoiler = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.va
 const Strikethrough = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
 const Word = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
 
+
 const tokenMap = {
 	quote: Quote,
 	code: Code,
@@ -42,12 +41,13 @@ const tokenMap = {
 	spoiler: Spoiler,
 	strikethrough: Strikethrough,
 	word: Word,
-	unknown: Word
+	unknown: Word,
+	emoticon: Emoticon
 };
 
 const mapToMessage = (token, index) => {
-	const Derp = tokenMap[token.type];
-	return <Derp token={token} key={index+token.type+token.value} />
+	const TokenType = tokenMap[token.type];
+	return <TokenType token={token} key={index+token.type+token.value} />
 };
 
 export default class MessageTokens extends React.Component {

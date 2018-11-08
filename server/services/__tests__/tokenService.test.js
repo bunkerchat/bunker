@@ -289,5 +289,49 @@ Array [
 ]
 `);
 		});
+
+		it("emoticons", () => {
+			const tokens = tokenService.tokenize(":heart: jpro is an :angel: to me");
+			expect(tokens).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "type": "emoticon",
+    "value": "heart",
+  },
+  Object {
+    "type": "word",
+    "value": " ",
+  },
+  Object {
+    "type": "word",
+    "value": "jpro ",
+  },
+  Object {
+    "type": "word",
+    "value": "is ",
+  },
+  Object {
+    "type": "word",
+    "value": "an ",
+  },
+  Object {
+    "type": "emoticon",
+    "value": "angel",
+  },
+  Object {
+    "type": "word",
+    "value": " ",
+  },
+  Object {
+    "type": "word",
+    "value": "to ",
+  },
+  Object {
+    "type": "word",
+    "value": "me",
+  },
+]
+`);
+		});
 	});
 });
