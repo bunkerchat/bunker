@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 import Emoticon from "./tokens/Emoticon.jsx";
+import Url from "./tokens/Url.jsx";
 
 const MessageTextContainer = styled.div`
 	display: inline-block;
@@ -23,12 +24,11 @@ const MessageTextContainer = styled.div`
 `;
 
 const Quote = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Code = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Url = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Italics = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Bold = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Spoiler = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Strikethrough = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Code = ({ token }) => <code dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Italics = ({ token }) => <em dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Bold = ({ token }) => <strong dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Spoiler = ({ token }) => <mark dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Strikethrough = ({ token }) => <del dangerouslySetInnerHTML={{ __html: token.value }} />;
 const Word = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
 
 
