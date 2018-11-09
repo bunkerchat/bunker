@@ -51,7 +51,10 @@ const messageSchema = new mongoose.Schema({
 	linkMeta: {
 		type: Object
 	},
-	reactions: [Reaction]
+	reactions: [Reaction],
+	tokens: {
+		type: Array
+	}
 });
 
 messageSchema.index({ text: "text" });
