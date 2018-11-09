@@ -18,11 +18,12 @@ const fightService = require("./fightService");
 const animationService = require("./animationService");
 const userService = require("./userService");
 const linkMetaService = require("./linkMetaService");
+const tokenService = require("./tokenService");
 
 const InvalidInputError = require("../errors/InvalidInputError");
 
-messageService.createMessage = function(roomMember, text) {
-	text = ent.encode(text);
+messageService.createMessage = function(roomMember, incomingText) {
+	const text = ent.encode(incomingText);
 
 	if (!text || !text.length) {
 		throw new InvalidInputError(); // block the trolls
@@ -72,7 +73,7 @@ messageService.createMessage = function(roomMember, text) {
 	} else if (/^\/\w+/i.test(text)) {
 		return badCommand(roomMember, text);
 	} else {
-		return linkMetaService.lookup(text).then(linkMeta => message(roomMember, text, "standard", linkMeta));
+		return message(roomMember, text, "standard");
 	}
 };
 
@@ -264,20 +265,29 @@ function me(roomMember, text) {
 	return message(roomMember, roomMember.user.nick + text.substring(3), "emote");
 }
 
-function message(roomMember, text, type, linkMeta) {
-	type = type || "standard";
+function message(roomMember, text, type) {
+	return Promise.try(() => {
+		type = type || "standard";
+		if (type !== "standard") return Promise.resolve();
+		return linkMetaService.lookup(text);
+	})
+		.then(linkMeta => {
+			const tokens = tokenService.tokenize(ent.decode(text));
 
-	return Message.create({
-		type,
-		text,
-		linkMeta,
-		room: roomMember.room,
-		author: type === "standard" ? roomMember.user : null
-	}).then(function(message) {
-		broadcastMessage(message);
-		saveInMentionedInboxes(message);
-		return populateMessage(message);
-	});
+			return Message.create({
+				type,
+				text,
+				linkMeta,
+				tokens,
+				room: roomMember.room,
+				author: type === "standard" ? roomMember.user : null
+			});
+		})
+		.then(function(message) {
+			broadcastMessage(message);
+			saveInMentionedInboxes(message);
+			return populateMessage(message);
+		});
 }
 
 function populateMessage(message) {

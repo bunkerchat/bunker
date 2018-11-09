@@ -3,6 +3,8 @@ global.log = require("./config/log");
 global._ = require("lodash");
 global.Promise = require("bluebird");
 
+const ent = require("ent");
+
 var mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 
@@ -23,9 +25,11 @@ var config = require("./config/config");
 var app = Promise.promisifyAll(require("./config/express"));
 var server = Promise.promisifyAll(require("http").Server(app));
 var socketio = require("./config/socketio");
+const tokenService = require("./services/tokenService");
 
 var User = require("./models/User");
 var Room = require("./models/Room");
+const Message = require("./models/Message");
 
 module.exports.run = function(cb) {
 	log.info('server - Starting "' + config.environment + '"');
@@ -59,11 +63,26 @@ function connectToMongoose() {
 }
 
 function startup() {
-	return Promise.join(User.update({}, { typingIn: null }, { multi: true }), ensureFirstRoom());
+	return Promise.join(noUserTyping(), ensureFirstRoom(), tokenizeLast5Days());
+}
+
+function noUserTyping() {
+	return User.update({}, { typingIn: null }, { multi: true });
 }
 
 function ensureFirstRoom() {
 	return Room.findOne({ name: "First" }).then(function(firstRoom) {
 		if (!firstRoom) return Room.create({ name: "First" });
+	});
+}
+
+function tokenizeLast5Days() {
+	return Message.find({
+		createdAt: { $gte: new Date(new Date().getTime() - 5 * 24 * 60 * 60 * 1000) }
+	}).then(messages => {
+		return Promise.map(messages, message => {
+			message.tokens = tokenService.tokenize(ent.decode(message.text));
+			return message.save();
+		});
 	});
 }
