@@ -74,7 +74,6 @@ class MessageBody extends React.Component {
 
 				<div className="row no-gutters">
 					<div className="col">
-						{/*(messageTokens ? <MessageTokens message={message} /> : <MessageText text={message.text} />)*/}
 						<MessageTokens message={message} />
 						<MessageReactions message={message} />
 					</div>
