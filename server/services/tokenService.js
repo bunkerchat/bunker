@@ -2,23 +2,6 @@ const tokenService = module.exports;
 const Lexer = require("flex-js");
 const encode = require("ent").encode;
 
-// const lexer = new Lexer();
-
-// // options
-// // lexer.setIgnoreCase(true);
-// //
-// // // definitions
-// // lexer.addDefinition("DIGIT", /[0-9]/);
-// //
-// // // rules
-// // lexer.addRule(/{DIGIT}+\.{DIGIT}+/, function(lexer) {
-// // 	console.log("Found float: " + lexer.text);
-// // });
-// // lexer.addRule(/\s+/);
-
-// lexer.setSource('abcd');
-// lexer.lex();
-
 // chop off leading and trailing characters
 const chopEnds = text => text.slice(1, text.length - 1);
 
@@ -85,12 +68,12 @@ tokenService.tokenize = textToTokenize => {
 
 	lexerInstance.setSource(textToTokenize);
 
-	// try {
+	try {
 	lexerInstance.lex();
-	// } catch (e) {
-	// 	console.error("tokenService error", e);
-	// 	output = [{ type: "unknown", value: encode(textToTokenize) }];
-	// }
+	} catch (e) {
+		console.error("tokenService error", e);
+		output = [{ type: "unknown", value: encode(textToTokenize) }];
+	}
 
 	return output;
 };
