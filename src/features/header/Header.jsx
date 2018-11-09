@@ -59,7 +59,7 @@ class Header extends React.PureComponent {
 					</Link>
 					<ul className="navbar-nav d-none d-md-flex">
 						{_.map(rooms, room => (
-							<RoomListItem className={`nav-item px-3 ${room.current ? "active" : ""}`} key={room._id}>
+							<RoomListItem className={`nav-item px-lg-3 ${room.current ? "active" : ""}`} key={room._id}>
 								<RoomLink room={room} roomMember={localRoomMembersByRoom[room._id]} />
 							</RoomListItem>
 						))}
