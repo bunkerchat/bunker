@@ -15,6 +15,11 @@ import { faCog, faEllipsisH, faGavel, faComments } from "@fortawesome/free-solid
 import { faSmile } from "@fortawesome/free-regular-svg-icons";
 library.add(faCog, faEllipsisH, faGavel, faComments, faSmile);
 
+if (process.env.NODE_ENV !== 'production') {
+	const {whyDidYouUpdate} = require('why-did-you-update');
+	whyDidYouUpdate(React);
+}
+
 ReactDOM.render(
 	<Provider store={store}>
 		<ConnectedRouter history={history}>
