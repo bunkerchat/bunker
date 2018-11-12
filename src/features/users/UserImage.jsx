@@ -7,7 +7,11 @@ const Container = styled.div`
 	display: flex;
 `;
 
-export default class UserImage extends React.PureComponent {
+export default class UserImage extends React.Component {
+	shouldComponentUpdate() {
+		return false;
+	}
+
 	render() {
 		const { user } = this.props;
 		return (
