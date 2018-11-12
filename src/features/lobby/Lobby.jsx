@@ -21,21 +21,29 @@ const mapStateToProps = state => ({
 	localRoomMembersByRoom: state.localRoomMembers.byRoom
 });
 
-const RoomLink = ({ room, roomMember }) => (
-	<Link className="list-group-item p-3 d-flex justify-content-between align-items-center" to={`/2/room/${room._id}`}>
-		{room.name}
-		{roomMember.unreadMessageCount > 0 && (
-			<UnreadMessageBadge className={`badge badge-primary ${roomMember.unreadMention ? "mention" : ""}`}>
-				{roomMember.unreadMessageCount}
-			</UnreadMessageBadge>
-		)}
-	</Link>
-);
+class LobbyRoomLink extends React.PureComponent {
+	render() {
+		const { room, roomMember } = this.props;
+		return (
+			<Link
+				className="list-group-item p-3 d-flex justify-content-between align-items-center"
+				to={`/2/room/${room._id}`}
+			>
+				{room.name}
+				{roomMember.unreadMessageCount > 0 && (
+					<UnreadMessageBadge className={`badge badge-primary ${roomMember.unreadMention ? "mention" : ""}`}>
+						{roomMember.unreadMessageCount}
+					</UnreadMessageBadge>
+				)}
+			</Link>
+		);
+	}
+}
 
 const RoomList = ({ rooms, roomMembers }) => (
 	<ul className="list-group mb-3">
 		{_.map(roomMembers, roomMember => (
-			<RoomLink room={_.find(rooms, { _id: roomMember.room })} roomMember={roomMember} key={roomMember._id} />
+			<LobbyRoomLink room={_.find(rooms, { _id: roomMember.room })} roomMember={roomMember} key={roomMember._id} />
 		))}
 	</ul>
 );

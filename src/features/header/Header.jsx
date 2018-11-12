@@ -30,18 +30,23 @@ const mapStateToProps = state => ({
 	anyUnreadMention: hasAnyUnreadMention(state)
 });
 
-const RoomLink = ({ room, roomMember }) => (
-	<Link className="nav-link" to={`/2/room/${room._id}`}>
-		{room.name}{" "}
-		{roomMember.unreadMessageCount > 0 && (
-			<FloatingRightBadge>
-				<UnreadMessageBadge className={`badge badge-primary ${roomMember.unreadMention ? "mention" : ""}`}>
-					{roomMember.unreadMessageCount}
-				</UnreadMessageBadge>
-			</FloatingRightBadge>
-		)}
-	</Link>
-);
+class HeaderRoomLink extends React.PureComponent {
+	render() {
+		const { room, roomMember } = this.props;
+		return (
+			<Link className="nav-link" to={`/2/room/${room._id}`}>
+				{room.name}{" "}
+				{roomMember.unreadMessageCount > 0 && (
+					<FloatingRightBadge>
+						<UnreadMessageBadge className={`badge badge-primary ${roomMember.unreadMention ? "mention" : ""}`}>
+							{roomMember.unreadMessageCount}
+						</UnreadMessageBadge>
+					</FloatingRightBadge>
+				)}
+			</Link>
+		);
+	}
+}
 
 class Header extends React.PureComponent {
 	render() {
@@ -60,7 +65,7 @@ class Header extends React.PureComponent {
 					<ul className="navbar-nav d-none d-md-flex">
 						{_.map(rooms, room => (
 							<RoomListItem className={`nav-item px-lg-3 ${room.current ? "active" : ""}`} key={room._id}>
-								<RoomLink room={room} roomMember={localRoomMembersByRoom[room._id]} />
+								<HeaderRoomLink room={room} roomMember={localRoomMembersByRoom[room._id]} />
 							</RoomListItem>
 						))}
 					</ul>
