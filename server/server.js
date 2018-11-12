@@ -26,6 +26,7 @@ var app = Promise.promisifyAll(require("./config/express"));
 var server = Promise.promisifyAll(require("http").Server(app));
 var socketio = require("./config/socketio");
 const tokenService = require("./services/tokenService");
+const emoticonService = require("./services/emoticonService");
 
 var User = require("./models/User");
 var Room = require("./models/Room");
@@ -63,7 +64,7 @@ function connectToMongoose() {
 }
 
 function startup() {
-	return Promise.join(noUserTyping(), ensureFirstRoom(), tokenizeLast5Days());
+	return Promise.join(noUserTyping(), ensureFirstRoom(), tokenizeLastNumberOfDays());
 }
 
 function noUserTyping() {
@@ -76,13 +77,21 @@ function ensureFirstRoom() {
 	});
 }
 
-function tokenizeLast5Days() {
-	return Message.find({
-		createdAt: { $gte: new Date(new Date().getTime() - 5 * 24 * 60 * 60 * 1000) }
-	}).then(messages => {
-		return Promise.map(messages, message => {
-			message.tokens = tokenService.tokenize(ent.decode(message.text));
-			return message.save();
-		});
+const numberOfDays = 3;
+
+function tokenizeLastNumberOfDays() {
+	return emoticonService.getEmoticonNamesFromDisk().then(() => {
+		return Message.find({
+			createdAt: { $gte: new Date(new Date().getTime() - numberOfDays * 24 * 60 * 60 * 1000) }
+		})
+			.then(messages => {
+				return Promise.map(messages, message => {
+					message.tokens = tokenService.tokenize(ent.decode(message.text));
+					return message.save();
+				});
+			})
+			.then(() => {
+				log.info(`tokenized ${numberOfDays} days`);
+			});
 	});
 }

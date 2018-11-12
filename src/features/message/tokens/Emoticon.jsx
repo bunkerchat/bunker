@@ -12,6 +12,8 @@ const Emoticon = ({ token }) => {
 	const knownEmoticon = emoticons.emoticonNameHash[emoticonText];
 
 	if (!knownEmoticon) {
+		console.warn(`unknown emoticon "${emoticonText}" (supposed to be handled server side) :\`(`);
+
 		// hack?
 		token.value = `:${token.value}:`;
 		return <Word token={token} />;

@@ -1,6 +1,16 @@
 const tokenService = module.exports;
 const Lexer = require("flex-js");
 const encode = require("ent").encode;
+const emoticonService = require("./emoticonService.js");
+
+let emoticonHash = {};
+emoticonService.getEmoticonNamesFromDisk().then(_emoticons => {
+	_emoticons.forEach(emoticon => {
+		// remove extensions
+		const key = emoticon.replace(/\..*$/gi, "");
+		emoticonHash[key] = emoticon;
+	});
+});
 
 // chop off leading and trailing characters
 const chopEnds = text => text.slice(1, text.length - 1);
@@ -52,9 +62,14 @@ tokenService.tokenize = textToTokenize => {
 
 	// ** emoticons
 	lexerInstance.addRule(/:.+?:/, lexer => {
-		output.push({ type: "emoticon", value: encode(chopEnds(lexer.text)) });
+		const emoticon = chopEnds(lexer.text);
+		const isRealEmoticon = !!emoticonHash[emoticon];
+		if (isRealEmoticon) {
+			output.push({ type: "emoticon", value: encode(emoticon) });
+		} else {
+			output.push({ type: "word", value: encode(lexer.text) });
+		}
 	});
-
 
 	// ** words and letters
 	lexerInstance.addRule(/[A-Za-z0-9,.'"!]*\s*/, lexer => {
@@ -69,7 +84,7 @@ tokenService.tokenize = textToTokenize => {
 	lexerInstance.setSource(textToTokenize);
 
 	try {
-	lexerInstance.lex();
+		lexerInstance.lex();
 	} catch (e) {
 		console.error("tokenService error", e);
 		output = [{ type: "unknown", value: encode(textToTokenize) }];
