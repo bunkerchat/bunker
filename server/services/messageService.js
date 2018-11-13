@@ -175,11 +175,15 @@ function magic8ball(roomMember, text) {
 	]);
 
 	setTimeout(function() {
+		const ballText = `:magic8ball: ${ballResponse}`;
+		const tokens = tokenService.tokenize(ent.decode(ballText));
+
 		return Message.create({
 			room: roomMember.room,
 			author: null,
 			type: "8ball",
-			text: ":magic8ball: " + ballResponse
+			text: ballText,
+			tokens,
 		}).then(broadcastMessage);
 	}, 3000);
 
@@ -273,7 +277,6 @@ function message(roomMember, text, type) {
 	})
 		.then(linkMeta => {
 			const tokens = tokenService.tokenize(ent.decode(text));
-
 			return Message.create({
 				type,
 				text,

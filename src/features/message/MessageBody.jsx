@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import MessageText from "./MessageText.jsx";
 import connect from "react-redux/es/connect/connect";
 import theme from "../../constants/theme";
 import MessageTimeAgo from "./MessageTimeAgo.jsx";
