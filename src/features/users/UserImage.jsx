@@ -8,10 +8,6 @@ const Container = styled.div`
 `;
 
 export default class UserImage extends React.Component {
-	shouldComponentUpdate() {
-		return false;
-	}
-
 	render() {
 		const { user } = this.props;
 		return (
