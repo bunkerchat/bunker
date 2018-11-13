@@ -4,23 +4,11 @@ import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { hasAnyUnreadMention, getTotalUnreadMessageCount } from "../../selectors/selectors";
-import theme from "../../constants/theme";
+import HeaderRoomLink from "./HeaderRoomLink.jsx";
+import UnreadMessageBadge from "./UnreadMessageBadge.jsx";
 
 const RoomListItem = styled.li`
 	position: relative;
-`;
-
-const FloatingRightBadge = styled.div`
-	position: absolute;
-	top: 0px;
-	right: -3px;
-`;
-
-const UnreadMessageBadge = styled.span`
-	&.mention {
-		background-color: ${theme.mentionBackgroundColor};
-		color: ${theme.mentionHeaderForegroundColor};
-	}
 `;
 
 const mapStateToProps = state => ({
@@ -29,24 +17,6 @@ const mapStateToProps = state => ({
 	totalUnreadMessageCount: getTotalUnreadMessageCount(state),
 	anyUnreadMention: hasAnyUnreadMention(state)
 });
-
-class HeaderRoomLink extends React.PureComponent {
-	render() {
-		const { room, roomMember } = this.props;
-		return (
-			<Link className="nav-link" to={`/2/room/${room._id}`}>
-				{room.name}{" "}
-				{roomMember.unreadMessageCount > 0 && (
-					<FloatingRightBadge>
-						<UnreadMessageBadge className={`badge badge-primary ${roomMember.unreadMention ? "mention" : ""}`}>
-							{roomMember.unreadMessageCount}
-						</UnreadMessageBadge>
-					</FloatingRightBadge>
-				)}
-			</Link>
-		);
-	}
-}
 
 class Header extends React.PureComponent {
 	render() {
@@ -63,11 +33,19 @@ class Header extends React.PureComponent {
 						)}
 					</Link>
 					<ul className="navbar-nav d-none d-md-flex">
-						{_.map(rooms, room => (
-							<RoomListItem className={`nav-item px-lg-3 ${room.current ? "active" : ""}`} key={room._id}>
-								<HeaderRoomLink room={room} roomMember={localRoomMembersByRoom[room._id]} />
-							</RoomListItem>
-						))}
+						{_.map(rooms, room => {
+							const roomMember = localRoomMembersByRoom[room._id];
+							return (
+								<RoomListItem className={`nav-item px-lg-3 ${room.current ? "active" : ""}`} key={room._id}>
+									<HeaderRoomLink
+										roomId={room._id}
+										roomName={room.name}
+										unreadMention={roomMember.unreadMention}
+										unreadMessageCount={roomMember.unreadMessageCount}
+									/>
+								</RoomListItem>
+							);
+						})}
 					</ul>
 					<div className="ml-auto navbar-nav text-right">
 						<Link className="nav-item nav-link" to={`/2/settings`}>
