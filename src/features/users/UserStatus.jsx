@@ -15,14 +15,10 @@ const ColoredStatus = styled.div`
 	}
 `;
 
-export default class UserStatus extends React.Component {
-	shouldComponentUpdate(prevProps) {
-		return this.props.user.connected !== prevProps.user.connected || this.props.user.present !== prevProps.user.present;
-	}
-
+export default class UserStatus extends React.PureComponent {
 	render() {
-		const { user } = this.props;
-		const presentClass = user.connected ? (user.present ? "present" : "away") : "";
+		const { connected, present } = this.props;
+		const presentClass = connected ? (present ? "present" : "away") : "";
 		return <ColoredStatus className={presentClass} />;
 	}
 }

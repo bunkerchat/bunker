@@ -25,7 +25,7 @@ export default class RoomMember extends React.PureComponent {
 						<FontAwesomeIcon icon="ellipsis-h" />
 					</IconContainer>
 				) : (
-					<UserImage user={user} />
+					<UserImage email={user.email} connected={user.connected} present={user.present} />
 				)}
 				<div className="ml-2">{user.nick}</div>
 			</Container>

@@ -51,7 +51,7 @@ class MessageAuthor extends React.Component {
 			<AuthorContainer className={`pl-1 ${isLocalAuthor ? "local" : ""}`}>
 				{this.props.firstInSeries && (
 					<div className="d-flex">
-						<UserImage user={user} />
+						<UserImage email={user.email} connected={user.connected} present={user.present} />
 						<AuthorNick className="d-none d-md-inline-block ml-2">{user.nick}</AuthorNick>
 					</div>
 				)}

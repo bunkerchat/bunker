@@ -7,13 +7,13 @@ const Container = styled.div`
 	display: flex;
 `;
 
-export default class UserImage extends React.Component {
+export default class UserImage extends React.PureComponent {
 	render() {
-		const { user } = this.props;
+		const { email, connected, present } = this.props;
 		return (
 			<Container>
-				<UserStatus user={user} />
-				<Gravatar email={user.email} size={25} rating="pg" default="identicon" />
+				<UserStatus connected={connected} present={present} />
+				<Gravatar email={email} size={25} rating="pg" default="identicon" />
 			</Container>
 		);
 	}
