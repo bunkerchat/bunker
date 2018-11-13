@@ -25,7 +25,7 @@ tokenService.tokenize = textToTokenize => {
 	const lexerInstance = new Lexer();
 
 	// contains at least one line break
-	lexerInstance.addRule(/.*(\r|\n)+.*/, lexer => {
+	lexerInstance.addRule(/.*([\r\n])+.*/, lexer => {
 		output.push({ type: "quote", value: encode(textToTokenize) });
 		lexer.terminate();
 	});
@@ -61,7 +61,7 @@ tokenService.tokenize = textToTokenize => {
 	});
 
 	// ** emoticons
-	lexerInstance.addRule(/:.+?:/, lexer => {
+	lexerInstance.addRule(/:[A-Za-z0-9]+:/, lexer => {
 		const emoticon = chopEnds(lexer.text);
 		const isRealEmoticon = !!emoticonHash[emoticon];
 		if (isRealEmoticon) {
