@@ -31,7 +31,6 @@ const Bold = ({ token }) => <strong dangerouslySetInnerHTML={{ __html: token.val
 const Spoiler = ({ token }) => <mark dangerouslySetInnerHTML={{ __html: token.value }} />;
 const Strikethrough = ({ token }) => <del dangerouslySetInnerHTML={{ __html: token.value }} />;
 
-
 const tokenMap = {
 	quote: Quote,
 	code: Code,
@@ -47,7 +46,7 @@ const tokenMap = {
 
 const mapToMessage = (token, index) => {
 	const TokenType = tokenMap[token.type];
-	return <TokenType token={token} key={index+token.type+token.value} />
+	return <TokenType token={token} key={index + token.type + token.value} />;
 };
 
 export default class MessageTokens extends React.Component {

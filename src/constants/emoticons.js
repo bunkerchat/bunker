@@ -13,5 +13,5 @@ export default {
 	imageEmoticons: _.filter(list, { isIcon: false }),
 	names: _.map(list, "name"),
 	files: _.map(list, "file"),
-	emoticonNameHash: _.keyBy(list, 'name')
+	emoticonNameHash: _.keyBy(list, "name")
 };

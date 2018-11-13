@@ -16,6 +16,10 @@ const ColoredStatus = styled.div`
 `;
 
 export default class UserStatus extends React.Component {
+	shouldComponentUpdate(prevProps) {
+		return this.props.user.connected !== prevProps.user.connected || this.props.user.present !== prevProps.user.present;
+	}
+
 	render() {
 		const { user } = this.props;
 		const presentClass = user.connected ? (user.present ? "present" : "away") : "";
