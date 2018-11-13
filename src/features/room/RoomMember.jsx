@@ -17,17 +17,17 @@ const IconContainer = styled.div`
 
 export default class RoomMember extends React.PureComponent {
 	render() {
-		const { roomId, user } = this.props;
+		const { roomId, nick, email, connected, present, typingIn } = this.props;
 		return (
 			<Container>
-				{user.connected && user.typingIn === roomId ? (
+				{connected && typingIn === roomId ? (
 					<IconContainer>
 						<FontAwesomeIcon icon="ellipsis-h" />
 					</IconContainer>
 				) : (
-					<UserImage email={user.email} connected={user.connected} present={user.present} />
+					<UserImage email={email} connected={connected} present={present} />
 				)}
-				<div className="ml-2">{user.nick}</div>
+				<div className="ml-2">{nick}</div>
 			</Container>
 		);
 	}

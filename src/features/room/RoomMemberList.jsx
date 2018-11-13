@@ -39,8 +39,8 @@ class RoomMemberList extends React.PureComponent {
 					{sortedRoomMemberUsers.map(roomMemberUser => (
 						<RoomMemberListItem
 							roomId={roomId}
-							roomMember={roomMemberUser.roomMember}
-							user={roomMemberUser.user}
+							userId={roomMemberUser.user._id}
+							role={roomMemberUser.roomMember.role}
 							key={roomMemberUser.roomMember._id}
 						/>
 					))}
