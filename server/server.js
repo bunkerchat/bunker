@@ -77,7 +77,7 @@ function ensureFirstRoom() {
 	});
 }
 
-const numberOfDays = 3;
+const numberOfDays = 1;
 
 function tokenizeLastNumberOfDays() {
 	return emoticonService.getEmoticonNamesFromDisk().then(() => {

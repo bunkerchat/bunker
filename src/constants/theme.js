@@ -38,6 +38,7 @@ const overrides = {
 	},
 	solar: {
 		chatButtonBackground: colors.dark,
+		messageAuthorCaret: colors.dark,
 		mentionBackgroundColor: colors.warning,
 		mentionForegroundColor: colors.white,
 		mentionHeaderForegroundColor: colors.white,
@@ -47,6 +48,7 @@ const overrides = {
 	superhero: {
 		top: 48,
 		chatButtonBackground: colors.dark,
+		messageAuthorCaret: "#2B3E50",
 		mentionBackgroundColor: colors.info,
 		mentionForegroundColor: colors.white,
 		mentionHeaderForegroundColor: colors.white,
@@ -63,6 +65,7 @@ export default _.assign(
 		messageLocalAuthorBackground: tinycolor(colors.dark)
 			.lighten(10)
 			.toString(),
+		messageAuthorCaret: colors.white,
 		messageAuthorText: colors.white,
 		chatButtonBackground: colors.white,
 		mentionBackgroundColor: "#faf2cc",
