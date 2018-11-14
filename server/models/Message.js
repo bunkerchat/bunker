@@ -52,9 +52,7 @@ const messageSchema = new mongoose.Schema({
 		type: Object
 	},
 	reactions: [Reaction],
-	tokens: {
-		type: Array
-	}
+	tokens: Array
 });
 
 messageSchema.index({ text: "text" });

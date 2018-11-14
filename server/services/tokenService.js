@@ -22,6 +22,11 @@ const chopEnds = text => text.slice(1, text.length - 1);
  */
 tokenService.tokenize = textToTokenize => {
 	let output = [];
+
+	if (!textToTokenize) {
+		return output;
+	}
+
 	const lexerInstance = new Lexer();
 
 	// contains at least one line break

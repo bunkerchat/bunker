@@ -5,6 +5,7 @@ const User = require("../models/User");
 const Room = require("../models/Room");
 const RoomMember = require("../models/RoomMember");
 const socketio = require("../config/socketio");
+const tokenService = require("./tokenService");
 
 const InvalidInputError = require("../errors/InvalidInputError");
 const ForbiddenError = require("../errors/ForbiddenError");
@@ -138,6 +139,7 @@ RoomService.setRoomAttribute = (roomMember, text) => {
 			if (command === "topic") {
 				const topic = matches[2].substr(0, 200).trim();
 				room.topic = topic;
+				room.topicTokens = tokenService.tokenize(topic);
 
 				if (topic && topic.length > 0) {
 					message = `${user.nick} changed the topic to ${topic}`;

@@ -24,7 +24,7 @@ class Header extends React.PureComponent {
 		return (
 			<div>
 				<nav className="navbar navbar-expand navbar-dark bg-dark">
-					<Link className="navbar-brand" to={`/2/lobby`}>
+					<Link className="navbar-brand" to="/2/lobby">
 						Bunker{" "}
 						{totalUnreadMessageCount > 0 && (
 							<UnreadMessageBadge className={`badge badge-primary d-md-none ${anyUnreadMention ? "mention" : ""}`}>

@@ -11,6 +11,7 @@ var roomSchema = new mongoose.Schema({
 		type: String,
 		maxlength: 200
 	},
+	topicTokens: Array,
 	icon: {
 		type: String
 	},
