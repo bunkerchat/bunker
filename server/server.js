@@ -8,7 +8,7 @@ const ent = require("ent");
 var mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 
-String.prototype.toObjectId = function () {
+String.prototype.toObjectId = function() {
 	var ObjectId = mongoose.Types.ObjectId;
 	return new ObjectId(this.toString());
 };
@@ -17,7 +17,7 @@ String.prototype.toObjectId = function () {
 // ex:
 // var foo = []
 // foo.pushAll([1,2,3],[4,5,6])
-Array.prototype.pushAll = function () {
+Array.prototype.pushAll = function() {
 	this.push.apply(this, this.concat.apply([], arguments));
 };
 
@@ -32,30 +32,30 @@ var User = require("./models/User");
 var Room = require("./models/Room");
 const Message = require("./models/Message");
 
-module.exports.run = function (cb) {
+module.exports.run = function(cb) {
 	log.info('server - Starting "' + config.environment + '"');
 
 	connectToMongoose()
 		.then(startup)
-		.then(function () {
+		.then(function() {
 			socketio.connect(server);
 			return server.listenAsync(config.express.port);
 		})
-		.then(function () {
+		.then(function() {
 			log.info("server - hosted - http://" + config.express.hostName + ":" + config.express.port);
 			//log.info('config file', config);
 		})
 		.then(cb)
-		.catch(function (error) {
+		.catch(function(error) {
 			return log.error("server - Error while starting", error);
 		});
 };
 
 function connectToMongoose() {
-	return new Promise(function (resolve, reject) {
+	return new Promise(function(resolve, reject) {
 		var url = "mongodb://" + config.db.host + ":" + config.db.port + "/" + config.db.name;
 		mongoose.connect(url);
-		mongoose.connection.once("open", function (err) {
+		mongoose.connection.once("open", function(err) {
 			if (err) return reject(err);
 			log.info("mongoose " + url);
 			resolve();
@@ -72,7 +72,7 @@ function noUserTyping() {
 }
 
 function ensureFirstRoom() {
-	return Room.findOne({ name: "First" }).then(function (firstRoom) {
+	return Room.findOne({ name: "First" }).then(function(firstRoom) {
 		if (!firstRoom) return Room.create({ name: "First" });
 	});
 }
@@ -86,7 +86,7 @@ function tokenizeLastNumberOfDays() {
 				return Promise.map(rooms, room => {
 					room.topicTokens = tokenService.tokenize(room.topic);
 					return room.save();
-				})
+				});
 			}),
 			Message.find({
 				createdAt: { $gte: new Date(new Date().getTime() - numberOfDays * 24 * 60 * 60 * 1000) }
@@ -100,6 +100,6 @@ function tokenizeLastNumberOfDays() {
 				.then(() => {
 					log.info(`tokenized ${numberOfDays} days`);
 				})
-		)
+		);
 	});
 }

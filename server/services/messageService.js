@@ -183,7 +183,7 @@ function magic8ball(roomMember, text) {
 			author: null,
 			type: "8ball",
 			text: ballText,
-			tokens,
+			tokens
 		}).then(broadcastMessage);
 	}, 3000);
 

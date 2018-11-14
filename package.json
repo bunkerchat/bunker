@@ -98,7 +98,7 @@
     "watch": "node node_modules/webpack/bin/webpack.js --mode development --watch",
     "postinstall": "node node_modules/bower/bin/bower install && npm run build",
     "deploy": "npm prune && npm ci && gulp && forever restart app.js",
-    "pretty": "node node_modules/prettier/bin-prettier.js --write \"./src/**/*.{js,jsx}\""
+    "pretty": "node node_modules/prettier/bin-prettier.js --write \"./{server,src}/**/*.{js,jsx}\""
   },
   "main": "app.js",
   "repository": {
