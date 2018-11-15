@@ -24,6 +24,7 @@ const mapStateToProps = state => ({
 class LobbyRoomLink extends React.PureComponent {
 	render() {
 		const { room, roomMember } = this.props;
+		if (!room) return null;
 		return (
 			<Link
 				className="list-group-item p-3 d-flex justify-content-between align-items-center"

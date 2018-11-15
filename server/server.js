@@ -73,25 +73,11 @@ function noUserTyping() {
 
 function ensureFirstRoom() {
 	return Room.findOne({ name: "First" }).then(function(firstRoom) {
-		if (!firstRoom) return Room.create({ name: "First" });
+		if (!firstRoom) return Room.create({ name: "First", isPrivate: false });
 	});
 }
 
 const numberOfDays = 1;
-
-const tokenizeRoom = () => {
-	return Room.find()
-		.then(rooms => {
-			return Promise.map(rooms, room => {
-				room.topicTokens = tokenService.tokenize(room.topic);
-				return room.save();
-			});
-		})
-		.catch(e => {
-			console.error("tokenizeRoom error", e);
-			throw e;
-		});
-};
 
 const tokenizeMessages = () => {
 	return Message.find({
@@ -110,6 +96,6 @@ const tokenizeMessages = () => {
 
 function tokenizeLastNumberOfDays() {
 	return emoticonService.getEmoticonNamesFromDisk().then(() => {
-		return Promise.join(tokenizeRoom(), tokenizeMessages());
+		return tokenizeMessages();
 	});
 }

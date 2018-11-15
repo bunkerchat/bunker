@@ -1,6 +1,7 @@
 const RoomService = module.exports;
 
 const uuid = require("node-uuid");
+const ent = require("ent");
 const User = require("../models/User");
 const Room = require("../models/Room");
 const RoomMember = require("../models/RoomMember");
@@ -139,7 +140,7 @@ RoomService.setRoomAttribute = (roomMember, text) => {
 			if (command === "topic") {
 				const topic = matches[2].substr(0, 200).trim();
 				room.topic = topic;
-				room.topicTokens = tokenService.tokenize(topic);
+				room.topicTokens = tokenService.tokenize(ent.decode(topic));
 
 				if (topic && topic.length > 0) {
 					message = `${user.nick} changed the topic to ${topic}`;

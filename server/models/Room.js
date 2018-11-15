@@ -1,25 +1,22 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-var roomSchema = new mongoose.Schema({
+const Room = new mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
 		maxlength: 50,
-		minlength: 1,
-		default: "please rename"
+		minlength: 1
 	},
 	topic: {
 		type: String,
 		maxlength: 200
 	},
 	topicTokens: Array,
-	icon: {
-		type: String
-	},
+	icon: String,
 	isPrivate: {
 		type: Boolean,
 		default: true
 	}
 });
 
-module.exports = mongoose.model("Room", roomSchema, "room");
+module.exports = mongoose.model("Room", Room);
