@@ -79,27 +79,37 @@ function ensureFirstRoom() {
 
 const numberOfDays = 1;
 
+const tokenizeRoom = () => {
+	return Room.find()
+		.then(rooms => {
+			return Promise.map(rooms, room => {
+				room.topicTokens = tokenService.tokenize(room.topic);
+				return room.save();
+			});
+		})
+		.catch(e => {
+			console.error("tokenizeRoom error", e);
+			throw e;
+		});
+};
+
+const tokenizeMessages = () => {
+	return Message.find({
+		createdAt: { $gte: new Date(new Date().getTime() - numberOfDays * 24 * 60 * 60 * 1000) }
+	})
+		.then(messages => {
+			return Promise.map(messages, message => {
+				message.tokens = tokenService.tokenize(ent.decode(message.text));
+				return message.save();
+			});
+		})
+		.then(() => {
+			log.info(`tokenized ${numberOfDays} days`);
+		});
+};
+
 function tokenizeLastNumberOfDays() {
 	return emoticonService.getEmoticonNamesFromDisk().then(() => {
-		return Promise.join(
-			Room.find().then(rooms => {
-				return Promise.map(rooms, room => {
-					room.topicTokens = tokenService.tokenize(room.topic);
-					return room.save();
-				});
-			}),
-			Message.find({
-				createdAt: { $gte: new Date(new Date().getTime() - numberOfDays * 24 * 60 * 60 * 1000) }
-			})
-				.then(messages => {
-					return Promise.map(messages, message => {
-						message.tokens = tokenService.tokenize(ent.decode(message.text));
-						return message.save();
-					});
-				})
-				.then(() => {
-					log.info(`tokenized ${numberOfDays} days`);
-				})
-		);
+		return Promise.join(tokenizeRoom(), tokenizeMessages());
 	});
 }

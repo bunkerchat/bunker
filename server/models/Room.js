@@ -5,7 +5,8 @@ var roomSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 		maxlength: 50,
-		minlength: 1
+		minlength: 1,
+		default: "please rename"
 	},
 	topic: {
 		type: String,
