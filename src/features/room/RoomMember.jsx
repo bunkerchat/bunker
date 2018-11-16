@@ -15,6 +15,10 @@ const IconContainer = styled.div`
 	vertical-align: middle;
 `;
 
+const Nick = styled.div`
+	line-height: 25px;
+`;
+
 export default class RoomMember extends React.PureComponent {
 	render() {
 		const { roomId, nick, email, connected, present, typingIn } = this.props;
@@ -27,7 +31,7 @@ export default class RoomMember extends React.PureComponent {
 				) : (
 					<UserImage email={email} connected={connected} present={present} />
 				)}
-				<div className="ml-2">{nick}</div>
+				<Nick className="ml-2">{nick}</Nick>
 			</Container>
 		);
 	}

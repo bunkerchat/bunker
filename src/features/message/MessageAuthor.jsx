@@ -38,11 +38,12 @@ const AuthorContainer = styled.div`
 	}
 `;
 
-const AuthorNick = styled.div`
+const Nick = styled.div`
 	flex: 1;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	line-height: 25px;
 `;
 
 const mapStateToProps = (state, props) => ({
@@ -68,7 +69,7 @@ class MessageAuthor extends React.Component {
 				{firstInSeries && (
 					<div className="d-flex">
 						<UserImage email={user.email} connected={user.connected} present={user.present} />
-						<AuthorNick className="d-none d-md-inline-block ml-2">{user.nick}</AuthorNick>
+						<Nick className="d-none d-md-inline-block ml-2">{user.nick}</Nick>
 					</div>
 				)}
 			</AuthorContainer>
