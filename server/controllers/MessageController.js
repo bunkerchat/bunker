@@ -5,12 +5,14 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
+const ent = require("ent");
 var ForbiddenError = require("../errors/ForbiddenError");
 var Message = require("../models/Message");
 var User = require("../models/User");
 var messageService = require("../services/messageService");
 var emoticonService = require("../services/emoticonService");
 const reactionService = require("../services/reactionService");
+const tokenService = require("../services/tokenService.js");
 
 // PUT /message/:id
 // Update a message (the edit functionality)
@@ -31,9 +33,12 @@ exports.update = function(req, res) {
 			User.findByIdAndUpdate(userId, notTypingUpdate).exec();
 			req.io.to("user_" + userId).emit("user", { _id: userId, verb: "updated", data: notTypingUpdate });
 
+			const text = ent.decode(messageUpdate.text);
+
 			// Only certain things are editable
 			var updates = {
-				text: messageUpdate.text,
+				text: ent.encode(text),
+				tokens: tokenService.tokenize(text),
 				edited: true,
 				editCount: dbMessage.editCount + 1
 			};

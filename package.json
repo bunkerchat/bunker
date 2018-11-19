@@ -30,6 +30,7 @@
     "connected-react-router": "4.4.1",
     "crypto": "0.0.3",
     "ejs": "2.4.1",
+    "emoji-regex": "7.0.1",
     "ent": "2.2.0",
     "exports-loader": "0.6.2",
     "express": "4.13.3",

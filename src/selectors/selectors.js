@@ -28,3 +28,11 @@ export const makeGetRoomMemberUsers = () => {
 			.value()
 	);
 };
+
+export const makeGetRoomTopic = createSelector([getActiveRoom], room => {
+	if (!room) return;
+	return {
+		tokens: room.topicTokens,
+		text: room.topic
+	};
+});
