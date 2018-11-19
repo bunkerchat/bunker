@@ -35,15 +35,6 @@ const handlers = {
 			loading: true
 		}
 	}),
-	"message/received": (state, action) => {
-		const room = state[action.message.room];
-		return {
-			...state,
-			[room._id]: {
-				...state[room._id]
-			}
-		};
-	},
 	"message/receivedHistory": (state, action) => ({
 		...state,
 		[action.roomId]: {

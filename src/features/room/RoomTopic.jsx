@@ -1,10 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import MessageTokens from "../message/MessageTokens.jsx";
 import { makeGetRoomTopic } from "../../selectors/selectors.js";
 
-const mapStateToProps = state => ({
-	message: makeGetRoomTopic(state)
+const mapStateToProps = createStructuredSelector({
+	message: makeGetRoomTopic
 });
 
 class RoomTopic extends React.Component {
