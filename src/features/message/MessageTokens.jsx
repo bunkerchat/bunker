@@ -4,6 +4,7 @@ import theme from "../../constants/theme";
 import Emoticon from "./tokens/Emoticon.jsx";
 import Url from "./tokens/Url.jsx";
 import Word from "./tokens/Word.jsx";
+import Emoji from "./tokens/Emoji.jsx";
 
 const MessageTextContainer = styled.div`
 	display: inline-block;
@@ -41,7 +42,8 @@ const tokenMap = {
 	strikethrough: Strikethrough,
 	word: Word,
 	unknown: Word,
-	emoticon: Emoticon
+	emoticon: Emoticon,
+	emoji: Emoji
 };
 
 const mapToMessage = (token, index) => {

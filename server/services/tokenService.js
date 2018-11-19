@@ -1,5 +1,6 @@
 const tokenService = module.exports;
 const Lexer = require("flex-js");
+const emojiRegex = require("emoji-regex");
 const encode = require("ent").encode;
 const emoticonService = require("./emoticonService.js");
 
@@ -79,6 +80,11 @@ tokenService.tokenize = textToTokenize => {
 	// ** words and letters
 	lexerInstance.addRule(/[A-Za-z0-9,.'"!]*\s*/, lexer => {
 		output.push({ type: "word", value: encode(lexer.text) });
+	});
+
+	// making new regex to strip off the global flag /g
+	lexerInstance.addRule(new RegExp(emojiRegex().source), lexer => {
+		output.push({ type: "emoji", value: encode(lexer.text) });
 	});
 
 	// ** catch all
