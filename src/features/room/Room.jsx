@@ -21,7 +21,7 @@ export default class Room extends React.PureComponent {
 		return (
 			<Container className={`${current ? "d-flex" : "d-none"}`}>
 				<MessagingContainer>
-					<RoomTopic roomId={roomId} />
+					<RoomTopic />
 					<ScrollingMessageList roomId={roomId} current={current} />
 					<ChatInput roomId={roomId} />
 				</MessagingContainer>
