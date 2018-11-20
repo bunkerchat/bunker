@@ -25,7 +25,13 @@ const MessageTextContainer = styled.div`
 	}
 `;
 
-const Quote = ({ token }) => <blockquote className="blockquote bg-light text-dark border border-dark" dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Pre = styled.pre`
+	white-space: pre-wrap;
+`;
+
+const Quote = ({ token }) => (
+	<Pre className="p-2 bg-light text-dark border border-dark" dangerouslySetInnerHTML={{ __html: token.value }} />
+);
 const Code = ({ token }) => <code dangerouslySetInnerHTML={{ __html: token.value }} />;
 const Italics = ({ token }) => <em dangerouslySetInnerHTML={{ __html: token.value }} />;
 const Bold = ({ token }) => <strong dangerouslySetInnerHTML={{ __html: token.value }} />;
