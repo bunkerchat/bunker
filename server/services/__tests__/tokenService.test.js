@@ -1,6 +1,11 @@
+const emoticonService = require("../emoticonService.js");
 const tokenService = require("../tokenService");
 
 describe("tokenService", () => {
+	beforeAll(() => {
+		return emoticonService.getEmoticonNamesFromDisk();
+	});
+
 	describe("tokenize", () => {
 		it("sentence", () => {
 			const tokens = tokenService.tokenize("The Quick Brown Fox.");
@@ -145,6 +150,30 @@ Array [
 `);
 		});
 
+		it("bold with spaces", () => {
+			const tokens = tokenService.tokenize("bold with *some spaces*.");
+			expect(tokens).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "type": "word",
+    "value": "bold ",
+  },
+  Object {
+    "type": "word",
+    "value": "with ",
+  },
+  Object {
+    "type": "bold",
+    "value": "some spaces",
+  },
+  Object {
+    "type": "word",
+    "value": ".",
+  },
+]
+`);
+		});
+
 		it("spoiler", () => {
 			const tokens = tokenService.tokenize("My dogs |eat fish|.");
 			expect(tokens).toMatchInlineSnapshot(`
@@ -278,20 +307,8 @@ Array [
 `);
 		});
 
-		it("derp", () => {
-			const tokens = tokenService.tokenize("derp");
-			expect(tokens).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "type": "word",
-    "value": "derp",
-  },
-]
-`);
-		});
-
 		it("emoticons", () => {
-			const tokens = tokenService.tokenize(":heart: jpro is an :angel: to me");
+			const tokens = tokenService.tokenize(":heart: jpro is an :angel: to me :fakeemoticon:");
 			expect(tokens).toMatchInlineSnapshot(`
 Array [
   Object {
@@ -328,7 +345,44 @@ Array [
   },
   Object {
     "type": "word",
-    "value": "me",
+    "value": "me ",
+  },
+  Object {
+    "type": "word",
+    "value": ":fakeemoticon:",
+  },
+]
+`);
+		});
+
+		it("mixing underscores and links", () => {
+			const message = `This Fortnite_SUX spitfire https://www.youtube.com/watch?v=Jv1ZN8c4_Gs`;
+			const tokens = tokenService.tokenize(message);
+			expect(tokens).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "type": "word",
+    "value": "This ",
+  },
+  Object {
+    "type": "word",
+    "value": "Fortnite",
+  },
+  Object {
+    "type": "unknown",
+    "value": "_",
+  },
+  Object {
+    "type": "word",
+    "value": "SUX ",
+  },
+  Object {
+    "type": "word",
+    "value": "spitfire ",
+  },
+  Object {
+    "type": "url",
+    "value": "https://www.youtube.com/watch?v=Jv1ZN8c4_Gs",
   },
 ]
 `);
