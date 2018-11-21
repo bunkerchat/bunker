@@ -5,6 +5,7 @@ import Emoticon from "./tokens/Emoticon.jsx";
 import Url from "./tokens/Url.jsx";
 import Word from "./tokens/Word.jsx";
 import Emoji from "./tokens/Emoji.jsx";
+import Quote from "./tokens/Quote.jsx";
 
 const MessageTextContainer = styled.div`
 	display: inline-block;
@@ -25,13 +26,6 @@ const MessageTextContainer = styled.div`
 	}
 `;
 
-const Pre = styled.pre`
-	white-space: pre-wrap;
-`;
-
-const Quote = ({ token }) => (
-	<Pre className="p-2 bg-light text-dark border border-dark" dangerouslySetInnerHTML={{ __html: token.value }} />
-);
 const Code = ({ token }) => <code dangerouslySetInnerHTML={{ __html: token.value }} />;
 const Italics = ({ token }) => <em dangerouslySetInnerHTML={{ __html: token.value }} />;
 const Bold = ({ token }) => <strong dangerouslySetInnerHTML={{ __html: token.value }} />;
