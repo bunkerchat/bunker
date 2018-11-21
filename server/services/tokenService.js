@@ -14,7 +14,7 @@ emoticonService.getEmoticonNamesFromDisk().then(_emoticons => {
 });
 
 // chop off leading and trailing characters
-const chopEnds = text => text.slice(1, text.length - 1);
+const chop = (first, text, last) => text.slice(first, text.length - last);
 
 /*
 	How rules work, in the following order
@@ -44,38 +44,44 @@ tokenService.tokenize = textToTokenize => {
 	});
 
 	// ** code
-	lexerInstance.addRule(/`.+`/, lexer => {
-		output.push({ type: "code", value: encode(chopEnds(lexer.text)) });
+	lexerInstance.addRule(/\s`.+`/, lexer => {
+		output.push({ type: "word", value: encode(' ') });
+		output.push({ type: "code", value: encode(chop(2, lexer.text, 1)) });
 	});
 
 	// ** urls
-	lexerInstance.addRule(/https?:\/\/\S+/, lexer => {
-		output.push({ type: "url", value: encode(lexer.text) });
+	lexerInstance.addRule(/\shttps?:\/\/\S+/, lexer => {
+		output.push({ type: "word", value: encode(' ') });
+		output.push({ type: "url", value: encode(chop(1,lexer.text,0)) });
 	});
 
 	// ** italics
-	lexerInstance.addRule(/_{ALPHA_NUM_CHAR_SPACE}+?_/, lexer => {
-		output.push({ type: "italics", value: encode(chopEnds(lexer.text)) });
+	lexerInstance.addRule(/\s_{ALPHA_NUM_CHAR_SPACE}+?_/, lexer => {
+		output.push({ type: "word", value: encode(' ') });
+		output.push({ type: "italics", value: encode(chop(2, lexer.text, 1)) });
 	});
 
 	// ** bold
-	lexerInstance.addRule(/\*{ALPHA_NUM_CHAR_SPACE}+?\*/, lexer => {
-		output.push({ type: "bold", value: encode(chopEnds(lexer.text)) });
+	lexerInstance.addRule(/\s\*{ALPHA_NUM_CHAR_SPACE}+?\*/, lexer => {
+		output.push({ type: "word", value: encode(' ') });
+		output.push({ type: "bold", value: encode(chop(2, lexer.text, 1)) });
 	});
 
 	// ** spoiler
-	lexerInstance.addRule(/\|{ALPHA_NUM_CHAR_SPACE}+?\|/, lexer => {
-		output.push({ type: "spoiler", value: encode(chopEnds(lexer.text)) });
+	lexerInstance.addRule(/\s\|{ALPHA_NUM_CHAR_SPACE}+?\|/, lexer => {
+		output.push({ type: "word", value: encode(' ') });
+		output.push({ type: "spoiler", value: encode(chop(2, lexer.text, 1)) });
 	});
 
 	// ** strikethrough
-	lexerInstance.addRule(/~{ALPHA_NUM_CHAR_SPACE}+?~/, lexer => {
-		output.push({ type: "strikethrough", value: encode(chopEnds(lexer.text)) });
+	lexerInstance.addRule(/\s~{ALPHA_NUM_CHAR_SPACE}+?~/, lexer => {
+		output.push({ type: "word", value: encode(' ') });
+		output.push({ type: "strikethrough", value: encode(chop(2, lexer.text, 1)) });
 	});
 
 	// ** emoticons
 	lexerInstance.addRule(/:{ALPHA_NUM}+:/, lexer => {
-		const emoticon = chopEnds(lexer.text);
+		const emoticon = chop(1, lexer.text, 1);
 		const isRealEmoticon = !!emoticonHash[emoticon];
 		if (isRealEmoticon) {
 			output.push({ type: "emoticon", value: encode(emoticon) });
@@ -85,10 +91,11 @@ tokenService.tokenize = textToTokenize => {
 	});
 
 	// ** words and letters
-	lexerInstance.addRule(/{ALPHA_NUM_CHAR}*\s*/, lexer => {
+	lexerInstance.addRule(/\s*{ALPHA_NUM_CHAR}*/, lexer => {
 		output.push({ type: "word", value: encode(lexer.text) });
 	});
 
+	// ** emoji
 	// making new regex to strip off the global flag /g
 	lexerInstance.addRule(new RegExp(emojiRegex().source), lexer => {
 		output.push({ type: "emoji", value: encode(lexer.text) });
