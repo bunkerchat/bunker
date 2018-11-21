@@ -99,16 +99,27 @@
     "watch": "node node_modules/webpack/bin/webpack.js --mode development --watch",
     "postinstall": "node node_modules/bower/bin/bower install && npm run build",
     "deploy": "npm prune && npm ci && gulp && forever restart app.js",
-    "pretty": "node node_modules/prettier/bin-prettier.js --write \"./{server,src}/**/*.{js,jsx}\""
+    "pretty": "node node_modules/prettier/bin-prettier.js --write \"./{server,src}/**/*.{js,jsx}\"",
+    "test": "jest"
   },
   "main": "app.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/bunkerchat/bunker.git"
   },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/assets/",
+      "/env/"
+    ],
+	"setupTestFrameworkScriptFile": "./src/setupTests.js"
+  },
   "author": "many",
   "license": "",
   "devDependencies": {
+    "enzyme": "3.7.0",
+    "enzyme-adapter-react-16": "1.7.0",
     "prettier": "1.14.3"
   }
 }

@@ -1,16 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { sendRoomMessage } from "../room/roomActions";
-import { connect } from "react-redux";
-import {
-	hideEmoticonPicker,
-	selectRightInEmoticonPicker,
-	searchEmoticonPicker,
-	showEmoticonPicker,
-	selectLeftInEmoticonPicker,
-	selectDownInEmoticonPicker,
-	selectUpInEmoticonPicker
-} from "../emoticon/emoticonPickerActions";
 
 const InputBox = styled.textarea`
 	border-radius: 0;
@@ -23,39 +12,7 @@ const InputBox = styled.textarea`
 	}
 `;
 
-const mapStateToProps = state => ({
-	emoticonPickerVisible: !!state.emoticonPicker.visible,
-	selectedEmoticon: state.emoticonPicker.selected
-});
-
-const mapDispatchToProps = dispatch => ({
-	searchEmoticonPicker: text => {
-		dispatch(searchEmoticonPicker(text));
-	},
-	showEmoticonPicker: (x, y, onEmotionPick) => {
-		dispatch(showEmoticonPicker(x, y, "right", onEmotionPick));
-	},
-	hideEmoticonPicker: () => {
-		dispatch(hideEmoticonPicker());
-	},
-	selectLeftEmoticonPicker: () => {
-		dispatch(selectLeftInEmoticonPicker());
-	},
-	selectRightEmoticonPicker: () => {
-		dispatch(selectRightInEmoticonPicker());
-	},
-	selectUpEmoticonPicker: () => {
-		dispatch(selectUpInEmoticonPicker());
-	},
-	selectDownEmoticonPicker: () => {
-		dispatch(selectDownInEmoticonPicker());
-	},
-	send: (roomId, text) => {
-		dispatch(sendRoomMessage(roomId, text));
-	}
-});
-
-class ChatInput extends React.PureComponent {
+export default class ChatInput extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -149,8 +106,3 @@ class ChatInput extends React.PureComponent {
 		);
 	}
 }
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ChatInput);

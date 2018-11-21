@@ -1,5 +1,5 @@
 import React from "react";
-import ChatInput from "../input/ChatInput.jsx";
+import ConnectedChatInput from "../input/ConnectedChatInput.jsx";
 import RoomMemberList from "./RoomMemberList.jsx";
 import ScrollingMessageList from "../message/ScrollingMessageList.jsx";
 import styled from "styled-components";
@@ -23,7 +23,7 @@ export default class Room extends React.PureComponent {
 				<MessagingContainer>
 					<RoomTopic />
 					<ScrollingMessageList roomId={roomId} current={current} />
-					<ChatInput roomId={roomId} />
+					<ConnectedChatInput roomId={roomId} />
 				</MessagingContainer>
 				<RoomMemberList roomId={roomId} />
 			</Container>

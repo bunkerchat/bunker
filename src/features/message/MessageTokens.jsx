@@ -9,7 +9,7 @@ import Quote from "./tokens/Quote.jsx";
 const MessageTextContainer = styled.div`
 	display: inline-block;
 	word-break: break-word;
-	
+
 	mark {
 		padding: 0;
 		background: black;
