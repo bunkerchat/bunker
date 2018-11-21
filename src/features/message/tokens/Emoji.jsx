@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const EmojiContainer = styled.span`
-	font-size: 1.6em;
+	font-size: 1.1em;
 `;
 
 const Emoji = ({ token }) => (
