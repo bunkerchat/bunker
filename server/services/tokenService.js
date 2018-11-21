@@ -30,6 +30,13 @@ tokenService.tokenize = textToTokenize => {
 
 	const lexerInstance = new Lexer();
 
+	lexerInstance.setIgnoreCase(true);
+
+	lexerInstance.addDefinition("ALPHA_NUM", /[a-z0-9]/);
+	lexerInstance.addDefinition("ALPHA_NUM_CHAR", /[a-z0-9,.'"!]/);
+	lexerInstance.addDefinition("ALPHA_NUM_CHAR_SPACE", /[a-z0-9,.'"!\s]/);
+
+
 	// contains at least one line break
 	lexerInstance.addRule(/.*([\r\n])+.*/, lexer => {
 		output.push({ type: "quote", value: encode(textToTokenize) });
@@ -47,27 +54,27 @@ tokenService.tokenize = textToTokenize => {
 	});
 
 	// ** italics
-	lexerInstance.addRule(/_.+?_/, lexer => {
+	lexerInstance.addRule(/_{ALPHA_NUM_CHAR_SPACE}+?_/, lexer => {
 		output.push({ type: "italics", value: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** bold
-	lexerInstance.addRule(/\*.+?\*/, lexer => {
+	lexerInstance.addRule(/\*{ALPHA_NUM_CHAR_SPACE}+?\*/, lexer => {
 		output.push({ type: "bold", value: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** spoiler
-	lexerInstance.addRule(/\|.+?\|/, lexer => {
+	lexerInstance.addRule(/\|{ALPHA_NUM_CHAR_SPACE}+?\|/, lexer => {
 		output.push({ type: "spoiler", value: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** strikethrough
-	lexerInstance.addRule(/~.+?~/, lexer => {
+	lexerInstance.addRule(/~{ALPHA_NUM_CHAR_SPACE}+?~/, lexer => {
 		output.push({ type: "strikethrough", value: encode(chopEnds(lexer.text)) });
 	});
 
 	// ** emoticons
-	lexerInstance.addRule(/:[A-Za-z0-9]+:/, lexer => {
+	lexerInstance.addRule(/:{ALPHA_NUM}+:/, lexer => {
 		const emoticon = chopEnds(lexer.text);
 		const isRealEmoticon = !!emoticonHash[emoticon];
 		if (isRealEmoticon) {
@@ -78,7 +85,7 @@ tokenService.tokenize = textToTokenize => {
 	});
 
 	// ** words and letters
-	lexerInstance.addRule(/[A-Za-z0-9,.'"!]*\s*/, lexer => {
+	lexerInstance.addRule(/{ALPHA_NUM_CHAR}*\s*/, lexer => {
 		output.push({ type: "word", value: encode(lexer.text) });
 	});
 
