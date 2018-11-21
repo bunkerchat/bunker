@@ -82,7 +82,9 @@ class ChatInput extends React.PureComponent {
 		if (event.key === ":") {
 			if (this.props.emoticonPickerVisible) {
 				this.props.hideEmoticonPicker();
-			} else {
+			}
+			// picker not visible and user isn't already typing an emoticon
+			else if (!/:\w+$/.test(this.state.text)) {
 				this.props.showEmoticonPicker(
 					this.state.ref.current.offsetLeft,
 					this.state.ref.current.offsetTop,
@@ -95,12 +97,18 @@ class ChatInput extends React.PureComponent {
 			// Move around within emoticon picker
 			if (event.key === "ArrowLeft") {
 				this.props.selectLeftEmoticonPicker();
-			} else if (event.key === "ArrowRight" || event.key === "Tab") {
+			} else if (event.key === "ArrowRight") {
 				this.props.selectRightEmoticonPicker();
 			} else if (event.key === "ArrowUp") {
 				this.props.selectUpEmoticonPicker();
 			} else if (event.key === "ArrowDown") {
 				this.props.selectDownEmoticonPicker();
+			} else if (event.key === "Tab") {
+				if (event.shiftKey) {
+					this.props.selectLeftEmoticonPicker();
+				} else {
+					this.props.selectRightEmoticonPicker();
+				}
 			}
 		} else if (event.key === "Enter") {
 			event.preventDefault();
