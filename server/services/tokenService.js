@@ -34,7 +34,7 @@ tokenService.tokenize = textToTokenize => {
 
 	lexerInstance.addDefinition("ALPHA_NUM", /[a-z0-9]/);
 	lexerInstance.addDefinition("ALPHA_NUM_CHAR", /[a-z0-9,.'"!@#$%^&*()\-+=]/);
-	lexerInstance.addDefinition("ALPHA_NUM_CHAR_SPACE", /[a-z0-9,.'"!\s]/);
+	lexerInstance.addDefinition("ALPHA_NUM_CHAR_SPACE", /[a-z0-9,.'"!@#$%^&*()\-+=\s]/);
 
 
 	// contains at least one line break
