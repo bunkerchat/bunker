@@ -33,7 +33,7 @@ tokenService.tokenize = textToTokenize => {
 	lexerInstance.setIgnoreCase(true);
 
 	lexerInstance.addDefinition("ALPHA_NUM", /[a-z0-9]/);
-	lexerInstance.addDefinition("ALPHA_NUM_CHAR", /[a-z0-9,.'"!]/);
+	lexerInstance.addDefinition("ALPHA_NUM_CHAR", /[a-z0-9,.'"!$]/);
 	lexerInstance.addDefinition("ALPHA_NUM_CHAR_SPACE", /[a-z0-9,.'"!\s]/);
 
 
