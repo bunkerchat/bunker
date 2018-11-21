@@ -4,17 +4,12 @@ import theme from "../../constants/theme";
 import Emoticon from "./tokens/Emoticon.jsx";
 import Url from "./tokens/Url.jsx";
 import Word from "./tokens/Word.jsx";
-import Emoji from "./tokens/Emoji.jsx";
 import Quote from "./tokens/Quote.jsx";
 
 const MessageTextContainer = styled.div`
 	display: inline-block;
 	word-break: break-word;
-
-	.emoticon {
-		max-height: 24px;
-	}
-
+	
 	mark {
 		padding: 0;
 		background: black;
@@ -43,7 +38,7 @@ const tokenMap = {
 	word: Word,
 	unknown: Word,
 	emoticon: Emoticon,
-	emoji: Emoji
+	emoji: Word
 };
 
 const mapToMessage = (token, index) => {
