@@ -13,19 +13,19 @@ describe("tokenService", () => {
 Array [
   Object {
     "type": "word",
-    "value": "The",
+    "value": "The ",
   },
   Object {
     "type": "word",
-    "value": " Quick",
+    "value": "Quick ",
   },
   Object {
     "type": "word",
-    "value": " Brown",
+    "value": "Brown ",
   },
   Object {
     "type": "word",
-    "value": " Fox.",
+    "value": "Fox.",
   },
 ]
 `);
@@ -37,11 +37,7 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "code",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "code ",
   },
   Object {
     "type": "code",
@@ -49,11 +45,15 @@ Array [
   },
   Object {
     "type": "word",
-    "value": " is",
+    "value": " ",
   },
   Object {
     "type": "word",
-    "value": " awesome",
+    "value": "is ",
+  },
+  Object {
+    "type": "word",
+    "value": "awesome",
   },
 ]
 `);
@@ -65,19 +65,15 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "One",
+    "value": "One ",
   },
   Object {
     "type": "word",
-    "value": " does",
+    "value": "does ",
   },
   Object {
     "type": "word",
-    "value": " not",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "not ",
   },
   Object {
     "type": "italics",
@@ -85,15 +81,19 @@ Array [
   },
   Object {
     "type": "word",
-    "value": " hank",
+    "value": " ",
   },
   Object {
     "type": "word",
-    "value": " a",
+    "value": "hank ",
   },
   Object {
     "type": "word",
-    "value": " hankerson.",
+    "value": "a ",
+  },
+  Object {
+    "type": "word",
+    "value": "hankerson.",
   },
 ]
 `);
@@ -105,11 +105,7 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "code",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "code ",
   },
   Object {
     "type": "code",
@@ -117,11 +113,15 @@ Array [
   },
   Object {
     "type": "word",
-    "value": " is",
+    "value": " ",
   },
   Object {
     "type": "word",
-    "value": " awesome",
+    "value": "is ",
+  },
+  Object {
+    "type": "word",
+    "value": "awesome",
   },
 ]
 `);
@@ -132,15 +132,11 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "Bunker",
+    "value": "Bunker ",
   },
   Object {
     "type": "word",
-    "value": " is",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "is ",
   },
   Object {
     "type": "bold",
@@ -160,15 +156,11 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "bold",
+    "value": "bold ",
   },
   Object {
     "type": "word",
-    "value": " with",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "with ",
   },
   Object {
     "type": "bold",
@@ -188,15 +180,11 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "My",
+    "value": "My ",
   },
   Object {
     "type": "word",
-    "value": " dogs",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "dogs ",
   },
   Object {
     "type": "spoiler",
@@ -216,11 +204,7 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "My",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "My ",
   },
   Object {
     "type": "strikethrough",
@@ -228,15 +212,19 @@ Array [
   },
   Object {
     "type": "word",
-    "value": " cats",
+    "value": " ",
   },
   Object {
     "type": "word",
-    "value": " eat",
+    "value": "cats ",
   },
   Object {
     "type": "word",
-    "value": " fish.",
+    "value": "eat ",
+  },
+  Object {
+    "type": "word",
+    "value": "fish.",
   },
 ]
 `);
@@ -248,19 +236,15 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "Yo!",
+    "value": "Yo! ",
   },
   Object {
     "type": "word",
-    "value": " Plz",
+    "value": "Plz ",
   },
   Object {
     "type": "word",
-    "value": " visit",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "visit ",
   },
   Object {
     "type": "url",
@@ -268,7 +252,11 @@ Array [
   },
   Object {
     "type": "word",
-    "value": " !",
+    "value": " ",
+  },
+  Object {
+    "type": "word",
+    "value": "!",
   },
 ]
 `);
@@ -280,15 +268,11 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "Plz",
+    "value": "Plz ",
   },
   Object {
     "type": "word",
-    "value": " visit",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "visit ",
   },
   Object {
     "type": "url",
@@ -296,7 +280,11 @@ Array [
   },
   Object {
     "type": "word",
-    "value": " !",
+    "value": " ",
+  },
+  Object {
+    "type": "word",
+    "value": "!",
   },
 ]
 `);
@@ -329,19 +317,19 @@ Array [
   },
   Object {
     "type": "word",
-    "value": " jpro",
-  },
-  Object {
-    "type": "word",
-    "value": " is",
-  },
-  Object {
-    "type": "word",
-    "value": " an",
-  },
-  Object {
-    "type": "word",
     "value": " ",
+  },
+  Object {
+    "type": "word",
+    "value": "jpro ",
+  },
+  Object {
+    "type": "word",
+    "value": "is ",
+  },
+  Object {
+    "type": "word",
+    "value": "an ",
   },
   Object {
     "type": "emoticon",
@@ -349,15 +337,15 @@ Array [
   },
   Object {
     "type": "word",
-    "value": " to",
-  },
-  Object {
-    "type": "word",
-    "value": " me",
-  },
-  Object {
-    "type": "word",
     "value": " ",
+  },
+  Object {
+    "type": "word",
+    "value": "to ",
+  },
+  Object {
+    "type": "word",
+    "value": "me ",
   },
   Object {
     "type": "word",
@@ -374,11 +362,11 @@ Array [
 Array [
   Object {
     "type": "word",
-    "value": "This",
+    "value": "This ",
   },
   Object {
     "type": "word",
-    "value": " Fortnite",
+    "value": "Fortnite",
   },
   Object {
     "type": "unknown",
@@ -386,15 +374,11 @@ Array [
   },
   Object {
     "type": "word",
-    "value": "SUX",
+    "value": "SUX ",
   },
   Object {
     "type": "word",
-    "value": " spitfire",
-  },
-  Object {
-    "type": "word",
-    "value": " ",
+    "value": "spitfire ",
   },
   Object {
     "type": "url",
