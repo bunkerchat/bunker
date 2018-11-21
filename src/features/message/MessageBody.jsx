@@ -56,7 +56,7 @@ class MessageBody extends React.Component {
 
 		return (
 			<MessageBodyContainer
-				className={`px-2 pb-1 ${firstInSeries ? "border-light border-top" : ""} ${isUserMentioned ? "mention" : ""}`}
+				className={`px-2 ${firstInSeries ? "border-light border-top" : ""} ${isUserMentioned ? "mention" : ""}`}
 			>
 				{firstInSeries && (
 					<div className="row d-md-none">
