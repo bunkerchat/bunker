@@ -46,7 +46,7 @@ const mapDispatchToProps = dispatch => ({
 
 class ConnectedChatInput extends React.PureComponent {
 	render() {
-		return <ChatInput {...this.props}/>;
+		return <ChatInput {...this.props} />;
 	}
 }
 
