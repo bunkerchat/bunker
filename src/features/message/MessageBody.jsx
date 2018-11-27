@@ -7,6 +7,7 @@ import { getMessageAuthor } from "../../selectors/selectors";
 import MessageControls from "./MessageControls.jsx";
 import MessageReactions from "./MessageReactions.jsx";
 import MessageTokens from "./MessageTokens.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const MessageBodyContainer = styled.div`
 	position: relative;
@@ -86,6 +87,7 @@ class MessageBody extends React.Component {
 							</small>
 						</MessageTime>
 					)}
+					{message.edited && <FontAwesomeIcon icon={["far", "edit"]} className="ml-2 my-1 text-muted" />}
 				</div>
 			</MessageBodyContainer>
 		);
