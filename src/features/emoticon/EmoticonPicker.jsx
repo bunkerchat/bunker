@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { hideEmoticonPicker, searchEmoticonPicker } from "./emoticonPickerActions";
 import styled from "styled-components";
 import EmoticonCategory from "./EmoticonCategory.jsx";
+import EmoticonPickerSearch from "./EmoticonPickerSearch.jsx";
 
 // full screen container that always renders
 // hidden state is off screen
@@ -43,7 +44,8 @@ const mapStateToProps = state => ({
 	onPick: state.emoticonPicker.onPick,
 	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
 	selectedEmoticon: state.emoticonPicker.selected,
-	searchValue: state.emoticonPicker.search
+	searchValue: state.emoticonPicker.search,
+	searchInputVisible: state.emoticonPicker.searchInputVisible
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -81,12 +83,19 @@ class EmoticonPicker extends React.PureComponent {
 		this.props.hideEmoticonPicker();
 	};
 
-	onSearchChange = event => {
-		this.props.searchEmoticonPicker(event.target.value);
-	};
-
 	render() {
-		const { visible, x, y, direction, filteredEmoticons, selectedEmoticon, onPick } = this.props;
+		const {
+			visible,
+			x,
+			y,
+			direction,
+			filteredEmoticons,
+			selectedEmoticon,
+			searchEmoticonPicker,
+			onPick,
+			searchValue,
+			searchInputVisible
+		} = this.props;
 
 		const style = {
 			position: "fixed"
@@ -111,9 +120,14 @@ class EmoticonPicker extends React.PureComponent {
 			<Container className={`${!visible ? "hidden" : ""}`}>
 				<Backdrop onClick={this.hide} />
 				<Picker innerRef={this.state.ref} className="card p-1" style={style}>
-					<div className="form-group-sm">
-						{/*<input className="form-control" type="text" value={searchValue} onChange={this.onSearchChange} onSubmit={this.onSubmit}/>*/}
-					</div>
+					{searchInputVisible && (
+						<EmoticonPickerSearch
+							searchValue={searchValue}
+							selectedEmoticon={selectedEmoticon}
+							searchEmoticonPicker={searchEmoticonPicker}
+							onPick={onPick}
+						/>
+					)}
 					<EmoticonCategory emoticons={filteredEmoticons} selected={selectedEmoticon} onPick={onPick} />
 				</Picker>
 			</Container>
