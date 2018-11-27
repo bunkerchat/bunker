@@ -54,48 +54,48 @@ export default class ChatInput extends React.PureComponent {
 					this.onEmoticonPick
 				);
 			}
-		} else if (/Arrow|Tab/.test(event.key)) {
+		} else if (/Arrow|Tab/.test(event.key) && this.props.emoticonPickerVisible) {
 			event.preventDefault();
 
-			if (this.props.emoticonPickerVisible) {
-				// Move around within emoticon picker
-				if (event.key === "ArrowLeft") {
+			// Move around within emoticon picker
+			if (event.key === "ArrowLeft") {
+				this.props.selectLeftEmoticonPicker();
+			} else if (event.key === "ArrowRight") {
+				this.props.selectRightEmoticonPicker();
+			} else if (event.key === "ArrowUp") {
+				this.props.selectUpEmoticonPicker();
+			} else if (event.key === "ArrowDown") {
+				this.props.selectDownEmoticonPicker();
+			} else if (event.key === "Tab") {
+				if (event.shiftKey) {
 					this.props.selectLeftEmoticonPicker();
-				} else if (event.key === "ArrowRight") {
+				} else {
 					this.props.selectRightEmoticonPicker();
-				} else if (event.key === "ArrowUp") {
-					this.props.selectUpEmoticonPicker();
-				} else if (event.key === "ArrowDown") {
-					this.props.selectDownEmoticonPicker();
-				} else if (event.key === "Tab") {
-					if (event.shiftKey) {
-						this.props.selectLeftEmoticonPicker();
-					} else {
-						this.props.selectRightEmoticonPicker();
-					}
 				}
-			} else {
-				// Edit
-				const currentIndex = this.state.editedMessage
-					? _.findIndex(this.props.localMessages, { _id: this.state.editedMessage._id })
-					: -1;
+			}
+		} else if (/ArrowUp|ArrowDown/.test(event.key)) {
+			event.preventDefault();
 
-				let editedMessage;
-				if (event.key === "ArrowUp") {
-					if (currentIndex > 0) {
-						editedMessage = this.props.localMessages[currentIndex - 1];
-					} else if (!this.state.editedMessage) {
-						editedMessage = _.last(this.props.localMessages);
-					}
-				} else if (event.key === "ArrowDown") {
-					if (currentIndex >= 0 && currentIndex < this.props.localMessages.length - 1) {
-						editedMessage = this.props.localMessages[currentIndex + 1];
-					}
-				}
+			// Edit
+			const currentIndex = this.state.editedMessage
+				? _.findIndex(this.props.localMessages, { _id: this.state.editedMessage._id })
+				: -1;
 
-				if (editedMessage) {
-					this.setState({ text: editedMessage.text, editedMessage });
+			let editedMessage;
+			if (event.key === "ArrowUp") {
+				if (currentIndex > 0) {
+					editedMessage = this.props.localMessages[currentIndex - 1];
+				} else if (!this.state.editedMessage) {
+					editedMessage = _.last(this.props.localMessages);
 				}
+			} else if (event.key === "ArrowDown") {
+				if (currentIndex >= 0 && currentIndex < this.props.localMessages.length - 1) {
+					editedMessage = this.props.localMessages[currentIndex + 1];
+				}
+			}
+
+			if (editedMessage) {
+				this.setState({ text: editedMessage.text, editedMessage });
 			}
 		} else if (event.key === "Enter") {
 			event.preventDefault();
