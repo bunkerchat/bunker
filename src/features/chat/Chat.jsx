@@ -28,17 +28,19 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ({
-	changeActiveRoom: roomId => {
-		dispatch(changeActiveRoom(roomId));
-	},
-	changePresent: present => {
-		dispatch(changePresent(present));
-	}
-});
+const mapDispatchToProps = {
+	changeActiveRoom,
+	changePresent
+};
 
 class Chat extends React.PureComponent {
+	setActiveRoom() {
+		const { changeActiveRoom, activeRoom } = this.props;
+		changeActiveRoom(activeRoom ? activeRoom._id : null);
+	}
+
 	componentDidMount() {
+		this.setActiveRoom();
 		window.document.addEventListener("visibilitychange", () => {
 			this.props.changePresent(document.visibilityState === "visible");
 		});
@@ -48,7 +50,7 @@ class Chat extends React.PureComponent {
 		const previousActiveRoom = prevProps.activeRoom || { _id: "prevlobby" };
 		const activeRoom = this.props.activeRoom || { _id: "currlobby" };
 		if (previousActiveRoom._id !== activeRoom._id) {
-			this.props.changeActiveRoom(this.props.activeRoom ? this.props.activeRoom._id : null);
+			this.setActiveRoom();
 		}
 
 		const unread =
