@@ -1,9 +1,11 @@
 import { createSelector } from "reselect";
 
 const getUsers = state => state.users;
+const getLocalUser = state => state.localUser;
 const getRooms = state => state.rooms;
 const getRoomMembers = (state, props) => state.rooms[props.roomId].$members;
 const getLocalRoomMembersByRoom = state => state.localRoomMembers.byRoom;
+const getMessagesByRoom = state => state.messages.byRoom;
 export const getAuthorUser = (state, props) => state.users[props.authorId];
 export const getMessageAuthor = (state, props) => state.users[props.message.author];
 
@@ -36,3 +38,11 @@ export const makeGetRoomTopic = createSelector([getActiveRoom], room => {
 		text: room.topic
 	};
 });
+
+export const getLocalMessages = createSelector(
+	[getActiveRoom, getMessagesByRoom, getLocalUser],
+	(room, messagesByRoom, localUser) => {
+		if (!room) return [];
+		return _.filter(messagesByRoom[room._id], { author: localUser._id });
+	}
+);

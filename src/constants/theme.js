@@ -1,23 +1,31 @@
 import _ from "lodash";
 import tinycolor from "tinycolor2";
 
-// Parse bootstrap provided styles for the :root which provides all the colors
-// This allows us access to: blue, cyan, danger, dark, gray, green, indigo, info, light, orange, pink, primary, purple, red, secondary, success, teal, warning, white, yellow
-// For specific values see _variables.scss in node_modules/bootswatch/dist/<theme name>
-const bootstrapStyleSheet = _.find(document.styleSheets, sheet => /bootstrap/.test(sheet.href));
-const rootCssRule = _.find(bootstrapStyleSheet.cssRules, { selectorText: ":root" });
-const rootCssAttributes = rootCssRule.cssText.match(/([a-z\-]+):(#\w+)/g);
-const colors = _.reduce(
-	rootCssAttributes,
-	(obj, attributeString) => {
-		const match = /([a-z][\w\-]+):(#\w+)/.exec(attributeString);
-		obj[match[1]] = match[2];
-		return obj;
-	},
-	{}
-);
+let colors = {};
 
-console.log("theme colors are:", colors);
+// Some checks here which allow this file to be loaded during tests
+// There will be no colors in a non-browser environment
+if (document && document.styleSheets) {
+	// Parse bootstrap provided styles for the :root which provides all the colors
+	// This allows us access to: blue, cyan, danger, dark, gray, green, indigo, info, light, orange, pink, primary, purple, red, secondary, success, teal, warning, white, yellow
+	// For specific values see _variables.scss in node_modules/bootswatch/dist/<theme name>
+	const bootstrapStyleSheet = _.find(document.styleSheets, sheet => /bootstrap/.test(sheet.href));
+	if (bootstrapStyleSheet) {
+		const rootCssRule = _.find(bootstrapStyleSheet.cssRules, { selectorText: ":root" });
+		const rootCssAttributes = rootCssRule.cssText.match(/([a-z\-]+):(#\w+)/g);
+		colors = _.reduce(
+			rootCssAttributes,
+			(obj, attributeString) => {
+				const match = /([a-z][\w\-]+):(#\w+)/.exec(attributeString);
+				obj[match[1]] = match[2];
+				return obj;
+			},
+			{}
+		);
+	}
+}
+
+// console.log("theme colors are:", colors);
 
 const overrides = {
 	cerulean: {},

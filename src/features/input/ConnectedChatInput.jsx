@@ -11,10 +11,13 @@ import {
 	selectUpInEmoticonPicker
 } from "../emoticon/emoticonPickerActions";
 import ChatInput from "./ChatInput.jsx";
+import { getLocalMessages } from "../../selectors/selectors";
+import { updateMessage } from "../message/messageActions";
 
 const mapStateToProps = state => ({
 	emoticonPickerVisible: !!state.emoticonPicker.visible,
-	selectedEmoticon: state.emoticonPicker.selected
+	selectedEmoticon: state.emoticonPicker.selected,
+	localMessages: getLocalMessages(state)
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -41,6 +44,9 @@ const mapDispatchToProps = dispatch => ({
 	},
 	send: (roomId, text) => {
 		dispatch(sendRoomMessage(roomId, text));
+	},
+	edit: message => {
+		dispatch(updateMessage(message));
 	}
 });
 
