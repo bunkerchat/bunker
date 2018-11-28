@@ -4,10 +4,6 @@ import styled from "styled-components";
 import { toggleMessageImagesVisible } from "../messageActions";
 import { connect } from "react-redux";
 
-const Container = styled.div`
-	display: inline-block;
-`;
-
 const ToggleButton = styled.button`
 	height: 25px;
 	width: 25px;
@@ -28,14 +24,14 @@ class Image extends React.Component {
 		const { value } = this.props.token;
 		const target = _.includes(value, window.location.origin) ? "_self" : "_blank";
 		return (
-			<Container>
+			<div className="d-inline-block">
 				<a href={value} target={target}>
 					{value}
 				</a>
 				<ToggleButton className="btn btn-outline-primary ml-2" onClick={this.toggleVisible}>
-					<FontAwesomeIcon icon={imagesVisible ? "caret-down" : "caret-right"} />
+					<FontAwesomeIcon icon={imagesVisible ? "caret-down" : "caret-right"}/>
 				</ToggleButton>
-			</Container>
+			</div>
 		);
 	}
 }
