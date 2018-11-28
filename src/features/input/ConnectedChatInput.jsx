@@ -50,13 +50,7 @@ const mapDispatchToProps = dispatch => ({
 	}
 });
 
-class ConnectedChatInput extends React.PureComponent {
-	render() {
-		return <ChatInput {...this.props} />;
-	}
-}
-
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(ConnectedChatInput);
+)(ChatInput);
