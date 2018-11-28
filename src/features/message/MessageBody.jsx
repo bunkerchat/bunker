@@ -1,46 +1,20 @@
 import React from "react";
 import styled from "styled-components";
 import connect from "react-redux/es/connect/connect";
-import theme from "../../constants/theme";
 import MessageTimeAgo from "./MessageTimeAgo.jsx";
 import { getMessageAuthor } from "../../selectors/selectors";
-import MessageControls from "./MessageControls.jsx";
 import MessageReactions from "./MessageReactions.jsx";
 import MessageTokens from "./MessageTokens.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MessageImages from "./MessageImages.jsx";
-
-const MessageBodyContainer = styled.div`
-	position: relative;
-	flex: 1;
-	min-height: 30px;
-
-	&.mention {
-		background-color: ${theme.mentionBackgroundColor};
-		color: ${theme.mentionForegroundColor};
-	}
-
-	&:hover {
-		.message-controls {
-			display: block;
-		}
-	}
-
-	.message-controls {
-		display: none;
-		position: absolute;
-		right: 0;
-		top: 0;
-	}
-`;
+import MessageBodyContainer from "./MessageBodyContainer.jsx";
 
 const MessageTime = styled.div`
 	width: 120px;
 `;
 
 const mapStateToProps = (state, props) => ({
-	author: getMessageAuthor(state, props),
-	localNick: state.localUser.nick
+	author: getMessageAuthor(state, props)
 });
 
 class MessageBody extends React.Component {
@@ -54,13 +28,10 @@ class MessageBody extends React.Component {
 	}
 
 	render() {
-		const { message, firstInSeries, author, localNick } = this.props;
-		const isUserMentioned = testTextForNick(message.text, localNick);
+		const { message, firstInSeries, author } = this.props;
 
 		return (
-			<MessageBodyContainer
-				className={`px-2 ${firstInSeries ? "border-light border-top" : ""} ${isUserMentioned ? "mention" : ""}`}
-			>
+			<MessageBodyContainer messageId={message._id} text={message.text} firstInSeries={firstInSeries}>
 				{firstInSeries && (
 					<div className="row d-md-none">
 						<div className="col">
@@ -68,7 +39,7 @@ class MessageBody extends React.Component {
 						</div>
 						<div className="col text-right">
 							<small className="text-muted">
-								<MessageTimeAgo date={message.createdAt} />
+								<MessageTimeAgo date={message.createdAt}/>
 							</small>
 						</div>
 					</div>
@@ -76,21 +47,18 @@ class MessageBody extends React.Component {
 
 				<div className="row no-gutters">
 					<div className="col">
-						<MessageTokens message={message} />
-						<MessageReactions message={message} />
-						<MessageImages message={message} />
-					</div>
-					<div className="message-controls">
-						<MessageControls messageId={message._id} />
+						<MessageTokens message={message}/>
+						<MessageReactions message={message}/>
+						<MessageImages message={message}/>
 					</div>
 					{firstInSeries && (
 						<MessageTime className="d-none d-md-block text-right">
 							<small className="text-muted">
-								<MessageTimeAgo date={message.createdAt} />
+								<MessageTimeAgo date={message.createdAt}/>
 							</small>
 						</MessageTime>
 					)}
-					{message.edited && <FontAwesomeIcon icon={["far", "edit"]} className="ml-2 my-1 text-muted" />}
+					{message.edited && <FontAwesomeIcon icon={["far", "edit"]} className="ml-2 my-1 text-muted"/>}
 				</div>
 			</MessageBodyContainer>
 		);
@@ -98,8 +66,3 @@ class MessageBody extends React.Component {
 }
 
 export default connect(mapStateToProps)(MessageBody);
-
-function testTextForNick(text, nick) {
-	const mentionRegex = new RegExp(`${nick}\\b|@[Aa]ll\\b`, "i");
-	return mentionRegex.test(text);
-}

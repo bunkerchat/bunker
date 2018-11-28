@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import { hasAnyUnreadMention, getActiveRoom, getTotalUnreadMessageCount } from "../../selectors/selectors";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
+import MessageControls from "../messageControls/MessageControls.jsx";
 
 const Container = styled.div`
 	display: flex;
@@ -93,6 +94,7 @@ class Chat extends React.PureComponent {
 				))}
 
 				<EmoticonPicker />
+				<MessageControls/>
 			</Container>
 		);
 	}

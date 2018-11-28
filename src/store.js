@@ -12,6 +12,7 @@ import users from "./features/users/usersReducer";
 import rooms from "./features/room/roomReducer";
 import messages from "./features/message/messagesReducer";
 import emoticonPicker from "./features/emoticon/emoticonPickerReducer";
+import messageControls from "./features/messageControls/messageControlsReducer";
 import log from "./features/chat/logReducer";
 
 const rootReducer = combineReducers({
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
 	rooms,
 	messages,
 	emoticonPicker,
+	messageControls,
 	log
 });
 
