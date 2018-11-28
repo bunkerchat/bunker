@@ -40,7 +40,7 @@ const handlers = {
 	"emoticonPicker/selectLeft": state => {
 		let previousIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) - 1;
 		if (previousIndex < 0) {
-			previousIndex = 0;
+			previousIndex = state.filteredEmoticons.length -1;
 		}
 		return {
 			...state,
@@ -49,9 +49,11 @@ const handlers = {
 	},
 	"emoticonPicker/selectRight": state => {
 		let nextIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) + 1;
-		if (nextIndex > state.filteredEmoticons.length) {
-			nextIndex = state.filteredEmoticons.length;
+		if (nextIndex === state.filteredEmoticons.length) {
+			nextIndex = 0;
 		}
+
+		console.log("nextIndex", nextIndex);
 		return {
 			...state,
 			selected: state.filteredEmoticons[nextIndex].name
