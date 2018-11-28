@@ -67,6 +67,19 @@ const handlers = {
 				)
 			}
 		};
+	},
+	"message/toggleImagesVisible": (state, action) => {
+		const message = action.message;
+		return {
+			...state,
+			byRoom: {
+				...state.byRoom,
+				[message.room]: _.map(
+					state.byRoom[message.room],
+					existing => (existing._id === message._id ? { ...message, imagesVisible: !existing.imagesVisible } : existing)
+				)
+			}
+		};
 	}
 };
 

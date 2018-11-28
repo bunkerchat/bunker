@@ -5,6 +5,7 @@ import Emoticon from "./tokens/Emoticon.jsx";
 import Url from "./tokens/Url.jsx";
 import Word from "./tokens/Word.jsx";
 import Quote from "./tokens/Quote.jsx";
+import Image from "./tokens/Image.jsx";
 
 const MessageTextContainer = styled.div`
 	display: inline-block;
@@ -31,6 +32,7 @@ const tokenMap = {
 	quote: Quote,
 	code: Code,
 	url: Url,
+	image: Image,
 	italics: Italics,
 	bold: Bold,
 	spoiler: Spoiler,
@@ -41,15 +43,17 @@ const tokenMap = {
 	emoji: Word
 };
 
-const mapToMessage = (token, index) => {
+const mapToMessage = (message, token, index) => {
 	const TokenType = tokenMap[token.type];
-	return <TokenType token={token} key={index + token.type + token.value} />;
+	return <TokenType message={message} token={token} key={index + token.type + token.value} />;
 };
 
 export default class MessageTokens extends React.Component {
 	render() {
 		const { message } = this.props;
 		const tokens = message.tokens || [{ type: "unknown", value: message.text }];
-		return <MessageTextContainer>{tokens.map(mapToMessage)}</MessageTextContainer>;
+		return (
+			<MessageTextContainer>{tokens.map((token, index) => mapToMessage(message, token, index))}</MessageTextContainer>
+		);
 	}
 }
