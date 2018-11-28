@@ -22,25 +22,17 @@ const handlers = {
 			new RegExp(action.text, "i").test(emoticon.name)
 		);
 
-		if (filteredEmoticons.length > 0) {
-			return {
-				...state,
-				search: action.text,
-				filteredEmoticons,
-				selected: _.first(filteredEmoticons).name
-			};
-		} else {
-			// Nothing found, close picker
-			return {
-				...state,
-				visible: false
-			};
-		}
+		return {
+			...state,
+			search: action.text,
+			filteredEmoticons,
+			selected: filteredEmoticons.length > 0 ? _.first(filteredEmoticons).name : ""
+		};
 	},
 	"emoticonPicker/selectLeft": state => {
 		let previousIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) - 1;
 		if (previousIndex < 0) {
-			previousIndex = state.filteredEmoticons.length -1;
+			previousIndex = state.filteredEmoticons.length - 1;
 		}
 		return {
 			...state,

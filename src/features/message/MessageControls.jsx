@@ -33,7 +33,9 @@ class MessageControls extends React.Component {
 
 	onEmoticonPick = emoticonName => {
 		this.props.hideEmoticonPicker();
-		this.props.toggleReaction(this.props.messageId, emoticonName);
+		if (emoticonName) {
+			this.props.toggleReaction(this.props.messageId, emoticonName);
+		}
 	};
 
 	render() {

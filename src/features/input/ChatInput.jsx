@@ -47,11 +47,7 @@ export default class ChatInput extends React.PureComponent {
 			}
 			// picker not visible and user isn't already typing an emoticon
 			else if (!/:\w+$/.test(this.state.text)) {
-				this.props.showEmoticonPicker(
-					this.ref.current.offsetLeft,
-					this.ref.current.offsetTop,
-					this.onEmoticonPick
-				);
+				this.props.showEmoticonPicker(this.ref.current.offsetLeft, this.ref.current.offsetTop, this.onEmoticonPick);
 			}
 		} else if (/Arrow|Tab/.test(event.key) && this.props.emoticonPickerVisible) {
 			event.preventDefault();
@@ -123,7 +119,9 @@ export default class ChatInput extends React.PureComponent {
 	};
 
 	onEmoticonPick = selected => {
-		this.setState({ text: this.state.text.replace(/:\w*$/, `:${selected}:`) });
+		if (selected) {
+			this.setState({ text: this.state.text.replace(/:\w*$/, `:${selected}:`) });
+		}
 		this.props.hideEmoticonPicker();
 		this.inputRef.current.focus();
 	};
