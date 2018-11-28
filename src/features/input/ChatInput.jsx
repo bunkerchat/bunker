@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import theme from "../../constants/theme";
 
 const InputBox = styled.textarea`
 	border-radius: 0;
@@ -10,6 +11,10 @@ const InputBox = styled.textarea`
 		outline: none;
 		box-shadow: none;
 	}
+
+	&.editing {
+		background-color: ${theme.mentionBackgroundColor};
+	}
 `;
 
 export default class ChatInput extends React.PureComponent {
@@ -18,7 +23,8 @@ export default class ChatInput extends React.PureComponent {
 		this.state = {
 			ref: React.createRef(),
 			inputRef: React.createRef(),
-			text: ""
+			text: "",
+			editedMessage: null
 		};
 	}
 
@@ -67,6 +73,30 @@ export default class ChatInput extends React.PureComponent {
 					this.props.selectRightEmoticonPicker();
 				}
 			}
+		} else if (/ArrowUp|ArrowDown/.test(event.key)) {
+			event.preventDefault();
+
+			// Edit
+			const currentIndex = this.state.editedMessage
+				? _.findIndex(this.props.localMessages, { _id: this.state.editedMessage._id })
+				: -1;
+
+			let editedMessage;
+			if (event.key === "ArrowUp") {
+				if (currentIndex > 0) {
+					editedMessage = this.props.localMessages[currentIndex - 1];
+				} else if (!this.state.editedMessage) {
+					editedMessage = _.last(this.props.localMessages);
+				}
+			} else if (event.key === "ArrowDown") {
+				if (currentIndex >= 0 && currentIndex < this.props.localMessages.length - 1) {
+					editedMessage = this.props.localMessages[currentIndex + 1];
+				}
+			}
+
+			if (editedMessage) {
+				this.setState({ text: editedMessage.text, editedMessage });
+			}
 		} else if (event.key === "Enter") {
 			event.preventDefault();
 
@@ -75,13 +105,21 @@ export default class ChatInput extends React.PureComponent {
 			} else {
 				this.onSend();
 			}
+		} else if (event.key === "Escape") {
+			if (this.state.editedMessage) {
+				this.setState({ editedMessage: null });
+			}
 		}
 	};
 
 	onSend = () => {
 		if (this.state.text.trim().length > 0) {
-			this.props.send(this.props.roomId, this.state.text);
-			this.setState({ text: "" });
+			if (this.state.editedMessage) {
+				this.props.edit({ ...this.state.editedMessage, text: this.state.text });
+			} else {
+				this.props.send(this.props.roomId, this.state.text);
+			}
+			this.setState({ text: "", editedMessage: null });
 		}
 	};
 
@@ -97,7 +135,7 @@ export default class ChatInput extends React.PureComponent {
 				<InputBox
 					innerRef={this.state.inputRef}
 					rows="1"
-					className="form-control"
+					className={`form-control ${!!this.state.editedMessage ? "editing" : ""}`}
 					value={this.state.text}
 					onChange={this.onInputChange}
 					onKeyDown={this.onKeyDown}

@@ -24,7 +24,7 @@ exports.update = function(req, res) {
 	Message.findById(messageId)
 		.populate("author")
 		.then(function(dbMessage) {
-			if (userId != dbMessage.author._id.toString()) {
+			if (userId !== dbMessage.author._id.toString()) {
 				throw new ForbiddenError("Only the author may edit their message");
 			}
 

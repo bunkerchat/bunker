@@ -12,7 +12,7 @@ const Container = styled.div`
 
 const mapDispatchToProps = dispatch => ({
 	showEmoticonPicker: (x, y, onEmotionPick) => {
-		dispatch(showEmoticonPicker(x, y, "left", onEmotionPick));
+		dispatch(showEmoticonPicker(x, y, "left", onEmotionPick, true));
 	},
 	hideEmoticonPicker: () => {
 		dispatch(hideEmoticonPicker());

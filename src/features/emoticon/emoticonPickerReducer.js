@@ -10,7 +10,8 @@ const handlers = {
 		onPick: action.onPick,
 		search: "",
 		filteredEmoticons: state.allEmoticons,
-		selected: _.first(state.allEmoticons).name
+		selected: _.first(state.allEmoticons).name,
+		searchInputVisible: action.searchInputVisible
 	}),
 	"emoticonPicker/hide": state => ({
 		...state,

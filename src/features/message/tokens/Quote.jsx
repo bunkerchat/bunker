@@ -6,7 +6,7 @@ const Pre = styled.pre`
 `;
 
 const Quote = ({ token }) => (
-	<Pre className="p-2 border border-dark" dangerouslySetInnerHTML={{ __html: token.value }} />
+	<Pre className="p-2 mb-0 border border-dark" dangerouslySetInnerHTML={{ __html: token.value }} />
 );
 
 export default Quote;
