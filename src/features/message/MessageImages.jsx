@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import { toggleMessageImagesVisible } from "./messageActions";
+import { connect } from "react-redux";
 
 const Image = styled.div`
 	img {
@@ -8,7 +10,15 @@ const Image = styled.div`
 	}
 `;
 
-export default class MessageImages extends React.Component {
+const mapDispatchToProps = {
+	toggleMessageImagesVisible
+};
+
+class MessageImages extends React.Component {
+	toggleVisible = () => {
+		this.props.toggleMessageImagesVisible(this.props.message);
+	};
+
 	render() {
 		const { message } = this.props;
 		if (!message.imagesVisible) return null;
@@ -25,3 +35,8 @@ export default class MessageImages extends React.Component {
 		);
 	}
 }
+
+export default connect(
+	false,
+	mapDispatchToProps
+)(MessageImages);
