@@ -47,6 +47,11 @@ tokenService.tokenize = textToTokenize => {
 		output.push({ type: "code", value: encode(chopEnds(lexer.text)) });
 	});
 
+	// ** images
+	lexerInstance.addRule(/https?:\/\/\S+\.(png|gif|jpg|jpeg)/, lexer => {
+		output.push({ type: "image", value: encode(lexer.text) });
+	});
+
 	// ** urls
 	lexerInstance.addRule(/https?:\/\/\S+/, lexer => {
 		output.push({ type: "url", value: encode(lexer.text) });

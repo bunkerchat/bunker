@@ -8,6 +8,7 @@ import MessageControls from "./MessageControls.jsx";
 import MessageReactions from "./MessageReactions.jsx";
 import MessageTokens from "./MessageTokens.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import MessageImages from "./MessageImages.jsx";
 
 const MessageBodyContainer = styled.div`
 	position: relative;
@@ -44,10 +45,11 @@ const mapStateToProps = (state, props) => ({
 
 class MessageBody extends React.Component {
 	shouldComponentUpdate(nextProps) {
-		// Only reason we're updating is if text changes
+		const { message } = this.props;
 		return (
-			this.props.message.text !== nextProps.message.text ||
-			(this.props.message.reactions || []).length !== (nextProps.message.reactions || []).length
+			message.text !== nextProps.message.text ||
+			(message.reactions || []).length !== (nextProps.message.reactions || []).length ||
+			message.imagesVisible !== nextProps.message.imagesVisible
 		);
 	}
 
@@ -76,6 +78,7 @@ class MessageBody extends React.Component {
 					<div className="col">
 						<MessageTokens message={message} />
 						<MessageReactions message={message} />
+						<MessageImages message={message} />
 					</div>
 					<div className="message-controls">
 						<MessageControls messageId={message._id} />

@@ -290,6 +290,35 @@ Array [
 `);
 		});
 
+		describe("image", () => {
+			it("png", () => {
+				const tokens = tokenService.tokenize("https://bnkr.net/blah.png");
+				expect(tokens[0]).toMatchObject({type: "image", value: "https://bnkr.net/blah.png"});
+			});
+
+			it("gif", () => {
+				const tokens = tokenService.tokenize("https://bnkr.net/blah.gif");
+				expect(tokens[0]).toMatchObject({type: "image", value: "https://bnkr.net/blah.gif"});
+			});
+
+			it("jpg", () => {
+				const tokens = tokenService.tokenize("https://bnkr.net/blah.jpg");
+				expect(tokens[0]).toMatchObject({type: "image", value: "https://bnkr.net/blah.jpg"});
+			});
+
+			it("jpeg", () => {
+				const tokens = tokenService.tokenize("https://bnkr.net/blah.jpeg");
+				expect(tokens[0]).toMatchObject({type: "image", value: "https://bnkr.net/blah.jpeg"});
+			});
+
+			it("multiple in one message", () => {
+				const tokens = tokenService.tokenize("3 formats https://bnkr.net/blah.png http://bnkr.net/blah.gif https://bnkr.net/blah.jpg");
+				expect(tokens[2]).toMatchObject({type: "image", value: "https://bnkr.net/blah.png"});
+				expect(tokens[4]).toMatchObject({type: "image", value: "http://bnkr.net/blah.gif"});
+				expect(tokens[6]).toMatchObject({type: "image", value: "https://bnkr.net/blah.jpg"});
+			});
+		});
+
 		it("quote", () => {
 			const ipsum = `Lorem ipsum dolor sit amet,
 consectetur adipiscing elit,
