@@ -48,22 +48,13 @@ const mapStateToProps = state => ({
 	searchInputVisible: state.emoticonPicker.searchInputVisible
 });
 
-const mapDispatchToProps = dispatch => ({
-	hideEmoticonPicker: () => {
-		dispatch(hideEmoticonPicker());
-	},
-	searchEmoticonPicker: text => {
-		dispatch(searchEmoticonPicker(text));
-	}
-});
+const mapDispatchToProps = {
+	hideEmoticonPicker,
+	searchEmoticonPicker
+};
 
 class EmoticonPicker extends React.PureComponent {
-	constructor() {
-		super();
-		this.state = {
-			ref: React.createRef()
-		};
-	}
+	ref = React.createRef();
 
 	componentDidMount() {
 		document.addEventListener("keydown", this.onKeyDown, false);
@@ -102,15 +93,15 @@ class EmoticonPicker extends React.PureComponent {
 		};
 
 		if (visible) {
-			const top = y - this.state.ref.current.offsetHeight;
+			const top = y - this.ref.current.offsetHeight;
 			if (top > 0) {
-				style.top = `${y - this.state.ref.current.offsetHeight}px`;
+				style.top = `${y - this.ref.current.offsetHeight}px`;
 			} else {
 				style.top = `${y}px`;
 			}
 
 			if (direction === "left") {
-				style.left = `${x - this.state.ref.current.offsetWidth}px`;
+				style.left = `${x - this.ref.current.offsetWidth}px`;
 			} else {
 				style.left = `${x}px`;
 			}
@@ -119,7 +110,7 @@ class EmoticonPicker extends React.PureComponent {
 		return (
 			<Container className={`${!visible ? "hidden" : ""}`}>
 				<Backdrop onClick={this.hide} />
-				<Picker innerRef={this.state.ref} className="card p-1" style={style}>
+				<Picker innerRef={this.ref} className="card p-1" style={style}>
 					{searchInputVisible && (
 						<EmoticonPickerSearch
 							searchValue={searchValue}
