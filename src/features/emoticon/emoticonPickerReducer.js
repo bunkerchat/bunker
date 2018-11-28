@@ -53,7 +53,6 @@ const handlers = {
 			nextIndex = 0;
 		}
 
-		console.log("nextIndex", nextIndex);
 		return {
 			...state,
 			selected: state.filteredEmoticons[nextIndex].name
