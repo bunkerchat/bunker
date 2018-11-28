@@ -48,7 +48,7 @@ tokenService.tokenize = textToTokenize => {
 	});
 
 	// ** images
-	lexerInstance.addRule(/https?:\/\/\S+\.(png|gif|jpg)/, lexer => {
+	lexerInstance.addRule(/https?:\/\/\S+\.(png|gif|jpg|jpeg)/, lexer => {
 		output.push({ type: "image", value: encode(lexer.text) });
 	});
 
