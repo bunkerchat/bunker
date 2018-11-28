@@ -17,52 +17,29 @@
 
 	<div class="well">
 		<h3>Login with:</h3>
-			<span class="g-signin"
-						data-scope="profile email"
-						data-clientid="<%= clientID %>"
-						data-redirecturi="postmessage"
-						data-accesstype="offline"
-						data-cookiepolicy="single_host_origin"
-						data-callback="signInCallback">
+		<span class="g-signin"
+			  data-scope="profile email"
+			  data-clientid="<%= clientID %>"
+			  data-redirecturi="postmessage"
+			  data-accesstype="offline"
+			  data-cookiepolicy="single_host_origin"
+			  data-callback="signInCallback">
 			</span>
 	</div>
 
 </div>
 
-<noscript id="deferred-styles">
-	<link rel="stylesheet" href="/assets/vendor/bootstrap/dist/css/bootstrap.css"/>
-	<link rel="stylesheet" href="/assets/vendor/bootswatch/sandstone/bootstrap.css"/>
-	<link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.css"/>
-	<link rel="stylesheet" href="/assets/styles/default.css"/>
-</noscript>
-<script>
-	// Inline CSS for max perf
-	// https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery
-	var loadDeferredStyles = function () {
-		var addStylesNode = document.getElementById("deferred-styles");
-		var replacement = document.createElement("div");
-		replacement.innerHTML = addStylesNode.textContent;
-		document.body.appendChild(replacement)
-		addStylesNode.parentElement.removeChild(addStylesNode);
-	};
-	var raf = requestAnimationFrame || mozRequestAnimationFrame ||
-			webkitRequestAnimationFrame || msRequestAnimationFrame;
-	if (raf) raf(function () {
-		window.setTimeout(loadDeferredStyles, 0);
-	});
-	else window.addEventListener('load', loadDeferredStyles);
-</script>
-
 <script type="text/javascript">
 	function signInCallback(authResult) {
 		if (authResult.code) {
-			$.ajax({
-				type: 'POST',
-				url: '/auth/googleCallback',
-				contentType: 'application/json',
-				data: JSON.stringify({ code: authResult.code })
+
+			fetch('/auth/googleCallback', {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(({ code: authResult.code })),
+				redirect: "manual"
 			})
-					.done(function () {
+					.then(function() {
 						var match = /\?directTo=(.+)/.exec(window.location.search);
 						if (match) {
 							window.location = match[1];
@@ -70,14 +47,16 @@
 						else {
 							window.location = '/' + window.location.hash;
 						}
-					});
+					})
+					.catch(err => {
+						console.error(err)
+					})
 		} else if (authResult.error) {
-			console.log('There was an error: ' + authResult.error);
+			console.error('There was an error: ' + authResult.error);
 		}
 	}
 </script>
 
-<script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
 <script src="//apis.google.com/js/client:plusone.js"></script>
 </body>
 </html>
