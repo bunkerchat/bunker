@@ -18,15 +18,14 @@ const InputBox = styled.textarea`
 `;
 
 export default class ChatInput extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			ref: React.createRef(),
-			inputRef: React.createRef(),
-			text: "",
-			editedMessage: null
-		};
-	}
+	ref = React.createRef();
+
+	inputRef = React.createRef();
+
+	state = {
+		text: "",
+		editedMessage: null
+	};
 
 	onInputChange = event => {
 		const text = event.target.value;
@@ -49,8 +48,8 @@ export default class ChatInput extends React.PureComponent {
 			// picker not visible and user isn't already typing an emoticon
 			else if (!/:\w+$/.test(this.state.text)) {
 				this.props.showEmoticonPicker(
-					this.state.ref.current.offsetLeft,
-					this.state.ref.current.offsetTop,
+					this.ref.current.offsetLeft,
+					this.ref.current.offsetTop,
 					this.onEmoticonPick
 				);
 			}
@@ -126,14 +125,14 @@ export default class ChatInput extends React.PureComponent {
 	onEmoticonPick = selected => {
 		this.setState({ text: this.state.text.replace(/:\w*$/, `:${selected}:`) });
 		this.props.hideEmoticonPicker();
-		this.state.inputRef.current.focus();
+		this.inputRef.current.focus();
 	};
 
 	render() {
 		return (
-			<div ref={this.state.ref}>
+			<div ref={this.ref}>
 				<InputBox
-					innerRef={this.state.inputRef}
+					innerRef={this.inputRef}
 					rows="1"
 					className={`form-control ${!!this.state.editedMessage ? "editing" : ""}`}
 					value={this.state.text}
