@@ -22,7 +22,7 @@ const Emoticon = ({ token }) => {
 	return knownEmoticon.isIcon ? (
 		<i className={`fa ${knownEmoticon.file} fa-lg`} title={`:${knownEmoticon.name}:`} />
 	) : (
-		<EmoticonImg title="${emoticonText}" src={`/assets/images/emoticons/${knownEmoticon.file}`} />
+		<EmoticonImg title={`:${emoticonText}:`} src={`/assets/images/emoticons/${knownEmoticon.file}`} />
 	);
 };
 
