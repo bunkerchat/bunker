@@ -25,6 +25,8 @@ const Controls = styled.div`
 	position: absolute;
 	z-index: 1001
 	background-color: ${theme.messageControlsBackground};
+	border-width: 2px !important;
+	border-radius: 5px;
 `;
 
 const mapStateToProps = state => ({
@@ -93,10 +95,10 @@ class MessageControls extends React.PureComponent {
 
 		return (
 			<Container className={!visible ? "hidden" : ""}>
-				<Backdrop onClick={this.props.hideMessageControls} />
-				<Controls className="p-1 border border-dark" style={style}>
+				<Backdrop onClick={this.props.hideMessageControls}/>
+				<Controls className="p-1 border border-primary" style={style}>
 					<button className="btn btn-link p-0" onClick={this.onClick}>
-						<FontAwesomeIcon icon={["far", "smile"]} />
+						<FontAwesomeIcon icon={["far", "smile"]}/>
 					</button>
 				</Controls>
 			</Container>
