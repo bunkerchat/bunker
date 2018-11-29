@@ -1,16 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import emoticons from "../../constants/emoticons";
+import MessageReaction from "./MessageReaction.jsx";
 
 const Container = styled.div`
 	display: inline-block;
 	background-color: lightblue;
-`;
-
-const Emoticon = styled.span`
-	img {
-		max-height: 24px;
-	}
 `;
 
 export default class MessageReactions extends React.PureComponent {
@@ -23,15 +17,9 @@ export default class MessageReactions extends React.PureComponent {
 		const reactionGroups = _.groupBy(reactions, "emoticonName");
 		return (
 			<Container className="ml-1">
-				{_.map(reactionGroups, (reactionGroup, emoticonName) => {
-					const emoticon = _.find(emoticons.imageEmoticons, { name: emoticonName });
-					return (
-						<Emoticon key={emoticonName} className="px-1">
-							<img src={`/assets/images/emoticons/${emoticon.file}`} />
-							<span>{reactionGroup.length > 1 ? reactionGroup.length : ""}</span>
-						</Emoticon>
-					);
-				})}
+				{_.map(reactionGroups, (reactionGroup, emoticonName) => (
+					<MessageReaction emoticonName={emoticonName} reactions={reactionGroup} key={emoticonName}/>
+				))}
 			</Container>
 		);
 	}
