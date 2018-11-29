@@ -29,7 +29,7 @@ class Image extends React.Component {
 					{value}
 				</a>
 				<ToggleButton className="btn btn-outline-primary ml-2" onClick={this.toggleVisible}>
-					<FontAwesomeIcon icon={imagesVisible ? "caret-down" : "caret-right"}/>
+					<FontAwesomeIcon icon={imagesVisible ? "caret-down" : "caret-right"} />
 				</ToggleButton>
 			</div>
 		);

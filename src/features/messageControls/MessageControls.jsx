@@ -6,17 +6,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
 import { toggleReaction } from "../message/messageActions";
 import { hideMessageControls } from "./messageControlsActions";
-
-// todo need backdrop hide click
+import Backdrop from "../backdrop/Backdrop.jsx";
 
 const Container = styled.div`
 	position: fixed;
+	top: 0;
 	left: 0;
-	background-color: ${theme.messageControlsBackground};
-	
+	width: 100vw;
+	height: 100vh;
+	z-index: 1000;
+
 	&.hidden {
 		left: -10000px;
 	}
+`;
+
+const Controls = styled.div`
+	position: absolute;
+	z-index: 1001
+	background-color: ${theme.messageControlsBackground};
 `;
 
 const mapStateToProps = state => ({
@@ -26,14 +34,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-	showEmoticonPicker: (x, y, onEmotionPick) => {
-		dispatch(showEmoticonPicker(x, y, "left", onEmotionPick, true));
+	showEmoticonPicker: (x, y, onEmotionPick, onHide) => {
+		dispatch(showEmoticonPicker(x, y, "left", onEmotionPick, onHide, true));
 	},
 	hideEmoticonPicker: () => {
 		dispatch(hideEmoticonPicker());
 	},
 	hideMessageControls: () => {
-		dispatch(hideMessageControls())
+		dispatch(hideMessageControls());
 	},
 	toggleReaction: (messageId, emoticonName) => {
 		dispatch(toggleReaction(messageId, emoticonName));
@@ -42,7 +50,7 @@ const mapDispatchToProps = dispatch => ({
 
 class MessageControls extends React.PureComponent {
 	onClick = event => {
-		this.props.showEmoticonPicker(event.clientX, event.clientY, this.onEmoticonPick);
+		this.props.showEmoticonPicker(event.clientX, event.clientY, this.onEmoticonPick, this.onEmoticonHide);
 	};
 
 	onEmoticonPick = emoticonName => {
@@ -53,12 +61,16 @@ class MessageControls extends React.PureComponent {
 		}
 	};
 
+	onEmoticonHide = () => {
+		this.props.hideMessageControls();
+	};
+
 	render() {
 		const { messageId, x, y } = this.props;
 		const visible = !!messageId;
 
 		const style = {
-			top: `${y}px`,
+			top: `${y}px`
 		};
 
 		if (visible) {
@@ -66,10 +78,13 @@ class MessageControls extends React.PureComponent {
 		}
 
 		return (
-			<Container className={`p-1 border border-dark ${!visible ? "hidden" : ""}`} style={style}>
-				<button className="btn btn-link p-0" onClick={this.onClick}>
-					<FontAwesomeIcon icon={["far", "smile"]}/>
-				</button>
+			<Container className={!visible ? "hidden" : ""}>
+				<Backdrop onClick={this.props.hideMessageControls} />
+				<Controls className="p-1 border border-dark" style={style}>
+					<button className="btn btn-link p-0" onClick={this.onClick}>
+						<FontAwesomeIcon icon={["far", "smile"]} />
+					</button>
+				</Controls>
 			</Container>
 		);
 	}

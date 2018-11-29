@@ -94,7 +94,7 @@ class Chat extends React.PureComponent {
 				))}
 
 				<EmoticonPicker />
-				<MessageControls/>
+				<MessageControls />
 			</Container>
 		);
 	}

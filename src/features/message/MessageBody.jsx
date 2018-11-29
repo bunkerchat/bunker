@@ -39,7 +39,7 @@ class MessageBody extends React.Component {
 						</div>
 						<div className="col text-right">
 							<small className="text-muted">
-								<MessageTimeAgo date={message.createdAt}/>
+								<MessageTimeAgo date={message.createdAt} />
 							</small>
 						</div>
 					</div>
@@ -47,18 +47,18 @@ class MessageBody extends React.Component {
 
 				<div className="row no-gutters">
 					<div className="col">
-						<MessageTokens message={message}/>
-						<MessageReactions message={message}/>
-						<MessageImages message={message}/>
+						<MessageTokens message={message} />
+						<MessageReactions message={message} />
+						<MessageImages message={message} />
 					</div>
 					{firstInSeries && (
 						<MessageTime className="d-none d-md-block text-right">
 							<small className="text-muted">
-								<MessageTimeAgo date={message.createdAt}/>
+								<MessageTimeAgo date={message.createdAt} />
 							</small>
 						</MessageTime>
 					)}
-					{message.edited && <FontAwesomeIcon icon={["far", "edit"]} className="ml-2 my-1 text-muted"/>}
+					{message.edited && <FontAwesomeIcon icon={["far", "edit"]} className="ml-2 my-1 text-muted" />}
 				</div>
 			</MessageBodyContainer>
 		);

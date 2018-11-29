@@ -13,7 +13,7 @@ const Container = styled.div`
 		background-color: ${theme.mentionBackgroundColor};
 		color: ${theme.mentionForegroundColor};
 	}
-	
+
 	&.selected {
 		background-color: lightblue;
 	}
@@ -39,7 +39,9 @@ class MessageBodyContainer extends React.Component {
 
 		return (
 			<Container
-				className={`px-2 ${firstInSeries ? "border-light border-top" : ""} ${isUserMentioned ? "mention" : ""} ${isSelectedMessage ? "selected" : ""}`}
+				className={`px-2 ${firstInSeries ? "border-light border-top" : ""} ${isUserMentioned ? "mention" : ""} ${
+					isSelectedMessage ? "selected" : ""
+				}`}
 				onClick={this.onClick}
 			>
 				{this.props.children}
@@ -48,7 +50,10 @@ class MessageBodyContainer extends React.Component {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MessageBodyContainer);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(MessageBodyContainer);
 
 function testTextForNick(text, nick) {
 	const mentionRegex = new RegExp(`${nick}\\b|@[Aa]ll\\b`, "i");

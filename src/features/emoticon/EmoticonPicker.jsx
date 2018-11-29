@@ -4,6 +4,7 @@ import { hideEmoticonPicker, searchEmoticonPicker } from "./emoticonPickerAction
 import styled from "styled-components";
 import EmoticonCategory from "./EmoticonCategory.jsx";
 import EmoticonPickerSearch from "./EmoticonPickerSearch.jsx";
+import Backdrop from "../backdrop/Backdrop.jsx";
 
 // full screen container that always renders
 // hidden state is off screen
@@ -13,27 +14,19 @@ const Container = styled.div`
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	z-index: 1000;
+	z-index: 1005;
 
 	&.hidden {
 		left: -10000px;
 	}
 `;
 
-// full screen backdrop to intercept clicking away from picker
-const Backdrop = styled.div`
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-`;
-
 // picker has highest z-index
 const Picker = styled.div`
+	position: absolute;
 	width: 300px;
 	height: 250px;
-	z-index: 1001;
+	z-index: 1006;
 `;
 
 const mapStateToProps = state => ({
@@ -42,6 +35,7 @@ const mapStateToProps = state => ({
 	y: state.emoticonPicker.y,
 	direction: state.emoticonPicker.direction,
 	onPick: state.emoticonPicker.onPick,
+	onHide: state.emoticonPicker.onHide,
 	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
 	selectedEmoticon: state.emoticonPicker.selected,
 	searchValue: state.emoticonPicker.search,
@@ -72,6 +66,9 @@ class EmoticonPicker extends React.PureComponent {
 
 	hide = () => {
 		this.props.hideEmoticonPicker();
+		if (typeof this.props.onHide === "function") {
+			this.props.onHide();
+		}
 	};
 
 	render() {
@@ -88,9 +85,7 @@ class EmoticonPicker extends React.PureComponent {
 			searchInputVisible
 		} = this.props;
 
-		const style = {
-			position: "fixed"
-		};
+		const style = {};
 
 		if (visible) {
 			const top = y - this.ref.current.offsetHeight;
