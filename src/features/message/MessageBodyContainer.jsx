@@ -33,11 +33,16 @@ class MessageBodyContainer extends React.Component {
 		const { text, firstInSeries, localNick, isSelectedMessage } = this.props;
 		const isUserMentioned = testTextForNick(text, localNick);
 
+		let border = "";
+		if (isSelectedMessage) {
+			border = "border border-primary";
+		} else if (firstInSeries) {
+			border = "border-top border-light"
+		}
+
 		return (
 			<Container
-				className={`px-2 ${firstInSeries ? "border-light border-top" : ""} ${isUserMentioned ? "mention" : ""} ${
-					isSelectedMessage ? "border border-primary" : ""
-				}`}
+				className={`px-2 ${border} ${isUserMentioned ? "mention" : ""}`}
 				onClick={this.onClick}
 			>
 				{this.props.children}
