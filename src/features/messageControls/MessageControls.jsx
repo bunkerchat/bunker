@@ -49,6 +49,20 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class MessageControls extends React.PureComponent {
+	componentDidMount() {
+		document.addEventListener("keydown", this.onKeyDown, false);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener("keydown", this.onKeyDown, false);
+	}
+
+	onKeyDown = event => {
+		if (event.keyCode === 27) {
+			this.props.hideMessageControls();
+		}
+	};
+
 	onClick = event => {
 		this.props.showEmoticonPicker(event.clientX, event.clientY, this.onEmoticonPick, this.onEmoticonHide);
 	};

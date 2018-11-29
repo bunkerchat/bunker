@@ -13,10 +13,6 @@ const Container = styled.div`
 		background-color: ${theme.mentionBackgroundColor};
 		color: ${theme.mentionForegroundColor};
 	}
-
-	&.selected {
-		background-color: lightblue;
-	}
 `;
 
 const mapStateToProps = (state, props) => ({
@@ -30,7 +26,7 @@ const mapDispatchToProps = {
 
 class MessageBodyContainer extends React.Component {
 	onClick = event => {
-		this.props.showMessageControls(this.props.messageId, event.clientX, event.clientY);
+		this.props.showMessageControls(this.props.messageId, event.clientX - 10, event.clientY - 10);
 	};
 
 	render() {
@@ -40,7 +36,7 @@ class MessageBodyContainer extends React.Component {
 		return (
 			<Container
 				className={`px-2 ${firstInSeries ? "border-light border-top" : ""} ${isUserMentioned ? "mention" : ""} ${
-					isSelectedMessage ? "selected" : ""
+					isSelectedMessage ? "border border-primary" : ""
 				}`}
 				onClick={this.onClick}
 			>
