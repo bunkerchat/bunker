@@ -24,7 +24,7 @@ class MessageReaction extends React.PureComponent {
 		const title = `:${emoticonName}: from ${nicks}`;
 		return (
 			<Emoticon key={emoticonName} className="px-1">
-				<img src={`/assets/images/emoticons/${emoticon.file}`} alt={`:${emoticonName}:`} title={title}/>
+				<img src={`/assets/images/emoticons/${emoticon.file}`} alt={`:${emoticonName}:`} title={title} />
 				<span>{reactions.length > 1 ? reactions.length : ""}</span>
 			</Emoticon>
 		);

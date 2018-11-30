@@ -37,14 +37,11 @@ class MessageBodyContainer extends React.Component {
 		if (isSelectedMessage) {
 			border = "border border-primary";
 		} else if (firstInSeries) {
-			border = "border-top border-light"
+			border = "border-top border-light";
 		}
 
 		return (
-			<Container
-				className={`px-2 ${border} ${isUserMentioned ? "mention" : ""}`}
-				onClick={this.onClick}
-			>
+			<Container className={`px-2 ${border} ${isUserMentioned ? "mention" : ""}`} onClick={this.onClick}>
 				{this.props.children}
 			</Container>
 		);

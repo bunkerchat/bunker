@@ -63,7 +63,7 @@ const handlers = {
 				...state.byRoom,
 				[message.room]: _.map(
 					state.byRoom[message.room],
-					existing => (existing._id === message._id ? message : existing)
+					existing => (existing._id === message._id ? { ...existing, ...message } : existing)
 				)
 			}
 		};

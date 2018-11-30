@@ -15,7 +15,8 @@ const mapDispatchToProps = {
 };
 
 class Image extends React.Component {
-	toggleVisible = () => {
+	toggleVisible = event => {
+		event.stopPropagation();
 		this.props.toggleMessageImagesVisible(this.props.message);
 	};
 

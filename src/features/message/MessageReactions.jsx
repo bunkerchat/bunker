@@ -18,7 +18,7 @@ export default class MessageReactions extends React.PureComponent {
 		return (
 			<Container className="ml-1">
 				{_.map(reactionGroups, (reactionGroup, emoticonName) => (
-					<MessageReaction emoticonName={emoticonName} reactions={reactionGroup} key={emoticonName}/>
+					<MessageReaction emoticonName={emoticonName} reactions={reactionGroup} key={emoticonName} />
 				))}
 			</Container>
 		);

@@ -9,6 +9,13 @@ const FullScreen = styled.div`
 	height: 100vh;
 `;
 
-const Backdrop = ({ onClick }) => <FullScreen onClick={onClick} />;
+export default class Backdrop extends React.PureComponent {
+	onClick = event => {
+		event.stopPropagation();
+		this.props.onClick();
+	};
 
-export default Backdrop;
+	render() {
+		return <FullScreen onClick={this.onClick} />;
+	}
+}
