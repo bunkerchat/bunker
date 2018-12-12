@@ -8,6 +8,7 @@ const Container = styled.div`
 	position: relative;
 	flex: 1;
 	min-height: 30px;
+	border: solid 1px transparent;
 
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
