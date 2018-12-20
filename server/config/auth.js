@@ -38,19 +38,22 @@ auth.init = function(app) {
 	});
 
 	passport.use(
-		new googleStrategy({
-			clientID: config.google.clientID,
-			clientSecret: config.google.clientSecret,
-			callbackURL: '/auth/googleCallback',
-			scope: "https://www.googleapis.com/auth/userinfo.email"
-		}, function(accessToken, refreshToken, profile, cb) {
-			userService.findOrCreateBunkerUser(profile).nodeify(cb);
-		})
+		new googleStrategy(
+			{
+				clientID: config.google.clientID,
+				clientSecret: config.google.clientSecret,
+				callbackURL: "/auth/googleCallback",
+				scope: "https://www.googleapis.com/auth/userinfo.email"
+			},
+			function(accessToken, refreshToken, profile, cb) {
+				userService.findOrCreateBunkerUser(profile).nodeify(cb);
+			}
+		)
 	);
 
-	app.get("/login/google", passport.authenticate('google'));
+	app.get("/login/google", passport.authenticate("google"));
 
-	app.get("/auth/googleCallback", passport.authenticate('google'), function(req, res) {
+	app.get("/auth/googleCallback", passport.authenticate("google"), function(req, res) {
 		req.session.googleCredentials = req.authInfo;
 		//res.json(req.query);
 		res.redirect("/");
