@@ -8,6 +8,6 @@ module.exports = (req, res, next) => {
 		req.session.userId = req.user._id;
 		next();
 	} else {
-		res.redirect(`/login?directTo=${req.originalUrl}`);
+		res.redirect('/login');
 	}
 };

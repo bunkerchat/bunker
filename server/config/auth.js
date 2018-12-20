@@ -1,7 +1,7 @@
 var Session = require("express-session");
 var MongoStore = require("connect-mongo")(Session);
 var passport = require("passport");
-var GooglePlusStrategy = require("passport-google-plus");
+var googleStrategy = require("passport-google-oauth20");
 var LocalStrategy = require("passport-local").Strategy;
 
 //var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
@@ -38,22 +38,22 @@ auth.init = function(app) {
 	});
 
 	passport.use(
-		new GooglePlusStrategy(
-			{
-				clientId: config.google.clientID,
-				clientSecret: config.google.clientSecret
-			},
-			loginCallback
-		)
+		new googleStrategy({
+			clientID: config.google.clientID,
+			clientSecret: config.google.clientSecret,
+			callbackURL: '/auth/googleCallback',
+			scope: "https://www.googleapis.com/auth/userinfo.email"
+		}, function(accessToken, refreshToken, profile, cb) {
+			userService.findOrCreateBunkerUser(profile).nodeify(cb);
+		})
 	);
 
-	function loginCallback(tokens, profile, done) {
-		userService.findOrCreateBunkerUser(profile).nodeify(done);
-	}
+	app.get("/login/google", passport.authenticate('google'));
 
-	app.post("/auth/googleCallback", passport.authenticate("google"), function(req, res) {
+	app.get("/auth/googleCallback", passport.authenticate('google'), function(req, res) {
 		req.session.googleCredentials = req.authInfo;
-		res.json({});
+		//res.json(req.query);
+		res.redirect("/");
 	});
 
 	passport.use(
