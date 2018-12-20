@@ -1,6 +1,0 @@
-GRAVATARS
-
-Your gravatar is the image icon displayed next to your name in the Bunker room user list.
-You can create/customize your gravatar by visiting gravatar.com. Log in to gravatar.com
-with the same email address you use to log in to Bunker. Follow gravatar.com's instructions
-on uploading an image, and then your custom gravatar should appear in Bunker.

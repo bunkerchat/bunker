@@ -1,100 +1,107 @@
-const Promise = require('bluebird');
-const moment = require('moment');
-const fs = Promise.promisifyAll(require('fs'));
-const path = require('path');
-const ent = require('ent');
-const ObjectId = require('mongodb').ObjectID;
+const Promise = require("bluebird");
+const moment = require("moment");
+const fs = Promise.promisifyAll(require("fs"));
+const path = require("path");
+const ent = require("ent");
+const ObjectId = require("mongodb").ObjectID;
 
-const RoomService = require('../services/RoomService');
-const User = require('../models/User');
-const Message = require('../models/Message');
-const Fight = require('../models/Fight');
-const FightRound = require('../models/FightRound');
-const HangmanPublicGameStatistics = require('../models/HangmanPublicGameStatistics');
-const HangmanUserStatistics = require('../models/HangmanUserStatistics');
+const RoomService = require("../services/RoomService");
+const User = require("../models/User");
+const Message = require("../models/Message");
+const Fight = require("../models/Fight");
+const FightRound = require("../models/FightRound");
+const HangmanPublicGameStatistics = require("../models/HangmanPublicGameStatistics");
+const HangmanUserStatistics = require("../models/HangmanUserStatistics");
 
-module.exports.getStats = function (roomMember) {
-	return generateStats(roomMember, './templates/statsForSelfTemplate.ejs');
+module.exports.getStats = function(roomMember) {
+	return generateStats(roomMember, "./templates/statsForSelfTemplate.ejs");
 };
 
-module.exports.getStatsForUser = function (username, roomId) {
-	return RoomService.getRoomMemberByNickAndRoom(username, roomId)
-		.then(function (roomMember) {
-			if (!roomMember) throw new Error('User not found');
-			return generateStats(roomMember, './templates/statsForUserTemplate.ejs');
-		});
+module.exports.getStatsForUser = function(username, roomId) {
+	return RoomService.getRoomMemberByNickAndRoom(username, roomId).then(function(roomMember) {
+		if (!roomMember) throw new Error("User not found");
+		return generateStats(roomMember, "./templates/statsForUserTemplate.ejs");
+	});
 };
 
 function generateStats(roomMember, template) {
-	return Message.count({author: roomMember.user._id})
-		.then(function (messageCount) {
-			return Promise.join(
-				fs.readFileAsync(path.join(__dirname, template)),
-				messageCount,
-				Message.count({author: roomMember.user._id, edited: true}),
-				// getActiveDays(roomMember),
-				Message.find({author: roomMember.user._id, type: 'standard'}).sort('createdAt ASC').limit(1),
-				Message.find({author: roomMember.user._id, type: 'standard'}).skip(_.random(0, messageCount)).limit(1),
-				getEmoticonCounts(roomMember),
-				getHangmanStats(roomMember.user._id),
-				// getFightStatistics(roomMember.user._id)
-			)
-				.spread(function (template, messageCount, editCount, /*activeDays,*/ firstMessage, randomMessage, emoticonCounts, hangmanStats, /*fightStats*/) {
-				    const activeDays = 0; // todo fix activedays and fightstats once mongo updated on server
+	return Message.count({ author: roomMember.user._id }).then(function(messageCount) {
+		return Promise.join(
+			fs.readFileAsync(path.join(__dirname, template)),
+			messageCount,
+			Message.count({ author: roomMember.user._id, edited: true }),
+			// getActiveDays(roomMember),
+			Message.find({ author: roomMember.user._id, type: "standard" })
+				.sort("createdAt ASC")
+				.limit(1),
+			Message.find({ author: roomMember.user._id, type: "standard" })
+				.skip(_.random(0, messageCount))
+				.limit(1),
+			getEmoticonCounts(roomMember),
+			getHangmanStats(roomMember.user._id)
+		).spread(function(template, messageCount, editCount, firstMessage, randomMessage, emoticonCounts, hangmanStats) {
+			const activeDays = 0; // todo fix activedays and fightstats once mongo updated on server
 
-					firstMessage = firstMessage[0];
-					randomMessage = randomMessage[0];
+			firstMessage = firstMessage[0];
+			randomMessage = randomMessage[0];
 
-					const dateFormat = 'dddd MMMM Do, YYYY';
-					const dateTimeFormat = 'dddd MMMM Do, YYYY @ h:mm:ssa';
+			const dateFormat = "dddd MMMM Do, YYYY";
+			const dateTimeFormat = "dddd MMMM Do, YYYY @ h:mm:ssa";
 
-					let averageCountPerDay = 0;
+			let averageCountPerDay = 0;
 
-					if (messageCount && activeDays.length) {
-						averageCountPerDay = messageCount / activeDays.length;
-					}
+			if (messageCount && activeDays.length) {
+				averageCountPerDay = messageCount / activeDays.length;
+			}
 
-					const data = {
-						user: roomMember.user.nick,
-						messageCount: messageCount,
-						averageMessageCountPerDay: ~~averageCountPerDay,
-						editCount: editCount,
-						startDate: moment(roomMember.user.createdAt).format(dateFormat),
-						totalDays: moment().diff(roomMember.user.createdAt, 'days'),
-						activeDays: activeDays.length,
-						firstMessage: firstMessage ? '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ')' : '',
-						emotes: ent.decode(_.map(emoticonCounts, 'emoticon').join(' ')),
-						randomMessage: randomMessage ? '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ')' : '',
-						hangmanGuessCount: hangmanStats.count,
-						hangmanGuessAccuracy: hangmanStats.guessAccuracy ? hangmanStats.guessAccuracy + '%' : 'N/A',
-						hangmanPrivateWinLoss: (hangmanStats.privateWins ? hangmanStats.privateWins : 0) + ' - ' + (hangmanStats.privateLosses ? hangmanStats.privateLosses : 0),
-						hangmanPublicWinLoss: hangmanStats.publicWins + ' - ' + hangmanStats.publicLosses
-					};
+			const data = {
+				user: roomMember.user.nick,
+				messageCount: messageCount,
+				averageMessageCountPerDay: ~~averageCountPerDay,
+				editCount: editCount,
+				startDate: moment(roomMember.user.createdAt).format(dateFormat),
+				totalDays: moment().diff(roomMember.user.createdAt, "days"),
+				activeDays: activeDays.length,
+				firstMessage: firstMessage
+					? '"' + ent.decode(firstMessage.text) + '" (' + moment(firstMessage.createdAt).format(dateTimeFormat) + ")"
+					: "",
+				emotes: ent.decode(_.map(emoticonCounts, "emoticon").join(" ")),
+				randomMessage: randomMessage
+					? '"' + ent.decode(randomMessage.text) + '" (' + moment(randomMessage.createdAt).format(dateTimeFormat) + ")"
+					: "",
+				hangmanGuessCount: hangmanStats.count,
+				hangmanGuessAccuracy: hangmanStats.guessAccuracy ? hangmanStats.guessAccuracy + "%" : "N/A",
+				hangmanPrivateWinLoss:
+					(hangmanStats.privateWins ? hangmanStats.privateWins : 0) +
+					" - " +
+					(hangmanStats.privateLosses ? hangmanStats.privateLosses : 0),
+				hangmanPublicWinLoss: hangmanStats.publicWins + " - " + hangmanStats.publicLosses
+			};
 
-					if (activeDays) {
-						const mostActive = makeActiveModel(activeDays);
+			if (activeDays) {
+				const mostActive = makeActiveModel(activeDays);
 
-						const activeDaysSorted = _(activeDays)
-							.sortByAll([
-								function (day) {
-									return day._id.year;
-								},
-								function (day) {
-									return day._id.dayOfYear;
-								}
-							])
-							.reverse()
-							.value();
+				const activeDaysSorted = _(activeDays)
+					.sortByAll([
+						function(day) {
+							return day._id.year;
+						},
+						function(day) {
+							return day._id.dayOfYear;
+						}
+					])
+					.reverse()
+					.value();
 
-						const lastActive = makeActiveModel(activeDaysSorted);
+				const lastActive = makeActiveModel(activeDaysSorted);
 
-						data.activeDate = mostActive.day.format(dateFormat) + ' (' + mostActive.object.count + ' messages)';
-						data.lastActiveDate = lastActive.day.format(dateFormat) + ' (' + lastActive.object.count + ' messages)';
-					}
+				data.activeDate = mostActive.day.format(dateFormat) + " (" + mostActive.object.count + " messages)";
+				data.lastActiveDate = lastActive.day.format(dateFormat) + " (" + lastActive.object.count + " messages)";
+			}
 
-					return ent.encode(_.template(template)(data));
-				});
+			return ent.encode(_.template(template)(data));
 		});
+	});
 }
 
 function makeActiveModel(activeDays) {
@@ -103,7 +110,9 @@ function makeActiveModel(activeDays) {
 	const mostActiveDayObject = _.first(activeDays);
 	const mostActiveYear = mostActiveDayObject._id.year;
 	const mostActiveDayOfYear = mostActiveDayObject._id.dayOfYear;
-	const mostActiveDay = moment().year(mostActiveYear).dayOfYear(mostActiveDayOfYear);
+	const mostActiveDay = moment()
+		.year(mostActiveYear)
+		.dayOfYear(mostActiveDayOfYear);
 
 	return {
 		object: mostActiveDayObject,
@@ -115,17 +124,17 @@ function makeActiveModel(activeDays) {
 
 function getActiveDays(roomMember) {
 	return Message.aggregate([
-		{$match: {author: new ObjectId(roomMember.user._id)}},
+		{ $match: { author: new ObjectId(roomMember.user._id) } },
 		{
 			$group: {
 				_id: {
-					year: {$year: '$createdAt'},
-					dayOfYear: {$dayOfYear: '$createdAt'}
+					year: { $year: "$createdAt" },
+					dayOfYear: { $dayOfYear: "$createdAt" }
 				},
-				count: {$sum: 1}
+				count: { $sum: 1 }
 			}
 		},
-		{$sort: {count: -1}}
+		{ $sort: { count: -1 } }
 	]).exec();
 }
 
@@ -135,24 +144,22 @@ function getEmoticonCounts(roomMember) {
 
 	return Message.find({
 		author: new ObjectId(roomMember.user._id),
-		text: {$regex: emoticonRegex}
-	}).then(function (messages) {
-
-		_.each(messages, function (message) {
-
+		text: { $regex: emoticonRegex }
+	}).then(function(messages) {
+		_.each(messages, function(message) {
 			const matches = _.uniq(message.text.match(emoticonRegex));
 			if (matches) {
-				_.each(matches, function (match) {
+				_.each(matches, function(match) {
 					countMap[match] = countMap[match] ? countMap[match] + 1 : 1;
 				});
 			}
 		});
 
 		return _(countMap)
-			.map(function (value, key) {
-				return {count: value, emoticon: key, name: key.replace(/:/g, '')};
+			.map(function(value, key) {
+				return { count: value, emoticon: key, name: key.replace(/:/g, "") };
 			})
-			.sortBy('count')
+			.sortBy("count")
 			.reverse()
 			.take(10)
 			.value();
@@ -160,63 +167,62 @@ function getEmoticonCounts(roomMember) {
 }
 
 function getHangmanStats(userId) {
-	return Promise.join(
-		getHangmanUserStatistics(userId),
-		getHangmanPublicStatistics()
-	)
-		.spread(function (userStats, publicStats) {
-			const stats = {
-				count: userStats.guessMisses + userStats.guessHits,
-				publicWins: publicStats.winCount,
-				publicLosses: publicStats.lossCount,
-				privateWins: userStats.privateGameWinCount,
-				privateLosses: userStats.privateGameLossCount
-			};
+	return Promise.join(getHangmanUserStatistics(userId), getHangmanPublicStatistics()).spread(function(
+		userStats,
+		publicStats
+	) {
+		const stats = {
+			count: userStats.guessMisses + userStats.guessHits,
+			publicWins: publicStats.winCount,
+			publicLosses: publicStats.lossCount,
+			privateWins: userStats.privateGameWinCount,
+			privateLosses: userStats.privateGameLossCount
+		};
 
-			if (!stats.count || !userStats.guessHits) {
-				stats.guessAccuracy = 0;
-			}
-			else {
-				stats.guessAccuracy = Math.round((userStats.guessHits / stats.count) * 100);
-			}
+		if (!stats.count || !userStats.guessHits) {
+			stats.guessAccuracy = 0;
+		} else {
+			stats.guessAccuracy = Math.round((userStats.guessHits / stats.count) * 100);
+		}
 
-			return stats;
-		});
+		return stats;
+	});
 }
 
 function getHangmanUserStatistics(userId) {
-	return HangmanUserStatistics.findOne({user: userId}).then(function (hangmanUserStatistics) {
+	return HangmanUserStatistics.findOne({ user: userId }).then(function(hangmanUserStatistics) {
 		if (hangmanUserStatistics) return hangmanUserStatistics;
-		return HangmanUserStatistics.create({user: userId});
+		return HangmanUserStatistics.create({ user: userId });
 	});
 }
 
 function getHangmanPublicStatistics() {
-	return HangmanPublicGameStatistics.findOne({}).then(function (publicStats) {
+	return HangmanPublicGameStatistics.findOne({}).then(function(publicStats) {
 		if (publicStats) return publicStats;
 		return HangmanPublicGameStatistics.create({});
 	});
 }
 
 function getFightStatistics(userId) {
-	return Fight.aggregate(
-		[{$match: {$or: [{opponent: ObjectId(userId)}, {challenger: ObjectId(userId)}]}},
-			{
-				$project: {
-					winningUser: '$winningUser',
-					losingUser: {
-						$cond: [
-							{$ne: ['$winningUser', null]},
-							{$cond: [{$ne: ['$winningUser', '$challenger']}, '$challenger', '$opponent']},
-							null
-						]
-					},
-					opponentUser: '$opponent',
-					challengerUser: '$challenger'
-				}
+	return Fight.aggregate([
+		{ $match: { $or: [{ opponent: ObjectId(userId) }, { challenger: ObjectId(userId) }] } },
+		{
+			$project: {
+				winningUser: "$winningUser",
+				losingUser: {
+					$cond: [
+						{ $ne: ["$winningUser", null] },
+						{ $cond: [{ $ne: ["$winningUser", "$challenger"] }, "$challenger", "$opponent"] },
+						null
+					]
+				},
+				opponentUser: "$opponent",
+				challengerUser: "$challenger"
 			}
-		]).exec().then(function (fightData) {
-
+		}
+	])
+		.exec()
+		.then(function(fightData) {
 			const fightResults = {};
 			const victims = {};
 			let userIds = [];
@@ -229,8 +235,7 @@ function getFightStatistics(userId) {
 
 				const fightIds = [];
 
-				_.forEach(fightData, function (fightDataElement) {
-
+				_.forEach(fightData, function(fightDataElement) {
 					fightIds.push(fightDataElement._id);
 					if (fightDataElement.winningUser) {
 						if (fightDataElement.winningUser == userId) {
@@ -245,8 +250,7 @@ function getFightStatistics(userId) {
 
 								victims[fightDataElement.challengerUser].beatings++;
 								userIds.push(fightDataElement.challengerUser);
-							}
-							else {
+							} else {
 								if (!victims[fightDataElement.opponentUser]) {
 									victims[fightDataElement.opponentUser] = {};
 									victims[fightDataElement.opponentUser].beatings = 0;
@@ -256,73 +260,81 @@ function getFightStatistics(userId) {
 								victims[fightDataElement.opponentUser].beatings++;
 								userIds.push(fightDataElement.opponentUser);
 							}
-						}
-						else {
+						} else {
 							userStats.losses++;
 						}
 
 						userStats.totalGames++;
-					}
-					else {
+					} else {
 						userStats.ties++;
 						userStats.totalGames++;
 					}
 
-					userStats.winPercentage = userStats.wins > 0 ?
-						Math.round(((userStats.wins + (userStats.ties * 0.5)) / userStats.totalGames) * 100) : 0;
+					userStats.winPercentage =
+						userStats.wins > 0 ? Math.round(((userStats.wins + userStats.ties * 0.5) / userStats.totalGames) * 100) : 0;
 				});
 
-				fightResults.fightWinPercentage = userStats.winPercentage + '% (' + userStats.wins + '-' + userStats.losses + '-' + userStats.ties + ')';
-				fightResults.topVictims = _.take(_.sortByOrder(victims, ['beatings'], [false]), 5);
+				fightResults.fightWinPercentage =
+					userStats.winPercentage + "% (" + userStats.wins + "-" + userStats.losses + "-" + userStats.ties + ")";
+				fightResults.topVictims = _.take(_.sortByOrder(victims, ["beatings"], [false]), 5);
 
 				userIds = _.uniq(userIds);
 
-				return User.find({"_id": {$in: userIds}}).then(function (users) {
-
-					_.forEach(fightResults.topVictims, function (victim) {
-						const userIndex = _.findIndex(users, function (user) {
+				return User.find({ _id: { $in: userIds } }).then(function(users) {
+					_.forEach(fightResults.topVictims, function(victim) {
+						const userIndex = _.findIndex(users, function(user) {
 							return user._id == victim._id;
 						});
 
 						victim.userNick = users[userIndex].nick;
 					});
 
-					return FightRound.find({fight: {$in: fightIds}}).then(function (fightRounds) {
+					return FightRound.find({ fight: { $in: fightIds } }).then(function(fightRounds) {
 						const fightRoundStats = {};
 						fightRoundStats.wins = 0;
 						fightRoundStats.losses = 0;
 						fightRoundStats.ties = 0;
 						fightRoundStats.totalRounds = 0;
 
-						_.forEach(fightRounds, function (fightRound) {
+						_.forEach(fightRounds, function(fightRound) {
 							if (fightRound.winningUser) {
 								if (fightRound.winningUser == userId) {
 									fightRoundStats.wins++;
-								}
-								else {
+								} else {
 									fightRoundStats.losses++;
 								}
-							}
-							else {
+							} else {
 								fightRoundStats.ties++;
 							}
 
 							fightRoundStats.totalRounds++;
 
-							fightRoundStats.winPercentage = fightRoundStats.wins > 0 ?
-								Math.round(((fightRoundStats.wins + (fightRoundStats.ties * 0.5)) / fightRoundStats.totalRounds) * 100) : 0;
+							fightRoundStats.winPercentage =
+								fightRoundStats.wins > 0
+									? Math.round(
+											((fightRoundStats.wins + fightRoundStats.ties * 0.5) / fightRoundStats.totalRounds) * 100
+									  )
+									: 0;
 						});
 
-						fightResults.fightRoundWinPercentage = fightRoundStats.winPercentage + '% (' + fightRoundStats.wins + '-' + fightRoundStats.losses + '-' + fightRoundStats.ties + ')';
+						fightResults.fightRoundWinPercentage =
+							fightRoundStats.winPercentage +
+							"% (" +
+							fightRoundStats.wins +
+							"-" +
+							fightRoundStats.losses +
+							"-" +
+							fightRoundStats.ties +
+							")";
 
 						return fightResults;
 					});
 				});
 			}
 
-			fightResults.fightWinPercentage = '0% (0-0-0)';
+			fightResults.fightWinPercentage = "0% (0-0-0)";
 			fightResults.victims = null;
-			fightResults.fightRoundWinPercentage = '0% (0-0-0)';
+			fightResults.fightRoundWinPercentage = "0% (0-0-0)";
 
 			return fightResults;
 		});

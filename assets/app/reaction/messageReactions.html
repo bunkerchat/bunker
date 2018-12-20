@@ -1,0 +1,8 @@
+<div ng-repeat="reactionsByAuthor in ::messageReactions.reactionsByAuthor">
+	<img class="gravatar" ng-src="{{::reactionsByAuthor.author.$gravatar}}"/>
+	<div class="reactions">
+		<img class="emoticon"
+			 ng-src="/assets/images/emoticons/{{::reaction.emoticonFile}}"
+			 ng-repeat="reaction in ::reactionsByAuthor.reactions"/>
+	</div>
+</div>

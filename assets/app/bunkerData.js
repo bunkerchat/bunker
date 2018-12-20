@@ -18,6 +18,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		memberships: [],
 		$resolved: false,
 		$promise: null,
+		reactionMenuMessageId: null,
 
 		start: function () {
 			// Call start once we are finished connecting (bunker.js)
@@ -28,87 +29,94 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		// Initial data, also sets up subscriptions
 		init: function () {
 			bunkerData.$resolved = false;
-			return io.socket.emitAsync('/init').then(function (initialData) {
-				bunkerData.$resolved = true;
-				delete bunkerData.version.old;
-				bunkerData.version.old = _.clone(bunkerData.version);
-				_.assign(bunkerData.version, initialData.version);
-				_.assign(bunkerData.user, initialData.user);
-				_.assign(bunkerData.userSettings, initialData.userSettings);
-				_.assign(bunkerData.inbox, initialData.inbox);
-				_.assign(bunkerData.memberships, initialData.memberships);
+			return io.socket.emitAsync('/init', {
+				present: $window.document.visibilityState === "visible"
+			})
+				.then(function (initialData) {
+					bunkerData.$resolved = true;
+					delete bunkerData.version.old;
+					bunkerData.version.old = _.clone(bunkerData.version);
+					_.assign(bunkerData.version, initialData.version);
+					_.assign(bunkerData.user, initialData.user);
+					_.assign(bunkerData.userSettings, initialData.userSettings);
+					_.assign(bunkerData.inbox, initialData.inbox);
+					_.assign(bunkerData.memberships, initialData.memberships);
 
-				_.each(initialData.users, user => {
-					user.$present = bunkerData.isPresent(user);
-					user.$gravatar = gravatarService.url(user.email, {s: 40});
+					_.each(initialData.users, user => {
+						user.$present = bunkerData.isPresent(user);
+						user.$gravatar = gravatarService.url(user.email, { s: 40 });
+					});
+
+					// instead of sending many duplicate users down, send one list
+					// then re-hydrate all the associations
+					users = _.keyBy(initialData.users, '_id');
+
+					_.each(bunkerData.inbox, function (inbox) {
+						if (inbox.message.author) { // TODO causing a bug for @aSig for some reason without this
+							inbox.message.author = users[inbox.message.author._id || inbox.message.author];
+						}
+					});
+
+					_.each(bunkerData.memberships, function (membership) {
+						membership.user = users[membership.user._id || membership.user];
+					});
+
+					bunkerData.inbox.unreadMessages = _.filter(bunkerData.inbox, { read: false }).length;
+
+					// Set $resolved on all rooms (those not in the data set to false)
+					// TODO ideally we could remove the rooms from the array entirely
+					_.each(bunkerData.rooms, function (room) {
+						room.$resolved = _.some(initialData.rooms, { _id: room._id });
+					});
+
+					// Go through data and sync messages
+					// Doing it this way keeps the rooms array intact so we don't disrupt the UI
+					_.each(initialData.rooms, function (roomData, index) {
+						var room = _.find(bunkerData.rooms, { _id: roomData._id });
+
+						if (!room) {
+							room = roomData;
+
+							// Set the room tab order
+							var membership = _.find(bunkerData.memberships, { room: room._id });
+							var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : index;
+							setRoomOrder(roomIndex, room);
+						}
+						else {
+
+							var existingMessagesLookup = _.keyBy(room.$messages, '_id');
+
+							// Add on messages that were previously not in the list
+							_.each(roomData.$messages, function (message) {
+								if (existingMessagesLookup[message._id]) return;
+								room.$messages.push(message);
+							});
+
+							// overwrite known room with messages from init response in event of reconnect
+							room.$pinnedMessages = roomData.$pinnedMessages;
+						}
+
+						room.$resolved = true;
+						decorateMessages(room);
+						decorateMembers(room);
+					});
+
+					// gather up all initial pinned messages once rooms have been set up
+					pinBoard.initialize(_.chain(bunkerData.rooms).map('$pinnedMessages').flatten().value());
+
+					// creates a hashmap of rooms by its id
+					roomLookup = _.keyBy(bunkerData.rooms, '_id');
+
+					while (bunkerData.publicRooms.length) bunkerData.publicRooms.pop();
+					_.each(initialData.publicRooms, room => bunkerData.publicRooms.push(room));
+
+					$rootScope.$broadcast('bunkerDataLoaded');
+					return bunkerData;
 				});
+		},
 
-				// instead of sending many duplicate users down, send one list
-				// then re-hydrate all the associations
-				users = _.keyBy(initialData.users, '_id');
-
-				_.each(bunkerData.inbox, function (inbox) {
-					if (inbox.message.author) { // TODO causing a bug for @aSig for some reason without this
-						inbox.message.author = users[inbox.message.author._id || inbox.message.author];
-					}
-				});
-
-				_.each(bunkerData.memberships, function (membership) {
-					membership.user = users[membership.user._id || membership.user];
-				});
-
-				bunkerData.inbox.unreadMessages = _.filter(bunkerData.inbox, {read: false}).length;
-
-				// Set $resolved on all rooms (those not in the data set to false)
-				// TODO ideally we could remove the rooms from the array entirely
-				_.each(bunkerData.rooms, function (room) {
-					room.$resolved = _.some(initialData.rooms, {_id: room._id});
-				});
-
-				// Go through data and sync messages
-				// Doing it this way keeps the rooms array intact so we don't disrupt the UI
-				_.each(initialData.rooms, function (roomData, index) {
-					var room = _.find(bunkerData.rooms, {_id: roomData._id});
-
-					if (!room) {
-						room = roomData;
-
-						// Set the room tab order
-						var membership = _.find(bunkerData.memberships, {room: room._id});
-						var roomIndex = _.has(membership, 'roomOrder') ? membership.roomOrder : index;
-						setRoomOrder(roomIndex, room);
-					}
-					else {
-
-						var existingMessagesLookup = _.keyBy(room.$messages, '_id');
-
-						// Add on messages that were previously not in the list
-						_.each(roomData.$messages, function (message) {
-							if (existingMessagesLookup[message._id]) return;
-							room.$messages.push(message);
-						});
-
-						// overwrite known room with messages from init response in event of reconnect
-						room.$pinnedMessages = roomData.$pinnedMessages;
-					}
-
-					room.$resolved = true;
-					decorateMessages(room);
-					decorateMembers(room);
-				});
-
-				// gather up all initial pinned messages once rooms have been set up
-				pinBoard.initialize(_.chain(bunkerData.rooms).map('$pinnedMessages').flatten().value());
-
-				// creates a hashmap of rooms by its id
-				roomLookup = _.keyBy(bunkerData.rooms, '_id');
-
-				while (bunkerData.publicRooms.length) bunkerData.publicRooms.pop();
-				_.each(initialData.publicRooms, room => bunkerData.publicRooms.push(room));
-
-				$rootScope.$broadcast('bunkerDataLoaded');
-				return bunkerData;
-			});
+		getUser(userId) {
+			return users[userId];
 		},
 
 		// Messages
@@ -118,21 +126,27 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			if (!bunkerData.userSettings.showNotifications && !message.author) return;
 
 			// we already have this message, please skip
-			if (_.some(room.$messages, {'_id': message._id})) return false;
+			if (_.some(room.$messages, { '_id': message._id })) return false;
 
 			bunkerData.decorateMessage(room, message);
 
 			room.$messages.push(message);
 		},
 		createMessage: function (roomId, text) {
-			return io.socket.emitAsync('/room/message', {roomId: roomId, text: text});
+			return io.socket.emitAsync('/room/message', { roomId: roomId, text: text });
 		},
 
 		editMessage: function (message) {
-			return io.socket.emitAsync('/message/edit', {message: message});
+			return io.socket.emitAsync('/message/edit', { message: message });
 		},
+
+		toggleReaction: (messageId, emoticonName) => {
+			if (!messageId) return;
+			io.socket.emitAsync('/message/reaction', { messageId, emoticonName });
+		},
+
 		loadMessages: function (room, skip) {
-			return io.socket.emitAsync('/room/messages', {roomId: room._id, skip: skip || 0})
+			return io.socket.emitAsync('/room/messages', { roomId: room._id, skip: skip || 0 })
 				.then(function (messages) {
 					var existingMessagesLookup = _.keyBy(room.$messages, '_id');
 
@@ -157,7 +171,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 						hiddenMessage.editCount++;
 						bunkerData.decorateMessage(room, hiddenMessage);
 
-						var otherMessage = _.find(room.$messages, {_id: message._id});
+						var otherMessage = _.find(room.$messages, { _id: message._id });
 						hiddenMessage.$firstInSeries = otherMessage.$firstInSeries;
 
 						var index = _.indexOf(room.$messages, otherMessage);
@@ -171,16 +185,16 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			roomLookup[id].$messages.splice(0, roomLookup[id].$messages.length - 100);
 		},
 		getHistoryMessages: function (roomId, startDate, endDate) {
-			return io.socket.emitAsync('/room/history', {roomId: roomId, startDate: startDate, endDate: endDate});
+			return io.socket.emitAsync('/room/history', { roomId: roomId, startDate: startDate, endDate: endDate });
 		},
-		search: params =>{
-			if(!params.query) return Promise.resolve()
+		search: params => {
+			if (!params.query) return Promise.resolve()
 			return io.socket.emitAsync('/search', params);
 		},
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = message._id + '_' + message.editCount;
+			message.$idAndEdited = `${message._id}${message.editCount}${message.reactions.length}`;
 			if (message.author) {
 				message.author = users[message.author._id];
 			}
@@ -192,13 +206,13 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			return roomLookup[id];
 		},
 		createRoom: function (roomName) {
-			return io.socket.emitAsync('/room', {name: roomName}).then(reinit);
+			return io.socket.emitAsync('/room', { name: roomName }).then(reinit);
 		},
 		joinRoom: function (roomId) {
-			return io.socket.emitAsync('/room/join', {roomId: roomId}).then(reinit);
+			return io.socket.emitAsync('/room/join', { roomId: roomId }).then(reinit);
 		},
 		leaveRoom: function (roomId) {
-			return io.socket.emitAsync('/room/leave', {roomId: roomId}).then(reinit);
+			return io.socket.emitAsync('/room/leave', { roomId: roomId }).then(reinit);
 		},
 
 		// User
@@ -207,20 +221,20 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 			// don't set active room when bunker is reloaded by code
 			if (lastActiveRoom == roomId || localStorage.bunkerReloaded) return;
 			lastActiveRoom = roomId;
-			io.socket.emitAsync('/user/current/activity', {room: roomId});
+			io.socket.emitAsync('/user/current/activity', { room: roomId });
 		},
 		broadcastTyping: function (roomId) {
 			if (!bunkerData.$resolved) return; // Not ready yet
 
 			if (bunkerData.user.typingIn != roomId) { // Only need to do anything if it's not already set
 				bunkerData.user.typingIn = roomId;
-				io.socket.emitAsync('/user/current/typing', {typingIn: roomId});
+				io.socket.emitAsync('/user/current/typing', { typingIn: roomId });
 			}
 
 			bunkerData.cancelBroadcastTyping();
 			typingTimeout = $timeout(function () {
 				bunkerData.user.typingIn = null;
-				io.socket.emitAsync('/user/current/typing', {typingIn: null});
+				io.socket.emitAsync('/user/current/typing', { typingIn: null });
 				typingTimeout = null;
 			}, 3000);
 		},
@@ -231,7 +245,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				if (present == bunkerData.user.present) return;
 
 				bunkerData.user.present = present;
-				io.socket.emitAsync('/user/current/present', {present});
+				io.socket.emitAsync('/user/current/present', { present });
 			}, 250);
 		},
 		cancelBroadcastTyping: function () {
@@ -271,7 +285,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 
 		// RoomMember
 		saveRoomMemberSettings: function (roomMembers) {
-			io.socket.emitAsync('/roommember/updateSettings', {roomMembers: roomMembers});
+			io.socket.emitAsync('/roommember/updateSettings', { roomMembers: roomMembers });
 		},
 
 		// Emoticons
@@ -288,7 +302,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 					_.each(bunkerData.inbox, function (inboxMessage) {
 						inboxMessage.read = true;
 					});
-					bunkerData.inbox.unreadMessages = _.filter(bunkerData.inbox, {read: false}).length;
+					bunkerData.inbox.unreadMessages = _.filter(bunkerData.inbox, { read: false }).length;
 
 					return data;
 				});

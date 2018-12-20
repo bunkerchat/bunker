@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-var roomSchema = new mongoose.Schema({
+const Room = new mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
@@ -11,13 +11,12 @@ var roomSchema = new mongoose.Schema({
 		type: String,
 		maxlength: 200
 	},
-	icon: {
-		type: String
-	},
+	topicTokens: Array,
+	icon: String,
 	isPrivate: {
 		type: Boolean,
 		default: true
 	}
 });
 
-module.exports = mongoose.model('Room', roomSchema, 'room');
+module.exports = mongoose.model("Room", Room, "room");

@@ -1,16 +1,18 @@
 app.factory('bunkerListener', function ($rootScope, $window, $document, $interval, bunkerData, $state, notifications, pinBoard, gravatarService) {
 
 	function handleRoomEvent(evt) {
-		var room = bunkerData.getRoom(evt._id);
+		const room = bunkerData.getRoom(evt._id);
 		if (!room) throw new Error('Received a message from a room we did not know about: ' + JSON.stringify(evt));
+
+		const message = evt.data;
+		const otherMessage = _.find(room.$messages, {_id: message._id});
 
 		switch (evt.verb) {
 			case 'messaged':
-				var message = evt.data;
-				if (message.edited) {
+			case 'reacted':
+				if (otherMessage) {
 					bunkerData.decorateMessage(room, message);
 
-					var otherMessage = _.find(room.$messages, {_id: message._id});
 					message.$firstInSeries = otherMessage.$firstInSeries;
 
 					var index = _.indexOf(room.$messages, otherMessage);
@@ -21,7 +23,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 					bunkerData.addMessage(room, message);
 					notifications.newMessage(room, message);
 
-					if(message.type === 'standard'){
+					if (message.type === 'standard') {
 						room.$lastMessage = _.cloneDeep(message);
 						room.$lastMessage.topic = room.$lastMessage.text;
 						delete room.$lastMessage.text;
@@ -136,7 +138,7 @@ app.factory('bunkerListener', function ($rootScope, $window, $document, $interva
 		bunkerData.broadcastPresent(false);
 	}
 
-	function handleConnect(){
+	function handleConnect() {
 		console.log('socket connected - hello, world');
 		bunkerData.connected = true;
 		$rootScope.$broadcast('socketConnected');

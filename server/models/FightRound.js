@@ -1,9 +1,9 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var schema = new mongoose.Schema({
 	fight: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Fight'
+		ref: "Fight"
 	},
 	roundNumber: {
 		type: Number,
@@ -11,17 +11,17 @@ var schema = new mongoose.Schema({
 	},
 	challengerPlay: {
 		type: String,
-		enum: ['h', 'm', 'l']
+		enum: ["h", "m", "l"]
 	},
 	opponentPlay: {
 		type: String,
-		enum: ['h', 'm', 'l', ''],
-		default: ''
+		enum: ["h", "m", "l", ""],
+		default: ""
 	},
 	winningUser: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	}
 });
 
-module.exports = mongoose.model('FightRound', schema, 'fightRound');
+module.exports = mongoose.model("FightRound", schema, "fightRound");

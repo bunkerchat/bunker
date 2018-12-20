@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var inboxMessageSchema = new mongoose.Schema({
 	createdAt: {
@@ -7,11 +7,11 @@ var inboxMessageSchema = new mongoose.Schema({
 	},
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	},
 	message: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Message'
+		ref: "Message"
 	},
 	read: {
 		type: Boolean,
@@ -19,4 +19,4 @@ var inboxMessageSchema = new mongoose.Schema({
 	}
 });
 
-module.exports = mongoose.model('InboxMessage', inboxMessageSchema, 'inboxmessage');
+module.exports = mongoose.model("InboxMessage", inboxMessageSchema, "inboxmessage");

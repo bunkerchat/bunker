@@ -1,38 +1,39 @@
-var mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const Reaction = require("./Reaction");
 
-var messageSchema = new mongoose.Schema({
-	createdAt:{
+const messageSchema = new mongoose.Schema({
+	createdAt: {
 		type: Date,
 		default: Date.now
 	},
 	room: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Room'
+		ref: "Room"
 	},
 	author: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	},
 	type: {
 		type: String,
 		enum: [
-			'standard',
-			'emote',
-			'room',
-			'global',
-			'help',
-			'roll',
-			'8ball',
-			'trump',
-			'animation',
-			'buildNotification',
-			'hangman',
-			'fight',
-			'code',
-			'stats',
-			'link'
+			"standard",
+			"emote",
+			"room",
+			"global",
+			"help",
+			"roll",
+			"8ball",
+			"trump",
+			"animation",
+			"buildNotification",
+			"hangman",
+			"fight",
+			"code",
+			"stats",
+			"link"
 		],
-		default: 'standard'
+		default: "standard"
 	},
 	text: {
 		type: String,
@@ -49,9 +50,11 @@ var messageSchema = new mongoose.Schema({
 	},
 	linkMeta: {
 		type: Object
-	}
+	},
+	reactions: [Reaction],
+	tokens: Array
 });
 
-messageSchema.index({ text: 'text'});
+messageSchema.index({ text: "text" });
 
-module.exports = mongoose.model('Message', messageSchema, 'message');
+module.exports = mongoose.model("Message", messageSchema, "message");

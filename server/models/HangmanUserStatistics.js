@@ -1,9 +1,9 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var schema = new mongoose.Schema({
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	},
 	privateGameWinCount: {
 		type: Number,
@@ -23,7 +23,7 @@ var schema = new mongoose.Schema({
 	}
 });
 
-module.exports = mongoose.model('HangmanUserStatistics', schema, 'hangmanuserstatistics');
+module.exports = mongoose.model("HangmanUserStatistics", schema, "hangmanuserstatistics");
 
 function zero() {
 	return 0;

@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var schema = new mongoose.Schema({
 	winCount: {
@@ -11,7 +11,7 @@ var schema = new mongoose.Schema({
 	}
 });
 
-module.exports = mongoose.model('HangmanPublicGameStatistics', schema, 'hangmanpublicgamestatistics');
+module.exports = mongoose.model("HangmanPublicGameStatistics", schema, "hangmanpublicgamestatistics");
 
 // mongoose executes default functions on new models
 function zero() {

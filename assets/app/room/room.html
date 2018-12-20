@@ -38,9 +38,16 @@
 								<div class="message-author-name visible-xs" ng-if="::message.$firstInSeries">
 									{{::message.author.nick}}
 								</div>
+
 								<span bunker-message="::message"></span>
 
+								<message-reactions reactions="message.reactions" ng-if="::message.reactions.length > 0">
+								</message-reactions>
+
 								<span class="message-info">
+
+									<reaction-button message-id="{{::message._id}}"></reaction-button>
+
 									<span ng-if="::(message.type == 'standard' || message.type == 'code' || message.type == 'quote')"
 										  data-user-role="{{::currentMembership.role}}"
 										  message-pin="{{::message._id}}"
@@ -78,6 +85,9 @@
 					</div>
 				</li>
 			</ol>
+
+			<reaction-menu></reaction-menu>
+
 		</div>
 
 		<!-- right pane -->
@@ -92,7 +102,8 @@
 					<span class="offline" ng-switch-when="false">
 						<!-- offline member, much less watches -->
 						<span class="user-icon">
-							<img class="gravatar-sm" ng-src="{{::member.user.$gravatar}}" title="{{::member.user.email}}"/>
+							<img class="gravatar-sm" ng-src="{{::member.user.$gravatar}}"
+								 title="{{::member.user.email}}"/>
 						</span>
 						<a ng-click="mentionUser(member.user.nick)">{{::member.user.nick}}</a>
 						<div class="pull-right">
@@ -108,8 +119,9 @@
 						<!-- default, online member -->
 						<span ng-switch="member.user.busy === true" class="user-icon">
 							<span ng-switch="member.user.typingIn === roomId" ng-switch-when="false">
-								<span ng-switch-when="false"  ng-class="{inRoom:member.user.activeRoom === roomId}">
-									<img class="gravatar-sm" ng-src="{{::member.user.$gravatar}}" title="{{::member.user.email}}"/>
+								<span ng-switch-when="false" ng-class="{inRoom:member.user.activeRoom === roomId}">
+									<img class="gravatar-sm" ng-src="{{::member.user.$gravatar}}"
+										 title="{{::member.user.email}}"/>
 									<div class="status" ng-class="member.user.$present ? 'here' : 'away'">
 									</div>
 								</span>

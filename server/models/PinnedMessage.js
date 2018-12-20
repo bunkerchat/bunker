@@ -1,23 +1,22 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var pinnedMessageSchema = new mongoose.Schema({
 	room: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Room'
+		ref: "Room"
 	},
 	message: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Message'
+		ref: "Message"
 	},
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	},
-	createdAt:{
+	createdAt: {
 		type: Date,
 		default: Date.now
 	}
 });
 
-module.exports = mongoose.model('PinnedMessage', pinnedMessageSchema, 'pinnedmessage');
-
+module.exports = mongoose.model("PinnedMessage", pinnedMessageSchema, "pinnedmessage");

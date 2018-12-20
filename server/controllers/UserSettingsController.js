@@ -1,7 +1,7 @@
-var UserSettings = require('../models/UserSettings');
-var RoomMember = require('../models/RoomMember');
+var UserSettings = require("../models/UserSettings");
+var RoomMember = require("../models/RoomMember");
 
-module.exports.save = function (req, res) {
+module.exports.save = function(req, res) {
 	var id = req.body.userSettingsId.toObjectId();
 	var update = req.body.settings;
 
@@ -10,8 +10,8 @@ module.exports.save = function (req, res) {
 		.catch(res.serverError);
 };
 
-module.exports.saveRoomMember = function (req, res) {
-	Promise.each(req.body.roomMembers, function (roomMember) {
+module.exports.saveRoomMember = function(req, res) {
+	Promise.each(req.body.roomMembers, function(roomMember) {
 		return RoomMember.findByIdAndUpdate(roomMember._id.toObjectId(), roomMember);
 	})
 		.then(res.ok)

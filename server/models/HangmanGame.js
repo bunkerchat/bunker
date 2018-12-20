@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var schema = new mongoose.Schema({
 	createdAt: {
@@ -11,11 +11,11 @@ var schema = new mongoose.Schema({
 	},
 	room: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Room'
+		ref: "Room"
 	},
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User'
+		ref: "User"
 	},
 	word: {
 		type: String,
@@ -33,4 +33,4 @@ var schema = new mongoose.Schema({
 	lastGuessSuccess: Boolean
 });
 
-module.exports = mongoose.model('HangmanGame', schema, 'hangmangame');
+module.exports = mongoose.model("HangmanGame", schema, "hangmangame");

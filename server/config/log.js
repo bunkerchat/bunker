@@ -1,8 +1,8 @@
-var winston = require('winston');
-var moment = require('moment');
+var winston = require("winston");
+var moment = require("moment");
 //var Elasticsearch = require( 'winston-elasticsearch' );
-var config = require('./config');
-var os = require('os');
+var config = require("./config");
+var os = require("os");
 
 function now() {
 	return moment().format();
@@ -17,7 +17,7 @@ module.exports = new winston.Logger({
 			colorize: true,
 			timestamp: now,
 			prettyPrint: true
-		}),
+		})
 		//new Elasticsearch({
 		//	level: 'info',
 		//	source: os.hostname(),
