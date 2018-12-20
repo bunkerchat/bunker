@@ -96,11 +96,11 @@
     "win-node-env": "0.4.0"
   },
   "scripts": {
-    "start-nodemon": "nodemon app.js",
     "start": "node app.js",
     "debug": "node debug app.js",
     "build": "NODE_ENV=production node node_modules/gulp/bin/gulp.js sass && node node_modules/webpack/bin/webpack.js --mode production",
     "watch": "node node_modules/webpack/bin/webpack.js --mode development --watch",
+    "watch:server": "nodemon app.js",
     "postinstall": "node node_modules/bower/bin/bower install && npm run build",
     "deploy": "npm prune && npm ci && gulp && forever restart app.js",
     "pretty": "node node_modules/prettier/bin-prettier.js --write \"./{server,src}/**/*.{js,jsx}\"",
