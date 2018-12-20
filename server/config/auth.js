@@ -53,7 +53,6 @@ auth.init = function(app) {
 
 	app.get("/auth/googleReturn", passport.authenticate("google"), function(req, res) {
 		req.session.googleCredentials = req.authInfo;
-		//res.json(req.query);
 		res.redirect("/");
 	});
 
