@@ -12,7 +12,7 @@ var viewController = module.exports;
 
 viewController.index = function(req, res) {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
-
+	console.log(req.session.queryParms);
 	Promise.join(emoticonService.getEmoticonNamesFromDisk(), UserSettings.findOne({ user: userId }))
 		.spread(function(emoticons, settings) {
 			res.render(config.useJavascriptBundle ? "index-prod" : "index", {
