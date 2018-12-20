@@ -1,10 +1,8 @@
 var Session = require("express-session");
 var MongoStore = require("connect-mongo")(Session);
 var passport = require("passport");
-var googleStrategy = require("passport-google-oauth20");
+var googleStrategy = require("passport-google-oauth20").Strategy;
 var LocalStrategy = require("passport-local").Strategy;
-
-//var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var config = require("./config");
 var userService = require("./../services/userService");
@@ -42,7 +40,7 @@ auth.init = function(app) {
 			{
 				clientID: config.google.clientID,
 				clientSecret: config.google.clientSecret,
-				callbackURL: "/auth/googleCallback",
+				callbackURL: "/auth/googleReturn",
 				scope: "https://www.googleapis.com/auth/userinfo.email"
 			},
 			function(accessToken, refreshToken, profile, cb) {
@@ -53,7 +51,7 @@ auth.init = function(app) {
 
 	app.get("/login/google", passport.authenticate("google"));
 
-	app.get("/auth/googleCallback", passport.authenticate("google"), function(req, res) {
+	app.get("/auth/googleReturn", passport.authenticate("google"), function(req, res) {
 		req.session.googleCredentials = req.authInfo;
 		//res.json(req.query);
 		res.redirect("/");
