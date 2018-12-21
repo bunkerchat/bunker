@@ -40,13 +40,13 @@
 
 	function signInCallback(authResult) {
 		if (authResult.code) {
-			$.ajax({
-				type: 'POST',
-				url: '/auth/googleCallback',
-				contentType: 'application/json',
-				data: JSON.stringify({ code: authResult.code })
+			fetch('/auth/googleCallback', {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(({ code: authResult.code })),
+				redirect: "manual"
 			})
-					.done(function () {
+					.then(function() {
 						var match = /\?directTo=(.+)/.exec(window.location.search);
 						if (match) {
 							window.location = match[1];
@@ -54,9 +54,12 @@
 						else {
 							window.location = '/' + window.location.hash;
 						}
-					});
+					})
+					.catch(err => {
+						console.error(err)
+					})
 		} else if (authResult.error) {
-			console.log('There was an error: ' + authResult.error);
+			console.error('There was an error: ' + authResult.error);
 		}
 	}
 </script>
