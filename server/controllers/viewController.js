@@ -12,7 +12,7 @@ var viewController = module.exports;
 
 viewController.index = function(req, res) {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
-	console.log(req.session.queryParms);
+
 	Promise.join(emoticonService.getEmoticonNamesFromDisk(), UserSettings.findOne({ user: userId }))
 		.spread(function(emoticons, settings) {
 			res.render(config.useJavascriptBundle ? "index-prod" : "index", {
@@ -59,6 +59,12 @@ viewController.debug = function(req, res) {
 
 viewController.login = function(req, res) {
 	res.render("login", {
+		clientID: config.google.clientID
+	});
+};
+
+viewController.loginGoogleOAuth = function(req, res) {
+	res.render("login-google", {
 		clientID: config.google.clientID
 	});
 };
