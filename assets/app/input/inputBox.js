@@ -69,7 +69,7 @@ app.directive('inputBox', function ($rootScope, $stateParams, bunkerData, emotic
 			// every key press in the text area
 			inputBox.keydown(e => {
 				// gets a human readable keyboard value
-				var key = keycode(e);
+				var key = keycode(e) || String.fromCharCode(e.keyCode);
 
 				var handler = handlers[key];
 				if (handler) {
