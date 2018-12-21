@@ -1,5 +1,10 @@
 <div class="container-fluid lobby" ng-show="!$root.roomId">
 	<div class="row margin-top">
+		<div class="col-sm-12">
+			<a class="btn btn-link btn-lg" href="/2/lobby">Try V2!</a>
+		</div>
+	</div>
+	<div class="row margin-top">
 		<form class="col-sm-6" ng-submit="lobby.createRoom(newRoomName)">
 			<div class="input-group">
 				<input type="text" class="form-control" placeholder="Room name"

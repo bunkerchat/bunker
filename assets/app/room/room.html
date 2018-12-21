@@ -167,10 +167,14 @@
 				<span class="pin-board-holder" pins="current.$pinnedMessages" data-user-role="::currentMembership.role">
 
 				</span>
-
-				<a class="btn btn-link" ng-click="openHistory()">
-					History
-				</a>
+				<div class="btn-group">
+					<a class="btn btn-link" ng-click="openHistory()">
+						History
+					</a>
+					<a class="btn btn-link" ng-href="/2/room/{{roomId}}">
+						Try V2!
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>
