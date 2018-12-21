@@ -17,7 +17,6 @@ var isLoggedIn = require("../policies/isLoggedIn");
 module.exports.http = function(app) {
 	// Public
 	app.get("/login", viewController.login);
-	app.get("/loginGoogle", viewController.loginGoogleOAuth);
 	app.get("/loginBasic", viewController.loginBasic);
 	app.get("/logout", viewController.logout);
 	app.get("/gif/:search?", GifController.index);

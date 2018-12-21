@@ -58,15 +58,8 @@ viewController.debug = function(req, res) {
 };
 
 viewController.login = function(req, res) {
-	res.render("login", {
-		clientID: config.google.clientID
-	});
-};
-
-viewController.loginGoogleOAuth = function(req, res) {
-	res.render("login-google", {
-		clientID: config.google.clientID
-	});
+	const { directTo } = (req.query || {});
+	res.render("login", { directTo });
 };
 
 viewController.loginBasic = function(req, res) {

@@ -14,56 +14,10 @@
 <body>
 <div class="container">
 	<h1>Bunker</h1>
-
 	<div class="well">
-		<h3>Login with:</h3>
-		<span class="g-signin"
-			  data-scope="profile email"
-			  data-clientid="<%= clientID %>"
-			  data-redirecturi="postmessage"
-			  data-accesstype="offline"
-			  data-cookiepolicy="single_host_origin"
-			  data-callback="signInCallback">
-			</span>
+		<a href="/login/google?directTo=<%= directTo %>">Log In with Google</a>
 	</div>
-
-	<p>
-		<a href="javascript:goToGoogleLoginPage();">Try the new google oauth2 login!</a>
-	</p>
-
 </div>
 
-<script type="text/javascript">
-	function goToGoogleLoginPage() {
-		window.location = "/loginGoogle" + window.location.search + window.location.hash;
-	}
-
-	function signInCallback(authResult) {
-		if (authResult.code) {
-			fetch('/auth/googleCallback', {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(({ code: authResult.code })),
-				redirect: "manual"
-			})
-					.then(function() {
-						var match = /\?directTo=(.+)/.exec(window.location.search);
-						if (match) {
-							window.location = match[1];
-						}
-						else {
-							window.location = '/' + window.location.hash;
-						}
-					})
-					.catch(err => {
-						console.error(err)
-					})
-		} else if (authResult.error) {
-			console.error('There was an error: ' + authResult.error);
-		}
-	}
-</script>
-
-<script src="//apis.google.com/js/client:plusone.js"></script>
 </body>
 </html>

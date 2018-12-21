@@ -74,17 +74,14 @@ auth.init = function(app) {
 	);
 
 	app.get("/login/google", function(req, res) {
-		if (req.query.directTo && req.query.directTo !== "/") {
-			req.session.directTo = req.query.directTo;
-		}
-		passport.authenticate("google") (req, res);
+		req.session.directTo = req.query.directTo;
+		passport.authenticate("google")(req, res);
 	});
 
 	app.get("/auth/googleReturn", passport.authenticate("google"), function(req, res) {
 		req.session.googleCredentials = req.authInfo;
-		res.redirect(req.session.directTo ? req.session.directTo : '/');
+		res.redirect(req.session.directTo ? req.session.directTo : "/");
 	});
-
 
 	// Local login - In Progress
 	passport.use(
