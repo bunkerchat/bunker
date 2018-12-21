@@ -63,6 +63,12 @@ viewController.login = function(req, res) {
 	});
 };
 
+viewController.loginGoogleOAuth = function(req, res) {
+	res.render("login-google", {
+		clientID: config.google.clientID
+	});
+};
+
 viewController.loginBasic = function(req, res) {
 	res.render("LoginBasic");
 };

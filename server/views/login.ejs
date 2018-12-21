@@ -27,12 +27,19 @@
 			</span>
 	</div>
 
+	<p>
+		<a href="javascript:goToGoogleLoginPage();">Try the new google oauth2 login!</a>
+	</p>
+
 </div>
 
 <script type="text/javascript">
+	function goToGoogleLoginPage() {
+		window.location = "/loginGoogle" + window.location.search + window.location.hash;
+	}
+
 	function signInCallback(authResult) {
 		if (authResult.code) {
-
 			fetch('/auth/googleCallback', {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
