@@ -58,8 +58,18 @@ viewController.debug = function(req, res) {
 };
 
 viewController.login = function(req, res) {
+	// If we don't have a userId and we haven't already made this loop, keep them here on the login page.
+	const navigateToLoginPage = !req.session.userId && !req.session.loginRedirect;
 	const { directTo } = (req.query || {});
-	res.render("login", { directTo });
+
+	if(navigateToLoginPage) {
+		req.session.loginRedirect = false;
+		res.render("login", { directTo });
+	}
+	else {
+		req.session.loginRedirect = true;
+		res.redirect(directTo ? directTo : "/");
+	}
 };
 
 viewController.loginBasic = function(req, res) {
