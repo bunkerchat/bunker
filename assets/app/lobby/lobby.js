@@ -36,7 +36,7 @@ app.controller('lobbyController', function ($rootScope, $state, bunkerData) {
 			_.each(self.rooms, room => {
 				var lastMessage = _(room.$messages).filter({type: 'standard'}).last();
 				// Set the topic on the message for the lobby
-				if(lastMessage) {
+				if (lastMessage) {
 					room.$lastMessage = _.cloneDeep(lastMessage);
 					room.$lastMessage.topic = (room.$lastMessage || { }).text;
 					delete room.$lastMessage.text;
