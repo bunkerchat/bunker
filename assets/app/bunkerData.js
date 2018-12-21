@@ -194,7 +194,7 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 		decorateMessage: function (room, message) {
 			message.$firstInSeries = isFirstInSeries(_.last(room.$messages), message);
 			message.$mentionsUser = bunkerData.mentionsUser(message.text);
-			message.$idAndEdited = `${message._id}${message.editCount}${message.reactions.length}`;
+			message.$idAndEdited = `${message._id}${message.editCount}${message.reactions ? message.reactions.length : ''}`;
 			if (message.author) {
 				message.author = users[message.author._id];
 			}
