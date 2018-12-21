@@ -33,33 +33,8 @@
 
 </div>
 
-<noscript id="deferred-styles">
-	<link rel="stylesheet" href="/assets/vendor/bootstrap/dist/css/bootstrap.css"/>
-	<link rel="stylesheet" href="/assets/vendor/bootswatch/sandstone/bootstrap.css"/>
-	<link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.css"/>
-	<link rel="stylesheet" href="/assets/styles/default.css"/>
-</noscript>
-<script>
-	// Inline CSS for max perf
-	// https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery
-	var loadDeferredStyles = function () {
-		var addStylesNode = document.getElementById("deferred-styles");
-		var replacement = document.createElement("div");
-		replacement.innerHTML = addStylesNode.textContent;
-		document.body.appendChild(replacement)
-		addStylesNode.parentElement.removeChild(addStylesNode);
-	};
-	var raf = requestAnimationFrame || mozRequestAnimationFrame ||
-			webkitRequestAnimationFrame || msRequestAnimationFrame;
-	if (raf) raf(function () {
-		window.setTimeout(loadDeferredStyles, 0);
-	});
-	else window.addEventListener('load', loadDeferredStyles);
-</script>
-
 <script type="text/javascript">
 	function goToGoogleLoginPage() {
-		// Preserve their query parms
 		window.location = "/loginGoogle" + window.location.search + window.location.hash;
 	}
 
@@ -86,7 +61,6 @@
 	}
 </script>
 
-<script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
 <script src="//apis.google.com/js/client:plusone.js"></script>
 </body>
 </html>
