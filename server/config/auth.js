@@ -2,7 +2,10 @@ var Session = require("express-session");
 var MongoStore = require("connect-mongo")(Session);
 var passport = require("passport");
 var GoogleStrategy = require("passport-google-oauth20").Strategy;
+var GooglePlusStrategy = require("passport-google-plus");
 var LocalStrategy = require("passport-local").Strategy;
+
+//var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var config = require("./config");
 var userService = require("./../services/userService");
@@ -35,12 +38,33 @@ auth.init = function(app) {
 		User.findById(id).exec(done);
 	});
 
+	// Google Plus login (Default)
+	passport.use(
+		new GooglePlusStrategy(
+			{
+				clientId: config.google.clientID,
+				clientSecret: config.google.clientSecret
+			},
+			loginCallback
+		)
+	);
+
+	function loginCallback(tokens, profile, done) {
+		userService.findOrCreateBunkerUser(profile).nodeify(done);
+	}
+
+	app.post("/auth/googleCallback", passport.authenticate("google"), function(req, res) {
+		req.session.googleCredentials = req.authInfo;
+		res.json({});
+	});
+
+	// Google OAuth Login - Secondary
 	passport.use(
 		new GoogleStrategy(
 			{
 				clientID: config.google.clientID,
 				clientSecret: config.google.clientSecret,
-				callbackURL: "/auth/googleReturn",
+				callbackURL: config.url + "/auth/googleReturn",
 				scope: "https://www.googleapis.com/auth/userinfo.email"
 			},
 			function(accessToken, refreshToken, profile, cb) {
@@ -49,13 +73,17 @@ auth.init = function(app) {
 		)
 	);
 
-	app.get("/login/google", passport.authenticate("google"));
+	app.get("/login/google", function(req, res) {
+		req.session.directTo = req.query.directTo;
+		passport.authenticate("google")(req, res);
+	});
 
 	app.get("/auth/googleReturn", passport.authenticate("google"), function(req, res) {
 		req.session.googleCredentials = req.authInfo;
-		res.redirect("/");
+		res.redirect(req.session.directTo ? req.session.directTo : "/");
 	});
 
+	// Local login - In Progress
 	passport.use(
 		new LocalStrategy(function(username, password, done) {
 			User.findOne({ email: username }, function(err, user) {

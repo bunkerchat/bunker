@@ -58,9 +58,18 @@ viewController.debug = function(req, res) {
 };
 
 viewController.login = function(req, res) {
-	res.render("login", {
-		clientID: config.google.clientID
-	});
+	// If we don't have a userId and we haven't already made this loop, keep them here on the login page.
+	const navigateToLoginPage = !req.session.userId && !req.session.loginRedirect;
+	const { directTo } = (req.query || {});
+
+	if(navigateToLoginPage) {
+		req.session.loginRedirect = false;
+		res.render("login", { directTo });
+	}
+	else {
+		req.session.loginRedirect = true;
+		res.redirect(directTo ? directTo : "/");
+	}
 };
 
 viewController.loginBasic = function(req, res) {

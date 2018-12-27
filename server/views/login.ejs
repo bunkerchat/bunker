@@ -10,15 +10,43 @@
 	<link rel="shortcut icon" href="/assets/favicon.ico">
 	<meta name="msapplication-config" content="/assets/browserconfig.xml">
 	<meta name="theme-color" content="#ffffff">
+	<style>
+		body {
+			font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+			font-size: 14px;
+			line-height: 1.42857143;
+			color: #333;
+			background-color: #fff;
+		}
+
+		.container {
+			padding: 0px 24px;
+		}
+
+		h1.header {
+			border-bottom: 1px solid #ddd;
+			padding-bottom: 8px;
+		}
+		.google-button {
+			display: block;
+			width: 191px;
+			height: 46px;
+			background-image: url("/assets/images/google-login.png");
+		}
+
+		.google-button:active {
+			opacity: 0.8;
+		}
+
+	</style>
 </head>
 <body>
 <div class="container">
-	<h1>Bunker</h1>
-
+	<h1 class="header">Bunker</h1>
 	<div class="well">
-		<a href="/login/google">Log In with Google</a>
+		<a class="google-button" tabindex="0" href="/login/google?directTo=<%= directTo %>"></a>
 	</div>
-
 </div>
+
 </body>
 </html>
