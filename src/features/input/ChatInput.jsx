@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 
+const removeLeadingTrailingEmptySpace = text => text.replace(/^(\s|\n|\r)+/, "").replace(/([\n\r])+$/, "");
+
 const InputBox = styled.textarea`
 	border-radius: 0;
 	resize: none;
@@ -28,7 +30,8 @@ export default class ChatInput extends React.PureComponent {
 	};
 
 	onInputChange = event => {
-		const text = event.target.value;
+		// remove leading newlines here, so IOS gets a chance to autocorrect on enter
+		const text = removeLeadingTrailingEmptySpace(event.target.value);
 
 		if (this.props.emoticonPickerVisible) {
 			const match = /:([A-z0-9\s]*)$/.exec(text);
@@ -93,8 +96,7 @@ export default class ChatInput extends React.PureComponent {
 				this.setState({ text: editedMessage.text, editedMessage });
 			}
 		} else if (event.key === "Enter") {
-			event.preventDefault();
-
+			// no event prevent default to allow IOS a chance to autocorrect. Handled in onInputChange
 			if (this.props.emoticonPickerVisible) {
 				this.onEmoticonPick(this.props.selectedEmoticon);
 			} else {
@@ -108,14 +110,18 @@ export default class ChatInput extends React.PureComponent {
 	};
 
 	onSend = () => {
-		if (this.state.text.trim().length > 0) {
-			if (this.state.editedMessage) {
-				this.props.edit({ ...this.state.editedMessage, text: this.state.text });
-			} else {
-				this.props.send(this.props.roomId, this.state.text);
-			}
-			this.setState({ text: "", editedMessage: null });
+		const { text, editedMessage } = this.state;
+		const { edit, send, roomId } = this.props;
+
+		if (!text.trim().length) return;
+
+		if (editedMessage) {
+			edit({ ...editedMessage, text });
+		} else {
+			send(roomId, text);
 		}
+
+		this.setState({ text: "", editedMessage: null });
 	};
 
 	onEmoticonPick = selected => {
@@ -135,7 +141,7 @@ export default class ChatInput extends React.PureComponent {
 					className={`form-control ${!!this.state.editedMessage ? "editing" : ""}`}
 					value={this.state.text}
 					onChange={this.onInputChange}
-					onKeyDown={this.onKeyDown}
+					onKeyUp={this.onKeyDown}
 				/>
 			</div>
 		);
