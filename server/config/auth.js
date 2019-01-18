@@ -1,27 +1,26 @@
-var Session = require("express-session");
-var MongoStore = require("connect-mongo")(Session);
-var passport = require("passport");
-var GoogleStrategy = require("passport-google-oauth20").Strategy;
-var GooglePlusStrategy = require("passport-google-plus");
-var LocalStrategy = require("passport-local").Strategy;
+const Session = require("express-session");
+const MongoStore = require("connect-mongo")(Session);
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const GooglePlusStrategy = require("passport-google-plus");
+const LocalStrategy = require("passport-local").Strategy;
 
-//var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const config = require("./config");
+const userService = require("./../services/userService");
+const User = require("./../models/User");
 
-var config = require("./config");
-var userService = require("./../services/userService");
-var User = require("./../models/User");
-
-var auth = module.exports;
+const auth = module.exports;
 
 auth.init = function(app) {
-	var session = (auth.session = Session({
+	const session = (auth.session = Session({
 		secret: "64ec1dff67add7c8ff0b08e0b518e43c",
 		resave: false,
 		saveUninitialized: true,
 		collection: "bunker_sessions",
 		store: new MongoStore({
 			url: "mongodb://" + config.db.host + ":" + config.db.port + "/" + config.db.session
-		})
+		}),
+		cookie: {maxAge: 1000 * 365 * 24 * 60 * 60 * 1000 } // thousand years
 	}));
 
 	app.use(session);
