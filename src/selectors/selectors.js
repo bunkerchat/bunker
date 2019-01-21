@@ -60,7 +60,7 @@ export const getDocumentTitle = createSelector(
 export const getSortedRoomMemberUsers = createSelector([getUsers, getRoomMembers], (users, roomMembers) => {
 	if (!roomMembers) return;
 
-	const emptyUser = { connected: false, present: false, nick: "" };
+	const emptyUser = { connected: false, present: false, nick: "", empty: true };
 
 	return _.orderBy(
 		roomMembers,

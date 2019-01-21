@@ -11,19 +11,22 @@ const ListItem = styled.li`
 `;
 
 const mapStateToProps = (state, props) => ({
-	connected: (state.users[props.userId] || {}).connected,
+	hasUser: !!state.users[props.userId],
+	connected: (state.users[props.userId] || {}).connected
 });
 
 class RoomMemberListItem extends React.Component {
 	render() {
-		const { role, connected, userId } = this.props;
+		const { role, connected, userId, hasUser } = this.props;
+		if (!hasUser) return null;
+
 		return (
 			<ListItem
 				className={`list-group-item p-2 d-flex justify-content-between align-items-center ${
 					!connected ? "disabled" : ""
 				}`}
 			>
-				<RoomMember userId={userId}/>
+				<RoomMember userId={userId} />
 				{role === "administrator" ? (
 					<FontAwesomeIcon icon="gavel" />
 				) : role === "moderator" ? (
