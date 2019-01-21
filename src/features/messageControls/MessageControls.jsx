@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import theme from "../../constants/theme";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";

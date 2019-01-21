@@ -10,28 +10,20 @@ const ListItem = styled.li`
 	}
 `;
 
-const mapStateToProps = (state, props) => {
-	const user = state.users[props.userId];
-	return _.pick(user, "nick", "email", "connected", "present", "typingIn");
-};
+const mapStateToProps = (state, props) => ({
+	connected: state.users[props.userId].connected,
+});
 
-class RoomMemberListItem extends React.PureComponent {
+class RoomMemberListItem extends React.Component {
 	render() {
-		const { roomId, role, nick, email, connected, present, typingIn } = this.props;
+		const { role, connected, userId } = this.props;
 		return (
 			<ListItem
 				className={`list-group-item p-2 d-flex justify-content-between align-items-center ${
 					!connected ? "disabled" : ""
 				}`}
 			>
-				<RoomMember
-					roomId={roomId}
-					nick={nick}
-					email={email}
-					connected={connected}
-					present={present}
-					typingIn={typingIn}
-				/>
+				<RoomMember userId={userId}/>
 				{role === "administrator" ? (
 					<FontAwesomeIcon icon="gavel" />
 				) : role === "moderator" ? (

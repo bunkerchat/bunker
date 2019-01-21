@@ -11,10 +11,11 @@ import {
 	selectUpInEmoticonPicker
 } from "../emoticon/emoticonPickerActions";
 import ChatInput from "./ChatInput.jsx";
-import { getLocalMessages } from "../../selectors/selectors";
+import { getActiveRoomId, getLocalMessages } from "../../selectors/selectors";
 import { updateMessage } from "../message/messageActions";
 
 const mapStateToProps = state => ({
+	roomId: getActiveRoomId(state),
 	emoticonPickerVisible: !!state.emoticonPicker.visible,
 	selectedEmoticon: state.emoticonPicker.selected,
 	localMessages: getLocalMessages(state)

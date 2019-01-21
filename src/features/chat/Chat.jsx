@@ -9,6 +9,8 @@ import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
 import MessageControls from "../messageControls/MessageControls.jsx";
 import { getActiveRoomId, getSection } from "../../selectors/selectors.js";
+import RoomMemberList from "../roomMember/RoomMemberList.jsx";
+import ConnectedChatInput from "../input/ConnectedChatInput.jsx";
 
 const Container = styled.div`
 	display: flex;
@@ -17,11 +19,21 @@ const Container = styled.div`
 	height: 100vh;
 `;
 
+const SingleRoomContainer = styled.div`
+	overflow: hidden;
+`;
+
+const MessageInputContainer = styled.div`
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+`;
+
 const mapStateToProps = state => ({
 	loaded: state.localUser.loaded,
 	section: getSection(state),
 	rooms: state.rooms,
-	activeRoomId: getActiveRoomId(state),
+	activeRoomId: getActiveRoomId(state)
 });
 
 const mapDispatchToProps = {
@@ -64,9 +76,16 @@ class Chat extends React.PureComponent {
 				<div className={`${section === "settings" ? "d-block" : "d-none"}`}>
 					<Settings />
 				</div>
-				{_.map(rooms, (room, roomId) => (
-					<Room roomId={roomId} current={room.current} key={roomId} />
-				))}
+				<SingleRoomContainer className="d-flex">
+					<MessageInputContainer>
+						{_.map(rooms, (room, roomId) => (
+							<Room roomId={roomId} current={room.current} key={roomId} />
+						))}
+
+						<ConnectedChatInput />
+					</MessageInputContainer>
+					<RoomMemberList />
+				</SingleRoomContainer>
 
 				<EmoticonPicker />
 				<MessageControls />

@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserImage from "../users/UserImage.jsx";
+import { getActiveRoomId } from "../../selectors/selectors.js";
 
 const Container = styled.div`
 	display: flex;
@@ -19,7 +21,18 @@ const Nick = styled.div`
 	line-height: 25px;
 `;
 
-export default class RoomMember extends React.PureComponent {
+const mapStateToProps = (state, props) => {
+	return {
+		roomId: getActiveRoomId(state),
+		nick: state.users[props.userId].nick,
+		email: state.users[props.userId].email,
+		connected: state.users[props.userId].connected,
+		present: state.users[props.userId].present,
+		typingIn: state.users[props.userId].typingIn
+	};
+};
+
+class RoomMember extends React.Component {
 	render() {
 		const { roomId, nick, email, connected, present, typingIn } = this.props;
 		return (
@@ -36,3 +49,5 @@ export default class RoomMember extends React.PureComponent {
 		);
 	}
 }
+
+export default connect(mapStateToProps)(RoomMember);

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import MessageTimeAgo from "./MessageTimeAgo.jsx";
 import { getMessageAuthor } from "../../selectors/selectors";
 import MessageReactions from "./MessageReactions.jsx";

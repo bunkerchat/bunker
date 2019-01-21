@@ -3,7 +3,6 @@ import { createSelector } from "reselect";
 const getUsers = state => state.users;
 const getLocalUser = state => state.localUser;
 const getRooms = state => state.rooms;
-const getRoomMembers = (state, props) => state.rooms[props.roomId].$members;
 const getLocalRoomMembersByRoom = state => state.localRoomMembers.byRoom;
 const getMessagesByRoom = state => state.messages.byRoom;
 export const getAuthorUser = (state, props) => state.users[props.authorId];
@@ -21,17 +20,10 @@ export const hasAnyUnreadMention = createSelector([getLocalRoomMembersByRoom], l
 	_.some(localRoomMembersByRoom, roomMember => roomMember.unreadMessageCount > 0 && roomMember.unreadMention)
 );
 
-export const makeGetRoomMemberUsers = () => {
-	return createSelector([getUsers, getRoomMembers], (users, roomMembers) =>
-		_(roomMembers)
-			.map(roomMember => {
-				const user = users[roomMember.user];
-				return user ? { roomMember, user } : null;
-			})
-			.remove()
-			.value()
-	);
-};
+export const getRoomMembers = createSelector(
+	[getActiveRoomId, getRooms],
+	(activeRoomId, rooms = {}) => (rooms[activeRoomId] || {}).$members
+);
 
 export const makeGetRoomTopic = createSelector([getActiveRoom], room => {
 	if (!room) return;
@@ -64,3 +56,19 @@ export const getDocumentTitle = createSelector(
 		return `${leading}${leadingBreak}Bunker`;
 	}
 );
+
+export const getSortedRoomMemberUsers = createSelector([getUsers, getRoomMembers], (users, roomMembers) => {
+	console.count('getSortedRoomMemberUsers')
+
+	if(!roomMembers) return
+
+	return _.orderBy(
+		roomMembers,
+		[
+			roomMember => users[roomMember.user].connected,
+			roomMember => users[roomMember.user].present,
+			roomMember => users[roomMember.user].nick.toLowerCase()
+		],
+		["desc", "desc", "asc"]
+	);
+});
