@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Room from "../room/Room.jsx";
 import Lobby from "../lobby/Lobby.jsx";
 import Settings from "../settings/Settings.jsx";
@@ -6,9 +6,20 @@ import Header from "../header/Header.jsx";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { changeActiveRoom, changePresent } from "../users/localUserActions";
-import { hasAnyUnreadMention, getActiveRoom, getTotalUnreadMessageCount } from "../../selectors/selectors";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
 import MessageControls from "../messageControls/MessageControls.jsx";
+import { getActiveRoomId, getDocumentTitle, getSection } from "../../selectors/selectors.js";
+
+function DocumentTitle(props) {
+	useEffect(
+		() => {
+			document.title = props.title;
+		},
+		[props.title]
+	);
+
+	return null;
+}
 
 const Container = styled.div`
 	display: flex;
@@ -17,17 +28,13 @@ const Container = styled.div`
 	height: 100vh;
 `;
 
-const mapStateToProps = (state, ownProps) => {
-	const sectionMatch = /2\/(\w+)/.exec(ownProps.location.pathname);
-	return {
-		loaded: state.localUser.loaded,
-		section: sectionMatch ? sectionMatch[1] : null,
-		rooms: state.rooms,
-		activeRoom: getActiveRoom(state),
-		totalUnreadMessageCount: getTotalUnreadMessageCount(state),
-		anyUnreadMention: hasAnyUnreadMention(state)
-	};
-};
+const mapStateToProps = state => ({
+	loaded: state.localUser.loaded,
+	section: getSection(state),
+	rooms: state.rooms,
+	activeRoomId: getActiveRoomId(state),
+	title: getDocumentTitle(state)
+});
 
 const mapDispatchToProps = {
 	changeActiveRoom,
@@ -36,8 +43,8 @@ const mapDispatchToProps = {
 
 class Chat extends React.PureComponent {
 	setActiveRoom() {
-		const { changeActiveRoom, activeRoom } = this.props;
-		changeActiveRoom(activeRoom ? activeRoom._id : null);
+		const { changeActiveRoom, activeRoomId } = this.props;
+		changeActiveRoom(activeRoomId);
 	}
 
 	componentDidMount() {
@@ -48,33 +55,13 @@ class Chat extends React.PureComponent {
 	}
 
 	componentDidUpdate(prevProps) {
-		const previousActiveRoom = prevProps.activeRoom || { _id: "prevlobby" };
-		const activeRoom = this.props.activeRoom || { _id: "currlobby" };
-		if (previousActiveRoom._id !== activeRoom._id) {
+		if (prevProps.activeRoomId !== this.props.activeRoomId) {
 			this.setActiveRoom();
-		}
-
-		const unread =
-			this.props.totalUnreadMessageCount > 0
-				? `${this.props.anyUnreadMention ? "*" : ""}(${this.props.totalUnreadMessageCount}) `
-				: "";
-
-		// Set title
-		switch (this.props.section) {
-			case "settings":
-				document.title = `${unread}Settings - Bunker`;
-				break;
-			case "room":
-				document.title = `${unread}${activeRoom.name} - Bunker`;
-				break;
-			default:
-				document.title = `${unread}Bunker`;
-				break;
 		}
 	}
 
 	render() {
-		const { loaded, section, rooms } = this.props;
+		const { loaded, section, rooms, title } = this.props;
 
 		if (!loaded) {
 			return <div>Loading...</div>;
@@ -82,6 +69,7 @@ class Chat extends React.PureComponent {
 
 		return (
 			<Container>
+				<DocumentTitle title={title} />
 				<Header />
 				<div className={`${section === "lobby" ? "d-block" : "d-none"}`}>
 					<Lobby />

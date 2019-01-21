@@ -15,9 +15,9 @@ import { faCog, faEllipsisH, faGavel, faComments, faCaretRight, faCaretDown } fr
 import { faSmile, faEdit } from "@fortawesome/free-regular-svg-icons";
 library.add(faCog, faEllipsisH, faGavel, faComments, faSmile, faEdit, faCaretRight, faCaretDown);
 
-if (process.env.NODE_ENV !== "production") {
-	const { whyDidYouUpdate } = require("why-did-you-update");
-	whyDidYouUpdate(React);
+if (process.env.NODE_ENV !== 'production') {
+	const whyDidYouRender = require('@welldone-software/why-did-you-render');
+	whyDidYouRender(React);
 }
 
 ReactDOM.render(

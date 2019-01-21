@@ -11,6 +11,8 @@ export const getMessageAuthor = (state, props) => state.users[props.message.auth
 
 export const getActiveRoom = createSelector([getRooms], rooms => _.find(rooms, { current: true }));
 
+export const getActiveRoomId = createSelector([getActiveRoom], (activeRoom = {}) => activeRoom._id);
+
 export const getTotalUnreadMessageCount = createSelector([getLocalRoomMembersByRoom], localRoomMembersByRoom =>
 	_.reduce(localRoomMembersByRoom, (count, roomMember) => count + (roomMember.unreadMessageCount || 0), 0)
 );
@@ -44,5 +46,21 @@ export const getLocalMessages = createSelector(
 	(room, messagesByRoom, localUser) => {
 		if (!room) return [];
 		return _.filter(messagesByRoom[room._id], { author: localUser._id });
+	}
+);
+
+export const getSection = state => {
+	const sectionMatch = /2\/(\w+)/.exec(state.router.location.pathname);
+	return sectionMatch ? sectionMatch[1] : null;
+};
+
+export const getDocumentTitle = createSelector(
+	[getTotalUnreadMessageCount, hasAnyUnreadMention, getSection, getActiveRoom],
+	(totalUnreadMessageCount, anyUnreadMention, section, activeRoom = {}) => {
+		const unread = totalUnreadMessageCount > 0 ? `${anyUnreadMention ? "*" : ""}(${totalUnreadMessageCount}) ` : "";
+		const roomName = activeRoom.name || (section === "settings" && "Settings") || "";
+		const leading = `${unread}${roomName}`;
+		const leadingBreak = leading ? " - " : "";
+		return `${leading}${leadingBreak} Bunker`;
 	}
 );
