@@ -11,7 +11,7 @@ const ListItem = styled.li`
 `;
 
 const mapStateToProps = (state, props) => ({
-	connected: state.users[props.userId].connected,
+	connected: (state.users[props.userId] || {}).connected,
 });
 
 class RoomMemberListItem extends React.Component {

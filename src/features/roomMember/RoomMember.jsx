@@ -24,11 +24,11 @@ const Nick = styled.div`
 const mapStateToProps = (state, props) => {
 	return {
 		roomId: getActiveRoomId(state),
-		nick: state.users[props.userId].nick,
-		email: state.users[props.userId].email,
-		connected: state.users[props.userId].connected,
-		present: state.users[props.userId].present,
-		typingIn: state.users[props.userId].typingIn
+		nick: (state.users[props.userId] || {}).nick,
+		email: (state.users[props.userId] || {}).email,
+		connected: (state.users[props.userId] || {}).connected,
+		present: (state.users[props.userId] || {}).present,
+		typingIn: (state.users[props.userId] || {}).typingIn
 	};
 };
 
