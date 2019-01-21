@@ -18,7 +18,7 @@ library.add(faCog, faEllipsisH, faGavel, faComments, faSmile, faEdit, faCaretRig
 
 if (process.env.NODE_ENV !== "production") {
 	const whyDidYouRender = require("@welldone-software/why-did-you-render");
-	whyDidYouRender(React);
+	whyDidYouRender(React, {include: [/.*/]});
 }
 
 ReactDOM.render(
