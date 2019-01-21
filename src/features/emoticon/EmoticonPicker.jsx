@@ -105,7 +105,7 @@ class EmoticonPicker extends React.PureComponent {
 		return (
 			<Container className={`${!visible ? "hidden" : ""}`}>
 				<Backdrop onClick={this.hide} />
-				<Picker innerRef={this.ref} className="card p-1" style={style}>
+				<Picker ref={this.ref} className="card p-1" style={style}>
 					{searchInputVisible && (
 						<EmoticonPickerSearch
 							searchValue={searchValue}

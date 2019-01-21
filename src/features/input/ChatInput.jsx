@@ -130,7 +130,7 @@ export default class ChatInput extends React.PureComponent {
 		return (
 			<div ref={this.ref}>
 				<InputBox
-					innerRef={this.inputRef}
+					ref={this.inputRef}
 					rows="1"
 					className={`form-control ${!!this.state.editedMessage ? "editing" : ""}`}
 					value={this.state.text}

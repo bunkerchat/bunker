@@ -118,7 +118,7 @@ class ScrollingMessageList extends React.PureComponent {
 	render() {
 		const { messages, loading, fullHistoryLoaded } = this.props;
 		return (
-			<MessageListContainer innerRef={this.ref}>
+			<MessageListContainer ref={this.ref}>
 				{loading ? (
 					<div className="alert alert-info text-center mb-0 rounded-0">
 						<strong>Loading...</strong>
