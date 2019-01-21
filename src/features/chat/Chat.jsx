@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Room from "../room/Room.jsx";
 import Lobby from "../lobby/Lobby.jsx";
 import Settings from "../settings/Settings.jsx";
@@ -8,18 +8,7 @@ import styled from "styled-components";
 import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
 import MessageControls from "../messageControls/MessageControls.jsx";
-import { getActiveRoomId, getDocumentTitle, getSection } from "../../selectors/selectors.js";
-
-function DocumentTitle(props) {
-	useEffect(
-		() => {
-			document.title = props.title;
-		},
-		[props.title]
-	);
-
-	return null;
-}
+import { getActiveRoomId, getSection } from "../../selectors/selectors.js";
 
 const Container = styled.div`
 	display: flex;
@@ -33,7 +22,6 @@ const mapStateToProps = state => ({
 	section: getSection(state),
 	rooms: state.rooms,
 	activeRoomId: getActiveRoomId(state),
-	title: getDocumentTitle(state)
 });
 
 const mapDispatchToProps = {
@@ -61,7 +49,7 @@ class Chat extends React.PureComponent {
 	}
 
 	render() {
-		const { loaded, section, rooms, title } = this.props;
+		const { loaded, section, rooms } = this.props;
 
 		if (!loaded) {
 			return <div>Loading...</div>;
@@ -69,7 +57,6 @@ class Chat extends React.PureComponent {
 
 		return (
 			<Container>
-				<DocumentTitle title={title} />
 				<Header />
 				<div className={`${section === "lobby" ? "d-block" : "d-none"}`}>
 					<Lobby />

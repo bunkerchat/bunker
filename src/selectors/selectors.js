@@ -61,6 +61,6 @@ export const getDocumentTitle = createSelector(
 		const roomName = activeRoom.name || (section === "settings" && "Settings") || "";
 		const leading = `${unread}${roomName}`;
 		const leadingBreak = leading ? " - " : "";
-		return `${leading}${leadingBreak} Bunker`;
+		return `${leading}${leadingBreak}Bunker`;
 	}
 );
