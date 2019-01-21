@@ -1,6 +1,9 @@
 import React from "react";
-import ScrollingMessageList from "../message/ScrollingMessageList.jsx";
+import { connect } from "react-redux";
 import styled from "styled-components";
+import ScrollingMessageList from "../message/ScrollingMessageList.jsx";
+import RoomMemberList from "../roomMember/RoomMemberList.jsx";
+import ConnectedChatInput from "../input/ConnectedChatInput.jsx";
 import RoomTopic from "./RoomTopic.jsx";
 
 const Container = styled.div`
@@ -13,16 +16,29 @@ const MessagingContainer = styled.div`
 	flex-direction: column;
 `;
 
-export default class Room extends React.PureComponent {
+const mapStateToProps = state => ({
+	rooms: state.rooms
+});
+
+class Room extends React.PureComponent {
 	render() {
-		const { roomId, current } = this.props;
+		const { rooms } = this.props;
+
 		return (
-			<Container className={`${current ? "flex-grow-1" : "d-none"}`}>
+			<Container className="d-flex">
 				<MessagingContainer>
 					<RoomTopic />
-					<ScrollingMessageList roomId={roomId} current={current} />
+
+					{_.map(rooms, (room, roomId) => (
+						<ScrollingMessageList roomId={roomId} current={room.current} key={roomId} />
+					))}
+
+					<ConnectedChatInput />
 				</MessagingContainer>
+				<RoomMemberList />
 			</Container>
 		);
 	}
 }
+
+export default connect(mapStateToProps)(Room);

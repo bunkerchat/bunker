@@ -13,8 +13,7 @@ const MessageListContainer = styled.div`
 	overflow-x: hidden;
 
 	// todo this hack makes the scrolling box honor our overflow: scroll, not sure why this is needed and I'm sad it's here
-	// i'm sorry jpro I made this worse with the * 2 + 5
-	height: calc(100vh - ${theme.inputBox * 2 + 5}px - ${theme.top}px);
+	height: calc(100vh - ${theme.inputBox}px - ${theme.top}px);
 
 	// these enable touch scrolling on iOS / Android
 	-webkit-overflow-scrolling: touch;
@@ -117,9 +116,9 @@ class ScrollingMessageList extends React.PureComponent {
 	}
 
 	render() {
-		const { messages, loading, fullHistoryLoaded } = this.props;
+		const { messages, loading, fullHistoryLoaded, current } = this.props;
 		return (
-			<MessageListContainer ref={this.ref}>
+			<MessageListContainer ref={this.ref} className={`${current ? "" : "d-none"}`}>
 				{loading ? (
 					<div className="alert alert-info text-center mb-0 rounded-0">
 						<strong>Loading...</strong>

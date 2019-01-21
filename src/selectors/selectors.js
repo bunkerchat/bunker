@@ -25,7 +25,7 @@ export const getRoomMembers = createSelector(
 	(activeRoomId, rooms = {}) => (rooms[activeRoomId] || {}).$members
 );
 
-export const makeGetRoomTopic = createSelector([getActiveRoom], room => {
+export const getRoomTopic = createSelector([getActiveRoom], room => {
 	if (!room) return;
 	return {
 		tokens: room.topicTokens,
@@ -58,9 +58,7 @@ export const getDocumentTitle = createSelector(
 );
 
 export const getSortedRoomMemberUsers = createSelector([getUsers, getRoomMembers], (users, roomMembers) => {
-	console.count('getSortedRoomMemberUsers')
-
-	if(!roomMembers) return
+	if (!roomMembers) return;
 
 	return _.orderBy(
 		roomMembers,
