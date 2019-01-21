@@ -71,6 +71,7 @@
     "password-hash": "1.2.2",
     "react": "16.8.0-alpha.1",
     "react-dom": "16.8.0-alpha.1",
+    "react-favicon": "0.0.14",
     "react-gravatar": "2.6.3",
     "react-redux": "5.0.7",
     "react-router": "4.3.1",

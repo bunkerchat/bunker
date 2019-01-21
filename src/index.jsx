@@ -1,3 +1,5 @@
+import BunkerFavicon from "./features/chat/BunkerFavicon.jsx";
+
 window._ = require("lodash");
 
 import React from "react";
@@ -26,6 +28,7 @@ ReactDOM.render(
 		<ConnectedRouter history={history}>
 			<>
 				<DocumentTitle />
+				<BunkerFavicon />
 				<Route exact path="/2" render={() => <Redirect to="/2/lobby" />} />
 				<Route path="/" component={Chat} />
 			</>
