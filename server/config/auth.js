@@ -20,7 +20,7 @@ auth.init = function(app) {
 		store: new MongoStore({
 			url: "mongodb://" + config.db.host + ":" + config.db.port + "/" + config.db.session
 		}),
-		cookie: {maxAge: 1000 * 365 * 24 * 60 * 60 * 1000 } // thousand years
+		cookie: { maxAge: 1000 * 365 * 24 * 60 * 60 * 1000 } // thousand years
 	}));
 
 	app.use(session);
@@ -74,12 +74,14 @@ auth.init = function(app) {
 
 	app.get("/login/google", function(req, res) {
 		req.session.directTo = req.query.directTo;
+		req.session.newLogin = !!req.query.newLogin;
 		passport.authenticate("google")(req, res);
 	});
 
 	app.get("/auth/googleReturn", passport.authenticate("google"), function(req, res) {
-		req.session.googleCredentials = req.authInfo;
-		res.redirect(req.session.directTo ? req.session.directTo : "/");
+		const session = req.session;
+		session.googleCredentials = req.authInfo;
+		session.newLogin ? res.render("hi") : res.redirect(session.directTo ? session.directTo : "/");
 	});
 
 	// Local login - In Progress

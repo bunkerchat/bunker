@@ -45,8 +45,28 @@
 	<h1 class="header">Bunker</h1>
 	<div class="well">
 		<a class="google-button" tabindex="0" href="/login/google?directTo=<%= directTo %>"></a>
+
+		<a onclick="login()">Login 2</a>
 	</div>
 </div>
+
+
+<script type="text/javascript">
+	function login(){
+		window.open('/login/google?newLogin=true')
+	}
+
+	function loginSuccess() {
+		var match = /\?directTo=(.+)/.exec(window.location.search);
+		if (match) {
+			window.location = match[1];
+		}
+		else {
+			window.location = '/' + window.location.hash;
+		}
+	}
+
+</script>
 
 </body>
 </html>
