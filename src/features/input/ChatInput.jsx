@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 
+const removeNewlines = text => text.replace(/(\n|\r)+/, "");
+
 const InputBox = styled.textarea`
 	border-radius: 0;
 	resize: none;
@@ -28,7 +30,8 @@ export default class ChatInput extends React.PureComponent {
 	};
 
 	onInputChange = event => {
-		const text = event.target.value;
+		// remove  newlines here, so IOS gets a chance to autocorrect on enter
+		const text = removeNewlines(event.target.value);
 
 		if (this.props.emoticonPickerVisible) {
 			const match = /:([A-z0-9\s]*)$/.exec(text);
@@ -93,9 +96,8 @@ export default class ChatInput extends React.PureComponent {
 				this.setState({ text: editedMessage.text, editedMessage });
 			}
 		} else if (event.key === "Enter") {
-			event.preventDefault();
-
 			if (this.props.emoticonPickerVisible) {
+				event.preventDefault();
 				this.onEmoticonPick(this.props.selectedEmoticon);
 			} else {
 				this.onSend();
@@ -108,14 +110,20 @@ export default class ChatInput extends React.PureComponent {
 	};
 
 	onSend = () => {
-		if (this.state.text.trim().length > 0) {
-			if (this.state.editedMessage) {
-				this.props.edit({ ...this.state.editedMessage, text: this.state.text });
+		setTimeout(() =>{
+			const { text, editedMessage } = this.state;
+			const { edit, send, roomId } = this.props;
+
+			if (!text.trim().length) return;
+
+			if (editedMessage) {
+				edit({ ...editedMessage, text });
 			} else {
-				this.props.send(this.props.roomId, this.state.text);
+				send(roomId, text);
 			}
+
 			this.setState({ text: "", editedMessage: null });
-		}
+		},25)
 	};
 
 	onEmoticonPick = selected => {
