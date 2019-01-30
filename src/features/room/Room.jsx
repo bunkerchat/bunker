@@ -5,6 +5,7 @@ import ScrollingMessageList from "../message/ScrollingMessageList.jsx";
 import RoomMemberList from "../roomMember/RoomMemberList.jsx";
 import ConnectedChatInput from "../input/ConnectedChatInput.jsx";
 import RoomTopic from "./RoomTopic.jsx";
+import { getActiveRoomId } from "../../selectors/selectors.js";
 
 const Container = styled.div`
 	overflow: hidden;
@@ -17,12 +18,15 @@ const MessagingContainer = styled.div`
 `;
 
 const mapStateToProps = state => ({
+	activeRoomId: getActiveRoomId(state),
 	rooms: state.rooms
 });
 
 class Room extends React.PureComponent {
 	render() {
-		const { rooms } = this.props;
+		const { rooms, activeRoomId } = this.props;
+
+		if (!activeRoomId) return null;
 
 		return (
 			<Container className="d-flex">
