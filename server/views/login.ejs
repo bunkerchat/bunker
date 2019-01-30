@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Bunker Login</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 	<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
@@ -44,18 +45,17 @@
 <div class="container">
 	<h1 class="header">Bunker</h1>
 	<div class="well">
-		<a class="google-button" tabindex="0" href="/login/google?directTo=<%= directTo %>"></a>
-
-		<a onclick="login()">Login 2</a>
+		<a class="google-button" tabindex="0" onclick="login()"></a>
 	</div>
 </div>
 
 
 <script type="text/javascript">
 	function login(){
-		window.open('/login/google?newLogin=true')
+		window.open('/login/google')
 	}
 
+	// being called from another window don't remove
 	function loginSuccess() {
 		var match = /\?directTo=(.+)/.exec(window.location.search);
 		if (match) {

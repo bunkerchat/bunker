@@ -74,14 +74,13 @@ auth.init = function(app) {
 
 	app.get("/login/google", function(req, res) {
 		req.session.directTo = req.query.directTo;
-		req.session.newLogin = !!req.query.newLogin;
 		passport.authenticate("google")(req, res);
 	});
 
 	app.get("/auth/googleReturn", passport.authenticate("google"), function(req, res) {
 		const session = req.session;
 		session.googleCredentials = req.authInfo;
-		session.newLogin ? res.render("hi") : res.redirect(session.directTo ? session.directTo : "/");
+		res.render("hi")
 	});
 
 	// Local login - In Progress
