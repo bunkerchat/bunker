@@ -110,7 +110,7 @@ export default class ChatInput extends React.PureComponent {
 	};
 
 	onSend = () => {
-		setTimeout(() =>{
+		setTimeout(() => {
 			const { text, editedMessage } = this.state;
 			const { edit, send, roomId } = this.props;
 
@@ -123,7 +123,7 @@ export default class ChatInput extends React.PureComponent {
 			}
 
 			this.setState({ text: "", editedMessage: null });
-		},25)
+		}, 25);
 	};
 
 	onEmoticonPick = selected => {
