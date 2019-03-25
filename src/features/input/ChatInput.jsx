@@ -30,7 +30,7 @@ const mapDispatchToProps = {
 	updateEditedMessage
 };
 
-export class ChatInput extends React.PureComponent {
+export class ChatInput extends React.Component {
 	ref = React.createRef();
 
 	inputRef = React.createRef();
