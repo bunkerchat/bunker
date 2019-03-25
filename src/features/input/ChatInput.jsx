@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import theme from "../../constants/theme";
+import { updateEditedMessage, updateText } from "./chatInputReducer";
+import { connect } from "react-redux";
 
 const removeNewlines = text => text.replace(/(\n|\r)+/, "");
 
@@ -19,15 +21,25 @@ const InputBox = styled.textarea`
 	}
 `;
 
-export default class ChatInput extends React.PureComponent {
+const mapStateToProps = (state, props) => {
+	return state.chatInput.byRoom[props.roomId] || { text: "", editedMessage: null };
+};
+
+const mapDispatchToProps = {
+	updateText,
+	updateEditedMessage
+};
+
+class ChatInput extends React.PureComponent {
 	ref = React.createRef();
 
 	inputRef = React.createRef();
 
-	state = {
-		text: "",
-		editedMessage: null
-	};
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if(this.props.text !== prevProps.text && this.inputRef.current) {
+			this.inputRef.current.focus();
+		}
+	}
 
 	onInputChange = event => {
 		// remove  newlines here, so IOS gets a chance to autocorrect on enter
@@ -40,7 +52,7 @@ export default class ChatInput extends React.PureComponent {
 			}
 		}
 
-		this.setState({ text });
+		this.props.updateText(this.props.roomId, text);
 	};
 
 	onKeyDown = event => {
@@ -49,7 +61,7 @@ export default class ChatInput extends React.PureComponent {
 				this.props.hideEmoticonPicker();
 			}
 			// picker not visible and user isn't already typing an emoticon
-			else if (!/:\w+$/.test(this.state.text)) {
+			else if (!/:\w+$/.test(this.props.text)) {
 				this.props.showEmoticonPicker(this.ref.current.offsetLeft, this.ref.current.offsetTop, this.onEmoticonPick);
 			}
 		} else if (/Arrow|Tab/.test(event.key) && this.props.emoticonPickerVisible) {
@@ -75,15 +87,15 @@ export default class ChatInput extends React.PureComponent {
 			event.preventDefault();
 
 			// Edit
-			const currentIndex = this.state.editedMessage
-				? _.findIndex(this.props.localMessages, { _id: this.state.editedMessage._id })
+			const currentIndex = this.props.editedMessage
+				? _.findIndex(this.props.localMessages, { _id: this.props.editedMessage._id })
 				: -1;
 
 			let editedMessage;
 			if (event.key === "ArrowUp") {
 				if (currentIndex > 0) {
 					editedMessage = this.props.localMessages[currentIndex - 1];
-				} else if (!this.state.editedMessage) {
+				} else if (!this.props.editedMessage) {
 					editedMessage = _.last(this.props.localMessages);
 				}
 			} else if (event.key === "ArrowDown") {
@@ -93,7 +105,8 @@ export default class ChatInput extends React.PureComponent {
 			}
 
 			if (editedMessage) {
-				this.setState({ text: editedMessage.text, editedMessage });
+				this.props.updateText(this.props.roomId, editedMessage.text);
+				this.props.updateEditedMessage(this.props.roomId, editedMessage);
 			}
 		} else if (event.key === "Enter") {
 			if (this.props.emoticonPickerVisible) {
@@ -103,16 +116,15 @@ export default class ChatInput extends React.PureComponent {
 				this.onSend();
 			}
 		} else if (event.key === "Escape") {
-			if (this.state.editedMessage) {
-				this.setState({ editedMessage: null });
+			if (this.props.editedMessage) {
+				this.props.updateEditedMessage(this.props.roomId, null);
 			}
 		}
 	};
 
 	onSend = () => {
 		setTimeout(() => {
-			const { text, editedMessage } = this.state;
-			const { edit, send, roomId } = this.props;
+			const { text, editedMessage, edit, send, roomId } = this.props;
 
 			if (!text.trim().length) return;
 
@@ -122,13 +134,14 @@ export default class ChatInput extends React.PureComponent {
 				send(roomId, text);
 			}
 
-			this.setState({ text: "", editedMessage: null });
+			this.props.updateText(this.props.roomId, "");
+			this.props.updateEditedMessage(this.props.roomId, null);
 		}, 25);
 	};
 
 	onEmoticonPick = selected => {
 		if (selected) {
-			this.setState({ text: this.state.text.replace(/:\w*$/, `:${selected}:`) });
+			this.props.updateText(this.props.roomId, this.props.text.replace(/:\w*$/, `:${selected}:`))
 		}
 		this.props.hideEmoticonPicker();
 		this.inputRef.current.focus();
@@ -140,8 +153,8 @@ export default class ChatInput extends React.PureComponent {
 				<InputBox
 					ref={this.inputRef}
 					rows="1"
-					className={`form-control ${!!this.state.editedMessage ? "editing" : ""}`}
-					value={this.state.text}
+					className={`form-control ${!!this.props.editedMessage ? "editing" : ""}`}
+					value={this.props.text}
 					onChange={this.onInputChange}
 					onKeyDown={this.onKeyDown}
 				/>
@@ -149,3 +162,5 @@ export default class ChatInput extends React.PureComponent {
 		);
 	}
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatInput);

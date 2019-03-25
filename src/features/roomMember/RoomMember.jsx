@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserImage from "../users/UserImage.jsx";
 import { getActiveRoomId } from "../../selectors/selectors.js";
+import { appendNick } from "../input/chatInputReducer";
 
 const Container = styled.div`
 	display: flex;
@@ -17,8 +18,9 @@ const IconContainer = styled.div`
 	vertical-align: middle;
 `;
 
-const Nick = styled.div`
+const Nick = styled.a`
 	line-height: 25px;
+	cursor: pointer;
 `;
 
 const mapStateToProps = (state, props) => {
@@ -32,22 +34,30 @@ const mapStateToProps = (state, props) => {
 	};
 };
 
+const mapDispatchToProps = {
+	appendNick
+};
+
 class RoomMember extends React.Component {
+	onClickNick = () => {
+		this.props.appendNick(this.props.roomId, this.props.nick);
+	};
+
 	render() {
 		const { roomId, nick, email, connected, present, typingIn } = this.props;
 		return (
 			<Container>
 				{connected && typingIn === roomId ? (
 					<IconContainer>
-						<FontAwesomeIcon icon="ellipsis-h" />
+						<FontAwesomeIcon icon="ellipsis-h"/>
 					</IconContainer>
 				) : (
-					<UserImage email={email} connected={connected} present={present} />
+					<UserImage email={email} connected={connected} present={present}/>
 				)}
-				<Nick className="ml-2">{nick}</Nick>
+				<Nick onClick={this.onClickNick} className="ml-2">{nick}</Nick>
 			</Container>
 		);
 	}
 }
 
-export default connect(mapStateToProps)(RoomMember);
+export default connect(mapStateToProps, mapDispatchToProps)(RoomMember);
