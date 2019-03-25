@@ -306,7 +306,7 @@ function saveInMentionedInboxes(message) {
 		.populate("user")
 		.then(roomMembers => roomMembers)
 		.each(roomMember => {
-			const regex = new RegExp(roomMember.user.nick + "\\b|@[Aa]ll", "i");
+			const regex = new RegExp(escapeRegExp(roomMember.user.nick) + "\\b|@[Aa]ll", "i");
 			if (!regex.test(message.text)) return;
 
 			return InboxMessage.create({ user: roomMember.user._id, message: message._id })
@@ -355,4 +355,8 @@ function hangman(roomMember, text) {
 
 		return message(roomMember, hangmanResponse.message, "hangman");
 	});
+}
+
+function escapeRegExp(string) {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
