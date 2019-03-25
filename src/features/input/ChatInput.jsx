@@ -30,13 +30,13 @@ const mapDispatchToProps = {
 	updateEditedMessage
 };
 
-class ChatInput extends React.PureComponent {
+export class ChatInput extends React.PureComponent {
 	ref = React.createRef();
 
 	inputRef = React.createRef();
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		if(this.props.text !== prevProps.text && this.inputRef.current) {
+		if (this.props.text !== prevProps.text && this.inputRef.current) {
 			this.inputRef.current.focus();
 		}
 	}
