@@ -123,6 +123,11 @@ export class ChatInput extends React.Component {
 	};
 
 	onSend = () => {
+		// so like whatever shit ios safari uses to know if a word is done being poked at
+		// needs to finish before react javascript shit runs
+		// hence the timeout
+		// 25 ms was a wild ass guess that just works
+		// if you take it out, the auto correct bullshit on ios stops working
 		setTimeout(() => {
 			const { text, editedMessage, edit, send, roomId } = this.props;
 
