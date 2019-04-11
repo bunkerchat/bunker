@@ -11,6 +11,7 @@ import userSettings from "./features/settings/userSettingsReducer";
 import users from "./features/users/usersReducer";
 import rooms from "./features/room/roomReducer";
 import messages from "./features/message/messagesReducer";
+import chatInput from "./features/input/chatInputReducer";
 import emoticonPicker from "./features/emoticon/emoticonPickerReducer";
 import messageControls from "./features/messageControls/messageControlsReducer";
 import log from "./features/chat/logReducer";
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
 	users,
 	rooms,
 	messages,
+	chatInput,
 	emoticonPicker,
 	messageControls,
 	log

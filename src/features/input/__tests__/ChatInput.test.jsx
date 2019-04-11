@@ -1,31 +1,53 @@
 import React from "react";
-import ChatInput from "../ChatInput";
+import {ChatInput} from "../ChatInput";
 import { mount, shallow } from "enzyme";
+jest.useFakeTimers();
 
 describe("ChatInput", () => {
+	const defaultProps = {
+		roomId: "123",
+		text: "",
+		editedMessage: null,
+		emoticonPickerVisible: false,
+		showEmoticonPicker: jest.fn(),
+		hideEmoticonPicker: jest.fn(),
+		updateText: jest.fn(),
+		updateEditedMessage: jest.fn(),
+		send: jest.fn()
+	};
+
 	test("can render", () => {
-		const wrapper = shallow(<ChatInput />);
+		const wrapper = shallow(<ChatInput {...defaultProps}/>);
 		expect(wrapper.exists()).toEqual(true);
 	});
 
 	describe("can send messages", () => {
 		test("can send text", () => {
 			const send = jest.fn();
-			const wrapper = mount(<ChatInput roomId="abc123" send={send} />);
-			wrapper.setState({ text: "really cool message" });
+			const props = {
+				...defaultProps,
+				text: "really cool message",
+				send
+			};
 
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 			expect(textarea.length).toEqual(1);
 
 			textarea.simulate("keydown", { key: "Enter" });
-			expect(send).toHaveBeenCalledWith("abc123", "really cool message");
+			jest.runAllTimers();
+			expect(send).toHaveBeenCalledWith("123", "really cool message");
 		});
 	});
 
 	describe("can interact with emoticon picker", () => {
 		test("can open picker with :", () => {
 			const showEmoticonPicker = jest.fn();
-			const wrapper = mount(<ChatInput showEmoticonPicker={showEmoticonPicker} />);
+			const props = {
+				...defaultProps,
+				showEmoticonPicker
+			};
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: ":" });
 			expect(showEmoticonPicker).toHaveBeenCalled();
@@ -33,7 +55,12 @@ describe("ChatInput", () => {
 
 		test("can close picker with another :", () => {
 			const hideEmoticonPicker = jest.fn();
-			const wrapper = mount(<ChatInput emoticonPickerVisible={true} hideEmoticonPicker={hideEmoticonPicker} />);
+			const props = {
+				...defaultProps,
+				emoticonPickerVisible: true,
+				hideEmoticonPicker
+			};
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: ":" });
 			expect(hideEmoticonPicker).toHaveBeenCalled();
@@ -41,21 +68,34 @@ describe("ChatInput", () => {
 
 		test("can pick an emoticon with Enter", () => {
 			const hideEmoticonPicker = jest.fn();
+			const props = {
+				...defaultProps,
+				text: "typing out :buddy",
+				emoticonPickerVisible: true,
+				selectedEmotion: "buddy",
+				hideEmoticonPicker
+			};
 			const wrapper = mount(
-				<ChatInput emoticonPickerVisible={true} selectedEmoticon="buddy" hideEmoticonPicker={hideEmoticonPicker} />
+				<ChatInput {...props} />
 			);
-			wrapper.setState({ text: "typing out :buddy" });
 
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "Enter" });
 			expect(hideEmoticonPicker).toHaveBeenCalled();
-			expect(wrapper.state().text).toEqual("typing out :buddy:");
 		});
 
 		test("wont open picker if in the middle of typing an emoticon", () => {
 			const showEmoticonPicker = jest.fn();
-			const wrapper = mount(<ChatInput showEmoticonPicker={showEmoticonPicker} />);
-			wrapper.setState({ text: "gonna make an emoticon :hellyeah" });
+			const props = {
+				...defaultProps,
+				text: "gonna make an emoticon :hellyeah",
+				emoticonPickerVisible: true,
+				selectedEmotion: "buddy",
+				showEmoticonPicker
+			};
+			const wrapper = mount(
+				<ChatInput {...props} />
+			);
 
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: ":" });
@@ -64,8 +104,13 @@ describe("ChatInput", () => {
 
 		test("selects left with left arrow key", () => {
 			const selectLeftEmoticonPicker = jest.fn();
+			const props = {
+				...defaultProps,
+				emoticonPickerVisible: true,
+				selectLeftEmoticonPicker
+			};
 			const wrapper = mount(
-				<ChatInput emoticonPickerVisible={true} selectLeftEmoticonPicker={selectLeftEmoticonPicker} />
+				<ChatInput {...props} />
 			);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "ArrowLeft" });
@@ -74,8 +119,13 @@ describe("ChatInput", () => {
 
 		test("selects left with shift tab key", () => {
 			const selectLeftEmoticonPicker = jest.fn();
+			const props = {
+				...defaultProps,
+				emoticonPickerVisible: true,
+				selectLeftEmoticonPicker
+			};
 			const wrapper = mount(
-				<ChatInput emoticonPickerVisible={true} selectLeftEmoticonPicker={selectLeftEmoticonPicker} />
+				<ChatInput {...props} />
 			);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "Tab", shiftKey: true });
@@ -84,8 +134,13 @@ describe("ChatInput", () => {
 
 		test("selects right with right arrow key", () => {
 			const selectRightEmoticonPicker = jest.fn();
+			const props = {
+				...defaultProps,
+				emoticonPickerVisible: true,
+				selectRightEmoticonPicker
+			};
 			const wrapper = mount(
-				<ChatInput emoticonPickerVisible={true} selectRightEmoticonPicker={selectRightEmoticonPicker} />
+				<ChatInput {...props} />
 			);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "ArrowRight" });
@@ -94,8 +149,13 @@ describe("ChatInput", () => {
 
 		test("selects right with tab key", () => {
 			const selectRightEmoticonPicker = jest.fn();
+			const props = {
+				...defaultProps,
+				emoticonPickerVisible: true,
+				selectRightEmoticonPicker
+			};
 			const wrapper = mount(
-				<ChatInput emoticonPickerVisible={true} selectRightEmoticonPicker={selectRightEmoticonPicker} />
+				<ChatInput {...props} />
 			);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "Tab" });
@@ -104,7 +164,14 @@ describe("ChatInput", () => {
 
 		test("selects up with up arrow key", () => {
 			const selectUpEmoticonPicker = jest.fn();
-			const wrapper = mount(<ChatInput emoticonPickerVisible={true} selectUpEmoticonPicker={selectUpEmoticonPicker} />);
+			const props = {
+				...defaultProps,
+				emoticonPickerVisible: true,
+				selectUpEmoticonPicker
+			};
+			const wrapper = mount(
+				<ChatInput {...props} />
+			);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "ArrowUp" });
 			expect(selectUpEmoticonPicker).toHaveBeenCalled();
@@ -112,8 +179,13 @@ describe("ChatInput", () => {
 
 		test("selects down with down arrow key", () => {
 			const selectDownEmoticonPicker = jest.fn();
+			const props = {
+				...defaultProps,
+				emoticonPickerVisible: true,
+				selectDownEmoticonPicker
+			};
 			const wrapper = mount(
-				<ChatInput emoticonPickerVisible={true} selectDownEmoticonPicker={selectDownEmoticonPicker} />
+				<ChatInput {...props} />
 			);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "ArrowDown" });
@@ -129,63 +201,78 @@ describe("ChatInput", () => {
 		];
 
 		it("selects up with up arrow", () => {
-			const wrapper = mount(<ChatInput localMessages={localMessages} />);
+			const updateEditedMessage = jest.fn();
+			const props = {
+				...defaultProps,
+				localMessages,
+				updateEditedMessage
+			};
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 
 			textarea.simulate("keydown", { key: "ArrowUp" });
-			let state = wrapper.state();
-			expect(state.editedMessage).toBeDefined();
-			expect(state.editedMessage._id).toEqual("789");
-
-			textarea.simulate("keydown", { key: "ArrowUp" });
-			expect(wrapper.state().editedMessage._id).toEqual("456");
-
-			textarea.simulate("keydown", { key: "ArrowUp" });
-			expect(wrapper.state().editedMessage._id).toEqual("123");
+			expect(updateEditedMessage).toHaveBeenCalledWith("123", localMessages[2]);
 		});
 
 		it("select downs with down arrow", () => {
-			const wrapper = mount(<ChatInput localMessages={localMessages} />);
+			const updateEditedMessage = jest.fn();
+			const props = {
+				...defaultProps,
+				localMessages,
+				editedMessage: localMessages[0],
+				updateEditedMessage
+			};
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 
-			textarea.simulate("keydown", { key: "ArrowUp" });
-			textarea.simulate("keydown", { key: "ArrowUp" });
-			expect(wrapper.state().editedMessage._id).toEqual("456");
 			textarea.simulate("keydown", { key: "ArrowDown" });
-			expect(wrapper.state().editedMessage._id).toEqual("789");
-			textarea.simulate("keydown", { key: "ArrowDown" });
-			expect(wrapper.state().editedMessage._id).toEqual("789"); // already at bottom
+			expect(updateEditedMessage).toHaveBeenCalledWith("123", localMessages[1]);
 		});
 
 		it("doesnt select down if at last message", () => {
-			const wrapper = mount(<ChatInput localMessages={localMessages} />);
+			const updateEditedMessage = jest.fn();
+			const props = {
+				...defaultProps,
+				localMessages,
+				editedMessage: localMessages[2],
+				updateEditedMessage
+			};
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 
 			textarea.simulate("keydown", { key: "ArrowDown" });
-			let state = wrapper.state();
-			expect(state.editedMessage).toEqual(null);
+			expect(updateEditedMessage).not.toHaveBeenCalled();
 		});
 
 		it("doesnt select up if at first message", () => {
-			const wrapper = mount(<ChatInput localMessages={localMessages} />);
+			const updateEditedMessage = jest.fn();
+			const props = {
+				...defaultProps,
+				localMessages,
+				editedMessage: localMessages[0],
+				updateEditedMessage
+			};
+
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 
 			textarea.simulate("keydown", { key: "ArrowUp" });
-			textarea.simulate("keydown", { key: "ArrowUp" });
-			textarea.simulate("keydown", { key: "ArrowUp" });
-			expect(wrapper.state().editedMessage._id).toEqual("123");
-			textarea.simulate("keydown", { key: "ArrowUp" });
-			expect(wrapper.state().editedMessage._id).toEqual("123");
+			expect(updateEditedMessage).not.toHaveBeenCalled();
 		});
 
 		it("clears edited message with Escape", () => {
-			const wrapper = mount(<ChatInput localMessages={localMessages} />);
+			const updateEditedMessage = jest.fn();
+			const props = {
+				...defaultProps,
+				localMessages,
+				updateEditedMessage
+			};
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 
 			textarea.simulate("keydown", { key: "ArrowUp" });
-			expect(wrapper.state().editedMessage._id).toEqual("789");
 			textarea.simulate("keydown", { key: "Escape" });
-			expect(wrapper.state().editedMessage).toEqual(null);
+			expect(updateEditedMessage).toHaveBeenCalled();
 		});
 	});
 });
