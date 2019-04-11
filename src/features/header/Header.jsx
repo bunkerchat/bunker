@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { hasAnyUnreadMention, getTotalUnreadMessageCount } from "../../selectors/selectors";
 import HeaderRoomLink from "./HeaderRoomLink.jsx";
 import UnreadMessageBadge from "./UnreadMessageBadge.jsx";
+import UploadButton from "../imageUpload/UploadButton.jsx";
 
 const RoomListItem = styled.li`
 	position: relative;
@@ -48,6 +49,7 @@ class Header extends React.PureComponent {
 						})}
 					</ul>
 					<div className="ml-auto navbar-nav text-right">
+						<UploadButton />
 						<Link className="nav-item nav-link" to={`/2/settings`}>
 							<FontAwesomeIcon icon="cog" />
 						</Link>
