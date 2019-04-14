@@ -30,12 +30,8 @@ const handlers = {
 			}
 		}
 	}),
-	"chatInput/appendText": (state, action) => {
-		return getAppendedState(state, action);
-	},
-	"chatInput/appendNick": (state, action) => {
-		return getAppendedState(state, {...action, text: `@${action.text}`});
-	},
+	"chatInput/appendText": (state, action) => getAppendedState(state, action),
+	"chatInput/appendNick": (state, action) => getAppendedState(state, {...action, text: `@${action.text}`}),
 	"chatInput/edited": (state, action) => ({
 		...state,
 		byRoom: {

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { getActiveRoomId } from "../../selectors/selectors";
 import { appendText } from "../input/chatInputReducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import imageLoader from "./imageLoader.js";
+import {loadImage} from "./imageLoader.js";
 import imageUpload from "./imageUpload.js";
 
 const UploadContainer = styled.a`
@@ -31,22 +31,17 @@ const mapDispatchToProps = {
 	appendText
 };
 
-class UploadButton extends React.PureComponent {
+class UploadButton extends React.Component {
 
 	fileUploadElement = null;
+	state = { uploading: false };
 
-	constructor(props) {
-		super(props);
-		this.state = { uploading: false };
-	}
-
-	uploadFile(evt) {
+	uploadFile = (evt) => {
 		this.setState({ uploading: true });
 
 		const file = _.first(evt.target.files);
 
-		imageLoader
-			.loadImage(file)
+		loadImage(file)
 			.then(loadedData => {
 				return imageUpload.doSingleImageUpload(loadedData.data.split(",")[1]);
 			})
@@ -55,7 +50,7 @@ class UploadButton extends React.PureComponent {
 				this.fileUploadElement.value = "";
 			})
 			.finally(() => this.setState({ uploading: false }));
-	}
+	};
 
 	render() {
 
@@ -70,7 +65,7 @@ class UploadButton extends React.PureComponent {
 			<UploadContainer className="nav-item nav-link">
 				<FontAwesomeIcon icon={iconToRender} className={iconClasses}/>
 				<FileUpload ref={el => this.fileUploadElement = el} type="file" name="image" accept="image/*"
-										onChange={(e) => this.uploadFile(e)}/>
+										onChange={this.uploadFile} />
 			</UploadContainer>);
 	}
 }
