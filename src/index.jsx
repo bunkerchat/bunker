@@ -14,9 +14,9 @@ import { Provider } from "react-redux";
 
 // Configure font-awesome
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faCog, faEllipsisH, faGavel, faComments, faCaretRight, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import { faCog, faEllipsisH, faGavel, faComments, faCaretRight, faCaretDown, faCloudUploadAlt, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { faSmile, faEdit } from "@fortawesome/free-regular-svg-icons";
-library.add(faCog, faEllipsisH, faGavel, faComments, faSmile, faEdit, faCaretRight, faCaretDown);
+library.add(faCog, faEllipsisH, faGavel, faComments, faSmile, faEdit, faCaretRight, faCaretDown, faCloudUploadAlt, faSpinner);
 
 if (process.env.NODE_ENV !== "production") {
 	const whyDidYouRender = require("@welldone-software/why-did-you-render");
