@@ -199,13 +199,11 @@ function magic8ball(roomMember, text) {
 }
 
 function soulSphere(roomMember, text) {
-	Message.aggregate([
-		{ $match: { author: roomMember.user._id, room: roomMember.room, text: {$regex: /^[\w ]{2,25}$/} } },
-		{ $sample: { size: 1 } }
-	])
-		.exec()
-		.then(randomMessages => {
-			const randomMessage = randomMessages.length > 0 ? _.first(randomMessages) : "Nothing happens";
+	const where = { author: roomMember.user._id, room: roomMember.room, text: { $regex: /^[\w ]{2,25}$/ } };
+	Message.count(where)
+		.then(messageCount => Message.findOne(where).skip(Math.round(Math.random() * messageCount)))
+		.then(randomMessage => {
+			randomMessage = randomMessage || { text: "Nothing happens" };
 			setTimeout(() => {
 				const ballText = `:soulsphere: ${randomMessage.text}`;
 				const tokens = tokenService.tokenize(ent.decode(ballText));
