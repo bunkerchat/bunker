@@ -200,9 +200,7 @@ function magic8ball(roomMember, text) {
 
 function soulSphere(roomMember, text) {
 	Message.aggregate([
-		{ $match: { author: roomMember.user._id, room: roomMember.room, text: {$regex: /^[\w ]*$/} } },
-		{ $redact: { $cond: [{ $gt: [{ $strLenCP: "$text" }, 2] }, "$$KEEP", "$$PRUNE"] } },
-		{ $redact: { $cond: [{ $lt: [{ $strLenCP: "$text" }, 25] }, "$$KEEP", "$$PRUNE"] } },
+		{ $match: { author: roomMember.user._id, room: roomMember.room, text: {$regex: /^[\w ]{2,25}$/} } },
 		{ $sample: { size: 1 } }
 	])
 		.exec()
