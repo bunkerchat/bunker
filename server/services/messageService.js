@@ -22,7 +22,7 @@ const tokenService = require("./tokenService");
 
 const InvalidInputError = require("../errors/InvalidInputError");
 
-messageService.createMessage = function(roomMember, incomingText) {
+messageService.createMessage = function (roomMember, incomingText) {
 	const text = ent.encode(incomingText);
 
 	if (!text || !text.length) {
@@ -40,6 +40,8 @@ messageService.createMessage = function(roomMember, incomingText) {
 		return RoomService.setRoomAttribute(roomMember, text);
 	} else if (/^\/magic8ball/i.test(text)) {
 		return magic8ball(roomMember, text); // Jordan's Magic 8 Ball, Bitches
+	} else if (/^\/soulsphere/i.test(text)) {
+		return soulSphere(roomMember, text); // Spooky soul sphere
 	} else if (/^\/roll/i.test(text)) {
 		return roll(roomMember, text);
 	} else if (/^\/show\s+:?\w+:?/i.test(text)) {
@@ -80,7 +82,7 @@ messageService.createMessage = function(roomMember, incomingText) {
 function broadcastMessage(message, verb = "messaged") {
 	return Message.findById(message._id)
 		.populate("author reactions")
-		.then(function(message) {
+		.then(function (message) {
 			socketio.io.to("room_" + message.room).emit("room", {
 				_id: message.room,
 				verb,
@@ -102,7 +104,7 @@ function stats(roomMember, text) {
 
 	if (match) {
 		const userNick = match[1];
-		return statsService.getStatsForUser(userNick, roomMember.room).then(function(stats) {
+		return statsService.getStatsForUser(userNick, roomMember.room).then(function (stats) {
 			return Message.create({
 				room: roomMember.room,
 				type: "stats",
@@ -112,7 +114,7 @@ function stats(roomMember, text) {
 		});
 	}
 
-	return statsService.getStats(roomMember).then(function(message) {
+	return statsService.getStats(roomMember).then(function (message) {
 		RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, message, "stats");
 	});
 }
@@ -124,7 +126,7 @@ function animation(roomMember, text) {
 
 function setUserBusy(roomMember, text) {
 	return RoomMember.find({ user: roomMember.user._id })
-		.then(function(memberships) {
+		.then(function (memberships) {
 			const user = roomMember.user;
 			const busy = !user.busy; // Flip busy status
 			const busyMessageMatches = text.match(/^\/(?:away|afk|busy)\s*(.+)/i);
@@ -132,7 +134,7 @@ function setUserBusy(roomMember, text) {
 
 			return [User.findByIdAndUpdate(user._id, { busy: busy, busyMessage: busyMessage }, { new: true }), memberships];
 		})
-		.spread(function(user, memberships) {
+		.spread(function (user, memberships) {
 			const message = [];
 			message.push(user.nick);
 			message.push(user.busy ? "is now away" : "is back");
@@ -174,7 +176,7 @@ function magic8ball(roomMember, text) {
 		"Very doubtful"
 	]);
 
-	setTimeout(function() {
+	setTimeout(function () {
 		const ballText = `:magic8ball: ${ballResponse}`;
 		const tokens = tokenService.tokenize(ent.decode(ballText));
 
@@ -191,6 +193,39 @@ function magic8ball(roomMember, text) {
 	const questionMatch = text.match(/\/magic8ball\s+(.+)/i);
 	if (questionMatch) {
 		question = ' shakes the magic 8 ball and asks "' + questionMatch[1] + '"';
+	}
+
+	return message(roomMember, roomMember.user.nick + question, "room");
+}
+
+function soulSphere(roomMember, text) {
+	Message.aggregate([
+		{ $match: { author: roomMember.user._id, room: roomMember.room, text: {$regex: /^[\w ]*$/} } },
+		{ $redact: { $cond: [{ $gt: [{ $strLenCP: "$text" }, 2] }, "$$KEEP", "$$PRUNE"] } },
+		{ $redact: { $cond: [{ $lt: [{ $strLenCP: "$text" }, 25] }, "$$KEEP", "$$PRUNE"] } },
+		{ $sample: { size: 1 } }
+	])
+		.exec()
+		.then(randomMessages => {
+			const randomMessage = randomMessages.length > 0 ? _.first(randomMessages) : "Nothing happens";
+			setTimeout(() => {
+				const ballText = `:soulsphere: ${randomMessage.text}`;
+				const tokens = tokenService.tokenize(ent.decode(ballText));
+
+				return Message.create({
+					room: roomMember.room,
+					author: null,
+					type: "8ball",
+					text: ballText,
+					tokens
+				}).then(broadcastMessage);
+			}, 3000);
+		});
+
+	let question = " shakes the soul sphere...";
+	const questionMatch = text.match(/\/soulsphere\s+(.+)/i);
+	if (questionMatch) {
+		question = ' shakes the soul sphere and asks "' + questionMatch[1] + '"';
 	}
 
 	return message(roomMember, roomMember.user.nick + question, "room");
@@ -286,7 +321,7 @@ function message(roomMember, text, type) {
 				author: type === "standard" ? roomMember.user : null
 			});
 		})
-		.then(function(message) {
+		.then(function (message) {
 			broadcastMessage(message);
 			saveInMentionedInboxes(message);
 			return populateMessage(message);
@@ -335,7 +370,7 @@ function code(roomMember, text) {
 }
 
 function fight(roomMember, text) {
-	return fightService.play(roomMember, text).then(function(fightResponse) {
+	return fightService.play(roomMember, text).then(function (fightResponse) {
 		if (fightResponse.isList) {
 			return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, fightResponse.message, "fight");
 		} else {
@@ -348,7 +383,7 @@ function fight(roomMember, text) {
 }
 
 function hangman(roomMember, text) {
-	return hangmanService.play(roomMember, text).then(function(hangmanResponse) {
+	return hangmanService.play(roomMember, text).then(function (hangmanResponse) {
 		if (hangmanResponse.isPrivate) {
 			return RoomService.messageUserInRoom(roomMember.user._id, roomMember.room, hangmanResponse.message, "hangman");
 		}
