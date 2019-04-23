@@ -199,7 +199,7 @@ function magic8ball(roomMember, text) {
 }
 
 function soulSphere(roomMember, text) {
-	const where = { author: roomMember.user._id, room: roomMember.room, text: { $regex: /^[\w ]{2,25}$/ } };
+	const where = { author: roomMember.user._id, room: roomMember.room, text: { $regex: /^[\w ]{2,50}$/ } };
 	Message.count(where)
 		.then(messageCount => Message.findOne(where).skip(Math.round(Math.random() * messageCount)))
 		.then(randomMessage => {
