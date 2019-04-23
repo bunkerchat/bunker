@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 import { updateEditedMessage, updateText } from "./chatInputReducer";
+import UploadButton from "../imageUpload/UploadButton.jsx";
 import { connect } from "react-redux";
 
 const removeNewlines = text => text.replace(/(\n|\r)+/, "");
@@ -10,6 +11,8 @@ const InputBox = styled.textarea`
 	border-radius: 0;
 	resize: none;
 	white-space: nowrap;
+	float: left;
+	width: calc(100% - 56px);
 
 	&.form-control:focus {
 		outline: none;
@@ -163,6 +166,7 @@ export class ChatInput extends React.Component {
 					onChange={this.onInputChange}
 					onKeyDown={this.onKeyDown}
 				/>
+				<UploadButton />
 			</div>
 		);
 	}

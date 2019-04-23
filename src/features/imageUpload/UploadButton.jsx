@@ -6,12 +6,18 @@ import { appendText } from "../input/chatInputReducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {loadImage} from "./imageLoader.js";
 import imageUpload from "./imageUpload.js";
+import theme from "../../constants/theme";
 
-const UploadContainer = styled.a`
+const UploadContainer = styled.span`
 	display: inline-block;
+	padding: .5rem 1rem;
 	background-color: transparent;
 	position: relative;
 	cursor: pointer;
+	
+	&:hover {
+		color: ${theme.colors.primary};
+	}
 `;
 
 const FileUpload = styled.input`
@@ -21,6 +27,15 @@ const FileUpload = styled.input`
 	width: 100%;
 	height: 100%;
 	opacity: 0;
+	cursor: pointer;
+	
+	&:hover {
+		color: ${theme.colors.primary};
+	}
+	
+	&::-webkit-file-upload-button {
+		cursor: pointer;
+	}
 `;
 
 const mapStateToProps = state => ({
@@ -58,11 +73,11 @@ class UploadButton extends React.Component {
 			return null;
 		}
 
-		const iconToRender = this.state.uploading ? "spinner" : "cloud-upload-alt";
+		const iconToRender = this.state.uploading ? "spinner" : "image";
 		const iconClasses = this.state.uploading ? "fa-spin" : "";
 
 		return (
-			<UploadContainer className="nav-item nav-link">
+			<UploadContainer>
 				<FontAwesomeIcon icon={iconToRender} className={iconClasses}/>
 				<FileUpload ref={el => this.fileUploadElement = el} type="file" name="image" accept="image/*"
 										onChange={this.uploadFile} />
