@@ -13,6 +13,7 @@ import { init } from "./features/chat/chatActions";
 import { userUpdated } from "./features/users/userActions";
 import { ping } from "./features/users/localUserActions";
 import { localRoomMemberUpdated } from "./features/users/localRoomMembersActions";
+import { imagePickSelectionsReceived } from "./features/imagePick/imagePickActions";
 
 const socket = io(window.url);
 
@@ -50,6 +51,11 @@ socket.on("user", socketMessage => {
 			// Add in user's _id because for some reason it's not sent down by server
 			dispatch(userUpdated({ ...socketMessage.data, _id: socketMessage._id }));
 			break;
+		case "messaged": {
+			if (socketMessage.data.type === "pick") {
+				dispatch(imagePickSelectionsReceived(socketMessage.data.message, socketMessage.data.data));
+			}
+		}
 	}
 });
 socket.on("user_roommember", socketMessage => {

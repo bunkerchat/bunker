@@ -9,6 +9,7 @@ import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
 import MessageControls from "../messageControls/MessageControls.jsx";
 import { getActiveRoomId, getSection } from "../../selectors/selectors.js";
+import ImagePickModal from "../imagePick/ImagePickModal.jsx";
 
 const Container = styled.div`
 	display: flex;
@@ -21,7 +22,8 @@ const mapStateToProps = state => ({
 	loaded: state.localUser.loaded,
 	section: getSection(state),
 	rooms: state.rooms,
-	activeRoomId: getActiveRoomId(state)
+	activeRoomId: getActiveRoomId(state),
+	imagePick: state.imagePick
 });
 
 const mapDispatchToProps = {
@@ -49,7 +51,7 @@ class Chat extends React.PureComponent {
 	}
 
 	render() {
-		const { loaded, section } = this.props;
+		const { loaded, section, imagePick } = this.props;
 
 		if (!loaded) {
 			return <div>Loading...</div>;
@@ -67,6 +69,7 @@ class Chat extends React.PureComponent {
 				<Room />
 				<EmoticonPicker />
 				<MessageControls />
+				{imagePick && <ImagePickModal/>}
 			</Container>
 		);
 	}

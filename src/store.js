@@ -14,6 +14,7 @@ import messages from "./features/message/messagesReducer";
 import chatInput from "./features/input/chatInputReducer";
 import emoticonPicker from "./features/emoticon/emoticonPickerReducer";
 import messageControls from "./features/messageControls/messageControlsReducer";
+import imagePick from "./features/imagePick/imagePickReducer";
 import log from "./features/chat/logReducer";
 
 const rootReducer = combineReducers({
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
 	chatInput,
 	emoticonPicker,
 	messageControls,
+	imagePick,
 	log
 });
 
