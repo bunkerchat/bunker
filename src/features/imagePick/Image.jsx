@@ -14,7 +14,7 @@ const Image = ({ image, selectImage }) => {
 	};
 
 	return (
-		<FixedHeightImage src={image} onClick={onSelectImage}/>
+		<FixedHeightImage className="p-2" src={image} onClick={onSelectImage}/>
 	);
 };
 
