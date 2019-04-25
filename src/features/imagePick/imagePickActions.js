@@ -1,5 +1,5 @@
-import { sendRoomMessage } from "../room/roomActions";
 import { getActiveRoomId } from "../../selectors/selectors";
+import { updateText } from "../input/chatInputReducer";
 
 export const imagePickSelectionsReceived = (message, images) => ({
 	type: "images/received",
@@ -11,10 +11,9 @@ export const selectImage = image => (dispatch, getState) => {
 	const state = getState();
 	const activeRoomId = getActiveRoomId(state);
 	const message = state.imagePick.message;
-	return dispatch(sendRoomMessage(activeRoomId, `${message} ${image}`))
-		.then(() => {
-			dispatch(closeImageSelections());
-		});
+
+	dispatch(updateText(activeRoomId, `${message} ${image} `));
+	dispatch(closeImageSelections());
 };
 
 // const testImages = [
