@@ -2,13 +2,31 @@ import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import theme from "../../constants/theme";
-import { showMessageControls } from "../messageControls/messageControlsActions";
+import { hideMessageControls, showMessageControls } from "../messageControls/messageControlsActions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Container = styled.div`
 	position: relative;
 	flex: 1;
 	min-height: 30px;
 	border: solid 1px transparent;
+	
+	.right-side-controls {
+		opacity: 0;
+		position: absolute;
+		top: 0;
+		right: 0;
+		padding-left: 150px;
+		background-color: ${theme.messageHoverBackground};
+	}
+	
+	&:hover {
+		background-color: ${theme.messageHoverBackground}
+	
+		.right-side-controls {
+			opacity: 1;
+		}
+	}
 
 	&.mention {
 		background-color: ${theme.mentionBackgroundColor};
@@ -22,32 +40,39 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = {
-	showMessageControls
+	showMessageControls,
+	hideMessageControls
 };
 
-class MessageBodyContainer extends React.Component {
-	onClick = event => {
-		this.props.showMessageControls(this.props.messageId, event.clientX - 10, event.clientY - 10);
+const MessageBodyContainer = ({ children, messageId, text, firstInSeries, localNick, isSelectedMessage, showMessageControls, hideMessageControls }) => {
+	const onControlsClick = event => {
+		if (!isSelectedMessage) {
+			showMessageControls(messageId, event.clientX - 10, event.clientY - 10);
+		} else {
+			hideMessageControls();
+		}
 	};
 
-	render() {
-		const { text, firstInSeries, localNick, isSelectedMessage } = this.props;
-		const isUserMentioned = testTextForNick(text, localNick);
+	const isUserMentioned = testTextForNick(text, localNick);
 
-		let border = "";
-		if (isSelectedMessage) {
-			border = "border border-primary";
-		} else if (firstInSeries) {
-			border = "border-top border-light";
-		}
-
-		return (
-			<Container className={`px-2 ${border} ${isUserMentioned ? "mention" : ""}`} onClick={this.onClick}>
-				{this.props.children}
-			</Container>
-		);
+	let border = "";
+	if (isSelectedMessage) {
+		border = "border border-primary";
+	} else if (firstInSeries) {
+		border = "border-top border-light";
 	}
-}
+
+	return (
+		<Container className={`${border} ${isUserMentioned ? "mention" : ""}`}>
+			{children}
+			<div className="right-side-controls px-2">
+				<button className="btn btn-link p-0" onClick={onControlsClick}>
+					<FontAwesomeIcon icon="cog"/>
+				</button>
+			</div>
+		</Container>
+	);
+};
 
 export default connect(
 	mapStateToProps,

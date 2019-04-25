@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
-import MessageControls from "../messageControls/MessageControls.jsx";
 import { getActiveRoomId, getSection } from "../../selectors/selectors.js";
 import ImagePickModal from "../imagePick/ImagePickModal.jsx";
 
@@ -68,7 +67,6 @@ class Chat extends React.PureComponent {
 				</div>
 				<Room />
 				<EmoticonPicker />
-				<MessageControls />
 				{imagePick && <ImagePickModal/>}
 			</Container>
 		);
