@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
 
 const getUsers = state => state.users;
-const getLocalUser = state => state.localUser;
+export const getLocalUser = state => state.localUser;
 const getRooms = state => state.rooms;
 const getLocalRoomMembersByRoom = state => state.localRoomMembers.byRoom;
 const getMessagesByRoom = state => state.messages.byRoom;

@@ -5,6 +5,8 @@ import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPick
 import { toggleReaction } from "../message/messageActions";
 import { hideMessageControls } from "./messageControlsActions";
 import styled from "styled-components";
+import { getActiveRoomId, getLocalUser } from "../../selectors/selectors";
+import { updateEditedMessage, updateText } from "../input/chatInputReducer";
 
 const Container = styled.div`
 	border-top: solid #eee 1px;
@@ -25,15 +27,21 @@ class MessageControls extends React.Component {
 		}
 	};
 
-	onClick = event => {
-		this.props.showEmoticonPicker(event.clientX, event.clientY, this.onEmoticonPick, this.onEmoticonHide);
+	onClickEdit = () => {
+		this.props.updateText(this.props.roomId, this.props.message.text);
+		this.props.updateEditedMessage(this.props.roomId, this.props.message);
+		this.props.hideMessageControls();
+	};
+
+	onClickReaction = event => {
+		this.props.showEmoticonPicker(event.clientX, event.clientY, "left", this.onEmoticonPick, this.onEmoticonHide, true);
 	};
 
 	onEmoticonPick = emoticonName => {
 		this.props.hideEmoticonPicker();
 		this.props.hideMessageControls();
 		if (emoticonName) {
-			this.props.toggleReaction(this.props.messageId, emoticonName);
+			this.props.toggleReaction(this.props.message._id, emoticonName);
 		}
 	};
 
@@ -42,10 +50,16 @@ class MessageControls extends React.Component {
 	};
 
 	render() {
+		const localMessage = this.props.localUser._id === this.props.message.author;
 		return (
 			<Container className="row no-gutters px-2 bg-light">
 				<div className="col text-right">
-					<button className="btn btn-link p-0" onClick={this.onClick}>
+					{localMessage && (
+						<button className="btn btn-link p-0 mr-2" onClick={this.onClickEdit}>
+							<FontAwesomeIcon icon={["far", "edit"]}/>
+						</button>
+					)}
+					<button className="btn btn-link p-0" onClick={this.onClickReaction}>
 						<FontAwesomeIcon icon={["far", "smile"]}/>
 					</button>
 				</div>
@@ -55,23 +69,18 @@ class MessageControls extends React.Component {
 }
 
 const mapStateToProps = state => ({
-	messageId: state.messageControls.messageId
+	roomId: getActiveRoomId(state),
+	localUser: getLocalUser(state)
 });
 
-const mapDispatchToProps = dispatch => ({
-	showEmoticonPicker: (x, y, onEmotionPick, onHide) => {
-		dispatch(showEmoticonPicker(x, y, "left", onEmotionPick, onHide, true));
-	},
-	hideEmoticonPicker: () => {
-		dispatch(hideEmoticonPicker());
-	},
-	hideMessageControls: () => {
-		dispatch(hideMessageControls());
-	},
-	toggleReaction: (messageId, emoticonName) => {
-		dispatch(toggleReaction(messageId, emoticonName));
-	}
-});
+const mapDispatchToProps = {
+	showEmoticonPicker,
+	hideEmoticonPicker,
+	hideMessageControls,
+	toggleReaction,
+	updateText,
+	updateEditedMessage
+};
 
 export default connect(
 	mapStateToProps,

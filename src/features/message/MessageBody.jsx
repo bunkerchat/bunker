@@ -57,7 +57,7 @@ class MessageBody extends React.Component {
 					{message.edited && <FontAwesomeIcon icon={["far", "edit"]} className="ml-2 my-1 text-muted"/>}
 				</div>
 				{isSelectedMessage && (
-					<MessageControls/>
+					<MessageControls message={message}/>
 				)}
 			</MessageBodyContainer>
 		);

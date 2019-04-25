@@ -21,7 +21,7 @@ const Container = styled.div`
 	}
 	
 	&:hover {
-		background-color: ${theme.messageHoverBackground}
+		background-color: ${theme.messageHoverBackground};
 	
 		.right-side-controls {
 			opacity: 1;
