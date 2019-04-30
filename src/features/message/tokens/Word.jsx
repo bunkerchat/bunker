@@ -1,5 +1,5 @@
 import React from "react";
 
-const Word = ({ token }) => <span dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Word = ({ value }) => <span dangerouslySetInnerHTML={{ __html: value }} />;
 
 export default Word;

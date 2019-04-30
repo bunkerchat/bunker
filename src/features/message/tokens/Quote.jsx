@@ -5,8 +5,8 @@ const Pre = styled.pre`
 	white-space: pre-wrap;
 `;
 
-const Quote = ({ token }) => (
-	<Pre className="p-2 mb-0 border border-dark" dangerouslySetInnerHTML={{ __html: token.value }} />
+const Quote = ({ value }) => (
+	<Pre className="p-2 mb-0 border border-dark" dangerouslySetInnerHTML={{ __html: value }} />
 );
 
 export default Quote;

@@ -22,11 +22,11 @@ const MessageTextContainer = styled.div`
 	}
 `;
 
-const Code = ({ token }) => <code dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Italics = ({ token }) => <em dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Bold = ({ token }) => <strong dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Spoiler = ({ token }) => <mark dangerouslySetInnerHTML={{ __html: token.value }} />;
-const Strikethrough = ({ token }) => <del dangerouslySetInnerHTML={{ __html: token.value }} />;
+const Code = ({ value }) => <code dangerouslySetInnerHTML={{ __html: value }}/>;
+const Italics = ({ value }) => <em dangerouslySetInnerHTML={{ __html: value }}/>;
+const Bold = ({ value }) => <strong dangerouslySetInnerHTML={{ __html: value }}/>;
+const Spoiler = ({ value }) => <mark dangerouslySetInnerHTML={{ __html: value }}/>;
+const Strikethrough = ({ value }) => <del dangerouslySetInnerHTML={{ __html: value }}/>;
 
 const tokenMap = {
 	quote: Quote,
@@ -45,7 +45,7 @@ const tokenMap = {
 
 const mapToMessage = (message, token, index) => {
 	const TokenType = tokenMap[token.type];
-	return <TokenType message={message} token={token} key={index + token.type + token.value} />;
+	return <TokenType message={message} value={token.value} key={index + token.type + token.value}/>;
 };
 
 export default class MessageTokens extends React.Component {
