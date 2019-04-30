@@ -2,8 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import theme from "../../constants/theme";
-import { hideMessageControls, showMessageControls } from "../messageControls/messageControlsActions";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import MessageControls from "../messageControls/MessageControls.jsx";
 
 const Container = styled.div`
 	position: relative;
@@ -13,11 +12,6 @@ const Container = styled.div`
 	
 	.right-side-controls {
 		opacity: 0;
-		position: absolute;
-		top: 0;
-		right: 0;
-		padding-left: 150px;
-		background-color: ${theme.messageHoverBackground};
 	}
 	
 	&:hover {
@@ -36,24 +30,11 @@ const Container = styled.div`
 
 const mapStateToProps = (state, props) => ({
 	localNick: state.localUser.nick,
-	isSelectedMessage: state.messageControls.messageId === props.messageId
+	isSelectedMessage: state.messageControls.messageId === props.message._id
 });
 
-const mapDispatchToProps = {
-	showMessageControls,
-	hideMessageControls
-};
-
-const MessageBodyContainer = ({ children, messageId, text, firstInSeries, localNick, isSelectedMessage, showMessageControls, hideMessageControls }) => {
-	const onControlsClick = event => {
-		if (!isSelectedMessage) {
-			showMessageControls(messageId, event.clientX - 10, event.clientY - 10);
-		} else {
-			hideMessageControls();
-		}
-	};
-
-	const isUserMentioned = testTextForNick(text, localNick);
+const MessageBodyContainer = ({ children, message, firstInSeries, localNick, isSelectedMessage}) => {
+	const isUserMentioned = testTextForNick(message.text, localNick);
 
 	let border = "";
 	if (isSelectedMessage) {
@@ -66,17 +47,14 @@ const MessageBodyContainer = ({ children, messageId, text, firstInSeries, localN
 		<Container className={`${border} ${isUserMentioned ? "mention" : ""}`}>
 			{children}
 			<div className="right-side-controls px-2">
-				<button className="btn btn-link p-0" onClick={onControlsClick}>
-					<FontAwesomeIcon icon="cog"/>
-				</button>
+				<MessageControls message={message}/>
 			</div>
 		</Container>
 	);
 };
 
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
+	mapStateToProps
 )(MessageBodyContainer);
 
 function testTextForNick(text, nick) {

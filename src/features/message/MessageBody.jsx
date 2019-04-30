@@ -8,7 +8,6 @@ import MessageTokens from "./MessageTokens.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MessageImages from "./MessageImages.jsx";
 import MessageBodyContainer from "./MessageBodyContainer.jsx";
-import MessageControls from "../messageControls/MessageControls.jsx";
 
 const MessageTime = styled.div`
 	width: 120px;
@@ -26,9 +25,9 @@ class MessageBody extends React.Component {
 	}
 
 	render() {
-		const { message, firstInSeries, author, isSelectedMessage } = this.props;
+		const { message, firstInSeries, author } = this.props;
 		return (
-			<MessageBodyContainer messageId={message._id} text={message.text} firstInSeries={firstInSeries}>
+			<MessageBodyContainer message={message} firstInSeries={firstInSeries}>
 				{firstInSeries && (
 					<div className="row d-md-none">
 						<div className="col">
@@ -56,9 +55,6 @@ class MessageBody extends React.Component {
 					)}
 					{message.edited && <FontAwesomeIcon icon={["far", "edit"]} className="ml-2 my-1 text-muted"/>}
 				</div>
-				{isSelectedMessage && (
-					<MessageControls message={message}/>
-				)}
 			</MessageBodyContainer>
 		);
 	}

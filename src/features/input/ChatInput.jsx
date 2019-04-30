@@ -3,6 +3,7 @@ import styled from "styled-components";
 import theme from "../../constants/theme";
 import { updateEditedMessage, updateText } from "./chatInputReducer";
 import { connect } from "react-redux";
+import { hideMessageControls } from "../messageControls/messageControlsActions";
 
 const removeNewlines = text => text.replace(/(\n|\r)+/, "");
 
@@ -27,7 +28,8 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = {
 	updateText,
-	updateEditedMessage
+	updateEditedMessage,
+	hideMessageControls
 };
 
 export class ChatInput extends React.Component {
@@ -141,6 +143,7 @@ export class ChatInput extends React.Component {
 
 			this.props.updateText(this.props.roomId, "");
 			this.props.updateEditedMessage(this.props.roomId, null);
+			this.props.hideMessageControls();
 		}, 25);
 	};
 

@@ -1,9 +1,7 @@
 const handlers = {
 	"messageControls/show": (state, action) => ({
 		...state,
-		messageId: action.messageId,
-		x: action.x,
-		y: action.y
+		messageId: action.messageId
 	}),
 	"messageControls/hide": state => ({
 		...state,
