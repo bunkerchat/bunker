@@ -12,6 +12,10 @@ import theme from "../../constants/theme";
 const Container = styled.div`
 	background-color: ${theme.messageHoverBackground};	
 	z-index: 1000;
+	
+	.btn {
+		font-size: 1.2rem;
+	}
 `;
 
 const MessageControls = ({ message, roomId, localUser, showEmoticonPicker, hideEmoticonPicker, toggleReaction, updateText, updateEditedMessage, showMessageControls, hideMessageControls }) => {

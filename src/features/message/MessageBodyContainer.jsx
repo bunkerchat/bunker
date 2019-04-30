@@ -12,7 +12,7 @@ const Container = styled.div`
 	
 	.right-side-controls {
 		position: absolute;
-		top: -5px;
+		bottom: 0;
 		right: 0;
 		opacity: 0;
 	}
