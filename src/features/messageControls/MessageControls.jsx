@@ -10,15 +10,8 @@ import styled from "styled-components";
 import theme from "../../constants/theme";
 
 const Container = styled.div`
-	position: absolute;
-	top: 5px;
-	right: 5px;
 	background-color: ${theme.messageHoverBackground};	
 	z-index: 1000;
-	
-	.btn {
-		font-size: 1.2rem;
-	}
 `;
 
 const MessageControls = ({ message, roomId, localUser, showEmoticonPicker, hideEmoticonPicker, toggleReaction, updateText, updateEditedMessage, showMessageControls, hideMessageControls }) => {
@@ -47,7 +40,7 @@ const MessageControls = ({ message, roomId, localUser, showEmoticonPicker, hideE
 
 	const localMessage = localUser._id === message.author;
 	return (
-		<Container className="border border-primary py-1 px-3">
+		<Container className="border border-primary px-3">
 			{localMessage && (
 				<button className="btn btn-link p-0 mr-2" onClick={onClickEdit}>
 					<FontAwesomeIcon icon={["far", "edit"]}/>

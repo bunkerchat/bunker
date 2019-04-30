@@ -11,6 +11,9 @@ const Container = styled.div`
 	border: solid 1px transparent;
 	
 	.right-side-controls {
+		position: absolute;
+		top: -5px;
+		right: 0;
 		opacity: 0;
 	}
 	
