@@ -49,7 +49,7 @@ class Header extends React.PureComponent {
 						})}
 					</ul>
 					<div className="ml-auto navbar-nav text-right">
-						{/*<UploadButton />*/}
+						<UploadButton />
 						<Link className="nav-item nav-link" to={`/2/settings`}>
 							<FontAwesomeIcon icon="cog" />
 						</Link>

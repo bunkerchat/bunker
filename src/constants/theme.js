@@ -80,7 +80,8 @@ export default _.assign(
 		mentionForegroundColor: "inherit",
 		mentionHeaderForegroundColor: colors.dark,
 		messageControlsBackground: colors.white,
-		messageHoverBackground: colors.light
+		messageHoverBackground: colors.light,
+		colors
 	},
 	overrides[window.theme]
 );
