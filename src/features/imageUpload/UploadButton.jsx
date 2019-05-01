@@ -6,12 +6,17 @@ import { appendText } from "../input/chatInputReducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {loadImage} from "./imageLoader.js";
 import imageUpload from "./imageUpload.js";
+import theme from "../../constants/theme";
 
-const UploadContainer = styled.a`
+const UploadContainer = styled.span`
 	display: inline-block;
 	background-color: transparent;
 	position: relative;
 	cursor: pointer;
+	
+	&:hover {
+		color: ${theme.colors.primary};
+	}
 `;
 
 const FileUpload = styled.input`
@@ -21,6 +26,16 @@ const FileUpload = styled.input`
 	width: 100%;
 	height: 100%;
 	opacity: 0;
+	overflow: hidden;
+	cursor: pointer;
+	
+	&:hover {
+		color: ${theme.colors.primary};
+	}
+	
+	&::-webkit-file-upload-button {
+		cursor: pointer;
+	}
 `;
 
 const mapStateToProps = state => ({
