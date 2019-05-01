@@ -13,6 +13,7 @@ describe("ChatInput", () => {
 		hideEmoticonPicker: jest.fn(),
 		updateText: jest.fn(),
 		updateEditedMessage: jest.fn(),
+		hideMessageControls: jest.fn(),
 		send: jest.fn()
 	};
 
