@@ -5,12 +5,12 @@ import { updateEditedMessage, updateText } from "./chatInputReducer";
 import { connect } from "react-redux";
 import { hideMessageControls } from "../messageControls/messageControlsActions";
 
-const removeNewlines = text => text.replace(/(\n|\r)+/, "");
+const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
 const InputBox = styled.textarea`
 	border-radius: 0;
 	resize: none;
-	white-space: nowrap;
+	overflow: hidden;
 
 	&.form-control:focus {
 		outline: none;
@@ -55,6 +55,12 @@ export class ChatInput extends React.Component {
 		}
 
 		this.props.updateText(this.props.roomId, text);
+
+		// Automatically expand the input box height if it needs to scroll
+		const {offsetHeight, scrollHeight} = this.inputRef.current;
+		if (offsetHeight < scrollHeight) {
+			this.inputRef.current.style.height = `${scrollHeight}px`;
+		}
 	};
 
 	onKeyDown = event => {
@@ -144,6 +150,7 @@ export class ChatInput extends React.Component {
 			this.props.updateText(this.props.roomId, "");
 			this.props.updateEditedMessage(this.props.roomId, null);
 			this.props.hideMessageControls();
+			this.inputRef.current.style.height = null; // Remove extra height, if any
 		}, 25);
 	};
 
