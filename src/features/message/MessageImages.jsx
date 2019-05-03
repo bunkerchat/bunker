@@ -6,38 +6,40 @@ import { connect } from "react-redux";
 const Image = styled.div`
 	img {
 		max-width: 100%;
-		max-height: 500px;
+		max-height: 350px;
 	}
 `;
+
+const MessageImages = ({ message, toggleMessageImagesVisible }) => {
+	const toggleVisible = event => {
+		event.stopPropagation();
+		toggleMessageImagesVisible(message);
+	};
+
+	if (!message.imagesVisible) return null;
+
+	const imageTokens = _.filter(message.tokens, { type: "image" });
+	return (
+		<div>
+			{imageTokens.map((token, index) => (
+				<Image key={index}>
+					<img src={token.value} alt={token.value} onClick={toggleVisible}/>
+				</Image>
+			))}
+			{message.linkMeta && message.linkMeta.image && (
+				<Image>
+					<img src={message.linkMeta.image} alt={message.linkMeta.title} onClick={toggleVisible}/>
+				</Image>
+			)}
+		</div>
+	);
+};
 
 const mapDispatchToProps = {
 	toggleMessageImagesVisible
 };
 
-class MessageImages extends React.Component {
-	toggleVisible = event => {
-		event.stopPropagation();
-		this.props.toggleMessageImagesVisible(this.props.message);
-	};
-
-	render() {
-		const { message } = this.props;
-		if (!message.imagesVisible) return null;
-
-		const imageTokens = _.filter(message.tokens, { type: "image" });
-		return (
-			<div>
-				{imageTokens.map((token, index) => (
-					<Image key={index}>
-						<img src={token.value} alt={token.value} onClick={this.toggleVisible} />
-					</Image>
-				))}
-			</div>
-		);
-	}
-}
-
 export default connect(
-	false,
+	null,
 	mapDispatchToProps
 )(MessageImages);
