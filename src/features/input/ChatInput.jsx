@@ -117,8 +117,8 @@ export class ChatInput extends React.Component {
 				this.props.updateEditedMessage(this.props.roomId, editedMessage);
 			}
 		} else if (event.key === "Enter") {
+			event.preventDefault();
 			if (this.props.emoticonPickerVisible) {
-				event.preventDefault();
 				this.onEmoticonPick(this.props.selectedEmoticon);
 			} else {
 				this.onSend();
@@ -150,7 +150,7 @@ export class ChatInput extends React.Component {
 			this.props.updateText(this.props.roomId, "");
 			this.props.updateEditedMessage(this.props.roomId, null);
 			this.props.hideMessageControls();
-			this.inputRef.current.style.height = null; // Remove extra height, if any
+			this.inputRef.current.style.removeProperty("height"); // Remove extra height, if any
 		}, 25);
 	};
 
