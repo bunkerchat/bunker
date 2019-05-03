@@ -5,7 +5,7 @@ import { getActiveRoomId } from "../../selectors/selectors";
 import { appendText } from "../input/chatInputReducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {loadImage} from "./imageLoader.js";
-import imageUpload from "./imageUpload.js";
+import {doSingleImageUpload} from "./imageUpload.js";
 import theme from "../../constants/theme";
 
 const UploadContainer = styled.span`
@@ -58,7 +58,7 @@ class UploadButton extends React.Component {
 
 		loadImage(file)
 			.then(loadedData => {
-				return imageUpload.doSingleImageUpload(loadedData.data.split(",")[1]);
+				return doSingleImageUpload(loadedData.data.split(",")[1]);
 			})
 			.then(imageUrl => {
 				this.props.appendText(this.props.activeRoomId, imageUrl);

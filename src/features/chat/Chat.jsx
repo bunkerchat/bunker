@@ -9,6 +9,7 @@ import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
 import { getActiveRoomId, getSection } from "../../selectors/selectors.js";
 import ImagePickModal from "../imagePick/ImagePickModal.jsx";
+import ImageUploadModal from "../imageUpload/ImageUploadModal.jsx";
 
 const Container = styled.div`
 	display: flex;
@@ -67,7 +68,8 @@ class Chat extends React.PureComponent {
 				</div>
 				<Room />
 				<EmoticonPicker />
-				{imagePick && <ImagePickModal/>}
+				{imagePick && <ImagePickModal />}
+				<ImageUploadModal />
 			</Container>
 		);
 	}
