@@ -23,14 +23,16 @@ const MessageImages = ({ message, toggleMessageImagesVisible }) => {
 		<div>
 			{imageTokens.map((token, index) => (
 				<Image key={index}>
-					<img src={token.value} alt={token.value} onClick={toggleVisible}/>
+					<img src={token.value} alt={token.value} onClick={toggleVisible} />
 				</Image>
 			))}
-			{message.linkMeta && message.linkMeta.image && (
-				<Image>
-					<img src={message.linkMeta.image} alt={message.linkMeta.title} onClick={toggleVisible}/>
-				</Image>
-			)}
+			{message.linkMeta &&
+				message.linkMeta.image && (
+					<Image>
+						<h3>{message.linkMeta.title}</h3>
+						<img src={message.linkMeta.image} alt={message.linkMeta.title} onClick={toggleVisible} />
+					</Image>
+				)}
 		</div>
 	);
 };
