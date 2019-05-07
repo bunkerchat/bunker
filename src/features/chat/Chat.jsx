@@ -16,6 +16,12 @@ const Container = styled.div`
 	flex-direction: column;
 	width: 100vw;
 	height: 100vh;
+	
+	input[type="text"],
+	select:focus,
+	textarea {
+		font-size: 16px;
+	}
 `;
 
 const mapStateToProps = state => ({
