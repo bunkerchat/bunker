@@ -23,7 +23,7 @@ export const useImagePasteWatcher = () => {
 
 		window.addEventListener("paste", pasteHandler);
 		return () => window.removeEventListener("paste", pasteHandler);
-	});
+	}, []);
 
 	return images;
 };
