@@ -31,10 +31,8 @@ class Settings extends React.PureComponent {
 							<option value="cerulean">Cerulean</option>
 							<option value="cosmo">Cosmo</option>
 							<option value="journal">Journal</option>
-							<option value="sandstone">Sandstone</option>
 							<option value="simplex">Simplex</option>
 							<option value="sketchy">Sketchy</option>
-							<option value="solar">Solar</option>
 							<option value="spacelab">Spacelab</option>
 							<option value="superhero">Superhero</option>
 						</select>
