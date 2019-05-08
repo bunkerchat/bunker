@@ -25,7 +25,7 @@ const ImagePickModal = ({ images, closeImageSelections }) => (
 			)}
 		</div>
 		<div className="modal-footer">
-			<button className="btn btn-default" onClick={closeImageSelections}>
+			<button className="btn btn-primary" onClick={closeImageSelections}>
 				{images.length > 0 ? "Cancel" : "Close"}
 			</button>
 		</div>

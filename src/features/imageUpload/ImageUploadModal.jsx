@@ -3,6 +3,12 @@ import { Modal } from "reactstrap";
 import { connect } from "react-redux";
 import { getImageFileUploads, setImageFilesToUpload, uploadImageFiles } from "./imageUploadReducer.js";
 import { useImagePasteWatcher } from "./useImagePasteWatcher.js";
+import styled from "styled-components";
+
+const FixedHeightImage = styled.img`
+	max-width: 100%;
+	max-height: 250px;
+`;
 
 const ImageUploadModal = ({ imageFiles, setImageFilesToUpload, uploadImageFiles }) => {
 	const pastedImages = useImagePasteWatcher();
@@ -25,13 +31,13 @@ const ImageUploadModal = ({ imageFiles, setImageFilesToUpload, uploadImageFiles 
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<div className="modal-body">
+			<div className="modal-body text-center">
 				{images.map((src, index) => (
-					<img src={src} key={index} />
+					<FixedHeightImage src={src} key={index} />
 				))}
 			</div>
 			<div className="modal-footer">
-				<button className="btn btn-default" onClick={uploadImageFiles}>
+				<button className="btn btn-primary" onClick={uploadImageFiles}>
 					Upload
 				</button>
 			</div>
