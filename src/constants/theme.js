@@ -12,11 +12,11 @@ if (document && document.styleSheets) {
 	const bootstrapStyleSheet = _.find(document.styleSheets, sheet => /bootstrap/.test(sheet.href));
 	if (bootstrapStyleSheet) {
 		const rootCssRule = _.find(bootstrapStyleSheet.cssRules, { selectorText: ":root" });
-		const rootCssAttributes = rootCssRule.cssText.match(/([a-z\-]+):(#\w+)/g);
+		const rootCssAttributes = rootCssRule.cssText.match(/([a-z\-]+):\s*(#\w+)/g);
 		colors = _.reduce(
 			rootCssAttributes,
 			(obj, attributeString) => {
-				const match = /([a-z][\w\-]+):(#\w+)/.exec(attributeString);
+				const match = /([a-z][\w\-]+):\s*(#\w+)/.exec(attributeString);
 				obj[match[1]] = match[2];
 				return obj;
 			},
