@@ -184,13 +184,13 @@ export function ChatInput({
 				updateEditedMessage(roomId, newEditedMessage);
 			}
 		} else if (event.key === "Enter") {
-			// don't `event.preventDefault();` outside
-			// `if (emoticonPickerVisible) { `
-			// it breaks onSend ios :catstare:
 			if (emoticonPickerVisible) {
 				event.preventDefault();
 				onEmoticonPick(selectedEmoticon);
 			} else {
+				if (!isMobile) {
+					event.preventDefault();
+				}
 				onSend();
 			}
 		} else if (event.key === "Escape") {
