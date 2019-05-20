@@ -1,9 +1,29 @@
-import React from "react";
-import styled from "styled-components";
-import theme from "../../constants/theme";
-import { updateEditedMessage, updateText } from "./chatInputReducer";
+import React, { useRef, useEffect } from "react";
 import { connect } from "react-redux";
-import { hideMessageControls } from "../messageControls/messageControlsActions";
+import { createStructuredSelector } from "reselect";
+import { updateEditedMessage, updateText } from "./chatInputReducer.js";
+import { hideMessageControls } from "../messageControls/messageControlsActions.js";
+import {
+	getActiveRoomId,
+	getCurrentRoomTextEmpty,
+	getEditedMessageForCurrentRoom,
+	getLocalMessages,
+	getTextForCurrentRoom
+} from "../../selectors/selectors.js";
+import styled from "styled-components";
+import theme from "../../constants/theme.js";
+import {
+	hideEmoticonPicker,
+	searchEmoticonPicker,
+	selectDownInEmoticonPicker,
+	selectLeftInEmoticonPicker,
+	selectRightInEmoticonPicker,
+	selectUpInEmoticonPicker,
+	showEmoticonPicker
+} from "../emoticon/emoticonPickerActions.js";
+import { sendRoomMessage } from "../room/roomActions.js";
+import { updateMessage } from "../message/messageActions.js";
+import { isMobile } from "../../constants/browserInfo.js";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -22,163 +42,204 @@ const InputBox = styled.textarea`
 	}
 `;
 
-const mapStateToProps = (state, props) => {
-	return state.chatInput.byRoom[props.roomId] || { text: "", editedMessage: null };
-};
-
-const mapDispatchToProps = {
+export function ChatInput({
+	// state
+	text,
+	editedMessage,
+	roomId,
+	emoticonPickerVisible,
+	selectedEmoticon,
+	localMessages,
 	updateText,
 	updateEditedMessage,
-	hideMessageControls
-};
+	hideMessageControls,
+	currentRoomTextEmpty,
 
-export class ChatInput extends React.Component {
-	ref = React.createRef();
+	// actions
+	searchEmoticonPicker,
+	showEmoticonPicker,
+	hideEmoticonPicker,
+	selectLeftEmoticonPicker,
+	selectRightEmoticonPicker,
+	selectUpEmoticonPicker,
+	selectDownEmoticonPicker,
+	send,
+	edit
+}) {
+	const ref = useRef();
+	const inputRef = useRef();
 
-	inputRef = React.createRef();
+	useEffect(
+		() => {
+			if (!currentRoomTextEmpty) return;
+			inputRef.current.style.removeProperty("height"); // Remove extra height, if any
+		},
+		[currentRoomTextEmpty]
+	);
 
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		if (this.props.text !== prevProps.text && this.inputRef.current) {
-			this.inputRef.current.focus();
-		}
-	}
-
-	onInputChange = event => {
+	function onInputChange(event) {
 		// remove  newlines here, so IOS gets a chance to autocorrect on enter
 		const text = removeNewlines(event.target.value);
 
-		if (this.props.emoticonPickerVisible) {
+		if (emoticonPickerVisible) {
 			const match = /:([A-z0-9\s]*)$/.exec(text);
 			if (match) {
-				this.props.searchEmoticonPicker(match[1]);
+				searchEmoticonPicker(match[1]);
 			}
 		}
 
-		this.props.updateText(this.props.roomId, text);
+		updateText(roomId, text);
 
 		// Automatically expand the input box height if it needs to scroll
-		const {offsetHeight, scrollHeight} = this.inputRef.current;
+		const { offsetHeight, scrollHeight } = inputRef.current;
 		if (offsetHeight < scrollHeight) {
-			this.inputRef.current.style.height = `${scrollHeight}px`;
+			inputRef.current.style.height = `${scrollHeight}px`;
 		}
-	};
+	}
 
-	onKeyDown = event => {
+	function onEmoticonPick(selected) {
+		if (selected) {
+			updateText(roomId, text.replace(/:\w*$/, `:${selected}:`));
+		}
+		hideEmoticonPicker();
+		inputRef.current.focus();
+	}
+
+	function sendMessage() {
+		// ios may have changed the text value, so get it right from the dom
+		const currentText = inputRef.current.value;
+		if (!currentText.trim().length) return;
+
+		if (editedMessage) {
+			edit({ ...editedMessage, text: currentText });
+		} else {
+			send(roomId, currentText);
+		}
+
+		updateText(roomId, "");
+		updateEditedMessage(roomId, null);
+		hideMessageControls();
+	}
+
+	function onSend() {
+		if (!isMobile) return sendMessage();
+
+		// so like whatever shit ios safari uses to know if a word is done being poked at
+		// needs to finish before react javascript shit runs
+		// hence the timeout
+		// 25 ms was a wild ass guess that just works
+		// if you take it out, the auto correct bullshit on ios stops working
+		setTimeout(sendMessage, 25);
+	}
+
+	function onKeyDown(event) {
 		if (event.key === ":") {
-			if (this.props.emoticonPickerVisible) {
-				this.props.hideEmoticonPicker();
+			if (emoticonPickerVisible) {
+				hideEmoticonPicker();
 			}
 			// picker not visible and user isn't already typing an emoticon
-			else if (!/:\w+$/.test(this.props.text)) {
-				this.props.showEmoticonPicker(this.ref.current.offsetLeft, this.ref.current.offsetTop, this.onEmoticonPick);
+			else if (!/:\w+$/.test(text)) {
+				showEmoticonPicker(ref.current.offsetLeft, ref.current.offsetTop, onEmoticonPick);
 			}
-		} else if (/Arrow|Tab/.test(event.key) && this.props.emoticonPickerVisible) {
+		} else if (/Arrow|Tab/.test(event.key) && emoticonPickerVisible) {
 			event.preventDefault();
 
 			// Move around within emoticon picker
 			if (event.key === "ArrowLeft") {
-				this.props.selectLeftEmoticonPicker();
+				selectLeftEmoticonPicker();
 			} else if (event.key === "ArrowRight") {
-				this.props.selectRightEmoticonPicker();
+				selectRightEmoticonPicker();
 			} else if (event.key === "ArrowUp") {
-				this.props.selectUpEmoticonPicker();
+				selectUpEmoticonPicker();
 			} else if (event.key === "ArrowDown") {
-				this.props.selectDownEmoticonPicker();
+				selectDownEmoticonPicker();
 			} else if (event.key === "Tab") {
 				if (event.shiftKey) {
-					this.props.selectLeftEmoticonPicker();
+					selectLeftEmoticonPicker();
 				} else {
-					this.props.selectRightEmoticonPicker();
+					selectRightEmoticonPicker();
 				}
 			}
 		} else if (/ArrowUp|ArrowDown/.test(event.key)) {
 			event.preventDefault();
 
 			// Edit
-			const currentIndex = this.props.editedMessage
-				? _.findIndex(this.props.localMessages, { _id: this.props.editedMessage._id })
-				: -1;
+			const currentIndex = editedMessage ? _.findIndex(localMessages, { _id: editedMessage._id }) : -1;
 
-			let editedMessage;
+			let newEditedMessage;
 			if (event.key === "ArrowUp") {
 				if (currentIndex > 0) {
-					editedMessage = this.props.localMessages[currentIndex - 1];
-				} else if (!this.props.editedMessage) {
-					editedMessage = _.last(this.props.localMessages);
+					newEditedMessage = localMessages[currentIndex - 1];
+				} else if (!newEditedMessage) {
+					newEditedMessage = _.last(localMessages);
 				}
 			} else if (event.key === "ArrowDown") {
-				if (currentIndex >= 0 && currentIndex < this.props.localMessages.length - 1) {
-					editedMessage = this.props.localMessages[currentIndex + 1];
+				if (currentIndex >= 0 && currentIndex < localMessages.length - 1) {
+					newEditedMessage = localMessages[currentIndex + 1];
 				}
 			}
 
-			if (editedMessage) {
-				this.props.updateText(this.props.roomId, editedMessage.text);
-				this.props.updateEditedMessage(this.props.roomId, editedMessage);
+			if (newEditedMessage) {
+				updateText(roomId, newEditedMessage.text);
+				updateEditedMessage(roomId, newEditedMessage);
 			}
 		} else if (event.key === "Enter") {
 			// don't `event.preventDefault();` outside
-			// `if (this.props.emoticonPickerVisible) { `
+			// `if (emoticonPickerVisible) { `
 			// it breaks onSend ios :catstare:
-			if (this.props.emoticonPickerVisible) {
+			if (emoticonPickerVisible) {
 				event.preventDefault();
-				this.onEmoticonPick(this.props.selectedEmoticon);
+				onEmoticonPick(selectedEmoticon);
 			} else {
-				this.onSend();
+				onSend();
 			}
 		} else if (event.key === "Escape") {
-			if (this.props.editedMessage) {
-				this.props.updateEditedMessage(this.props.roomId, null);
-			}
-		}
-	};
-
-	onSend = () => {
-		// so like whatever shit ios safari uses to know if a word is done being poked at
-		// needs to finish before react javascript shit runs
-		// hence the timeout
-		// 25 ms was a wild ass guess that just works
-		// if you take it out, the auto correct bullshit on ios stops working
-		setTimeout(() => {
-			const { text, editedMessage, edit, send, roomId } = this.props;
-
-			if (!text.trim().length) return;
-
 			if (editedMessage) {
-				edit({ ...editedMessage, text });
-			} else {
-				send(roomId, text);
+				updateEditedMessage(roomId, null);
 			}
-
-			this.props.updateText(this.props.roomId, "");
-			this.props.updateEditedMessage(this.props.roomId, null);
-			this.props.hideMessageControls();
-			this.inputRef.current.style.removeProperty("height"); // Remove extra height, if any
-		}, 25);
-	};
-
-	onEmoticonPick = selected => {
-		if (selected) {
-			this.props.updateText(this.props.roomId, this.props.text.replace(/:\w*$/, `:${selected}:`))
 		}
-		this.props.hideEmoticonPicker();
-		this.inputRef.current.focus();
-	};
-
-	render() {
-		return (
-			<div ref={this.ref}>
-				<InputBox
-					ref={this.inputRef}
-					rows="1"
-					className={`form-control ${!!this.props.editedMessage ? "editing" : ""}`}
-					value={this.props.text}
-					onChange={this.onInputChange}
-					onKeyDown={this.onKeyDown}
-				/>
-			</div>
-		);
 	}
+
+	return (
+		<div ref={ref}>
+			<InputBox
+				ref={inputRef}
+				rows="1"
+				className={`form-control ${!!editedMessage ? "editing" : ""}`}
+				value={text}
+				onChange={onInputChange}
+				onKeyDown={onKeyDown}
+			/>
+		</div>
+	);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChatInput);
+const mapStateToProps = createStructuredSelector({
+	roomId: getActiveRoomId,
+	emoticonPickerVisible: state => !!state.emoticonPicker.visible,
+	selectedEmoticon: state => state.emoticonPicker.selected,
+	localMessages: getLocalMessages,
+	text: getTextForCurrentRoom,
+	currentRoomTextEmpty: getCurrentRoomTextEmpty,
+	editedMessage: getEditedMessageForCurrentRoom
+});
+
+const mapDispatchToProps = {
+	updateText,
+	updateEditedMessage,
+	hideMessageControls,
+	searchEmoticonPicker,
+	showEmoticonPicker,
+	hideEmoticonPicker,
+	selectLeftEmoticonPicker: selectLeftInEmoticonPicker,
+	selectRightEmoticonPicker: selectRightInEmoticonPicker,
+	selectUpEmoticonPicker: selectUpInEmoticonPicker,
+	selectDownEmoticonPicker: selectDownInEmoticonPicker,
+	send: sendRoomMessage,
+	edit: updateMessage
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(ChatInput);
