@@ -1,10 +1,11 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { updateEditedMessage, updateText } from "./chatInputReducer.js";
 import { hideMessageControls } from "../messageControls/messageControlsActions.js";
 import {
 	getActiveRoomId,
+	getCurrentRoomTextEmpty,
 	getEditedMessageForCurrentRoom,
 	getLocalMessages,
 	getTextForCurrentRoom
@@ -52,6 +53,7 @@ export function ChatInput({
 	updateText,
 	updateEditedMessage,
 	hideMessageControls,
+	currentRoomTextEmpty,
 
 	// actions
 	searchEmoticonPicker,
@@ -66,6 +68,14 @@ export function ChatInput({
 }) {
 	const ref = useRef();
 	const inputRef = useRef();
+
+	useEffect(
+		() => {
+			if (!currentRoomTextEmpty) return;
+			inputRef.current.style.removeProperty("height"); // Remove extra height, if any
+		},
+		[currentRoomTextEmpty]
+	);
 
 	function onInputChange(event) {
 		// remove  newlines here, so IOS gets a chance to autocorrect on enter
@@ -101,20 +111,21 @@ export function ChatInput({
 		// hence the timeout
 		// 25 ms was a wild ass guess that just works
 		// if you take it out, the auto correct bullshit on ios stops working
-		setImmediate(() => {
-			if (!text.trim().length) return;
+		setTimeout(() => {
+			// ios may have changed the text value, so get it right from the dom
+			const currentText = inputRef.current.value;
+			if (!currentText.trim().length) return;
 
 			if (editedMessage) {
-				edit({ ...editedMessage, text });
+				edit({ ...editedMessage, text: currentText });
 			} else {
-				send(roomId, text);
+				send(roomId, currentText);
 			}
 
 			updateText(roomId, "");
 			updateEditedMessage(roomId, null);
 			hideMessageControls();
-			inputRef.current.style.removeProperty("height"); // Remove extra height, if any
-		});
+		}, 25);
 	}
 
 	function onKeyDown(event) {
@@ -205,6 +216,7 @@ const mapStateToProps = createStructuredSelector({
 	selectedEmoticon: state => state.emoticonPicker.selected,
 	localMessages: getLocalMessages,
 	text: getTextForCurrentRoom,
+	currentRoomTextEmpty: getCurrentRoomTextEmpty,
 	editedMessage: getEditedMessageForCurrentRoom
 });
 

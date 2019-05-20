@@ -53,6 +53,8 @@ export const getTextForCurrentRoom = createSelector(
 	(getChatForCurrentRoom = {}) => getChatForCurrentRoom.text
 );
 
+export const getCurrentRoomTextEmpty = createSelector([getTextForCurrentRoom], (text = "") => text.length === 0);
+
 export const getEditedMessageForCurrentRoom = createSelector(
 	[getChatForCurrentRoom],
 	(getChatForCurrentRoom = {}) => getChatForCurrentRoom.editedMessage
