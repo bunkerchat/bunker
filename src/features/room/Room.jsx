@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import ScrollingMessageList from "../message/ScrollingMessageList.jsx";
 import RoomMemberList from "../roomMember/RoomMemberList.jsx";
-// import ConnectedChatInput from "../input/ConnectedChatInput.jsx";
 import RoomTopic from "./RoomTopic.jsx";
 import { getActiveRoomId } from "../../selectors/selectors.js";
 import ChatInput from "../input/ChatInput.jsx";
