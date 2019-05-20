@@ -166,22 +166,22 @@ export function ChatInput({
 			// Edit
 			const currentIndex = editedMessage ? _.findIndex(localMessages, { _id: editedMessage._id }) : -1;
 
-			let editedMessage;
+			let newEditedMessage;
 			if (event.key === "ArrowUp") {
 				if (currentIndex > 0) {
-					editedMessage = localMessages[currentIndex - 1];
-				} else if (!editedMessage) {
-					editedMessage = _.last(localMessages);
+					newEditedMessage = localMessages[currentIndex - 1];
+				} else if (!newEditedMessage) {
+					newEditedMessage = _.last(localMessages);
 				}
 			} else if (event.key === "ArrowDown") {
 				if (currentIndex >= 0 && currentIndex < localMessages.length - 1) {
-					editedMessage = localMessages[currentIndex + 1];
+					newEditedMessage = localMessages[currentIndex + 1];
 				}
 			}
 
-			if (editedMessage) {
-				updateText(roomId, editedMessage.text);
-				updateEditedMessage(roomId, editedMessage);
+			if (newEditedMessage) {
+				updateText(roomId, newEditedMessage.text);
+				updateEditedMessage(roomId, newEditedMessage);
 			}
 		} else if (event.key === "Enter") {
 			// don't `event.preventDefault();` outside
