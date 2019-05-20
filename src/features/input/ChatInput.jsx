@@ -117,8 +117,11 @@ export class ChatInput extends React.Component {
 				this.props.updateEditedMessage(this.props.roomId, editedMessage);
 			}
 		} else if (event.key === "Enter") {
-			event.preventDefault();
+			// don't `event.preventDefault();` outside
+			// `if (this.props.emoticonPickerVisible) { `
+			// it breaks onSend ios :catstare:
 			if (this.props.emoticonPickerVisible) {
+				event.preventDefault();
 				this.onEmoticonPick(this.props.selectedEmoticon);
 			} else {
 				this.onSend();
