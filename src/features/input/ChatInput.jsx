@@ -129,7 +129,7 @@ export function ChatInput({
 		// hence the timeout
 		// 25 ms was a wild ass guess that just works
 		// if you take it out, the auto correct bullshit on ios stops working
-		setTimeout(sendMessage, 50);
+		setTimeout(sendMessage, 25);
 	}
 
 	function onKeyDown(event) {
