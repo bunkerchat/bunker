@@ -33,12 +33,31 @@ export const getRoomTopic = createSelector([getActiveRoom], room => {
 	};
 });
 
+const getChatByRoom = state => state.chatInput.byRoom;
+
 export const getLocalMessages = createSelector(
 	[getActiveRoom, getMessagesByRoom, getLocalUser],
 	(room, messagesByRoom, localUser) => {
 		if (!room) return [];
 		return _.filter(messagesByRoom[room._id], { author: localUser._id });
 	}
+);
+
+const getChatForCurrentRoom = createSelector(
+	[getActiveRoomId, getChatByRoom],
+	(activeRoomId, chatByRoomId) => chatByRoomId[activeRoomId]
+);
+
+export const getTextForCurrentRoom = createSelector(
+	[getChatForCurrentRoom],
+	(getChatForCurrentRoom = {}) => getChatForCurrentRoom.text
+);
+
+export const getCurrentRoomTextEmpty = createSelector([getTextForCurrentRoom], (text = "") => text.length === 0);
+
+export const getEditedMessageForCurrentRoom = createSelector(
+	[getChatForCurrentRoom],
+	(getChatForCurrentRoom = {}) => getChatForCurrentRoom.editedMessage
 );
 
 export const getSection = state => {
