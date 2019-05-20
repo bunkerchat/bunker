@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { updateEditedMessage, updateText } from "./chatInputReducer.js";
@@ -23,7 +23,7 @@ import {
 } from "../emoticon/emoticonPickerActions.js";
 import { sendRoomMessage } from "../room/roomActions.js";
 import { updateMessage } from "../message/messageActions.js";
-import React from "react";
+import { isMobile } from "../../constants/browserInfo.js";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -105,27 +105,31 @@ export function ChatInput({
 		inputRef.current.focus();
 	}
 
+	function sendMessage() {
+		// ios may have changed the text value, so get it right from the dom
+		const currentText = inputRef.current.value;
+		if (!currentText.trim().length) return;
+
+		if (editedMessage) {
+			edit({ ...editedMessage, text: currentText });
+		} else {
+			send(roomId, currentText);
+		}
+
+		updateText(roomId, "");
+		updateEditedMessage(roomId, null);
+		hideMessageControls();
+	}
+
 	function onSend() {
+		if (!isMobile) return sendMessage();
+
 		// so like whatever shit ios safari uses to know if a word is done being poked at
 		// needs to finish before react javascript shit runs
 		// hence the timeout
 		// 25 ms was a wild ass guess that just works
 		// if you take it out, the auto correct bullshit on ios stops working
-		setTimeout(() => {
-			// ios may have changed the text value, so get it right from the dom
-			const currentText = inputRef.current.value;
-			if (!currentText.trim().length) return;
-
-			if (editedMessage) {
-				edit({ ...editedMessage, text: currentText });
-			} else {
-				send(roomId, currentText);
-			}
-
-			updateText(roomId, "");
-			updateEditedMessage(roomId, null);
-			hideMessageControls();
-		}, 25);
+		setTimeout(sendMessage, 50);
 	}
 
 	function onKeyDown(event) {
