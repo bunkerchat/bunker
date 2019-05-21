@@ -14,9 +14,29 @@ import { Provider } from "react-redux";
 
 // Configure font-awesome
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faCog, faEllipsisH, faGavel, faComments, faCaretRight, faCaretDown, faCloudUploadAlt, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import {
+	faCog,
+	faEllipsisH,
+	faGavel,
+	faComments,
+	faCaretRight,
+	faCaretDown,
+	faCloudUploadAlt,
+	faSpinner
+} from "@fortawesome/free-solid-svg-icons";
 import { faSmile, faEdit } from "@fortawesome/free-regular-svg-icons";
-library.add(faCog, faEllipsisH, faGavel, faComments, faSmile, faEdit, faCaretRight, faCaretDown, faCloudUploadAlt, faSpinner);
+library.add(
+	faCog,
+	faEllipsisH,
+	faGavel,
+	faComments,
+	faSmile,
+	faEdit,
+	faCaretRight,
+	faCaretDown,
+	faCloudUploadAlt,
+	faSpinner
+);
 
 if (process.env.NODE_ENV !== "production") {
 	const whyDidYouRender = require("@welldone-software/why-did-you-render");
@@ -36,3 +56,16 @@ ReactDOM.render(
 	</Provider>,
 	document.getElementById("index")
 );
+
+// ReactDOM.createRoot(document.getElementById("index")).render(
+// 	<Provider store={store}>
+// 		<ConnectedRouter history={history}>
+// 			<>
+// 				<DocumentTitle />
+// 				<BunkerFavicon />
+// 				<Route exact path="/2" render={() => <Redirect to="/2/lobby" />} />
+// 				<Route path="/" component={Chat} />
+// 			</>
+// 		</ConnectedRouter>
+// 	</Provider>
+// );
