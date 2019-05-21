@@ -6,6 +6,7 @@ import { maxMessages } from "../../constants/chat";
 import { connect } from "react-redux";
 import MessageList from "./MessageList.jsx";
 import theme from "../../constants/theme";
+import { isIOS } from "../../constants/browserInfo.js";
 
 const MessageListContainer = styled.div`
 	flex: 1;
@@ -18,6 +19,7 @@ const MessageListContainer = styled.div`
 
 	// these enable touch scrolling on iOS / Android
 	-webkit-overflow-scrolling: touch;
+	padding-top: ${isIOS ? theme.top * 2 : "0"}px;
 	z-index: 0;
 `;
 
