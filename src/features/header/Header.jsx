@@ -24,7 +24,7 @@ class Header extends React.PureComponent {
 		const { rooms, localRoomMembersByRoom, totalUnreadMessageCount, anyUnreadMention } = this.props;
 		return (
 			<div>
-				<nav className="navbar navbar-expand navbar-dark bg-dark">
+				<nav className="navbar navbar-expand fixed-top navbar-dark bg-dark">
 					<Link className="navbar-brand" to="/2/lobby">
 						Bunker{" "}
 						{totalUnreadMessageCount > 0 && (

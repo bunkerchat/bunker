@@ -10,12 +10,14 @@ import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
 import { getActiveRoomId, getSection } from "../../selectors/selectors.js";
 import ImagePickModal from "../imagePick/ImagePickModal.jsx";
 import ImageUploadModal from "../imageUpload/ImageUploadModal.jsx";
+import theme from "../../constants/theme.js";
 
 const Container = styled.div`
 	display: flex;
 	flex-direction: column;
 	width: 100vw;
 	height: 100vh;
+	padding-top: ${theme.top}px;
 `;
 
 const mapStateToProps = state => ({

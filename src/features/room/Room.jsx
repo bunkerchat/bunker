@@ -36,8 +36,6 @@ class Room extends React.PureComponent {
 					{_.map(rooms, (room, roomId) => (
 						<ScrollingMessageList roomId={roomId} current={room.current} key={roomId} />
 					))}
-
-					{/*<ConnectedChatInput />*/}
 					<ChatInput />
 				</MessagingContainer>
 				<RoomMemberList />
