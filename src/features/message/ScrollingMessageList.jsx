@@ -19,7 +19,6 @@ const MessageListContainer = styled.div`
 
 	// these enable touch scrolling on iOS / Android
 	-webkit-overflow-scrolling: touch;
-	padding-top: ${isIOS ? theme.top * 2 : "0"}px;
 	z-index: 0;
 `;
 
