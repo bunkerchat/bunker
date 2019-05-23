@@ -11,6 +11,7 @@ import { getActiveRoomId, getSection } from "../../selectors/selectors.js";
 import ImagePickModal from "../imagePick/ImagePickModal.jsx";
 import ImageUploadModal from "../imageUpload/ImageUploadModal.jsx";
 import theme from "../../constants/theme.js";
+import Notify from "../notifications/Notify.jsx";
 
 const Container = styled.div`
 	display: flex;
@@ -62,6 +63,7 @@ class Chat extends React.PureComponent {
 		return (
 			<Container>
 				<Header />
+				<Notify/>
 				<div className={`${section === "lobby" ? "d-block" : "d-none"}`}>
 					<Lobby />
 				</div>

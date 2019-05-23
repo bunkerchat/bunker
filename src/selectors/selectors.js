@@ -7,6 +7,10 @@ const getLocalRoomMembersByRoom = state => state.localRoomMembers.byRoom;
 const getMessagesByRoom = state => state.messages.byRoom;
 export const getAuthorUser = (state, props) => state.users[props.authorId];
 export const getMessageAuthor = (state, props) => state.users[props.message.author];
+export const getLastMessage = state => state.messages.lastMessage;
+export const getNick = state => state.localUser.nick;
+export const getDesktopMentionNotifications = state => state.userSettings?.desktopMentionNotifications;
+export const getShowDesktopNotification = state => state.notifications.showDesktop;
 
 export const getActiveRoom = createSelector([getRooms], rooms => _.find(rooms, { current: true }));
 
@@ -36,10 +40,10 @@ export const getRoomTopic = createSelector([getActiveRoom], room => {
 const getChatByRoom = state => state.chatInput.byRoom;
 
 export const getLocalMessages = createSelector(
-	[getActiveRoom, getMessagesByRoom, getLocalUser],
-	(room, messagesByRoom, localUser) => {
-		if (!room) return [];
-		return _.filter(messagesByRoom[room._id], { author: localUser._id });
+	[getActiveRoomId, getMessagesByRoom, getLocalUser],
+	(activeRoomId, messagesByRoom, localUser) => {
+		if (!activeRoomId) return [];
+		return _.filter(messagesByRoom[activeRoomId], { author: localUser._id });
 	}
 );
 
@@ -91,3 +95,29 @@ export const getSortedRoomMemberUsers = createSelector([getUsers, getRoomMembers
 		["desc", "desc", "asc"]
 	);
 });
+
+export const getLastMessageContainsMention = createSelector([getLastMessage, getNick], (lastMessage, nick) => {
+	if (!lastMessage) return;
+
+	const hasMention = lastMessage.tokens.some(token => {
+		if (token.type !== "word") return false;
+		return token.value.includes(nick) || token.value.includes("@all");
+	});
+
+	if (hasMention) return lastMessage;
+});
+
+export const getLastMentionRoomName = createSelector(
+	[getLastMessageContainsMention, getRooms],
+	(lastMessageMention = {}, rooms = {}) => rooms[lastMessageMention.room]?.name
+);
+
+export const getLastMentionAuthorNick = createSelector(
+	[getLastMessageContainsMention, getUsers],
+	(lastMessageMention = {}, users = {}) => users[lastMessageMention.author]?.nick
+);
+
+export const getLastMentionText = createSelector(
+	[getLastMessageContainsMention],
+	(lastMessageMention = {}) => lastMessageMention.text
+);

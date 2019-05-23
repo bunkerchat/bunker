@@ -29,6 +29,7 @@ const handlers = {
 		const message = parseMessage(action.message);
 		return {
 			...state,
+			lastMessage: message,
 			byRoom: {
 				...state.byRoom,
 				[message.room]: _.uniqBy([...state.byRoom[message.room], message], "_id")
