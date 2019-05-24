@@ -29,16 +29,19 @@ viewController.index = function(req, res) {
 viewController.version2 = (req, res) => {
 	const userId = req.session.userId;
 
-	return Promise.join(UserSettings.findOne({ user: userId }), emoticonService.getEmoticonNamesFromDisk()).spread(
-		(userSettings, emoticons) => {
-			res.render("v2", {
-				config,
-				userId,
-				userSettings,
-				emoticons
-			});
-		}
-	);
+	return Promise.join(
+		UserSettings.findOne({ user: userId }),
+		emoticonService.getEmoticonNamesFromDisk(),
+		versionService.getBundleV2()
+	).spread((userSettings, emoticons, javascript) => {
+		res.render("v2", {
+			config,
+			userId,
+			userSettings,
+			emoticons,
+			javascript
+		});
+	});
 };
 
 viewController.debug = function(req, res) {
@@ -60,13 +63,12 @@ viewController.debug = function(req, res) {
 viewController.login = function(req, res) {
 	// If we don't have a userId and we haven't already made this loop, keep them here on the login page.
 	const navigateToLoginPage = !req.session.userId && !req.session.loginRedirect;
-	const { directTo } = (req.query || {});
+	const { directTo } = req.query || {};
 
-	if(navigateToLoginPage) {
+	if (navigateToLoginPage) {
 		req.session.loginRedirect = false;
 		res.render("login", { directTo });
-	}
-	else {
+	} else {
 		req.session.loginRedirect = true;
 		res.redirect(directTo ? directTo : "/");
 	}

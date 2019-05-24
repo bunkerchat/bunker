@@ -22,7 +22,10 @@
 	window.theme = '<%= userSettings.theme || 'cerulean' %>';
 	window.emoticonNames = <%- JSON.stringify(emoticons) %>;
 </script>
-<script src="/dist/main.bundle.js"></script>
-<script src="/dist/vendors~main.bundle.js"></script>
+
+<% javascript.forEach(js => { %>
+	<script src="/dist/<%- js %>"></script>
+<% }); %>
+
 </body>
 </html>

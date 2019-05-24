@@ -78,6 +78,21 @@ function getBundle() {
 		.catch(() => []);
 }
 
+let bundleCacheV2;
+function getBundleV2() {
+	if (bundleCacheV2) return Promise.resolve(bundleCacheV2);
+
+	return fs
+		.readdirAsync("./dist")
+		.then(bundledFiles => {
+			bundleCacheV2 = bundledFiles.filter(file => !file.includes(".map"));
+			return bundleCacheV2
+		})
+		.catch(() => []);
+}
+
+versionService.getBundleV2 = getBundleV2;
+
 var gitHashCache;
 function getGitHash() {
 	if (gitHashCache) return Promise.resolve(gitHashCache);
