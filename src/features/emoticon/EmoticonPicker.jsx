@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import { hideEmoticonPicker, searchEmoticonPicker } from "./emoticonPickerActions";
 import styled from "styled-components";
 import EmoticonCategory from "./EmoticonCategory.jsx";
@@ -29,25 +30,7 @@ const Picker = styled.div`
 	z-index: 1006;
 `;
 
-const mapStateToProps = state => ({
-	visible: state.emoticonPicker.visible,
-	x: state.emoticonPicker.x,
-	y: state.emoticonPicker.y,
-	direction: state.emoticonPicker.direction,
-	onPick: state.emoticonPicker.onPick,
-	onHide: state.emoticonPicker.onHide,
-	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
-	selectedEmoticon: state.emoticonPicker.selected,
-	searchValue: state.emoticonPicker.search,
-	searchInputVisible: state.emoticonPicker.searchInputVisible
-});
-
-const mapDispatchToProps = {
-	hideEmoticonPicker,
-	searchEmoticonPicker
-};
-
-class EmoticonPicker extends React.PureComponent {
+class EmoticonPicker extends React.Component {
 	ref = React.createRef();
 
 	componentDidMount() {
@@ -120,6 +103,24 @@ class EmoticonPicker extends React.PureComponent {
 		);
 	}
 }
+
+const mapStateToProps = createStructuredSelector({
+	visible: state => state.emoticonPicker.visible,
+	x: state => state.emoticonPicker.x,
+	y: state => state.emoticonPicker.y,
+	direction: state => state.emoticonPicker.direction,
+	onPick: state => state.emoticonPicker.onPick,
+	onHide: state => state.emoticonPicker.onHide,
+	filteredEmoticons: state => state.emoticonPicker.filteredEmoticons,
+	selectedEmoticon: state => state.emoticonPicker.selected,
+	searchValue: state => state.emoticonPicker.search,
+	searchInputVisible: state => state.emoticonPicker.searchInputVisible
+});
+
+const mapDispatchToProps = {
+	hideEmoticonPicker,
+	searchEmoticonPicker
+};
 
 export default connect(
 	mapStateToProps,

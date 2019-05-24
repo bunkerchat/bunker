@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Emoticon from "./Emoticon.jsx";
+import { LazyLoadComponent } from "react-lazy-load-image-component";
 
 const Container = styled.div`
 	display: flex;
