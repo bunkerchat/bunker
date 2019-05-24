@@ -26,11 +26,11 @@ const Nick = styled.a`
 const mapStateToProps = (state, props) => {
 	return {
 		roomId: getActiveRoomId(state),
-		nick: (state.users[props.userId] || {}).nick,
-		email: (state.users[props.userId] || {}).email,
-		connected: (state.users[props.userId] || {}).connected,
-		present: (state.users[props.userId] || {}).present,
-		typingIn: (state.users[props.userId] || {}).typingIn
+		nick: state.users[props.userId]?.nick,
+		email: state.users[props.userId]?.email,
+		connected: state.users[props.userId]?.connected,
+		present: state.users[props.userId]?.present,
+		typingIn: state.users[props.userId]?.typingIn
 	};
 };
 
@@ -49,15 +49,20 @@ class RoomMember extends React.Component {
 			<Container>
 				{connected && typingIn === roomId ? (
 					<IconContainer>
-						<FontAwesomeIcon icon="ellipsis-h"/>
+						<FontAwesomeIcon icon="ellipsis-h" />
 					</IconContainer>
 				) : (
-					<UserImage email={email} connected={connected} present={present}/>
+					<UserImage email={email} connected={connected} present={present} />
 				)}
-				<Nick onClick={this.onClickNick} className="ml-2">{nick}</Nick>
+				<Nick onClick={this.onClickNick} className="ml-2">
+					{nick}
+				</Nick>
 			</Container>
 		);
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RoomMember);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(RoomMember);

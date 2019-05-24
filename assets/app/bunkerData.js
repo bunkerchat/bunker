@@ -231,12 +231,12 @@ app.factory('bunkerData', function ($rootScope, $q, $window, $timeout, $notifica
 				io.socket.emitAsync('/user/current/typing', { typingIn: roomId });
 			}
 
-			bunkerData.cancelBroadcastTyping();
-			typingTimeout = $timeout(function () {
-				bunkerData.user.typingIn = null;
-				io.socket.emitAsync('/user/current/typing', { typingIn: null });
-				typingTimeout = null;
-			}, 3000);
+			// bunkerData.cancelBroadcastTyping();
+			// typingTimeout = $timeout(function () {
+			// 	bunkerData.user.typingIn = null;
+			// 	io.socket.emitAsync('/user/current/typing', { typingIn: null });
+			// 	typingTimeout = null;
+			// }, 3000);
 		},
 		broadcastPresent: function (present) {
 			if (present == bunkerData.user.present) return;

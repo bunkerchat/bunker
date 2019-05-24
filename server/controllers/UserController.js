@@ -198,10 +198,28 @@ module.exports.activity = (req, res) => {
 		.catch(log.error);
 };
 
+const usersTyping = {};
+
+const clearUserTyping = req =>
+	setTimeout(() => {
+		const userId = req.session.userId;
+		delete usersTyping[userId];
+		userActivity(req, { typingIn: null });
+	}, 3000);
+
 module.exports.typing = (req, res) => {
-	userActivity(req, { typingIn: req.body.typingIn })
-		.then(() => res.ok())
-		.catch(res.serverError);
+	const userId = req.session.userId;
+
+	if (usersTyping[userId]) {
+		clearTimeout(usersTyping[userId]);
+	} else {
+		userActivity(req, { typingIn: req.body.typingIn })
+			.then(() => res.ok())
+			.catch(res.serverError);
+	}
+
+	// clear typing notification after 3 seconds
+	usersTyping[userId] = clearUserTyping(req);
 };
 
 module.exports.present = (req, res) => {

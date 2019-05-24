@@ -1,4 +1,5 @@
 import { emit } from "../../api";
+import { getActiveRoomId } from "../../selectors/selectors.js";
 
 export function roomUpdated(room) {
 	return { type: "room/updated", room };
@@ -44,3 +45,9 @@ export function loadRoomMessages(roomId, skip) {
 		);
 	};
 }
+
+export const sendTypingNotification = () => (dispatch, getState) => {
+	const state = getState();
+	const activeRoomId = getActiveRoomId(state);
+	return emit("/user/current/typing", { typingIn: activeRoomId });
+};
