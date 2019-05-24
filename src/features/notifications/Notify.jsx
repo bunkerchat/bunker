@@ -6,7 +6,8 @@ import {
 	getDesktopMentionNotifications,
 	getLastMentionAuthorNick,
 	getLastMentionRoomName,
-	getLastMentionText
+	getLastMentionText,
+	getShowNotification
 } from "../../selectors/selectors.js";
 
 function Notify({
@@ -14,7 +15,8 @@ function Notify({
 	desktopMentionNotifications,
 	lastMentionRoomName,
 	lastMentionAuthorNick,
-	lastMentionText
+	lastMentionText,
+	showNotification
 }) {
 	if (!desktopMentionNotifications) return null;
 
@@ -32,7 +34,7 @@ function Notify({
 
 	return (
 		<Notification
-			ignore={!lastMentionText}
+			ignore={!showNotification}
 			title={notificationTitle}
 			onShow={onShow}
 			onClick={onClick}
@@ -47,11 +49,11 @@ const mapStateToProps = createStructuredSelector({
 	desktopMentionNotifications: getDesktopMentionNotifications,
 	lastMentionRoomName: getLastMentionRoomName,
 	lastMentionAuthorNick: getLastMentionAuthorNick,
-	lastMentionText: getLastMentionText
+	lastMentionText: getLastMentionText,
+	showNotification: getShowNotification
 });
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 export default connect(
 	mapStateToProps,

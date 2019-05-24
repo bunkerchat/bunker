@@ -5,6 +5,7 @@ export const getLocalUser = state => state.localUser;
 const getRooms = state => state.rooms;
 const getLocalRoomMembersByRoom = state => state.localRoomMembers.byRoom;
 const getMessagesByRoom = state => state.messages.byRoom;
+const getLocalUserPresent = state => state.localUser.present;
 export const getAuthorUser = (state, props) => state.users[props.authorId];
 export const getMessageAuthor = (state, props) => state.users[props.message.author];
 export const getLastMessage = state => state.messages.lastMessage;
@@ -101,11 +102,16 @@ export const getLastMessageContainsMention = createSelector([getLastMessage, get
 
 	const hasMention = lastMessage.tokens.some(token => {
 		if (token.type !== "word") return false;
-		return token.value.includes(nick) || token.value.includes("@all");
+		return token.value.toUpperCase().includes(nick.toUpperCase()) || token.value.includes("@all");
 	});
 
 	if (hasMention) return lastMessage;
 });
+
+export const getShowNotification = createSelector(
+	[getLastMessageContainsMention, getLocalUserPresent],
+	(lastMessage, localUserPresent) => !!lastMessage && !localUserPresent
+);
 
 export const getLastMentionRoomName = createSelector(
 	[getLastMessageContainsMention, getRooms],
