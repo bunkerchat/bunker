@@ -13,8 +13,6 @@ const MemberListContainer = styled.div`
 `;
 
 function RoomMemberList({ sortedRoomMemberUserIds }) {
-	console.log('...sortedRoomMemberUserIds', sortedRoomMemberUserIds)
-
 	return (
 		<MemberListContainer className="border-left d-none d-md-block">
 			<ul className="list-group list-group-flush">
