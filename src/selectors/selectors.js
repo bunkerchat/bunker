@@ -13,6 +13,8 @@ export const getNick = state => state.localUser.nick;
 export const getDesktopMentionNotifications = state => state.userSettings?.desktopMentionNotifications;
 export const getShowDesktopNotification = state => state.notifications.showDesktop;
 
+export const getRoomIds = createSelector([getRooms], (rooms = {}) => Object.keys(rooms));
+
 export const getActiveRoom = createSelector([getRooms], rooms => _.find(rooms, { current: true }));
 
 export const getActiveRoomId = createSelector([getActiveRoom], (activeRoom = {}) => activeRoom._id);
@@ -127,3 +129,11 @@ export const getLastMentionText = createSelector(
 	[getLastMessageContainsMention],
 	(lastMessageMention = {}) => lastMessageMention.text
 );
+
+export const getRoomIsCurrent = roomId => createSelector([getActiveRoomId], activeRoomId => activeRoomId === roomId);
+
+export const getRoomName = roomId => state => getRooms(state)[roomId]?.name;
+
+export const getUnreadMention = roomId => state => getLocalRoomMembersByRoom(state)[roomId]?.unreadMention;
+
+export const getUnreadMessageCount = roomId => state => getLocalRoomMembersByRoom(state)[roomId]?.unreadMessageCount;

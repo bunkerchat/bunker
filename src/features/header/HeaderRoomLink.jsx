@@ -1,7 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
-import UnreadMessageBadge from "./UnreadMessageBadge.jsx";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { getRoomIsCurrent, getRoomName, getUnreadMention, getUnreadMessageCount } from "../../selectors/selectors.js";
+import UnreadMessageBadge from "./HeaderRoomLink.jsx";
+import { Link } from "react-router-dom";
+
+const RoomListItem = styled.li`
+	position: relative;
+`;
 
 const FloatingRightBadge = styled.div`
 	position: absolute;
@@ -9,10 +16,19 @@ const FloatingRightBadge = styled.div`
 	right: -3px;
 `;
 
-export default class HeaderRoomLink extends React.PureComponent {
-	render() {
-		const { roomId, roomName, unreadMention, unreadMessageCount } = this.props;
-		return (
+function HeaderRoomLink({
+	// props
+	roomId,
+
+	//state
+	roomName,
+	current,
+	name,
+	unreadMention,
+	unreadMessageCount
+}) {
+	return (
+		<RoomListItem className={`nav-item px-lg-3 ${current ? "active" : ""}`}>
 			<Link className="nav-link" to={`/2/room/${roomId}`}>
 				{roomName}{" "}
 				{unreadMessageCount > 0 && (
@@ -23,6 +39,17 @@ export default class HeaderRoomLink extends React.PureComponent {
 					</FloatingRightBadge>
 				)}
 			</Link>
-		);
-	}
+		</RoomListItem>
+	);
 }
+
+const makeMapStateToProps = (initialState, { roomId }) => {
+	return createStructuredSelector({
+		current: getRoomIsCurrent(roomId),
+		roomName: getRoomName(roomId),
+		unreadMention: getUnreadMention(roomId),
+		unreadMessageCount: getUnreadMessageCount(roomId)
+	});
+};
+
+export default connect(makeMapStateToProps)(HeaderRoomLink);
