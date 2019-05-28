@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { getRoomIsCurrent, getRoomName, getUnreadMention, getUnreadMessageCount } from "../../selectors/selectors.js";
-import UnreadMessageBadge from "./HeaderRoomLink.jsx";
+import UnreadMessageBadge from "./UnreadMessageBadge.jsx";
 import { Link } from "react-router-dom";
 
 const RoomListItem = styled.li`
