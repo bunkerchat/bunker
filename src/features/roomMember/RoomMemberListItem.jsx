@@ -2,7 +2,9 @@ import React from "react";
 import RoomMember from "./RoomMember.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
+import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
+import { getRoomMemberRoleForCurrentRoomByUserId } from "../../selectors/selectors.js";
 
 const ListItem = styled.li`
 	&.disabled {
@@ -10,31 +12,33 @@ const ListItem = styled.li`
 	}
 `;
 
-const mapStateToProps = (state, props) => ({
-	hasUser: !!state.users[props.userId],
-	connected: (state.users[props.userId] || {}).connected
-});
+function RoomMemberListItem({ role, connected, userId, hasUser }) {
+	if (!hasUser) return null;
 
-class RoomMemberListItem extends React.Component {
-	render() {
-		const { role, connected, userId, hasUser } = this.props;
-		if (!hasUser) return null;
-
-		return (
-			<ListItem
-				className={`list-group-item p-2 d-flex justify-content-between align-items-center ${
-					!connected ? "disabled" : ""
-				}`}
-			>
-				<RoomMember userId={userId} />
-				{role === "administrator" ? (
-					<FontAwesomeIcon icon="gavel" />
-				) : role === "moderator" ? (
-					<FontAwesomeIcon icon="comments" />
-				) : null}
-			</ListItem>
-		);
-	}
+	return (
+		<ListItem
+			className={`list-group-item p-2 d-flex justify-content-between align-items-center ${
+				!connected ? "disabled" : ""
+			}`}
+		>
+			<RoomMember userId={userId} />
+			{role === "administrator" ? (
+				<FontAwesomeIcon icon="gavel" />
+			) : role === "moderator" ? (
+				<FontAwesomeIcon icon="comments" />
+			) : null}
+		</ListItem>
+	);
 }
+
+const mapStateToProps = (initialState, initialProps) => {
+	const roomMemberRole = getRoomMemberRoleForCurrentRoomByUserId(initialProps.userId);
+
+	return createStructuredSelector({
+		role: roomMemberRole,
+		hasUser: state => !!state.users[initialProps.userId],
+		connected: state => (state.users[initialProps.userId] || {}).connected
+	});
+};
 
 export default connect(mapStateToProps)(RoomMemberListItem);

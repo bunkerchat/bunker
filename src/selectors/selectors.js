@@ -99,6 +99,17 @@ export const getSortedRoomMemberUsers = createSelector([getUsers, getRoomMembers
 	);
 });
 
+export const getSortedRoomMemberUserIds = createSelector([getSortedRoomMemberUsers], roomMemberUsers =>
+	roomMemberUsers.map(roomMemberUser => roomMemberUser.user)
+);
+
+export const getRoomMembersForCurrentRoomHash = createSelector([getRoomMembers], roomMembers =>
+	_.keyBy(roomMembers, "user")
+);
+
+export const getRoomMemberRoleForCurrentRoomByUserId = userId =>
+	createSelector([getRoomMembersForCurrentRoomHash], roomMembersHash => roomMembersHash[userId].role);
+
 export const getLastMessageContainsMention = createSelector([getLastMessage, getNick], (lastMessage, nick) => {
 	if (!lastMessage) return;
 

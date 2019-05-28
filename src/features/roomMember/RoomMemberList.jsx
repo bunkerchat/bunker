@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import theme from "../../constants/theme";
 import styled from "styled-components";
 import RoomMemberListItem from "./RoomMemberListItem.jsx";
-import { getSortedRoomMemberUsers } from "../../selectors/selectors.js";
+import { getSortedRoomMemberUserIds } from "../../selectors/selectors.js";
 
 const MemberListContainer = styled.div`
 	flex: 0 0 ${theme.memberList}px;
@@ -12,26 +12,26 @@ const MemberListContainer = styled.div`
 	overflow-y: auto;
 `;
 
-const mapStateToProps = state => ({
-	sortedRoomMemberUsers: getSortedRoomMemberUsers(state)
-});
+function RoomMemberList({ sortedRoomMemberUserIds }) {
+	console.log('...sortedRoomMemberUserIds', sortedRoomMemberUserIds)
 
-class RoomMemberList extends React.Component {
-	static defaultProps = {
-		sortedRoomMemberUsers: []
-	};
-
-	render() {
-		return (
-			<MemberListContainer className="border-left d-none d-md-block">
-				<ul className="list-group list-group-flush">
-					{this.props.sortedRoomMemberUsers.map(roomMemberUser => (
-						<RoomMemberListItem userId={roomMemberUser.user} role={roomMemberUser.role} key={roomMemberUser._id} />
-					))}
-				</ul>
-			</MemberListContainer>
-		);
-	}
+	return (
+		<MemberListContainer className="border-left d-none d-md-block">
+			<ul className="list-group list-group-flush">
+				{sortedRoomMemberUserIds.map(id => (
+					<RoomMemberListItem key={id} userId={id}  />
+				))}
+			</ul>
+		</MemberListContainer>
+	);
 }
+
+RoomMemberList.defaultProps = {
+	sortedRoomMemberUserIds: []
+};
+
+const mapStateToProps = state => ({
+	sortedRoomMemberUserIds: getSortedRoomMemberUserIds(state)
+});
 
 export default connect(mapStateToProps)(RoomMemberList);

@@ -16,11 +16,6 @@ const UnreadMessageBadge = styled.span`
 	}
 `;
 
-const mapStateToProps = state => ({
-	rooms: state.rooms,
-	localRoomMembersByRoom: state.localRoomMembers.byRoom
-});
-
 class LobbyRoomLink extends React.PureComponent {
 	render() {
 		const { room, roomMember } = this.props;
@@ -70,5 +65,10 @@ class Lobby extends React.PureComponent {
 		);
 	}
 }
+
+const mapStateToProps = state => ({
+	rooms: state.rooms,
+	localRoomMembersByRoom: state.localRoomMembers.byRoom
+});
 
 export default connect(mapStateToProps)(Lobby);
