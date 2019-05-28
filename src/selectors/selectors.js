@@ -148,3 +148,19 @@ export const getRoomName = roomId => state => getRooms(state)[roomId]?.name;
 export const getUnreadMention = roomId => state => getLocalRoomMembersByRoom(state)[roomId]?.unreadMention;
 
 export const getUnreadMessageCount = roomId => state => getLocalRoomMembersByRoom(state)[roomId]?.unreadMessageCount;
+
+export const getUnreadRoomIds = createSelector([getLocalRoomMembersByRoom], localRoomMembersByRoom =>
+	_(localRoomMembersByRoom)
+		.filter(roomMember => roomMember.unreadMessageCount > 0)
+		.orderBy(["unreadStart"])
+		.map("room")
+		.value()
+);
+
+export const getReadRoomIds = createSelector([getLocalRoomMembersByRoom], localRoomMembersByRoom =>
+	_(localRoomMembersByRoom)
+		.filter(roomMember => !roomMember.unreadMessageCount)
+		.sortBy("roomOrder")
+		.map("room")
+		.value()
+);
