@@ -51,3 +51,9 @@ export const sendTypingNotification = () => (dispatch, getState) => {
 	const activeRoomId = getActiveRoomId(state);
 	return emit("/user/current/typing", { typingIn: activeRoomId });
 };
+
+export const joinedRoom = room => ({ type: "room/joined", room });
+
+export const joinRoom = roomId => dispatch => {
+	return emit("/room/join", roomId).then(room => dispatch(joinedRoom(room)));
+};

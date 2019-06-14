@@ -49,6 +49,13 @@ const handlers = {
 			...state[action.roomId],
 			fullHistoryLoaded: false
 		}
+	}),
+	"room/joined": (state, action) =>({
+		...state,
+		[action.room._id]: {
+			...state[action.room._id],
+			...action.room
+		}
 	})
 };
 
