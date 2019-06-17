@@ -108,7 +108,7 @@ export const getRoomMembersForCurrentRoomHash = createSelector([getRoomMembers],
 );
 
 export const getRoomMemberRoleForCurrentRoomByUserId = userId =>
-	createSelector([getRoomMembersForCurrentRoomHash], roomMembersHash => roomMembersHash[userId].role);
+	createSelector([getRoomMembersForCurrentRoomHash], roomMembersHash => roomMembersHash[userId]?.role);
 
 export const getLastMessageContainsMention = createSelector([getLastMessage, getNick], (lastMessage, nick) => {
 	if (!lastMessage) return;
