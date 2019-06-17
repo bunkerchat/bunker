@@ -4,7 +4,7 @@ export const updateText = (roomId, text) => ({ type: "chatInput/text", roomId, t
 export const updateEditedMessage = (roomId, editedMessage) => ({ type: "chatInput/edited", roomId, editedMessage });
 
 function getAppendedState(state, action) {
-	const currentText = state.byRoom[action.roomId] ? state.byRoom[action.roomId].text : "";
+	const currentText = state.byRoom[action.roomId]?.text || "";
 	const text = currentText.length > 0 ? `${currentText} ${action.text} ` : `${action.text} `;
 
 	return {
@@ -16,7 +16,7 @@ function getAppendedState(state, action) {
 				text
 			}
 		}
-	}
+	};
 }
 
 const handlers = {
@@ -31,7 +31,7 @@ const handlers = {
 		}
 	}),
 	"chatInput/appendText": (state, action) => getAppendedState(state, action),
-	"chatInput/appendNick": (state, action) => getAppendedState(state, {...action, text: `@${action.text}`}),
+	"chatInput/appendNick": (state, action) => getAppendedState(state, { ...action, text: `@${action.text}` }),
 	"chatInput/edited": (state, action) => ({
 		...state,
 		byRoom: {
@@ -44,6 +44,6 @@ const handlers = {
 	})
 };
 
-export default function (state = { byRoom: {} }, action) {
+export default function(state = { byRoom: {} }, action) {
 	return handlers[action.type] ? handlers[action.type](state, action) : state;
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { updateEditedMessage, updateText } from "./chatInputReducer.js";
@@ -69,6 +69,7 @@ export function ChatInput({
 	const ref = useRef();
 	const inputRef = useRef();
 	const [currentText, setCurrentText] = useState("");
+	const throttleUpdateText = useMemo(() => _.throttle(updateText, 500), [updateText]);
 
 	// call update text whenever a connected prop changes?
 	useEffect(
@@ -107,6 +108,8 @@ export function ChatInput({
 		}
 
 		setCurrentText("");
+		throttleUpdateText(roomId, "");
+
 		updateEditedMessage(roomId, null);
 		hideMessageControls();
 	}
@@ -218,7 +221,12 @@ export function ChatInput({
 		}
 
 		setCurrentText(cleanText);
-		updateText(roomId, cleanText);
+
+		if (emoticonPickerVisible) {
+			updateText(cleanText);
+		} else {
+			throttleUpdateText(roomId, cleanText);
+		}
 
 		// Automatically expand the input box height if it needs to scroll
 		const { offsetHeight, scrollHeight } = inputRef.current;
