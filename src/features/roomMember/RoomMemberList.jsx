@@ -14,7 +14,7 @@ const MemberListContainer = styled.div`
 `;
 
 function RoomMemberList({ sortedRoomMemberUserIds }) {
-	const [debouncedSortedRoomMemberUserIds] = useDebounce(sortedRoomMemberUserIds, 500, { maxWait: 1000 });
+	const [debouncedSortedRoomMemberUserIds] = useDebounce(sortedRoomMemberUserIds, 75, { maxWait: 500 });
 
 	return (
 		<MemberListContainer className="border-left d-none d-md-block">
