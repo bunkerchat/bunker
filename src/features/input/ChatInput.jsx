@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { updateEditedMessage, updateText } from "./chatInputReducer.js";
@@ -68,6 +68,16 @@ export function ChatInput({
 }) {
 	const ref = useRef();
 	const inputRef = useRef();
+	const [currentText, setCurrentText] = useState("");
+
+	// call update text whenever a connected prop changes?
+	useEffect(
+		() => {
+			if (text === currentText) return;
+			setCurrentText(text);
+		},
+		[text]
+	);
 
 	useEffect(
 		() => {
@@ -79,7 +89,7 @@ export function ChatInput({
 
 	function onEmoticonPick(selected) {
 		if (selected) {
-			updateText(roomId, text.replace(/:\w*$/, `:${selected}:`));
+			setCurrentText(currentText.replace(/:\w*$/, `:${selected}:`));
 		}
 		hideEmoticonPicker();
 		inputRef.current.focus();
@@ -96,7 +106,7 @@ export function ChatInput({
 			send(roomId, currentText);
 		}
 
-		updateText(roomId, "");
+		setCurrentText("");
 		updateEditedMessage(roomId, null);
 		hideMessageControls();
 	}
@@ -198,16 +208,17 @@ export function ChatInput({
 
 	function onInputChange(event) {
 		// remove  newlines here, so IOS gets a chance to autocorrect on enter
-		const text = removeNewlines(event.target.value);
+		const cleanText = removeNewlines(event.target.value);
 
 		if (emoticonPickerVisible) {
-			const match = /:([A-z0-9\s]*)$/.exec(text);
+			const match = /:([A-z0-9\s]*)$/.exec(cleanText);
 			if (match) {
 				searchEmoticonPicker(match[1]);
 			}
 		}
 
-		updateText(roomId, text);
+		setCurrentText(cleanText);
+		updateText(roomId, cleanText);
 
 		// Automatically expand the input box height if it needs to scroll
 		const { offsetHeight, scrollHeight } = inputRef.current;
@@ -222,7 +233,7 @@ export function ChatInput({
 				ref={inputRef}
 				rows="1"
 				className={`form-control ${!!editedMessage ? "editing" : ""}`}
-				value={text}
+				value={currentText}
 				onChange={onInputChange}
 				onKeyDown={onKeyDown}
 			/>
