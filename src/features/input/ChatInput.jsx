@@ -77,26 +77,6 @@ export function ChatInput({
 		[currentRoomTextEmpty]
 	);
 
-	function onInputChange(event) {
-		// remove  newlines here, so IOS gets a chance to autocorrect on enter
-		const text = removeNewlines(event.target.value);
-
-		if (emoticonPickerVisible) {
-			const match = /:([A-z0-9\s]*)$/.exec(text);
-			if (match) {
-				searchEmoticonPicker(match[1]);
-			}
-		}
-
-		updateText(roomId, text);
-
-		// Automatically expand the input box height if it needs to scroll
-		const { offsetHeight, scrollHeight } = inputRef.current;
-		if (offsetHeight < scrollHeight) {
-			inputRef.current.style.height = `${scrollHeight}px`;
-		}
-	}
-
 	function onEmoticonPick(selected) {
 		if (selected) {
 			updateText(roomId, text.replace(/:\w*$/, `:${selected}:`));
@@ -132,71 +112,107 @@ export function ChatInput({
 		setTimeout(sendMessage, 25);
 	}
 
+	function handleOpenCloseEmoticon() {
+		if (emoticonPickerVisible) {
+			hideEmoticonPicker();
+		}
+		// picker not visible and user isn't already typing an emoticon
+		else if (!/:\w+$/.test(text)) {
+			showEmoticonPicker(ref.current.offsetLeft, ref.current.offsetTop, onEmoticonPick);
+		}
+	}
+
+	function handleEmoticonTabArrow(event) {
+		event.preventDefault();
+
+		// Move around within emoticon picker
+		if (event.key === "ArrowLeft") {
+			selectLeftEmoticonPicker();
+		} else if (event.key === "ArrowRight") {
+			selectRightEmoticonPicker();
+		} else if (event.key === "ArrowUp") {
+			selectUpEmoticonPicker();
+		} else if (event.key === "ArrowDown") {
+			selectDownEmoticonPicker();
+		} else if (event.key === "Tab") {
+			if (event.shiftKey) {
+				selectLeftEmoticonPicker();
+			} else {
+				selectRightEmoticonPicker();
+			}
+		}
+	}
+
+	function handleMessageNavigation(event) {
+		event.preventDefault();
+
+		// Edit
+		const currentIndex = editedMessage ? _.findIndex(localMessages, { _id: editedMessage._id }) : -1;
+
+		let newEditedMessage;
+		if (event.key === "ArrowUp") {
+			if (currentIndex > 0) {
+				newEditedMessage = localMessages[currentIndex - 1];
+			} else if (!newEditedMessage) {
+				newEditedMessage = _.last(localMessages);
+			}
+		} else if (event.key === "ArrowDown") {
+			if (currentIndex >= 0 && currentIndex < localMessages.length - 1) {
+				newEditedMessage = localMessages[currentIndex + 1];
+			}
+		}
+
+		if (newEditedMessage) {
+			updateText(roomId, newEditedMessage.text);
+			updateEditedMessage(roomId, newEditedMessage);
+		}
+	}
+
+	function handleEnterKey(event) {
+		if (emoticonPickerVisible) {
+			event.preventDefault();
+			onEmoticonPick(selectedEmoticon);
+		} else {
+			if (!isMobile) {
+				event.preventDefault();
+			}
+			onSend();
+		}
+	}
+
 	function onKeyDown(event) {
 		if (event.key === ":") {
-			if (emoticonPickerVisible) {
-				hideEmoticonPicker();
-			}
-			// picker not visible and user isn't already typing an emoticon
-			else if (!/:\w+$/.test(text)) {
-				showEmoticonPicker(ref.current.offsetLeft, ref.current.offsetTop, onEmoticonPick);
-			}
+			handleOpenCloseEmoticon();
 		} else if (/Arrow|Tab/.test(event.key) && emoticonPickerVisible) {
-			event.preventDefault();
-
-			// Move around within emoticon picker
-			if (event.key === "ArrowLeft") {
-				selectLeftEmoticonPicker();
-			} else if (event.key === "ArrowRight") {
-				selectRightEmoticonPicker();
-			} else if (event.key === "ArrowUp") {
-				selectUpEmoticonPicker();
-			} else if (event.key === "ArrowDown") {
-				selectDownEmoticonPicker();
-			} else if (event.key === "Tab") {
-				if (event.shiftKey) {
-					selectLeftEmoticonPicker();
-				} else {
-					selectRightEmoticonPicker();
-				}
-			}
+			handleEmoticonTabArrow(event);
 		} else if (/ArrowUp|ArrowDown/.test(event.key)) {
-			event.preventDefault();
-
-			// Edit
-			const currentIndex = editedMessage ? _.findIndex(localMessages, { _id: editedMessage._id }) : -1;
-
-			let newEditedMessage;
-			if (event.key === "ArrowUp") {
-				if (currentIndex > 0) {
-					newEditedMessage = localMessages[currentIndex - 1];
-				} else if (!newEditedMessage) {
-					newEditedMessage = _.last(localMessages);
-				}
-			} else if (event.key === "ArrowDown") {
-				if (currentIndex >= 0 && currentIndex < localMessages.length - 1) {
-					newEditedMessage = localMessages[currentIndex + 1];
-				}
-			}
-
-			if (newEditedMessage) {
-				updateText(roomId, newEditedMessage.text);
-				updateEditedMessage(roomId, newEditedMessage);
-			}
+			handleMessageNavigation(event);
 		} else if (event.key === "Enter") {
-			if (emoticonPickerVisible) {
-				event.preventDefault();
-				onEmoticonPick(selectedEmoticon);
-			} else {
-				if (!isMobile) {
-					event.preventDefault();
-				}
-				onSend();
-			}
+			handleEnterKey(event);
 		} else if (event.key === "Escape") {
 			if (editedMessage) {
 				updateEditedMessage(roomId, null);
 			}
+		}
+	}
+
+	function onInputChange(event) {
+		// remove  newlines here, so IOS gets a chance to autocorrect on enter
+		const text = removeNewlines(event.target.value);
+
+		if (emoticonPickerVisible) {
+			const match = /:([A-z0-9\s]*)$/.exec(text);
+			if (match) {
+				searchEmoticonPicker(match[1]);
+			}
+		}
+
+		updateText(roomId, text);
+
+		// Automatically expand the input box height if it needs to scroll
+		const { offsetHeight, scrollHeight } = inputRef.current;
+		if (offsetHeight < scrollHeight) {
+			inputRef.current.style.height = `${scrollHeight}px`;
 		}
 	}
 
