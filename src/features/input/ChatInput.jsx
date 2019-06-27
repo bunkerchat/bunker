@@ -221,12 +221,7 @@ export function ChatInput({
 		}
 
 		setCurrentText(cleanText);
-
-		if (emoticonPickerVisible) {
-			updateText(cleanText);
-		} else {
-			throttleUpdateText(roomId, cleanText);
-		}
+		updateText(cleanText);
 
 		// Automatically expand the input box height if it needs to scroll
 		const { offsetHeight, scrollHeight } = inputRef.current;
