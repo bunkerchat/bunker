@@ -53,7 +53,6 @@ export function ChatInput({
 	updateText,
 	updateEditedMessage,
 	hideMessageControls,
-	currentRoomTextEmpty,
 
 	// actions
 	searchEmoticonPicker,
@@ -80,14 +79,6 @@ export function ChatInput({
 		[text]
 	);
 
-	useEffect(
-		() => {
-			if (!currentRoomTextEmpty) return;
-			inputRef.current.style.removeProperty("height"); // Remove extra height, if any
-		},
-		[currentRoomTextEmpty]
-	);
-
 	function onEmoticonPick(selected) {
 		if (selected) {
 			setCurrentText(currentText.replace(/:\w*$/, `:${selected}:`));
@@ -112,6 +103,7 @@ export function ChatInput({
 
 		updateEditedMessage(roomId, null);
 		hideMessageControls();
+		inputRef.current.style.removeProperty("height"); // Remove extra height, if any
 	}
 
 	function onSend() {
