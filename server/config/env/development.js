@@ -2,6 +2,13 @@ var config = module.exports;
 
 config.environment = "development";
 
+// when doing dev on real ios device, switch this line to your current
+// ip address. Then login to https://console.cloud.google.com/apis/credentials?project=celtic-defender-718
+// using "bunkerjschat" login, go to "OAuth 2.0 client IDs", then "Development" add "http://192.168.1.27.xip.io:9002"
+// to "Authorized JavaScript origins" and "http://192.168.1.27.xip.io:9002/auth/googleReturn" to Authorized redirect URIs
+
+// config.url = "http://192.168.1.27.xip.io:9002";
+
 config.url = "http://localhost:9002";
 
 config.db = {
