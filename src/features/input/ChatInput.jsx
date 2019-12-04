@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { updateEditedMessage, updateText } from "./chatInputReducer.js";
-import { hideMessageControls } from "../messageControls/messageControlsActions.js";
+import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import {
 	getActiveRoomId,
 	getCurrentRoomTextEmpty,

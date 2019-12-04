@@ -12,7 +12,7 @@ import { messageUpdated, messageReceived, roomUpdated } from "./features/room/ro
 import { init } from "./features/chat/chatActions";
 import { userUpdated } from "./features/users/userActions";
 import { ping } from "./features/users/localUserActions";
-import { localRoomMemberUpdated } from "./features/users/localRoomMembersActions";
+import { localRoomMemberUpdated } from "./features/users/localRoomMembersSlice";
 import { imagePickSelectionsReceived } from "./features/imagePick/imagePickActions";
 
 const socket = io(window.url);
