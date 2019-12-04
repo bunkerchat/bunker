@@ -7,7 +7,7 @@ import rooms from "./features/room/roomReducer";
 import messages from "./features/message/messagesReducer";
 import chatInput from "./features/input/chatInputReducer";
 import emoticonPicker from "./features/emoticon/emoticonPickerReducer";
-import messageControls from "./features/messageControls/messageControlsReducer";
+import messageControls from "./features/messageControls/messageControlsSlice";
 import imagePick from "./features/imagePick/imagePickReducer";
 import log from "./features/chat/logReducer";
 import imageUpload from "./features/imageUpload/imageUploadReducer";

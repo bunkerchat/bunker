@@ -5,7 +5,7 @@ import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPick
 import { toggleReaction } from "../message/messageActions";
 import { getActiveRoomId, getLocalUser } from "../../selectors/selectors";
 import { updateEditedMessage, updateText } from "../input/chatInputReducer";
-import { hideMessageControls, showMessageControls } from "./messageControlsActions";
+import { hideMessageControls, showMessageControls } from "./messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 
