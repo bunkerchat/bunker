@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { selectImage } from "./imagePickSlice";
+import { selectImage } from "./imagePickActions";
 
 const FixedHeightImage = styled.img`
 	height: 150px;

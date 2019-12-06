@@ -1,4 +1,3 @@
-import { createSlice } from "@reduxjs/toolkit";
 import { getActiveRoomId } from "../../selectors/selectors";
 import { updateText } from "../input/chatInputReducer";
 
@@ -16,22 +15,6 @@ export const selectImage = image => (dispatch, getState) => {
 	dispatch(updateText(activeRoomId, `${message} ${image} `));
 	dispatch(closeImageSelections());
 };
-
-const imagePickSlice = createSlice({
-	name: "imagePick",
-	initialState: {},
-	reducers: {
-		"images/received": (state, action) => ({
-			message: action.message,
-			images: action.images
-		}),
-		"images/close": () => ({})
-	}
-});
-
-// export const {  } = imagePickSlice.actions;
-
-export default imagePickSlice.reducer;
 
 // const testImages = [
 // 	"http://chariotlearning.com/wp-content/uploads/2015/12/Testing_in_Progress.gif",

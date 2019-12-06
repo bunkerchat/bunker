@@ -1,8 +1,8 @@
 import React from "react";
 import { Modal } from "reactstrap";
 import { connect } from "react-redux";
+import { closeImageSelections } from "./imagePickActions";
 import Image from "./Image.jsx";
-import { closeImageSelections } from "./imagePickSlice";
 
 const ImagePickModal = ({ images, closeImageSelections }) => (
 	<Modal isOpen={true} size="lg" toggle={closeImageSelections}>
