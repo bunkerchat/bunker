@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Modal } from "reactstrap";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { getImageFileUploads, setImageFilesToUpload } from "./imageUploadReducer.js";
 import { useImagePasteWatcher } from "./useImagePasteWatcher.js";
 import { getActiveRoomId } from "../../selectors/selectors";
 import { loadImage } from "./imageLoader";
@@ -57,12 +56,10 @@ const ImageUploadModal = ({ activeRoomId, appendText }) => {
 };
 
 const mapStateToProps = state => ({
-	imageFiles: getImageFileUploads(state),
 	activeRoomId: getActiveRoomId(state)
 });
 
 const mapDispatchToProps = {
-	setImageFilesToUpload,
 	appendText
 };
 

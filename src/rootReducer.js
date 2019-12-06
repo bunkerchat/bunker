@@ -10,7 +10,6 @@ import emoticonPicker from "./features/emoticon/emoticonPickerReducer";
 import messageControls from "./features/messageControls/messageControlsSlice";
 import imagePick from "./features/imagePick/imagePickSlice";
 import log from "./features/chat/logReducer";
-import imageUpload from "./features/imageUpload/imageUploadReducer";
 
 const rootReducer = combineReducers({
 	localUser,
@@ -23,8 +22,7 @@ const rootReducer = combineReducers({
 	emoticonPicker,
 	messageControls,
 	imagePick,
-	log,
-	imageUpload
+	log
 });
 
 export default rootReducer;
