@@ -72,7 +72,7 @@ class Chat extends React.PureComponent {
 				</div>
 				<Room />
 				<EmoticonPicker />
-				{imagePick.images && <ImagePickModal />}
+				{imagePick && <ImagePickModal />}
 				<ImageUploadModal />
 			</Container>
 		);
