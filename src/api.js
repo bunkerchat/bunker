@@ -13,7 +13,7 @@ import { init } from "./features/init/initActions";
 import { userUpdated } from "./features/users/userActions";
 import { ping } from "./features/users/localUserActions";
 import { localRoomMemberUpdated } from "./features/users/localRoomMembersSlice";
-import { imagePickSelectionsReceived } from "./features/imagePick/imagePickActions";
+import { imagePickSelectionsReceived } from "./features/imagePick/imagePickSlice";
 
 const socket = io(window.url);
 
