@@ -3,7 +3,7 @@ import localUser from "./features/users/localUserReducer";
 import localRoomMembers from "./features/users/localRoomMembersSlice";
 import userSettings from "./features/settings/userSettingsReducer";
 import users from "./features/users/usersReducer";
-import rooms from "./features/room/roomReducer";
+import rooms from "./features/room/roomsSlice";
 import messages from "./features/message/messagesReducer";
 import chatInput from "./features/input/chatInputReducer";
 import emoticonPicker from "./features/emoticon/emoticonPickerReducer";

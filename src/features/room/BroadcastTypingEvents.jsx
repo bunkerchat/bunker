@@ -3,7 +3,7 @@ import _ from "lodash";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { getTextForCurrentRoom } from "../../selectors/selectors.js";
-import { sendTypingNotification } from "./roomActions.js";
+import { sendTypingNotification } from "./roomsSlice";
 
 function BroadcastTypingEvents({ text = "", sendTypingNotification }) {
 	const notify = useMemo(() => _.throttle(sendTypingNotification, 1500, { trailing: false }), []);
