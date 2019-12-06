@@ -12,6 +12,9 @@ import {
 } from "../../selectors/selectors.js";
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
+import { sendRoomMessage } from "../room/roomActions.js";
+import { updateMessage } from "../message/messageActions.js";
+import { isMobile } from "../../constants/browserInfo.js";
 import {
 	hideEmoticonPicker,
 	searchEmoticonPicker,
@@ -20,10 +23,7 @@ import {
 	selectRightInEmoticonPicker,
 	selectUpInEmoticonPicker,
 	showEmoticonPicker
-} from "../emoticon/emoticonPickerActions.js";
-import { sendRoomMessage } from "../room/roomActions.js";
-import { updateMessage } from "../message/messageActions.js";
-import { isMobile } from "../../constants/browserInfo.js";
+} from "../emoticon/emoticonPickerActions";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 

@@ -12,7 +12,7 @@ const handlers = {
 		byRoom: {
 			...state.byRoom,
 			..._.reduce(
-				action.data.rooms,
+				action.payload.rooms,
 				(byRoom, room) => {
 					byRoom[room._id] = _(room.$messages)
 						.reverse()

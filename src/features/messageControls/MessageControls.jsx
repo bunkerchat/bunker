@@ -1,13 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
 import { toggleReaction } from "../message/messageActions";
 import { getActiveRoomId, getLocalUser } from "../../selectors/selectors";
 import { updateEditedMessage, updateText } from "../input/chatInputReducer";
 import { hideMessageControls, showMessageControls } from "./messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme";
+import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
 
 const Container = styled.div`
 	background-color: ${theme.messageHoverBackground};	

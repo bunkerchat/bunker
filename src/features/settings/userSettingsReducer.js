@@ -1,5 +1,5 @@
 const handlers = {
-	"init/received": (state, action) => action.data.userSettings
+	"init/received": (state, action) => action.payload.userSettings
 };
 
 export default function(state = {}, action) {

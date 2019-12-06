@@ -18,7 +18,7 @@ const handlers = {
 	"init/received": (state, action) =>
 		setCurrentRoom({
 			...state,
-			..._.keyBy(action.data.rooms, "_id")
+			..._.keyBy(action.payload.rooms, "_id")
 		}),
 	"room/updated": (state, action) => ({
 		...state,

@@ -9,7 +9,7 @@ import {
 	successResponse
 } from "./features/socket/socketActions";
 import { messageUpdated, messageReceived, roomUpdated } from "./features/room/roomActions";
-import { init } from "./features/chat/chatActions";
+import { init } from "./features/init/initActions";
 import { userUpdated } from "./features/users/userActions";
 import { ping } from "./features/users/localUserActions";
 import { localRoomMemberUpdated } from "./features/users/localRoomMembersSlice";
