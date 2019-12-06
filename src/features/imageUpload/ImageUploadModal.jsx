@@ -1,30 +1,41 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Modal } from "reactstrap";
 import { connect } from "react-redux";
-import { getImageFileUploads, setImageFilesToUpload, uploadImageFiles } from "./imageUploadReducer.js";
-import { useImagePasteWatcher } from "./useImagePasteWatcher.js";
 import styled from "styled-components";
+import { getImageFileUploads, setImageFilesToUpload } from "./imageUploadReducer.js";
+import { useImagePasteWatcher } from "./useImagePasteWatcher.js";
+import { getActiveRoomId } from "../../selectors/selectors";
+import { loadImage } from "./imageLoader";
+import { doSingleImageUpload } from "./imageUpload";
+import { appendText } from "../input/chatInputReducer";
 
 const FixedHeightImage = styled.img`
 	max-width: 100%;
 	max-height: 250px;
 `;
 
-const ImageUploadModal = ({ imageFiles, setImageFilesToUpload, uploadImageFiles }) => {
+const ImageUploadModal = ({ activeRoomId, appendText }) => {
 	const pastedImages = useImagePasteWatcher();
+	const [open, setOpen] = useState(false);
+	const closeImageSelections = () => setOpen(false);
+	const images = useMemo(() => pastedImages.map(file => window.URL.createObjectURL(file)), [pastedImages]);
+
 	useEffect(
 		() => {
-			setImageFilesToUpload(pastedImages);
+			pastedImages.length > 0 && setOpen(true);
 		},
 		[pastedImages]
 	);
 
-	const closeImageSelections = () => setImageFilesToUpload([]);
-
-	const images = useMemo(() => imageFiles.map(file => window.URL.createObjectURL(file)), [imageFiles]);
+	const uploadImageFiles = () => {
+		return loadImage(pastedImages[0])
+			.then(loadedData => doSingleImageUpload(loadedData.data.split(",")[1]))
+			.then(imageUrl => appendText(activeRoomId, imageUrl))
+			.finally(() => closeImageSelections());
+	};
 
 	return (
-		<Modal isOpen={!!images.length} size="lg" toggle={closeImageSelections}>
+		<Modal isOpen={open} size="lg" toggle={closeImageSelections}>
 			<div className="modal-header">
 				<h5 className="modal-title">Upload an image</h5>
 				<button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeImageSelections}>
@@ -46,12 +57,13 @@ const ImageUploadModal = ({ imageFiles, setImageFilesToUpload, uploadImageFiles 
 };
 
 const mapStateToProps = state => ({
-	imageFiles: getImageFileUploads(state)
+	imageFiles: getImageFileUploads(state),
+	activeRoomId: getActiveRoomId(state)
 });
 
 const mapDispatchToProps = {
 	setImageFilesToUpload,
-	uploadImageFiles
+	appendText
 };
 
 export default connect(

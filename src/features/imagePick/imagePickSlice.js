@@ -25,7 +25,7 @@ const imagePickSlice = createSlice({
 			message: action.message,
 			images: action.images
 		}),
-		"images/close": () => null
+		"images/close": () => ({})
 	}
 });
 
