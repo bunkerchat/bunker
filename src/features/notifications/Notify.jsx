@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import Notification from "react-web-notification";
 import {
@@ -45,12 +44,12 @@ function Notify({
 	);
 }
 
-const mapStateToProps = createStructuredSelector({
-	desktopMentionNotifications: getDesktopMentionNotifications,
-	lastMentionRoomName: getLastMentionRoomName,
-	lastMentionAuthorNick: getLastMentionAuthorNick,
-	lastMentionText: getLastMentionText,
-	showNotification: getShowNotification
+const mapStateToProps = state => ({
+	desktopMentionNotifications: getDesktopMentionNotifications(state),
+	lastMentionRoomName: getLastMentionRoomName(state),
+	lastMentionAuthorNick: getLastMentionAuthorNick(state),
+	lastMentionText: getLastMentionText(state),
+	showNotification: getShowNotification(state)
 });
 
 const mapDispatchToProps = {};

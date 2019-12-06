@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { getTextForCurrentRoom } from "../../selectors/selectors.js";
 import { sendTypingNotification } from "./roomsSlice";
 
@@ -17,8 +16,8 @@ function BroadcastTypingEvents({ text = "", sendTypingNotification }) {
 	return null;
 }
 
-const mapStateToProps = createStructuredSelector({
-	text: getTextForCurrentRoom
+const mapStateToProps = state => ({
+	text: getTextForCurrentRoom(state)
 });
 
 const mapDispatchToProps = {

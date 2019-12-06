@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { updateEditedMessage, updateText } from "./chatInputReducer.js";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import {
@@ -236,14 +235,14 @@ export function ChatInput({
 	);
 }
 
-const mapStateToProps = createStructuredSelector({
-	roomId: getActiveRoomId,
-	emoticonPickerVisible: state => !!state.emoticonPicker.visible,
-	selectedEmoticon: state => state.emoticonPicker.selected,
-	localMessages: getLocalMessages,
-	text: getTextForCurrentRoom,
-	currentRoomTextEmpty: getCurrentRoomTextEmpty,
-	editedMessage: getEditedMessageForCurrentRoom
+const mapStateToProps = state => ({
+	roomId: getActiveRoomId(state),
+	emoticonPickerVisible: !!state.emoticonPicker.visible,
+	selectedEmoticon: state.emoticonPicker.selected,
+	localMessages: getLocalMessages(state),
+	text: getTextForCurrentRoom(state),
+	currentRoomTextEmpty: getCurrentRoomTextEmpty(state),
+	editedMessage: getEditedMessageForCurrentRoom(state)
 });
 
 const mapDispatchToProps = {

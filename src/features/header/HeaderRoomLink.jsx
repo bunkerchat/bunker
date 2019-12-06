@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { getRoomIsCurrent, getRoomName, getUnreadMention, getUnreadMessageCount } from "../../selectors/selectors.js";
 import UnreadMessageBadge from "./UnreadMessageBadge.jsx";
 import { Link } from "react-router-dom";
@@ -44,11 +43,11 @@ function HeaderRoomLink({
 }
 
 const makeMapStateToProps = (initialState, { roomId }) => {
-	return createStructuredSelector({
-		current: getRoomIsCurrent(roomId),
-		roomName: getRoomName(roomId),
-		unreadMention: getUnreadMention(roomId),
-		unreadMessageCount: getUnreadMessageCount(roomId)
+	return state => ({
+		current: getRoomIsCurrent(roomId)(state),
+		roomName: getRoomName(roomId)(state),
+		unreadMention: getUnreadMention(roomId)(state),
+		unreadMessageCount: getUnreadMessageCount(roomId)(state)
 	});
 };
 
