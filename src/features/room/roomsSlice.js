@@ -2,12 +2,6 @@ import { emit } from "../../api";
 import { getActiveRoomId } from "../../selectors/selectors";
 
 /* actions */
-
-
-export default function(state = {}, action) {
-	return handlers[action.type] ? handlers[action.type](state, action) : state;
-}
-
 export function roomUpdated(room) {
 	return { type: "room/updated", room };
 }
@@ -125,3 +119,7 @@ const handlers = {
 		}
 	})
 };
+
+export default function(state = {}, action) {
+	return handlers[action.type] ? handlers[action.type](state, action) : state;
+}
