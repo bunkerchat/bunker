@@ -1,7 +1,7 @@
 const handlers = {
 	"init/received": (state, action) => ({
 		...state,
-		...action.data.user,
+		...action.payload.user,
 		loaded: true
 	}),
 	"localUser/activeRoom": (state, action) => ({

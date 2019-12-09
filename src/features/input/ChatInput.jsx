@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { updateEditedMessage, updateText } from "./chatInputReducer.js";
-import { hideMessageControls } from "../messageControls/messageControlsActions.js";
+import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import {
 	getActiveRoomId,
 	getCurrentRoomTextEmpty,
@@ -12,6 +11,8 @@ import {
 } from "../../selectors/selectors.js";
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
+import { updateMessage } from "../message/messageActions.js";
+import { isMobile } from "../../constants/browserInfo.js";
 import {
 	hideEmoticonPicker,
 	searchEmoticonPicker,
@@ -20,10 +21,8 @@ import {
 	selectRightInEmoticonPicker,
 	selectUpInEmoticonPicker,
 	showEmoticonPicker
-} from "../emoticon/emoticonPickerActions.js";
-import { sendRoomMessage } from "../room/roomActions.js";
-import { updateMessage } from "../message/messageActions.js";
-import { isMobile } from "../../constants/browserInfo.js";
+} from "../emoticon/emoticonPickerActions";
+import { sendRoomMessage } from "../room/roomsSlice";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -236,14 +235,14 @@ export function ChatInput({
 	);
 }
 
-const mapStateToProps = createStructuredSelector({
-	roomId: getActiveRoomId,
-	emoticonPickerVisible: state => !!state.emoticonPicker.visible,
-	selectedEmoticon: state => state.emoticonPicker.selected,
-	localMessages: getLocalMessages,
-	text: getTextForCurrentRoom,
-	currentRoomTextEmpty: getCurrentRoomTextEmpty,
-	editedMessage: getEditedMessageForCurrentRoom
+const mapStateToProps = state => ({
+	roomId: getActiveRoomId(state),
+	emoticonPickerVisible: !!state.emoticonPicker.visible,
+	selectedEmoticon: state.emoticonPicker.selected,
+	localMessages: getLocalMessages(state),
+	text: getTextForCurrentRoom(state),
+	currentRoomTextEmpty: getCurrentRoomTextEmpty(state),
+	editedMessage: getEditedMessageForCurrentRoom(state)
 });
 
 const mapDispatchToProps = {

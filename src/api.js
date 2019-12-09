@@ -8,12 +8,12 @@ import {
 	reconnected,
 	successResponse
 } from "./features/socket/socketActions";
-import { messageUpdated, messageReceived, roomUpdated } from "./features/room/roomActions";
-import { init } from "./features/chat/chatActions";
+import { init } from "./features/init/initActions";
 import { userUpdated } from "./features/users/userActions";
 import { ping } from "./features/users/localUserActions";
-import { localRoomMemberUpdated } from "./features/users/localRoomMembersActions";
+import { localRoomMemberUpdated } from "./features/users/localRoomMembersSlice";
 import { imagePickSelectionsReceived } from "./features/imagePick/imagePickActions";
+import { messageReceived, messageUpdated, roomUpdated } from "./features/room/roomsSlice";
 
 const socket = io(window.url);
 

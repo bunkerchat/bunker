@@ -1,5 +1,5 @@
 const handlers = {
-	"init/received": (state, action) => _.keyBy(action.data.users, "_id"),
+	"init/received": (state, action) => _.keyBy(action.payload.users, "_id"),
 	"user/updated": (state, action) => ({
 		...state,
 		[action.user._id]: {

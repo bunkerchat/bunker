@@ -1,5 +1,5 @@
 import { emit } from "../../api";
-import { messageUpdated } from "../room/roomActions";
+import { messageUpdated } from "../room/roomsSlice";
 
 const messageReacted = () => {
 	return { type: "message/reacted" };

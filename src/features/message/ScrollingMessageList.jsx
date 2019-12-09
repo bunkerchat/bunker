@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import userId from "../../constants/userId";
-import { clearRoomMessages, loadRoomMessages } from "../room/roomActions";
 import { maxMessages } from "../../constants/chat";
 import { connect } from "react-redux";
 import MessageList from "./MessageList.jsx";
 import theme from "../../constants/theme";
 import { isIOS } from "../../constants/browserInfo.js";
+import { clearRoomMessages, loadRoomMessages } from "../room/roomsSlice";
 
 const MessageListContainer = styled.div`
 	flex: 1;

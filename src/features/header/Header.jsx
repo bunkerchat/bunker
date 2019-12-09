@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { hasAnyUnreadMention, getTotalUnreadMessageCount } from "../../selectors/selectors";
 import HeaderRoomLink from "./HeaderRoomLink.jsx";
@@ -40,10 +39,10 @@ class Header extends React.Component {
 	}
 }
 
-const mapStateToProps = createStructuredSelector({
-	roomIds: getRoomIds,
-	totalUnreadMessageCount: getTotalUnreadMessageCount,
-	anyUnreadMention: hasAnyUnreadMention
+const mapStateToProps = state => ({
+	roomIds: getRoomIds(state),
+	totalUnreadMessageCount: getTotalUnreadMessageCount(state),
+	anyUnreadMention: hasAnyUnreadMention(state)
 });
 
 export default connect(mapStateToProps)(Header);

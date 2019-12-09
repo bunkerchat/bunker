@@ -1,8 +1,7 @@
+import { createAction } from "@reduxjs/toolkit";
 import { emit } from "../../api";
 
-export function initialDataReceived(data) {
-	return { type: "init/received", data };
-}
+export const initialDataReceived = createAction("init/received");
 
 export function init() {
 	return dispatch => {

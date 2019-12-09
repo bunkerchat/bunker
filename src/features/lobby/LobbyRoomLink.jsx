@@ -1,5 +1,4 @@
 import React from "react";
-import { createStructuredSelector } from "reselect";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { getRoomName, getUnreadMention, getUnreadMessageCount } from "../../selectors/selectors.js";
@@ -35,11 +34,10 @@ function LobbyRoomLink({
 	);
 }
 
-const mapStateToProps = (initialState, { roomId }) =>
-	createStructuredSelector({
-		name: getRoomName(roomId),
-		unreadMessageCount: getUnreadMessageCount(roomId),
-		unreadMention: getUnreadMention(roomId)
-	});
+const mapStateToProps = (initialState, { roomId }) => state => ({
+	name: getRoomName(roomId)(state),
+	unreadMessageCount: getUnreadMessageCount(roomId)(state),
+	unreadMention: getUnreadMention(roomId)(state)
+});
 
 export default connect(mapStateToProps)(LobbyRoomLink);

@@ -1,4 +1,4 @@
-import { createSelector } from "reselect";
+import { createSelector } from "@reduxjs/toolkit";
 
 const getUsers = state => state.users;
 export const getLocalUser = state => state.localUser;

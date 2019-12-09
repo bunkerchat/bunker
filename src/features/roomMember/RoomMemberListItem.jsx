@@ -2,7 +2,6 @@ import React from "react";
 import RoomMember from "./RoomMember.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
-import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { getRoomMemberRoleForCurrentRoomByUserId } from "../../selectors/selectors.js";
 
@@ -34,10 +33,10 @@ function RoomMemberListItem({ role, connected, userId, hasUser }) {
 const mapStateToProps = (initialState, initialProps) => {
 	const roomMemberRole = getRoomMemberRoleForCurrentRoomByUserId(initialProps.userId);
 
-	return createStructuredSelector({
-		role: roomMemberRole,
-		hasUser: state => !!state.users[initialProps.userId],
-		connected: state => (state.users[initialProps.userId] || {}).connected
+	return state => ({
+		role: roomMemberRole(state),
+		hasUser: !!state.users[initialProps.userId],
+		connected:  (state.users[initialProps.userId] || {}).connected
 	});
 };
 
