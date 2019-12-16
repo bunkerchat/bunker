@@ -9,10 +9,10 @@ const localRoomMembersSlice = createSlice({
 	},
 	reducers: {
 		localRoomMemberUpdated(state, action) {
-			const { roomMember } = action.payload;
-			if (!roomMember) return;
-			const existing = _.find(state.byRoom, { _id: roomMember._id });
-			state.byRoom[existing.room].roomMember = roomMember;
+			const existing = _.find(state.byRoom, { _id: action.payload._id });
+			if (existing) {
+				_.assign(existing, action.payload);
+			}
 		}
 	}
 });
