@@ -40,7 +40,7 @@ library.add(
 
 if (process.env.NODE_ENV !== "production") {
 	const whyDidYouRender = require("@welldone-software/why-did-you-render");
-	whyDidYouRender(React, { include: [/.*/], exclude: [/^Connect/, /TimeAgo/, /StyledComponent/, /FontAwesomeIcon/] });
+	whyDidYouRender(React, { include: [/.*/], exclude: [/^Connect/, /TimeAgo/, /StyledComponent/, /styled/, /FontAwesomeIcon/] });
 }
 
 ReactDOM.render(
@@ -56,16 +56,3 @@ ReactDOM.render(
 	</Provider>,
 	document.getElementById("index")
 );
-
-// ReactDOM.createRoot(document.getElementById("index")).render(
-// 	<Provider store={store}>
-// 		<ConnectedRouter history={history}>
-// 			<>
-// 				<DocumentTitle />
-// 				<BunkerFavicon />
-// 				<Route exact path="/2" render={() => <Redirect to="/2/lobby" />} />
-// 				<Route path="/" component={Chat} />
-// 			</>
-// 		</ConnectedRouter>
-// 	</Provider>
-// );
