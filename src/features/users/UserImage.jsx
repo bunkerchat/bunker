@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import Gravatar from "react-gravatar";
 import UserStatus from "./UserStatus.jsx";
@@ -7,14 +7,15 @@ const Container = styled.div`
 	display: flex;
 `;
 
-export default class UserImage extends React.PureComponent {
-	render() {
-		const { email, connected, present } = this.props;
-		return (
-			<Container>
-				<UserStatus connected={connected} present={present} />
-				<Gravatar email={email} size={25} rating="pg" default="identicon" />
-			</Container>
-		);
-	}
-}
+const UserImage = ({ email, connected, present }) => {
+	const gravatar = useMemo(() => <Gravatar email={email} size={25} rating="pg" default="identicon" />, []);
+
+	return (
+		<Container>
+			<UserStatus connected={connected} present={present} />
+			{gravatar}
+		</Container>
+	);
+};
+
+export default UserImage;
