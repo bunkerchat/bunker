@@ -10,19 +10,30 @@ import theme from "../../constants/theme";
 import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
 
 const Container = styled.div`
-	background-color: ${theme.messageHoverBackground};	
+	background-color: ${theme.messageHoverBackground};
 	z-index: 1000;
-	
+
 	.btn {
 		font-size: 1.2rem;
 	}
 `;
 
-const MessageControls = ({ message, roomId, localUser, showEmoticonPicker, hideEmoticonPicker, toggleReaction, updateText, updateEditedMessage, showMessageControls, hideMessageControls }) => {
+const MessageControls = ({
+	message,
+	roomId,
+	localUser,
+	showEmoticonPicker,
+	hideEmoticonPicker,
+	toggleReaction,
+	updateText,
+	updateEditedMessage,
+	showMessageControls,
+	hideMessageControls
+}) => {
 	const onClickEdit = () => {
 		showMessageControls(message._id);
 		updateText(roomId, message.text);
-		updateEditedMessage(roomId, message);
+		updateEditedMessage({ roomId, editedMessage: message });
 	};
 
 	const onClickReaction = event => {
@@ -47,11 +58,11 @@ const MessageControls = ({ message, roomId, localUser, showEmoticonPicker, hideE
 		<Container className="border border-primary px-3">
 			{localMessage && (
 				<button className="btn btn-link p-0 mr-2" onClick={onClickEdit}>
-					<FontAwesomeIcon icon={["far", "edit"]}/>
+					<FontAwesomeIcon icon={["far", "edit"]} />
 				</button>
 			)}
 			<button className="btn btn-link p-0" onClick={onClickReaction}>
-				<FontAwesomeIcon icon={["far", "smile"]}/>
+				<FontAwesomeIcon icon={["far", "smile"]} />
 			</button>
 		</Container>
 	);

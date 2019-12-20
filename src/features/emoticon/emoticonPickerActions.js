@@ -10,18 +10,18 @@ export const searchEmoticonPicker = text => {
 	return { type: "emoticonPicker/search", text };
 };
 
-export const selectLeftInEmoticonPicker = () => {
+export const selectLeftEmoticonPicker = () => {
 	return { type: "emoticonPicker/selectLeft" };
 };
 
-export const selectRightInEmoticonPicker = () => {
+export const selectRightEmoticonPicker = () => {
 	return { type: "emoticonPicker/selectRight" };
 };
 
-export const selectUpInEmoticonPicker = () => {
+export const selectUpEmoticonPicker = () => {
 	return { type: "emoticonPicker/selectUp" };
 };
 
-export const selectDownInEmoticonPicker = () => {
+export const selectDownEmoticonPicker = () => {
 	return { type: "emoticonPicker/selectDown" };
 };

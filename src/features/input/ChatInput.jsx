@@ -4,10 +4,9 @@ import { updateEditedMessage, updateText } from "./chatInputReducer.js";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import {
 	getActiveRoomId,
-	getCurrentRoomTextEmpty,
 	getEditedMessageForCurrentRoom,
 	getLocalMessages,
-	getTextForCurrentRoom
+	getAppendTextForCurrentRoom
 } from "../../selectors/selectors.js";
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
@@ -16,13 +15,14 @@ import { isMobile } from "../../constants/browserInfo.js";
 import {
 	hideEmoticonPicker,
 	searchEmoticonPicker,
-	selectDownInEmoticonPicker,
-	selectLeftInEmoticonPicker,
-	selectRightInEmoticonPicker,
-	selectUpInEmoticonPicker,
+	selectDownEmoticonPicker,
+	selectLeftEmoticonPicker,
+	selectRightEmoticonPicker,
+	selectUpEmoticonPicker,
 	showEmoticonPicker
 } from "../emoticon/emoticonPickerActions";
 import { sendRoomMessage } from "../room/roomsSlice";
+import { appendNick } from "./chatInputReducer";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -43,17 +43,17 @@ const InputBox = styled.textarea`
 
 export function ChatInput({
 	// state
-	text,
-	editedMessage,
 	roomId,
 	emoticonPickerVisible,
 	selectedEmoticon,
 	localMessages,
+	appendText,
+	editedMessage,
+
+	// actions
 	updateText,
 	updateEditedMessage,
 	hideMessageControls,
-
-	// actions
 	searchEmoticonPicker,
 	showEmoticonPicker,
 	hideEmoticonPicker,
@@ -61,26 +61,45 @@ export function ChatInput({
 	selectRightEmoticonPicker,
 	selectUpEmoticonPicker,
 	selectDownEmoticonPicker,
-	send,
-	edit
+	sendRoomMessage,
+	updateMessage,
+	appendNick
 }) {
 	const ref = useRef();
 	const inputRef = useRef();
-	const [currentText, setCurrentText] = useState("");
-	const throttleUpdateText = useMemo(() => _.throttle(updateText, 500), [updateText]);
 
-	// call update text whenever a connected prop changes?
+	const replaceText = (old, text) => {
+		inputRef.current.value = inputRef.current.value.replace(old, text);
+	};
+
+	const appendNewText = text => {
+		inputRef.current.value += text;
+	};
+
+	const setText = text => {
+		inputRef.current.value = text;
+	};
+
 	useEffect(
 		() => {
-			if (text === currentText) return;
-			setCurrentText(text);
+			if (!editedMessage?.text) return;
+			setText(editedMessage?.text);
 		},
-		[text]
+		[editedMessage?.text]
+	);
+
+	useEffect(
+		() => {
+			if (!appendText) return;
+			appendNewText(appendText);
+			appendNick(roomId, "");
+		},
+		[appendText]
 	);
 
 	function onEmoticonPick(selected) {
 		if (selected) {
-			setCurrentText(currentText.replace(/:\w*$/, `:${selected}:`));
+			replaceText(/:\w*$/, `:${selected}:`);
 		}
 		hideEmoticonPicker();
 		inputRef.current.focus();
@@ -88,19 +107,23 @@ export function ChatInput({
 
 	function sendMessage() {
 		// ios may have changed the text value, so get it right from the dom
-		const currentText = inputRef.current.value;
-		if (!currentText.trim().length) return;
-
-		if (editedMessage) {
-			edit({ ...editedMessage, text: currentText });
-		} else {
-			send(roomId, currentText);
+		const currentText = removeNewlines(inputRef.current.value);
+		if (!currentText.trim().length) {
+			setText("");
+			return;
 		}
 
-		setCurrentText("");
-		throttleUpdateText(roomId, "");
+		if (editedMessage) {
+			updateMessage({ ...editedMessage, text: currentText });
+		} else {
+			sendRoomMessage(roomId, currentText);
+		}
 
-		updateEditedMessage(roomId, null);
+		// setCurrentText("");
+		setText("");
+		updateText(roomId, "");
+
+		updateEditedMessage({ roomId, editedMessage: null });
 		hideMessageControls();
 		inputRef.current.style.removeProperty("height"); // Remove extra height, if any
 	}
@@ -121,7 +144,7 @@ export function ChatInput({
 			hideEmoticonPicker();
 		}
 		// picker not visible and user isn't already typing an emoticon
-		else if (!/:\w+$/.test(text)) {
+		else if (!/:\w+$/.test(inputRef.current.value)) {
 			showEmoticonPicker(ref.current.offsetLeft, ref.current.offsetTop, onEmoticonPick);
 		}
 	}
@@ -150,7 +173,7 @@ export function ChatInput({
 	function handleMessageNavigation(event) {
 		event.preventDefault();
 
-		// Edit
+		// updateMessage
 		const currentIndex = editedMessage ? _.findIndex(localMessages, { _id: editedMessage._id }) : -1;
 
 		let newEditedMessage;
@@ -168,7 +191,7 @@ export function ChatInput({
 
 		if (newEditedMessage) {
 			updateText(roomId, newEditedMessage.text);
-			updateEditedMessage(roomId, newEditedMessage);
+			updateEditedMessage({ roomId, editedMessage: newEditedMessage });
 		}
 	}
 
@@ -195,7 +218,7 @@ export function ChatInput({
 			handleEnterKey(event);
 		} else if (event.key === "Escape") {
 			if (editedMessage) {
-				updateEditedMessage(roomId, null);
+				updateEditedMessage({ roomId, editedMessage: null });
 			}
 		}
 	}
@@ -211,8 +234,12 @@ export function ChatInput({
 			}
 		}
 
-		setCurrentText(cleanText);
-		updateText(cleanText);
+		updateText(roomId, cleanText);
+
+		// TODO: add support for shift+enter to add more lines
+		if (event.nativeEvent.inputType === "insertLineBreak") {
+			event.preventDefault();
+		}
 
 		// Automatically expand the input box height if it needs to scroll
 		const { offsetHeight, scrollHeight } = inputRef.current;
@@ -227,7 +254,6 @@ export function ChatInput({
 				ref={inputRef}
 				rows="1"
 				className={`form-control ${!!editedMessage ? "editing" : ""}`}
-				value={currentText}
 				onChange={onInputChange}
 				onKeyDown={onKeyDown}
 			/>
@@ -240,8 +266,7 @@ const mapStateToProps = state => ({
 	emoticonPickerVisible: !!state.emoticonPicker.visible,
 	selectedEmoticon: state.emoticonPicker.selected,
 	localMessages: getLocalMessages(state),
-	text: getTextForCurrentRoom(state),
-	currentRoomTextEmpty: getCurrentRoomTextEmpty(state),
+	appendText: getAppendTextForCurrentRoom(state),
 	editedMessage: getEditedMessageForCurrentRoom(state)
 });
 
@@ -252,12 +277,13 @@ const mapDispatchToProps = {
 	searchEmoticonPicker,
 	showEmoticonPicker,
 	hideEmoticonPicker,
-	selectLeftEmoticonPicker: selectLeftInEmoticonPicker,
-	selectRightEmoticonPicker: selectRightInEmoticonPicker,
-	selectUpEmoticonPicker: selectUpInEmoticonPicker,
-	selectDownEmoticonPicker: selectDownInEmoticonPicker,
-	send: sendRoomMessage,
-	edit: updateMessage
+	selectLeftEmoticonPicker,
+	selectRightEmoticonPicker,
+	selectUpEmoticonPicker,
+	selectDownEmoticonPicker,
+	sendRoomMessage,
+	updateMessage,
+	appendNick
 };
 
 export default connect(

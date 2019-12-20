@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { getTextForCurrentRoom } from "../../selectors/selectors.js";
+import { getAppendTextForCurrentRoom } from "../../selectors/selectors.js";
 import { sendTypingNotification } from "./roomsSlice";
 
 function BroadcastTypingEvents({ text = "", sendTypingNotification }) {
@@ -17,7 +17,7 @@ function BroadcastTypingEvents({ text = "", sendTypingNotification }) {
 }
 
 const mapStateToProps = state => ({
-	text: getTextForCurrentRoom(state)
+	text: getAppendTextForCurrentRoom(state)
 });
 
 const mapDispatchToProps = {

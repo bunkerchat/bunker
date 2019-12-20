@@ -55,16 +55,16 @@ const getChatForCurrentRoom = createSelector(
 	(activeRoomId, chatByRoomId) => chatByRoomId[activeRoomId]
 );
 
-export const getTextForCurrentRoom = createSelector(
+export const getAppendTextForCurrentRoom = createSelector(
 	[getChatForCurrentRoom],
-	(getChatForCurrentRoom = {}) => getChatForCurrentRoom.text
+	(getChatForCurrentRoom = {}) => getChatForCurrentRoom.appendText
 );
 
-export const getCurrentRoomTextEmpty = createSelector([getTextForCurrentRoom], (text = "") => text.length === 0);
+export const getCurrentRoomTextEmpty = createSelector([getAppendTextForCurrentRoom], (text = "") => text.length === 0);
 
 export const getEditedMessageForCurrentRoom = createSelector(
 	[getChatForCurrentRoom],
-	(getChatForCurrentRoom = {}) => getChatForCurrentRoom.editedMessage
+	(chatForCurrentRoom = {}) => chatForCurrentRoom.editedMessage
 );
 
 export const getSection = state => {
