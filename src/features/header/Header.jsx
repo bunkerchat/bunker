@@ -33,7 +33,7 @@ const Header = ({ roomIds, totalUnreadMessageCount, anyUnreadMention, isDisconne
 				<div className="ml-auto navbar-nav text-right">
 					<UploadButton />
 					<Link className="nav-item nav-link" to={`/2/settings`}>
-						<FontAwesomeIcon icon="cog" spin={isDisconnected} color={isVersionV2Deployed ? "yellow" : "white"} />
+						<FontAwesomeIcon icon="cog" spin={isDisconnected} color={isVersionV2Deployed ? "orange" : "white"} />
 					</Link>
 				</div>
 			</nav>

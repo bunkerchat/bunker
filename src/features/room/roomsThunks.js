@@ -13,5 +13,4 @@ export const sendTypingNotification = () => (dispatch, getState) => {
 	const state = getState();
 	const activeRoomId = getActiveRoomId(state);
 	throttledSend(activeRoomId);
-	// return emit("/user/current/typing", { typingIn: activeRoomId });
 };
