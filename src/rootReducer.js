@@ -11,6 +11,7 @@ import messageControls from "./features/messageControls/messageControlsSlice";
 import imagePick from "./features/imagePick/imagePickReducer";
 import log from "./features/chat/logReducer";
 import socket from "./features/socket/socketSlice";
+import version from "./features/version/versionSlice";
 
 const rootReducer = combineReducers({
 	localUser,
@@ -24,7 +25,8 @@ const rootReducer = combineReducers({
 	messageControls,
 	imagePick,
 	log,
-	socket
+	socket,
+	version
 });
 
 export default rootReducer;

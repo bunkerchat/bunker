@@ -17,8 +17,10 @@ versionService.version = function version() {
 		getClientCode(),
 		getVendorCode(),
 		getClientStyles(),
-		emoticonService.getEmoticonNamesFromDisk()
-	).spread((serverVersion, clientFile, vendorFile, clientStyles, emoticons) => {
+		emoticonService.getEmoticonNamesFromDisk(),
+		getClientCodeV2(),
+		getVendorCodeV2()
+	).spread((serverVersion, clientFile, vendorFile, clientStyles, emoticons, clientFileV2, vendorFileV2) => {
 		var clientVersion;
 		if (clientFile) {
 			clientVersion = /bundle-(.+?)\.js/gi.exec(clientFile)[1];
@@ -32,13 +34,27 @@ versionService.version = function version() {
 			clientVersion += /default-(.+?)\.css/gi.exec(clientStyles)[1];
 		}
 
+		let clientVersionV2;
+		if (clientFileV2) {
+			clientVersionV2 = /main\.(.+?)\.js/gi.exec(clientFileV2)[1];
+		}
+
+		if (vendorFileV2) {
+			clientVersionV2 += /vendor-\.(.+?)\.js/gi.exec(vendorFileV2)[1];
+		}
+
 		// hash emoticon names onto list as well
 		clientVersion += crypto
 			.createHash("md5")
 			.update(emoticons.join())
 			.digest("hex");
 
-		versionCache = { serverVersion, clientVersion };
+		clientVersionV2 += crypto
+			.createHash("md5")
+			.update(emoticons.join())
+			.digest("hex");
+
+		versionCache = { serverVersion, clientVersion, clientVersionV2 };
 		return versionCache;
 	});
 };
@@ -67,6 +83,14 @@ function getClientStyles() {
 	);
 }
 
+function getClientCodeV2() {
+	return getBundleV2().then(bundledFiles => _.find(bundledFiles, file => /main\..+?\.js/gi.test(file)));
+}
+
+function getVendorCodeV2() {
+	return getBundleV2().then(bundledFiles => _.find(bundledFiles, file => /vendor-\..+?\.js/gi.test(file)));
+}
+
 var bundleCache;
 function getBundle() {
 	if (!config.useJavascriptBundle) return Promise.resolve([]);
@@ -86,7 +110,7 @@ function getBundleV2() {
 		.readdirAsync("./dist")
 		.then(bundledFiles => {
 			bundleCacheV2 = bundledFiles.filter(file => !file.includes(".map"));
-			return bundleCacheV2
+			return bundleCacheV2;
 		})
 		.catch(() => []);
 }

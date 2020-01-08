@@ -166,3 +166,6 @@ export const getReadRoomIds = createSelector([getLocalRoomMembersByRoom], localR
 );
 
 export const getIsDisconnected = state => !state.socket.connected;
+
+export const newIsVersionV2Deployed = ({ version }) =>
+	version.clientVersionV2New && version.clientVersionV2 !== version.clientVersionV2New;
