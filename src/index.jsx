@@ -39,8 +39,11 @@ library.add(
 );
 
 if (process.env.NODE_ENV !== "production") {
-	const whyDidYouRender = require("@welldone-software/why-did-you-render");
-	whyDidYouRender(React, { include: [/.*/], exclude: [/^Connect/, /TimeAgo/, /StyledComponent/, /styled/, /FontAwesomeIcon/, /Gravatar/] });
+	const whyDidYouRender = require("@welldone-software/why-did-you-render/dist/no-classes-transpile/umd/whyDidYouRender.min.js");
+	whyDidYouRender(React, {
+		include: [/.*/],
+		exclude: [/^Connect/, /TimeAgo/, /StyledComponent/, /styled/, /FontAwesomeIcon/, /Gravatar/]
+	});
 }
 
 ReactDOM.render(

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { connect } from "react-redux";
-import { updateEditedMessage, updateText } from "./chatInputReducer.js";
+import { updateEditedMessage } from "./chatInputReducer.js";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import {
 	getActiveRoomId,
@@ -51,7 +51,6 @@ export function ChatInput({
 	editedMessage,
 
 	// actions
-	updateText,
 	updateEditedMessage,
 	hideMessageControls,
 	searchEmoticonPicker,
@@ -119,9 +118,7 @@ export function ChatInput({
 			sendRoomMessage(roomId, currentText);
 		}
 
-		// setCurrentText("");
 		setText("");
-		updateText(roomId, "");
 
 		updateEditedMessage({ roomId, editedMessage: null });
 		hideMessageControls();
@@ -190,7 +187,6 @@ export function ChatInput({
 		}
 
 		if (newEditedMessage) {
-			updateText(roomId, newEditedMessage.text);
 			updateEditedMessage({ roomId, editedMessage: newEditedMessage });
 		}
 	}
@@ -234,8 +230,6 @@ export function ChatInput({
 			}
 		}
 
-		updateText(roomId, cleanText);
-
 		// TODO: add support for shift+enter to add more lines
 		if (event.nativeEvent.inputType === "insertLineBreak") {
 			event.preventDefault();
@@ -271,7 +265,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-	updateText,
 	updateEditedMessage,
 	hideMessageControls,
 	searchEmoticonPicker,
