@@ -111,7 +111,7 @@ export const getRoomMemberRoleForCurrentRoomByUserId = userId =>
 	createSelector([getRoomMembersForCurrentRoomHash], roomMembersHash => roomMembersHash[userId]?.role);
 
 export const getLastMessageContainsMention = createSelector([getLastMessage, getNick], (lastMessage, nick) => {
-	if (!lastMessage) return;
+	if (!lastMessage || !lastMessage.tokens) return;
 
 	const hasMention = lastMessage.tokens.some(token => {
 		if (token.type !== "word") return false;
