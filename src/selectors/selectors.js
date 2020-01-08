@@ -164,3 +164,5 @@ export const getReadRoomIds = createSelector([getLocalRoomMembersByRoom], localR
 		.map("room")
 		.value()
 );
+
+export const getIsDisconnected = state => !state.socket.connected;

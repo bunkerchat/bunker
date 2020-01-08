@@ -1,5 +1,11 @@
 import io from "socket.io-client";
 import { dispatch } from "./store";
+import { init } from "./features/init/initActions";
+import { userUpdated } from "./features/users/userActions";
+import { ping } from "./features/users/localUserActions";
+import { localRoomMemberUpdated } from "./features/users/localRoomMembersSlice";
+import { imagePickSelectionsReceived } from "./features/imagePick/imagePickActions";
+import { messageReceived, messageUpdated, roomUpdated } from "./features/room/roomsSlice";
 import {
 	connected,
 	disconnected,
@@ -7,13 +13,7 @@ import {
 	errorResponse,
 	reconnected,
 	successResponse
-} from "./features/socket/socketActions";
-import { init } from "./features/init/initActions";
-import { userUpdated } from "./features/users/userActions";
-import { ping } from "./features/users/localUserActions";
-import { localRoomMemberUpdated } from "./features/users/localRoomMembersSlice";
-import { imagePickSelectionsReceived } from "./features/imagePick/imagePickActions";
-import { messageReceived, messageUpdated, roomUpdated } from "./features/room/roomsSlice";
+} from "./features/socket/socketSlice";
 
 const socket = io(window.url);
 
