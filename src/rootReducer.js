@@ -9,7 +9,7 @@ import chatInput from "./features/input/chatInputReducer";
 import emoticonPicker from "./features/emoticon/emoticonPickerReducer";
 import messageControls from "./features/messageControls/messageControlsSlice";
 import imagePick from "./features/imagePick/imagePickReducer";
-import log from "./features/chat/logReducer";
+// import log from "./features/chat/logReducer";
 import socket from "./features/socket/socketSlice";
 import version from "./features/version/versionSlice";
 
@@ -24,7 +24,7 @@ const rootReducer = combineReducers({
 	emoticonPicker,
 	messageControls,
 	imagePick,
-	log,
+	// log,
 	socket,
 	version
 });
