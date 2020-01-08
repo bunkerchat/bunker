@@ -122,7 +122,12 @@ export function ChatInput({
 
 		updateEditedMessage({ roomId, editedMessage: null });
 		hideMessageControls();
-		inputRef.current.style.removeProperty("height"); // Remove extra height, if any
+
+		// hack for ios
+		setTimeout(() => {
+			// Remove extra height, if any
+			inputRef.current.style.removeProperty("height");
+		});
 	}
 
 	function onSend() {
