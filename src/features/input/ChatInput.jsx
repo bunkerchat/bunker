@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useEffect } from "react";
 import { connect } from "react-redux";
 import { updateEditedMessage } from "./chatInputReducer.js";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
@@ -23,6 +23,7 @@ import {
 } from "../emoticon/emoticonPickerActions";
 import { sendRoomMessage } from "../room/roomsSlice";
 import { appendNick } from "./chatInputReducer";
+import { sendTypingNotification } from "../room/roomsThunks";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -62,7 +63,8 @@ export function ChatInput({
 	selectDownEmoticonPicker,
 	sendRoomMessage,
 	updateMessage,
-	appendNick
+	appendNick,
+	sendTypingNotification
 }) {
 	const ref = useRef();
 	const inputRef = useRef();
@@ -221,6 +223,8 @@ export function ChatInput({
 			if (editedMessage) {
 				updateEditedMessage({ roomId, editedMessage: null });
 			}
+		} else if (/[A-z0-9]/.test(event.key)) {
+			sendTypingNotification();
 		}
 	}
 
@@ -281,7 +285,8 @@ const mapDispatchToProps = {
 	selectDownEmoticonPicker,
 	sendRoomMessage,
 	updateMessage,
-	appendNick
+	appendNick,
+	sendTypingNotification
 };
 
 export default connect(

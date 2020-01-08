@@ -7,7 +7,6 @@ import RoomMemberList from "../roomMember/RoomMemberList.jsx";
 import RoomTopic from "./RoomTopic.jsx";
 import { getActiveRoomId } from "../../selectors/selectors.js";
 import ChatInput from "../input/ChatInput.jsx";
-import BroadcastTypingEvents from "./BroadcastTypingEvents.jsx";
 
 const Container = styled.div`
 	overflow: hidden;
@@ -32,7 +31,6 @@ const Room = ({ rooms, activeRoomId }) => {
 					<ScrollingMessageList roomId={roomId} current={room.current} key={roomId} />
 				))}
 				<ChatInput />
-				<BroadcastTypingEvents />
 			</MessagingContainer>
 			{isDesktop && <RoomMemberList />}
 		</Container>
