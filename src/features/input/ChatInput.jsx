@@ -211,19 +211,20 @@ export function ChatInput({
 	}
 
 	function onKeyDown(event) {
-		if (event.key === ":") {
+		const { key } = event;
+		if (key === ":") {
 			handleOpenCloseEmoticon();
-		} else if (/Arrow|Tab/.test(event.key) && emoticonPickerVisible) {
+		} else if (/Arrow|Tab/.test(key) && emoticonPickerVisible) {
 			handleEmoticonTabArrow(event);
-		} else if (/ArrowUp|ArrowDown/.test(event.key)) {
+		} else if (/ArrowUp|ArrowDown/.test(key)) {
 			handleMessageNavigation(event);
-		} else if (event.key === "Enter") {
+		} else if (key === "Enter") {
 			handleEnterKey(event);
-		} else if (event.key === "Escape") {
+		} else if (key === "Escape") {
 			if (editedMessage) {
 				updateEditedMessage({ roomId, editedMessage: null });
 			}
-		} else if (event.key.length === 1 && /[A-z0-9]/.test(event.key)) {
+		} else if (key.length === 1 && /[A-z0-9]/.test(key)) {
 			sendTypingNotification();
 		}
 	}
