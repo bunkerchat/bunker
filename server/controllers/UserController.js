@@ -215,7 +215,7 @@ module.exports.typing = (req, res) => {
 	if (usersTyping[userId]) {
 		clearTimeout(usersTyping[userId]);
 	} else {
-		userActivity(req, { typingIn: req.body.typingIn });
+		userActivity(req, { typingIn: req.body.typingIn }).catch(res.serverError);
 	}
 
 	// clear typing notification after 3 seconds
@@ -277,6 +277,8 @@ module.exports.clearInbox = (req, res) => {
 };
 
 module.exports.ping = (req, res) => {
+	res.ok();
+
 	return Promise.try(() => {
 		if (req.session.userId) {
 			const userId = req.session.userId.toObjectId();
@@ -294,9 +296,7 @@ module.exports.ping = (req, res) => {
 				});
 			});
 		}
-	})
-		.then(() => res.ok())
-		.catch(res.serverError);
+	}).catch(res.serverError);
 };
 
 // clear inactive users from list
