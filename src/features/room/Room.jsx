@@ -28,8 +28,8 @@ const Room = ({ rooms, activeRoomId }) => {
 				<RoomTopic />
 
 				{_.map(rooms, (room, roomId) => (
-					<ScrollingMessageList roomId={roomId} current={room.current} key={roomId} />
-				))}
+				<ScrollingMessageList roomId={roomId} current={room.current} key={roomId} />
+			))}
 				<ChatInput />
 			</MessagingContainer>
 			{isDesktop && <RoomMemberList />}

@@ -1,7 +1,6 @@
 import io from "socket.io-client";
 import { dispatch } from "./store";
 import { init } from "./features/init/initActions";
-import { userUpdated } from "./features/users/userActions";
 import { ping } from "./features/users/localUserActions";
 import { localRoomMemberUpdated } from "./features/users/localRoomMembersSlice";
 import { imagePickSelectionsReceived } from "./features/imagePick/imagePickActions";
@@ -14,6 +13,7 @@ import {
 	reconnected,
 	successResponse
 } from "./features/socket/socketSlice";
+import { userUpdated } from "./features/users/usersSlice";
 
 const socket = io(window.url);
 

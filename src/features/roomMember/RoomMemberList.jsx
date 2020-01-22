@@ -1,6 +1,5 @@
 import React from "react";
 import { connect } from "react-redux";
-import { useDebounce } from "use-debounce";
 import theme from "../../constants/theme";
 import styled from "styled-components";
 import RoomMemberListItem from "./RoomMemberListItem.jsx";
@@ -14,12 +13,10 @@ const MemberListContainer = styled.div`
 `;
 
 function RoomMemberList({ sortedRoomMemberUserIds }) {
-	const [debouncedSortedRoomMemberUserIds] = useDebounce(sortedRoomMemberUserIds, 75, { maxWait: 500 });
-
 	return (
 		<MemberListContainer className="border-left d-none d-md-block">
 			<ul className="list-group list-group-flush">
-				{debouncedSortedRoomMemberUserIds.map(id => (
+				{sortedRoomMemberUserIds.map(id => (
 					<RoomMemberListItem key={id} userId={id} />
 				))}
 			</ul>
