@@ -223,7 +223,7 @@ export function ChatInput({
 			if (editedMessage) {
 				updateEditedMessage({ roomId, editedMessage: null });
 			}
-		} else if (/[A-z0-9]/.test(event.key)) {
+		} else if (event.key.length === 1 && /[A-z0-9]/.test(event.key)) {
 			sendTypingNotification();
 		}
 	}
