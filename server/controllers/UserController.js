@@ -208,18 +208,14 @@ const clearUserTyping = req =>
 	}, 3000);
 
 module.exports.typing = (req, res) => {
-
-	// so this fixes typing lag on v2. Whole UI thread blocks
-	res.ok()
-
 	const userId = req.session.userId;
 
 	if (usersTyping[userId]) {
 		clearTimeout(usersTyping[userId]);
 	} else {
 		userActivity(req, { typingIn: req.body.typingIn })
-			// .then(() => res.ok())
-			// .catch(res.serverError);
+			.then(() => res.ok())
+			.catch(res.serverError);
 	}
 
 	// clear typing notification after 3 seconds
