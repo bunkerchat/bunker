@@ -17,7 +17,7 @@ export const getRoomIds = createSelector([getRooms], (rooms = {}) => Object.keys
 
 export const getActiveRoom = createSelector([getRooms], rooms => _.find(rooms, { current: true }));
 
-export const getActiveRoomId = createSelector([getActiveRoom], (activeRoom = {}) => activeRoom._id);
+export const getActiveRoomId = state => state.room.activeRoomId;
 
 export const getTotalUnreadMessageCount = createSelector([getLocalRoomMembersByRoom], localRoomMembersByRoom =>
 	_.reduce(localRoomMembersByRoom, (count, roomMember) => count + (roomMember.unreadMessageCount || 0), 0)
@@ -49,6 +49,8 @@ export const getLocalMessages = createSelector(
 		return _.filter(messagesByRoom[activeRoomId], { author: localUser._id });
 	}
 );
+
+export const getMessageIdsForCurrentRoom = ({ messages, room }) => messages.byRoom[room.activeRoomId];
 
 const getChatForCurrentRoom = createSelector(
 	[getActiveRoomId, getChatByRoom],

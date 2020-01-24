@@ -51,30 +51,11 @@ export const joinRoom = roomId => dispatch => {
 	return emit("/room/join", roomId).then(room => dispatch(joinedRoom(room)));
 };
 
-
-/* reducer */
-const setCurrentRoom = rooms => {
-	_.each(rooms, room => {
-		room.current = false;
-	});
-
-	const roomMatch = /room\/(\w+)/i.exec(window.location.pathname);
-	if (roomMatch) {
-		const room = rooms[roomMatch[1]];
-		if (room) {
-			room.current = true;
-		}
-	}
-
-	return rooms;
-};
-
 const handlers = {
-	"init/received": (state, action) =>
-		setCurrentRoom({
-			...state,
-			..._.keyBy(action.payload.rooms, "_id")
-		}),
+	"init/received": (state, action) => ({
+		...state,
+		..._.keyBy(action.payload.rooms, "_id")
+	}),
 	"room/updated": (state, action) => ({
 		...state,
 		[action.room._id]: {
@@ -82,7 +63,7 @@ const handlers = {
 			...action.room
 		}
 	}),
-	"@@router/LOCATION_CHANGE": state => setCurrentRoom({ ...state }),
+	// "@@router/LOCATION_CHANGE": state => setCurrentRoom({ ...state }),
 	"message/loadingMany": (state, action) => ({
 		...state,
 		[action.roomId]: {
@@ -105,7 +86,7 @@ const handlers = {
 			fullHistoryLoaded: false
 		}
 	}),
-	"room/joined": (state, action) =>({
+	"room/joined": (state, action) => ({
 		...state,
 		[action.room._id]: {
 			...state[action.room._id],

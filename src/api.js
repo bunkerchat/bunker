@@ -78,7 +78,7 @@ setInterval(() => {
 // only accepts data as a JSON object
 // returns a promise
 export function emit(endpoint, data) {
-	dispatch(emitEndpoint(endpoint));
+	// dispatch(emitEndpoint(endpoint));
 
 	const payload = _.isObject(data) ? data : undefined;
 	return new Promise((resolve, reject) => {
