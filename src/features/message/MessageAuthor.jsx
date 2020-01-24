@@ -4,7 +4,7 @@ import theme from "../../constants/theme";
 import userId from "../../constants/userId";
 import { connect } from "react-redux";
 import UserImage from "../users/UserImage.jsx";
-import { getAuthorUser } from "../users/usersSelectors.js";
+import { getUserById } from "../users/usersSelectors.js";
 
 const AuthorContainer = styled.div`
 	flex: 0 0 30px;
@@ -46,8 +46,8 @@ const Nick = styled.div`
 	line-height: 25px;
 `;
 
-const mapStateToProps = (state, props) => ({
-	user: getAuthorUser(state, props)
+const mapStateToProps = (state, ownProps) => ({
+	user: getUserById(ownProps.authorId)(state)
 });
 
 class MessageAuthor extends React.Component {

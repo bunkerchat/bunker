@@ -7,7 +7,7 @@ import MessageTokens from "./MessageTokens.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MessageImages from "./MessageImages.jsx";
 import MessageBodyContainer from "./MessageBodyContainer.jsx";
-import { getMessageAuthor } from "../users/usersSelectors.js";
+import { getUserById } from "../users/usersSelectors.js";
 
 const MessageTime = styled.div`
 	width: 120px;
@@ -35,34 +35,34 @@ class MessageBody extends React.Component {
 						</div>
 						<div className="col text-right">
 							<small className="text-muted">
-								<MessageTimeAgo date={message.createdAt}/>
+								<MessageTimeAgo date={message.createdAt} />
 							</small>
 						</div>
 					</div>
 				)}
 				<div className="row no-gutters px-2">
 					<div className="col">
-						<MessageTokens message={message}/>
-						<MessageReactions message={message}/>
-						<MessageImages message={message}/>
+						<MessageTokens message={message} />
+						<MessageReactions message={message} />
+						<MessageImages message={message} />
 					</div>
 					{firstInSeries && (
 						<MessageTime className="d-none d-md-block text-right">
 							<small className="text-muted">
-								<MessageTimeAgo date={message.createdAt}/>
+								<MessageTimeAgo date={message.createdAt} />
 							</small>
 						</MessageTime>
 					)}
-					{message.edited && <FontAwesomeIcon icon={["far", "edit"]} className="ml-2 my-1 text-muted"/>}
+					{message.edited && <FontAwesomeIcon icon={["far", "edit"]} className="ml-2 my-1 text-muted" />}
 				</div>
 			</MessageBodyContainer>
 		);
 	}
 }
 
-const mapStateToProps = (state, props) => ({
-	author: getMessageAuthor(state, props),
-	isSelectedMessage: state.messageControls.messageId === props.message._id
+const mapStateToProps = (state, ownProps) => ({
+	author: getUserById(ownProps.message.author),
+	isSelectedMessage: state.messageControls.messageId === ownProps.message._id
 });
 
 export default connect(mapStateToProps)(MessageBody);

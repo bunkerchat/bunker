@@ -1,8 +1,6 @@
 export const getUsers = state => state.users;
 
-export const getAuthorUser = (state, props) => state.users[props.authorId];
-
-export const getMessageAuthor = (state, props) => state.users[props.message.author];
+export const getUserById = userId => state => state.users[userId];
 
 export const getLocalUser = state => state.localUser;
 
