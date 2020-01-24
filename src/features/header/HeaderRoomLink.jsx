@@ -1,9 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { getRoomIsCurrent, getRoomName, getUnreadMention, getUnreadMessageCount } from "../../selectors/selectors.js";
 import UnreadMessageBadge from "./UnreadMessageBadge.jsx";
 import { Link } from "react-router-dom";
+import { getUnreadMention, getUnreadMessageCount } from "../users/usersSelectors.js";
+import { getRoomIsCurrent, getRoomName } from "../room/roomSelectors.js";
 
 const RoomListItem = styled.li`
 	position: relative;

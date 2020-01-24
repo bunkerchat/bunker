@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { getRoomName, getUnreadMention, getUnreadMessageCount } from "../../selectors/selectors.js";
 
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
+import { getUnreadMention, getUnreadMessageCount } from "../users/usersSelectors.js";
+import { getRoomName } from "../room/roomSelectors.js";
 
 const UnreadMessageBadge = styled.span`
 	&.mention {

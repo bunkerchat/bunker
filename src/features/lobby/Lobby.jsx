@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import LobbyRoomLink from "./LobbyRoomLink.jsx";
-import { getReadRoomIds, getUnreadRoomIds } from "../../selectors/selectors.js";
+import { getReadRoomIds, getUnreadRoomIds } from "../room/roomSelectors.js";
 
 const Container = styled.div`
 	flex: 1;

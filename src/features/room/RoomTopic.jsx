@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import MessageTokens from "../message/MessageTokens.jsx";
-import { getRoomTopic } from "../../selectors/selectors.js";
+import { getRoomTopic } from "./roomSelectors.js";
 
 class RoomTopic extends React.Component {
 	render() {

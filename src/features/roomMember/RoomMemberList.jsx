@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import theme from "../../constants/theme";
 import styled from "styled-components";
 import RoomMemberListItem from "./RoomMemberListItem.jsx";
-import { getSortedRoomMemberUserIds } from "../../selectors/selectors.js";
+import { getSortedRoomMemberUserIds } from "./roomMemberSelectors.js";
 
 const MemberListContainer = styled.div`
 	flex: 0 0 ${theme.memberList}px;

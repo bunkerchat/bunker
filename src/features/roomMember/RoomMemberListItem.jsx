@@ -3,7 +3,7 @@ import RoomMember from "./RoomMember.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { getRoomMemberRoleForCurrentRoomByUserId } from "../../selectors/selectors.js";
+import { getRoomMemberRoleForCurrentRoomByUserId } from "./roomMemberSelectors.js";
 
 const ListItem = styled.li`
 	&.disabled {

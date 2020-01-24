@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { getDocumentTitle } from "../../selectors/selectors.js";
+import { getDocumentTitle } from "./chatSelectors.js";
 
 const mapStateToProps = state => ({
 	title: getDocumentTitle(state)

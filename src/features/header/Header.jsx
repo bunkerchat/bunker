@@ -2,16 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-	hasAnyUnreadMention,
-	getIsDisconnected,
-	newIsVersionV2Deployed
-} from "../../selectors/selectors";
 import HeaderRoomLink from "./HeaderRoomLink.jsx";
 import UnreadMessageBadge from "./UnreadMessageBadge.jsx";
 import UploadButton from "../imageUpload/UploadButton.jsx";
 import { getRoomIds } from "../room/roomSelectors.js";
 import { getTotalUnreadMessageCount } from "../message/messageSelectors.js";
+import { getIsDisconnected } from "../socket/socketSelectors.js";
+import { newIsVersionV2Deployed } from "../version/versionSelectors.js";
+import { hasAnyUnreadMention } from "../chat/chatSelectors.js";
 
 const Header = ({ roomIds, totalUnreadMessageCount, anyUnreadMention, isDisconnected, isVersionV2Deployed }) => {
 	return (
