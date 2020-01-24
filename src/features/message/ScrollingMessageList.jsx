@@ -22,24 +22,6 @@ const MessageListContainer = styled.div`
 	z-index: 0;
 `;
 
-const mapStateToProps = (state, ownProps) => {
-	const room = state.rooms[ownProps.roomId];
-	return {
-		loading: room.loading,
-		fullHistoryLoaded: room.fullHistoryLoaded,
-		messages: state.messages.byRoom[ownProps.roomId]
-	};
-};
-
-const mapDispatchToProps = dispatch => ({
-	loadMessages: (roomId, skip) => {
-		dispatch(loadRoomMessages(roomId, skip));
-	},
-	clearMessages: roomId => {
-		dispatch(clearRoomMessages(roomId));
-	}
-});
-
 class ScrollingMessageList extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -139,6 +121,20 @@ class ScrollingMessageList extends React.PureComponent {
 		);
 	}
 }
+
+const mapStateToProps = (state, ownProps) => {
+	const room = state.rooms[ownProps.roomId];
+	return {
+		loading: room.loading,
+		fullHistoryLoaded: room.fullHistoryLoaded,
+		messages: state.messages.byRoom[ownProps.roomId]
+	};
+};
+
+const mapDispatchToProps = {
+	loadMessages: loadRoomMessages,
+	clearMessages: clearRoomMessages
+};
 
 export default connect(
 	mapStateToProps,

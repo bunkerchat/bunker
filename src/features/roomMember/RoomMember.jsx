@@ -44,7 +44,7 @@ class RoomMember extends React.Component {
 	};
 
 	render() {
-		const { roomId, nick, email, connected, present, typingIn } = this.props;
+		const { roomId, nick, connected, typingIn, userId } = this.props;
 		return (
 			<Container>
 				{connected && typingIn === roomId ? (
@@ -52,7 +52,7 @@ class RoomMember extends React.Component {
 						<FontAwesomeIcon icon="ellipsis-h" />
 					</IconContainer>
 				) : (
-					<UserImage email={email} connected={connected} present={present} />
+					<UserImage userId={userId} />
 				)}
 				<Nick onClick={this.onClickNick} className="ml-2">
 					{nick}

@@ -2,20 +2,26 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import Gravatar from "react-gravatar";
 import UserStatus from "./UserStatus.jsx";
+import { getUserConnected, getUserEmail, getUserPresent } from "./usersSelectors.js";
+import { connect } from "react-redux";
 
 const Container = styled.div`
 	display: flex;
 `;
 
 const UserImage = ({ email, connected, present }) => {
-	const gravatar = useMemo(() => <Gravatar email={email} size={25} rating="pg" default="identicon" />, []);
-
 	return (
 		<Container>
 			<UserStatus connected={connected} present={present} />
-			{gravatar}
+			<Gravatar email={email} size={25} rating="pg" default="identicon" />
 		</Container>
 	);
 };
 
-export default UserImage;
+const mapStateToProps = (state, { userId }) => ({
+	email: getUserEmail(userId)(state),
+	connected: getUserConnected(userId)(state),
+	present: getUserPresent(userId)(state)
+});
+
+export default connect(mapStateToProps)(UserImage);
