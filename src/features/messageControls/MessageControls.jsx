@@ -7,7 +7,7 @@ import { hideMessageControls, showMessageControls } from "./messageControlsSlice
 import styled from "styled-components";
 import theme from "../../constants/theme";
 import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
-import { getLocalUser } from "../users/usersSelectors.js";
+import { getLocalUserId } from "../users/usersSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 
 const Container = styled.div`
@@ -22,7 +22,7 @@ const Container = styled.div`
 const MessageControls = ({
 	message,
 	roomId,
-	localUser,
+	localUserId,
 	showEmoticonPicker,
 	hideEmoticonPicker,
 	toggleReaction,
@@ -54,7 +54,7 @@ const MessageControls = ({
 		hideMessageControls();
 	};
 
-	const localMessage = localUser._id === message.author;
+	const localMessage = localUserId === message.author;
 	return (
 		<Container className="border border-primary px-3">
 			{localMessage && (
@@ -71,7 +71,7 @@ const MessageControls = ({
 
 const mapStateToProps = state => ({
 	roomId: getActiveRoomId(state),
-	localUser: getLocalUser(state)
+	localUserId: getLocalUserId(state)
 });
 
 const mapDispatchToProps = {
