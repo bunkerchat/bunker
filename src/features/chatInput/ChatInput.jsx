@@ -221,8 +221,6 @@ export function ChatInput({
 			if (editedMessage) {
 				updateEditedMessage({ roomId, editedMessage: null });
 			}
-			// }
-			// goodbye sweet typing notification
 		} else if (key.length === 1 && /[A-z0-9]/.test(key)) {
 			sendTypingNotification();
 		}

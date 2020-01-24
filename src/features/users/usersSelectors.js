@@ -8,6 +8,8 @@ export const getUserConnected = userId => state => getUserById(userId)(state)?.c
 
 export const getUserPresent = userId => state => getUserById(userId)(state)?.present;
 
+export const getUserNick = userId => state => getUserById(userId)(state)?.nick;
+
 export const getLocalUser = state => state.localUser;
 
 export const getLocalUserId = state => state.localUser._id;

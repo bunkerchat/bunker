@@ -7,7 +7,7 @@ import MessageTokens from "./MessageTokens.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MessageImages from "./MessageImages.jsx";
 import MessageBodyContainer from "./MessageBodyContainer.jsx";
-import { getUserById } from "../users/usersSelectors.js";
+import { getUserNick } from "../users/usersSelectors.js";
 
 const MessageTime = styled.div`
 	width: 120px;
@@ -25,13 +25,13 @@ class MessageBody extends React.Component {
 	}
 
 	render() {
-		const { message, firstInSeries, author } = this.props;
+		const { message, firstInSeries, nick } = this.props;
 		return (
 			<MessageBodyContainer message={message} firstInSeries={firstInSeries}>
 				{firstInSeries && (
 					<div className="row d-md-none">
 						<div className="col">
-							<h6>{author ? author.nick : "Unknown"}</h6>
+							<h6>{nick || "Unknown"}</h6>
 						</div>
 						<div className="col text-right">
 							<small className="text-muted">
@@ -61,7 +61,7 @@ class MessageBody extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-	author: getUserById(ownProps.message.author),
+	nick: getUserNick(ownProps.message.author)(state),
 	isSelectedMessage: state.messageControls.messageId === ownProps.message._id
 });
 
