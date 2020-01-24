@@ -126,7 +126,6 @@
 	"license": "",
 	"devDependencies": {
 		"@welldone-software/why-did-you-render": "3.4.2",
-		"circular-dependency-plugin": "5.2.0",
 		"enzyme": "3.7.0",
 		"enzyme-adapter-react-16": "1.7.0",
 		"prettier": "1.14.3"
