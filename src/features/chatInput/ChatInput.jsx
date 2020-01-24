@@ -3,10 +3,7 @@ import { connect } from "react-redux";
 import { updateEditedMessage } from "./chatInputReducer.js";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import {
-	getActiveRoomId,
-	getEditedMessageForCurrentRoom,
-	getLocalMessages,
-	getAppendTextForCurrentRoom
+	getEditedMessageForCurrentRoom
 } from "../../selectors/selectors.js";
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
@@ -24,6 +21,9 @@ import {
 import { sendRoomMessage } from "../room/roomsSlice";
 import { appendNick } from "./chatInputReducer";
 import { sendTypingNotification } from "../room/roomsThunks";
+import { getLocalMessages } from "../message/messageSelectors.js";
+import { getAppendTextForCurrentRoom } from "./chatInputSelectors.js";
+import { getActiveRoomId } from "../room/roomSelectors.js";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 

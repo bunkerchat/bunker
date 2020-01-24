@@ -4,14 +4,14 @@ import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	hasAnyUnreadMention,
-	getTotalUnreadMessageCount,
 	getIsDisconnected,
 	newIsVersionV2Deployed
 } from "../../selectors/selectors";
 import HeaderRoomLink from "./HeaderRoomLink.jsx";
 import UnreadMessageBadge from "./UnreadMessageBadge.jsx";
 import UploadButton from "../imageUpload/UploadButton.jsx";
-import { getRoomIds } from "../../selectors/selectors.js";
+import { getRoomIds } from "../room/roomSelectors.js";
+import { getTotalUnreadMessageCount } from "../message/messageSelectors.js";
 
 const Header = ({ roomIds, totalUnreadMessageCount, anyUnreadMention, isDisconnected, isVersionV2Deployed }) => {
 	return (

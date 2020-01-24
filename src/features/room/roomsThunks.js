@@ -1,5 +1,5 @@
-import { getActiveRoomId } from "../../selectors/selectors";
 import { emit } from "../../api";
+import { getActiveRoomId } from "./roomSelectors.js";
 
 const throttledSend = _.throttle(
 	activeRoomId => {

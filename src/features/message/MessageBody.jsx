@@ -2,12 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import MessageTimeAgo from "./MessageTimeAgo.jsx";
-import { getMessageAuthor } from "../../selectors/selectors";
 import MessageReactions from "./MessageReactions.jsx";
 import MessageTokens from "./MessageTokens.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MessageImages from "./MessageImages.jsx";
 import MessageBodyContainer from "./MessageBodyContainer.jsx";
+import { getMessageAuthor } from "../users/usersSelectors.js";
 
 const MessageTime = styled.div`
 	width: 120px;

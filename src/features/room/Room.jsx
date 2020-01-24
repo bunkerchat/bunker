@@ -5,8 +5,8 @@ import { useMedia } from "react-use";
 import ScrollingMessageList from "../message/ScrollingMessageList.jsx";
 import RoomMemberList from "../roomMember/RoomMemberList.jsx";
 import RoomTopic from "./RoomTopic.jsx";
-import { getActiveRoomId } from "../../selectors/selectors.js";
-import ChatInput from "../input/ChatInput.jsx";
+import ChatInput from "../chatInput/ChatInput.jsx";
+import { getActiveRoomId } from "./roomSelectors.js";
 
 const Container = styled.div`
 	overflow: hidden;
@@ -28,8 +28,8 @@ const Room = ({ rooms, activeRoomId }) => {
 				<RoomTopic />
 
 				{_.map(rooms, (room, roomId) => (
-				<ScrollingMessageList roomId={roomId} current={room.current} key={roomId} />
-			))}
+					<ScrollingMessageList roomId={roomId} current={roomId === activeRoomId} key={roomId} />
+				))}
 				<ChatInput />
 			</MessagingContainer>
 			{isDesktop && <RoomMemberList />}

@@ -2,7 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import Favicon from "react-favicon";
 
-import { getTotalUnreadMessageCount, hasAnyUnreadMention } from "../../selectors/selectors.js";
+import { hasAnyUnreadMention } from "../../selectors/selectors.js";
+import { getTotalUnreadMessageCount } from "../message/messageSelectors.js";
 
 const mapStateToProps = state => ({
 	totalUnreadMessageCount: getTotalUnreadMessageCount(state),

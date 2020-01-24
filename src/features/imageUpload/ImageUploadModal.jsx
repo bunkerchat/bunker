@@ -3,10 +3,10 @@ import { Modal } from "reactstrap";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { useImagePasteWatcher } from "./useImagePasteWatcher.js";
-import { getActiveRoomId } from "../../selectors/selectors";
 import { loadImage } from "./imageLoader";
 import { doSingleImageUpload } from "./imageUpload";
-import { appendText } from "../input/chatInputReducer";
+import { appendText } from "../chatInput/chatInputReducer";
+import { getActiveRoomId } from "../room/roomSelectors.js";
 
 const FixedHeightImage = styled.img`
 	max-width: 100%;

@@ -7,11 +7,12 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
-import { getActiveRoomId, getSection } from "../../selectors/selectors.js";
+import { getSection } from "../../selectors/selectors.js";
 import ImagePickModal from "../imagePick/ImagePickModal.jsx";
 import ImageUploadModal from "../imageUpload/ImageUploadModal.jsx";
 import theme from "../../constants/theme.js";
 import Notify from "../notifications/Notify.jsx";
+import { getActiveRoomId } from "../room/roomSelectors.js";
 
 const Container = styled.div`
 	display: flex;

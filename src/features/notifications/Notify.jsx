@@ -3,11 +3,11 @@ import { connect } from "react-redux";
 import Notification from "react-web-notification";
 import {
 	getDesktopMentionNotifications,
-	getLastMentionAuthorNick,
 	getLastMentionRoomName,
 	getLastMentionText,
 	getShowNotification
 } from "../../selectors/selectors.js";
+import { getLastMentionAuthorNick } from "./notificationsSelectors.js";
 
 function Notify({
 	// state

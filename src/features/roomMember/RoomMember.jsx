@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserImage from "../users/UserImage.jsx";
-import { getActiveRoomId } from "../../selectors/selectors.js";
-import { appendNick } from "../input/chatInputReducer";
+import { appendNick } from "../chatInput/chatInputReducer";
+import { getActiveRoomId } from "../room/roomSelectors.js";
 
 const Container = styled.div`
 	display: flex;

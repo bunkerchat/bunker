@@ -1,19 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { getActiveRoomId } from "../../selectors/selectors";
-import { appendText } from "../input/chatInputReducer";
+import { appendText } from "../chatInput/chatInputReducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {loadImage} from "./imageLoader.js";
 import {doSingleImageUpload} from "./imageUpload.js";
 import theme from "../../constants/theme";
+import { getActiveRoomId } from "../room/roomSelectors.js";
 
 const UploadContainer = styled.span`
 	display: inline-block;
 	background-color: transparent;
 	position: relative;
 	cursor: pointer;
-	
+
 	&:hover {
 		color: ${theme.colors.primary};
 	}
@@ -28,11 +28,11 @@ const FileUpload = styled.input`
 	opacity: 0;
 	overflow: hidden;
 	cursor: pointer;
-	
+
 	&:hover {
 		color: ${theme.colors.primary};
 	}
-	
+
 	&::-webkit-file-upload-button {
 		cursor: pointer;
 	}

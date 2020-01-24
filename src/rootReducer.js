@@ -5,7 +5,7 @@ import userSettings from "./features/settings/userSettingsReducer";
 import users from "./features/users/usersSlice";
 import rooms from "./features/room/roomsSlice";
 import messages from "./features/message/messagesReducer";
-import chatInput from "./features/input/chatInputReducer";
+import chatInput from "./features/chatInput/chatInputReducer";
 import emoticonPicker from "./features/emoticon/emoticonPickerReducer";
 import messageControls from "./features/messageControls/messageControlsSlice";
 import imagePick from "./features/imagePick/imagePickReducer";

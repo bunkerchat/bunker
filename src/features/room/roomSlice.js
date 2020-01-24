@@ -6,14 +6,14 @@ const roomSlice = createSlice({
 	initialState: { activeRoomId: null },
 	extraReducers: {
 		"@@router/LOCATION_CHANGE": (state, { payload }) => {
-			const roomMatch = /room\/(\w+)/i.exec(payload.location.pathname);
-			if (!roomMatch) return;
+			// empty array is lobby
+			const roomMatch = /room\/(\w+)/i.exec(payload.location.pathname) || [];
 			state.activeRoomId = roomMatch[1];
 		}
 	},
 	reducers: {}
 });
 
-export const { } = roomSlice.actions;
+export const {} = roomSlice.actions;
 
 export default roomSlice.reducer;

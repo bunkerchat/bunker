@@ -4,7 +4,7 @@ import theme from "../../constants/theme";
 import userId from "../../constants/userId";
 import { connect } from "react-redux";
 import UserImage from "../users/UserImage.jsx";
-import { getAuthorUser } from "../../selectors/selectors";
+import { getAuthorUser } from "../users/usersSelectors.js";
 
 const AuthorContainer = styled.div`
 	flex: 0 0 30px;
