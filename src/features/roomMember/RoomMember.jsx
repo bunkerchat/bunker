@@ -30,44 +30,39 @@ const Nick = styled.a`
 	cursor: pointer;
 `;
 
-const mapStateToProps = (state, props) => {
-	return {
-		roomId: getActiveRoomId(state),
-		nick: getUserNick(props.userId)(state),
-		email: getUserEmail(props.userId)(state),
-		connected: getUserConnected(props.userId)(state),
-		present: getUserPresent(props.userId)(state),
-		typingIn: getUserTypingIn(props.userId)(state)
-	};
+const RoomMember = ({ roomId, nick, connected, typingIn, userId, appendNick }) => {
+	function onClickNick() {
+		appendNick(roomId, nick);
+	}
+
+	return (
+		<Container>
+			{connected && typingIn === roomId ? (
+				<IconContainer>
+					<FontAwesomeIcon icon="ellipsis-h" />
+				</IconContainer>
+			) : (
+				<UserImage userId={userId} />
+			)}
+			<Nick onClick={onClickNick} className="ml-2">
+				{nick}
+			</Nick>
+		</Container>
+	);
 };
+
+const mapStateToProps = (state, props) => ({
+	roomId: getActiveRoomId(state),
+	nick: getUserNick(props.userId)(state),
+	email: getUserEmail(props.userId)(state),
+	connected: getUserConnected(props.userId)(state),
+	present: getUserPresent(props.userId)(state),
+	typingIn: getUserTypingIn(props.userId)(state)
+});
 
 const mapDispatchToProps = {
 	appendNick
 };
-
-class RoomMember extends React.Component {
-	onClickNick = () => {
-		this.props.appendNick(this.props.roomId, this.props.nick);
-	};
-
-	render() {
-		const { roomId, nick, connected, typingIn, userId } = this.props;
-		return (
-			<Container>
-				{connected && typingIn === roomId ? (
-					<IconContainer>
-						<FontAwesomeIcon icon="ellipsis-h" />
-					</IconContainer>
-				) : (
-					<UserImage userId={userId} />
-				)}
-				<Nick onClick={this.onClickNick} className="ml-2">
-					{nick}
-				</Nick>
-			</Container>
-		);
-	}
-}
 
 export default connect(
 	mapStateToProps,
