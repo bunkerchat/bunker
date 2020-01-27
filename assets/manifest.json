@@ -15,6 +15,6 @@
     "theme_color": "#000000",
     "background_color": "#ffffff",
     "display": "standalone",
-    "scope": "/2/",
-    "start_url": "/2/."
+    "scope": "https://bunkerchat.net/2/",
+    "start_url": "https://bunkerchat.net/2/lobby"
 }
