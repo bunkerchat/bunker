@@ -5,6 +5,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserImage from "../users/UserImage.jsx";
 import { appendNick } from "../chatInput/chatInputReducer";
 import { getActiveRoomId } from "../room/roomSelectors.js";
+import {
+	getUserConnected,
+	getUserEmail,
+	getUserNick,
+	getUserPresent,
+	getUserTypingIn
+} from "../users/usersSelectors.js";
 
 const Container = styled.div`
 	display: flex;
@@ -26,11 +33,11 @@ const Nick = styled.a`
 const mapStateToProps = (state, props) => {
 	return {
 		roomId: getActiveRoomId(state),
-		nick: state.users[props.userId]?.nick,
-		email: state.users[props.userId]?.email,
-		connected: state.users[props.userId]?.connected,
-		present: state.users[props.userId]?.present,
-		typingIn: state.users[props.userId]?.typingIn
+		nick: getUserNick(props.userId)(state),
+		email: getUserEmail(props.userId)(state),
+		connected: getUserConnected(props.userId)(state),
+		present: getUserPresent(props.userId)(state),
+		typingIn: getUserTypingIn(props.userId)(state)
 	};
 };
 

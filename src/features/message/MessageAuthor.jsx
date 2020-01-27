@@ -3,7 +3,7 @@ import styled from "styled-components";
 import theme from "../../constants/theme";
 import { connect } from "react-redux";
 import UserImage from "../users/UserImage.jsx";
-import { getLocalUserId } from "../users/usersSelectors.js";
+import { getLocalUserId, getUserNick } from "../users/usersSelectors.js";
 
 const AuthorContainer = styled.div`
 	flex: 0 0 30px;
@@ -45,30 +45,23 @@ const Nick = styled.div`
 	line-height: 25px;
 `;
 
-class MessageAuthor extends React.Component {
-	render() {
-		// Currently ignoring if the user wasn't returned
-		// This happens when a user hasn't logged in in over 45 days
-		// todo handle this better?
-		const user = this.props.user || {};
-		const { authorId, firstInSeries, localUserId } = this.props;
+const MessageAuthor = ({ authorId, firstInSeries, localUserId, nick }) => {
+	const isLocalAuthor = authorId === localUserId;
+	return (
+		<AuthorContainer className={`pl-1 ${isLocalAuthor ? "local" : ""} ${firstInSeries ? "first" : ""}`}>
+			{firstInSeries && (
+				<div className="d-flex">
+					<UserImage userId={authorId} />
+					<Nick className="d-none d-md-inline-block ml-2">{nick}</Nick>
+				</div>
+			)}
+		</AuthorContainer>
+	);
+};
 
-		const isLocalAuthor = authorId === localUserId;
-		return (
-			<AuthorContainer className={`pl-1 ${isLocalAuthor ? "local" : ""} ${firstInSeries ? "first" : ""}`}>
-				{firstInSeries && (
-					<div className="d-flex">
-						<UserImage userId={authorId} />
-						<Nick className="d-none d-md-inline-block ml-2">{user.nick}</Nick>
-					</div>
-				)}
-			</AuthorContainer>
-		);
-	}
-}
-
-const mapStateToProps = state => ({
-	localUserId: getLocalUserId(state)
+const mapStateToProps = (state, ownProps) => ({
+	localUserId: getLocalUserId(state),
+	nick: getUserNick(ownProps.authorId)(state)
 });
 
 export default connect(mapStateToProps)(MessageAuthor);
