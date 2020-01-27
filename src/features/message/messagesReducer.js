@@ -8,11 +8,11 @@ const parseMessage = message => {
 };
 
 const handlers = {
-	"init/received": (state, action) => ({
+	"init/received": (state, { payload }) => ({
 		byRoom: {
 			...state.byRoom,
 			..._.reduce(
-				action.payload.rooms,
+				payload.rooms,
 				(byRoom, room) => {
 					byRoom[room._id] = _(room.$messages)
 						.reverse()
@@ -23,7 +23,17 @@ const handlers = {
 				},
 				{}
 			)
-		}
+		},
+		byKey: payload.rooms.reduce(
+			(byKey, room) => {
+				room.$messages.forEach(message => {
+					if (!byKey) return; // no idea why this is happening
+					byKey[message._id] = parseMessage(message);
+				});
+				return byKey;
+			},
+			{ ...state.byKey }
+		)
 	}),
 	"message/received": (state, action) => {
 		const message = parseMessage(action.message);
@@ -33,6 +43,10 @@ const handlers = {
 			byRoom: {
 				...state.byRoom,
 				[message.room]: _.uniqBy([...state.byRoom[message.room], message], "_id")
+			},
+			byKey: {
+				...state.byKey,
+				[message._id]: message
 			}
 		};
 	},
@@ -46,7 +60,11 @@ const handlers = {
 			byRoom: {
 				...state.byRoom,
 				[action.roomId]: _.uniqBy([...messages, ...state.byRoom[action.roomId]], "_id")
-			}
+			},
+			byKey: messages.reduce((byKey, message) => {
+				byKey[message._id] = message;
+				return byKey;
+			}, state.byKey || {})
 		};
 	},
 	"message/clear": (state, action) => ({
@@ -66,6 +84,10 @@ const handlers = {
 					state.byRoom[message.room],
 					existing => (existing._id === message._id ? { ...existing, ...message } : existing)
 				)
+			},
+			byKey: {
+				...state.byKey,
+				[message._id]: message
 			}
 		};
 	},
@@ -79,11 +101,19 @@ const handlers = {
 					state.byRoom[message.room],
 					existing => (existing._id === message._id ? { ...message, imagesVisible: !existing.imagesVisible } : existing)
 				)
+			},
+			byKey: {
+				...state.byKey,
+				[message._id]: { ...[message._id], imagesVisible: ![message._id].imagesVisible }
 			}
 		};
 	}
 };
 
-export default function(state = {}, action) {
+const defaultState = {
+	byKey: {}
+};
+
+export default function(state = defaultState, action) {
 	return handlers[action.type] ? handlers[action.type](state, action) : state;
 }

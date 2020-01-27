@@ -9,6 +9,7 @@ import theme from "../../constants/theme";
 import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
 import { getLocalUserId } from "../users/usersSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
+import { getMessageAuthorId, getMessageText } from "../message/messageSelectors";
 
 const Container = styled.div`
 	background-color: ${theme.messageHoverBackground};
@@ -20,9 +21,16 @@ const Container = styled.div`
 `;
 
 const MessageControls = ({
-	message,
+	// own props
+	messageId,
+
+	// state
 	roomId,
 	localUserId,
+	messageText,
+	messageAuthorId,
+
+	// actions
 	showEmoticonPicker,
 	hideEmoticonPicker,
 	toggleReaction,
@@ -32,13 +40,13 @@ const MessageControls = ({
 	hideMessageControls
 }) => {
 	const onClickEdit = () => {
-		showMessageControls(message._id);
-		updateText(roomId, message.text);
-		updateEditedMessage({ roomId, editedMessage: message });
+		showMessageControls(messageId);
+		updateText(roomId, messageText);
+		updateEditedMessage({ roomId, editedMessage: messageText });
 	};
 
 	const onClickReaction = event => {
-		showMessageControls(message._id);
+		showMessageControls(messageId);
 		showEmoticonPicker(event.clientX, event.clientY, "left", onEmoticonPick, onEmoticonHide, true);
 	};
 
@@ -46,7 +54,7 @@ const MessageControls = ({
 		hideMessageControls();
 		hideEmoticonPicker();
 		if (emoticonName) {
-			toggleReaction(message._id, emoticonName);
+			toggleReaction(messageId, emoticonName);
 		}
 	};
 
@@ -54,7 +62,7 @@ const MessageControls = ({
 		hideMessageControls();
 	};
 
-	const localMessage = localUserId === message.author;
+	const localMessage = localUserId === messageAuthorId;
 	return (
 		<Container className="border border-primary px-3">
 			{localMessage && (
@@ -69,9 +77,11 @@ const MessageControls = ({
 	);
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, { messageId }) => ({
 	roomId: getActiveRoomId(state),
-	localUserId: getLocalUserId(state)
+	localUserId: getLocalUserId(state),
+	messageText: getMessageText(messageId)(state),
+	messageAuthorId: getMessageAuthorId(messageId)(state)
 });
 
 const mapDispatchToProps = {

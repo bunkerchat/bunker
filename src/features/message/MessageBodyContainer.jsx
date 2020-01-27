@@ -9,17 +9,17 @@ const Container = styled.div`
 	flex: 1;
 	min-height: 30px;
 	border: solid 1px transparent;
-	
+
 	.right-side-controls {
 		position: absolute;
 		bottom: 0;
 		right: 0;
 		opacity: 0;
 	}
-	
+
 	&:hover {
 		background-color: ${theme.messageHoverBackground};
-	
+
 		.right-side-controls {
 			opacity: 1;
 		}
@@ -31,12 +31,7 @@ const Container = styled.div`
 	}
 `;
 
-const mapStateToProps = (state, props) => ({
-	localNick: state.localUser.nick,
-	isSelectedMessage: state.messageControls.messageId === props.message._id
-});
-
-const MessageBodyContainer = ({ children, message, firstInSeries, localNick, isSelectedMessage}) => {
+const MessageBodyContainer = ({ children, message, firstInSeries, localNick, isSelectedMessage }) => {
 	const isUserMentioned = testTextForNick(message.text, localNick);
 
 	let border = "";
@@ -50,15 +45,18 @@ const MessageBodyContainer = ({ children, message, firstInSeries, localNick, isS
 		<Container className={`${border} ${isUserMentioned ? "mention" : ""}`}>
 			{children}
 			<div className="right-side-controls px-2">
-				<MessageControls message={message}/>
+				<MessageControls messageId={message._id} />
 			</div>
 		</Container>
 	);
 };
 
-export default connect(
-	mapStateToProps
-)(MessageBodyContainer);
+const mapStateToProps = (state, props) => ({
+	localNick: state.localUser.nick,
+	isSelectedMessage: state.messageControls.messageId === props.message._id
+});
+
+export default connect(mapStateToProps)(MessageBodyContainer);
 
 function testTextForNick(text, nick) {
 	const mentionRegex = new RegExp(`${nick}\\b|@[Aa]ll\\b`, "i");

@@ -17,3 +17,7 @@ export const getLocalMessages = createSelector(
 		return _.filter(messagesByRoom[activeRoomId], { author: localUser._id });
 	}
 );
+
+export const getMessageById = messageId => state => state.messages.byKey[messageId];
+export const getMessageText = messageId => state => getMessageById(messageId)(state).text;
+export const getMessageAuthorId = messageId => state => getMessageById(messageId)(state).author;
