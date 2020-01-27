@@ -6,14 +6,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Chat from "./features/chat/Chat.jsx";
 import DocumentTitle from "./features/chat/DocumentTitle.jsx";
-
+import EmoticonPreLoad from "./features/init/EmoticonPreLoad.jsx";
 import { history, store } from "./store.js";
 import { ConnectedRouter } from "connected-react-router";
 import { Route, Redirect } from "react-router";
 import { Provider } from "react-redux";
 
-// Configure font-awesome
-import { library } from "@fortawesome/fontawesome-svg-core";
+import { library } from "@fortawesome/fontawesome-svg-core"; // Configure font-awesome
 import {
 	faCog,
 	faEllipsisH,
@@ -25,6 +24,7 @@ import {
 	faSpinner
 } from "@fortawesome/free-solid-svg-icons";
 import { faSmile, faEdit } from "@fortawesome/free-regular-svg-icons";
+
 library.add(
 	faCog,
 	faEllipsisH,
@@ -52,6 +52,7 @@ ReactDOM.render(
 			<>
 				<DocumentTitle />
 				<BunkerFavicon />
+				<EmoticonPreLoad />
 				<Route exact path="/2" render={() => <Redirect to="/2/lobby" />} />
 				<Route path="/" component={Chat} />
 			</>
