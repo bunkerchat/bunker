@@ -10,7 +10,7 @@ export default class MessageList extends React.PureComponent {
 				{messages.map((message, index) => (
 					<div id={message._id} key={message._id}>
 						{message.author ? (
-							<Message message={message} previous={messages[index - 1]} />
+							<Message messageId={message._id} previousMessageId={messages[index - 1]?._id} />
 						) : (
 							<SystemMessage message={message} />
 						)}

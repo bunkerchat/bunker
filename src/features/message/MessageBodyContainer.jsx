@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import theme from "../../constants/theme";
 import MessageControls from "../messageControls/MessageControls.jsx";
+import { getMessageText } from "./messageSelectors";
 
 const Container = styled.div`
 	position: relative;
@@ -31,8 +32,8 @@ const Container = styled.div`
 	}
 `;
 
-const MessageBodyContainer = ({ children, message, firstInSeries, localNick, isSelectedMessage }) => {
-	const isUserMentioned = testTextForNick(message.text, localNick);
+const MessageBodyContainer = ({ children, messageId, messageText, firstInSeries, localNick, isSelectedMessage }) => {
+	const isUserMentioned = testTextForNick(messageText, localNick);
 
 	let border = "";
 	if (isSelectedMessage) {
@@ -45,15 +46,16 @@ const MessageBodyContainer = ({ children, message, firstInSeries, localNick, isS
 		<Container className={`${border} ${isUserMentioned ? "mention" : ""}`}>
 			{children}
 			<div className="right-side-controls px-2">
-				<MessageControls messageId={message._id} />
+				<MessageControls messageId={messageId} />
 			</div>
 		</Container>
 	);
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state, { messageId }) => ({
 	localNick: state.localUser.nick,
-	isSelectedMessage: state.messageControls.messageId === props.message._id
+	messageText: getMessageText(messageId)(state),
+	isSelectedMessage: state.messageControls.messageId === messageId
 });
 
 export default connect(mapStateToProps)(MessageBodyContainer);

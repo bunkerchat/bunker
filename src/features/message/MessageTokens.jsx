@@ -6,6 +6,8 @@ import Url from "./tokens/Url.jsx";
 import Word from "./tokens/Word.jsx";
 import Quote from "./tokens/Quote.jsx";
 import Image from "./tokens/Image.jsx";
+import { getMessageById, getMessageText, getMessageTokens } from "./messageSelectors";
+import { connect } from "react-redux";
 
 const MessageTextContainer = styled.div`
 	display: inline-block;
@@ -22,11 +24,11 @@ const MessageTextContainer = styled.div`
 	}
 `;
 
-const Code = ({ value }) => <code dangerouslySetInnerHTML={{ __html: value }}/>;
-const Italics = ({ value }) => <em dangerouslySetInnerHTML={{ __html: value }}/>;
-const Bold = ({ value }) => <strong dangerouslySetInnerHTML={{ __html: value }}/>;
-const Spoiler = ({ value }) => <mark dangerouslySetInnerHTML={{ __html: value }}/>;
-const Strikethrough = ({ value }) => <del dangerouslySetInnerHTML={{ __html: value }}/>;
+const Code = ({ value }) => <code dangerouslySetInnerHTML={{ __html: value }} />;
+const Italics = ({ value }) => <em dangerouslySetInnerHTML={{ __html: value }} />;
+const Bold = ({ value }) => <strong dangerouslySetInnerHTML={{ __html: value }} />;
+const Spoiler = ({ value }) => <mark dangerouslySetInnerHTML={{ __html: value }} />;
+const Strikethrough = ({ value }) => <del dangerouslySetInnerHTML={{ __html: value }} />;
 
 const tokenMap = {
 	quote: Quote,
@@ -45,15 +47,21 @@ const tokenMap = {
 
 const mapToMessage = (message, token, index) => {
 	const TokenType = tokenMap[token.type];
-	return <TokenType message={message} value={token.value} key={index + token.type + token.value}/>;
+	return <TokenType message={message} value={token.value} key={index + token.type + token.value} />;
 };
 
-export default class MessageTokens extends React.Component {
-	render() {
-		const { message } = this.props;
-		const tokens = message.tokens || [{ type: "unknown", value: message.text }];
-		return (
-			<MessageTextContainer>{tokens.map((token, index) => mapToMessage(message, token, index))}</MessageTextContainer>
-		);
-	}
-}
+const MessageTokens = ({ message, tokens, text }) => {
+	tokens = tokens || [{ type: "unknown", value: text }];
+	return (
+		<MessageTextContainer>{tokens.map((token, index) => mapToMessage(message, token, index))}</MessageTextContainer>
+	);
+};
+
+const mapStateToProps = (state, { messageId }) => ({
+	// TODO: remove this once toggleMessageImagesVisible is fixed
+	message: getMessageById(messageId)(state),
+	text: getMessageText(messageId)(state),
+	tokens: getMessageTokens(messageId)(state)
+});
+
+export default connect(mapStateToProps)(MessageTokens);
