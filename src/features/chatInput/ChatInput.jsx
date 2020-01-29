@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { connect } from "react-redux";
-import { updateEditedMessage } from "./chatInputReducer.js";
+import { updateEditedMessage } from "./chatInputSlice.js";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
@@ -16,11 +16,13 @@ import {
 	showEmoticonPicker
 } from "../emoticon/emoticonPickerActions";
 import { sendRoomMessage } from "../room/roomsSlice";
-import { appendNick } from "./chatInputReducer";
+import { appendNick } from "./chatInputSlice.js";
 import { sendTypingNotification } from "../room/roomsThunks";
 import { getLocalMessages } from "../message/messageSelectors.js";
 import { getAppendTextForCurrentRoom, getEditedMessageForCurrentRoom } from "./chatInputSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
+import { getNewText } from "./chatInputSelectors";
+import { setNewText } from "./chatInputSlice";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -47,6 +49,7 @@ export function ChatInput({
 	localMessages,
 	appendText,
 	editedMessage,
+	newText,
 
 	// actions
 	updateEditedMessage,
@@ -61,8 +64,11 @@ export function ChatInput({
 	sendRoomMessage,
 	updateMessage,
 	appendNick,
-	sendTypingNotification
+	sendTypingNotification,
+	setNewText
 }) {
+	console.log('>>> newText', newText)
+
 	const ref = useRef();
 	const inputRef = useRef();
 
@@ -90,9 +96,18 @@ export function ChatInput({
 		() => {
 			if (!appendText) return;
 			appendNewText(appendText);
-			appendNick(roomId, "");
+			appendNick("");
 		},
 		[appendText]
+	);
+
+	useEffect(
+		() => {
+			if (!newText) return;
+			setText(newText);
+			setNewText("");
+		},
+		[newText]
 	);
 
 	function onEmoticonPick(selected) {
@@ -119,7 +134,7 @@ export function ChatInput({
 
 		setText("");
 
-		updateEditedMessage({ roomId, editedMessage: null });
+		updateEditedMessage(null);
 		hideMessageControls();
 
 		// hack for ios
@@ -191,7 +206,7 @@ export function ChatInput({
 		}
 
 		if (newEditedMessage) {
-			updateEditedMessage({ roomId, editedMessage: newEditedMessage });
+			updateEditedMessage(newEditedMessage);
 		}
 	}
 
@@ -219,7 +234,7 @@ export function ChatInput({
 			handleEnterKey(event);
 		} else if (key === "Escape") {
 			if (editedMessage) {
-				updateEditedMessage({ roomId, editedMessage: null });
+				updateEditedMessage(null);
 			}
 		} else if (key.length === 1 && /[A-z0-9]/.test(key)) {
 			sendTypingNotification();
@@ -268,7 +283,8 @@ const mapStateToProps = state => ({
 	selectedEmoticon: state.emoticonPicker.selected,
 	localMessages: getLocalMessages(state),
 	appendText: getAppendTextForCurrentRoom(state),
-	editedMessage: getEditedMessageForCurrentRoom(state)
+	editedMessage: getEditedMessageForCurrentRoom(state),
+	newText: getNewText(state)
 });
 
 const mapDispatchToProps = {
@@ -284,7 +300,8 @@ const mapDispatchToProps = {
 	sendRoomMessage,
 	updateMessage,
 	appendNick,
-	sendTypingNotification
+	sendTypingNotification,
+	setNewText
 };
 
 export default connect(

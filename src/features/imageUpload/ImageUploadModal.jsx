@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { useImagePasteWatcher } from "./useImagePasteWatcher.js";
 import { loadImage } from "./imageLoader";
 import { doSingleImageUpload } from "./imageUpload";
-import { appendText } from "../chatInput/chatInputReducer";
+import { appendText } from "../chatInput/chatInputSlice.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 
 const FixedHeightImage = styled.img`
@@ -13,7 +13,7 @@ const FixedHeightImage = styled.img`
 	max-height: 250px;
 `;
 
-const ImageUploadModal = ({ activeRoomId, appendText }) => {
+const ImageUploadModal = ({ appendText }) => {
 	const pastedImages = useImagePasteWatcher();
 	const [open, setOpen] = useState(false);
 	const closeImageSelections = () => setOpen(false);
@@ -29,7 +29,7 @@ const ImageUploadModal = ({ activeRoomId, appendText }) => {
 	const uploadImageFiles = () => {
 		return loadImage(pastedImages[0])
 			.then(loadedData => doSingleImageUpload(loadedData.data.split(",")[1]))
-			.then(imageUrl => appendText(activeRoomId, imageUrl))
+			.then(imageUrl => appendText(imageUrl))
 			.finally(() => closeImageSelections());
 	};
 
@@ -55,9 +55,7 @@ const ImageUploadModal = ({ activeRoomId, appendText }) => {
 	);
 };
 
-const mapStateToProps = state => ({
-	activeRoomId: getActiveRoomId(state)
-});
+const mapStateToProps = state => ({});
 
 const mapDispatchToProps = {
 	appendText

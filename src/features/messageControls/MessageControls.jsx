@@ -2,13 +2,12 @@ import React from "react";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toggleReaction } from "../message/messageActions";
-import { updateEditedMessage, updateText } from "../chatInput/chatInputReducer";
+import { updateEditedMessage, setNewText } from "../chatInput/chatInputSlice.js";
 import { hideMessageControls, showMessageControls } from "./messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
 import { getLocalUserId } from "../users/usersSelectors.js";
-import { getActiveRoomId } from "../room/roomSelectors.js";
 import { getMessageAuthorId, getMessageText } from "../message/messageSelectors";
 
 const Container = styled.div`
@@ -25,7 +24,6 @@ const MessageControls = ({
 	messageId,
 
 	// state
-	roomId,
 	localUserId,
 	messageText,
 	messageAuthorId,
@@ -41,8 +39,8 @@ const MessageControls = ({
 }) => {
 	const onClickEdit = () => {
 		showMessageControls(messageId);
-		updateText(roomId, messageText);
-		updateEditedMessage({ roomId, editedMessage: messageText });
+		updateText(messageText);
+		updateEditedMessage(messageText);
 	};
 
 	const onClickReaction = event => {
@@ -78,7 +76,6 @@ const MessageControls = ({
 };
 
 const mapStateToProps = (state, { messageId }) => ({
-	roomId: getActiveRoomId(state),
 	localUserId: getLocalUserId(state),
 	messageText: getMessageText(messageId)(state),
 	messageAuthorId: getMessageAuthorId(messageId)(state)
@@ -88,7 +85,7 @@ const mapDispatchToProps = {
 	showEmoticonPicker,
 	hideEmoticonPicker,
 	toggleReaction,
-	updateText,
+	updateText: setNewText,
 	updateEditedMessage,
 	showMessageControls,
 	hideMessageControls

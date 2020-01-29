@@ -1,10 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { appendText } from "../chatInput/chatInputReducer";
+import { appendText } from "../chatInput/chatInputSlice.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {loadImage} from "./imageLoader.js";
-import {doSingleImageUpload} from "./imageUpload.js";
+import { loadImage } from "./imageLoader.js";
+import { doSingleImageUpload } from "./imageUpload.js";
 import theme from "../../constants/theme";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 
@@ -38,20 +38,11 @@ const FileUpload = styled.input`
 	}
 `;
 
-const mapStateToProps = state => ({
-	activeRoomId: getActiveRoomId(state)
-});
-
-const mapDispatchToProps = {
-	appendText
-};
-
 class UploadButton extends React.Component {
-
 	fileUploadElement = null;
 	state = { uploading: false };
 
-	uploadFile = (evt) => {
+	uploadFile = evt => {
 		this.setState({ uploading: true });
 
 		const file = _.first(evt.target.files);
@@ -61,14 +52,13 @@ class UploadButton extends React.Component {
 				return doSingleImageUpload(loadedData.data.split(",")[1]);
 			})
 			.then(imageUrl => {
-				this.props.appendText(this.props.activeRoomId, imageUrl);
+				this.props.appendText(imageUrl);
 				this.fileUploadElement.value = "";
 			})
 			.finally(() => this.setState({ uploading: false }));
 	};
 
 	render() {
-
 		if (!this.props.activeRoomId) {
 			return null;
 		}
@@ -78,11 +68,28 @@ class UploadButton extends React.Component {
 
 		return (
 			<UploadContainer className="nav-item nav-link">
-				<FontAwesomeIcon icon={iconToRender} className={iconClasses}/>
-				<FileUpload ref={el => this.fileUploadElement = el} type="file" name="image" accept="image/*"
-										onChange={this.uploadFile} />
-			</UploadContainer>);
+				<FontAwesomeIcon icon={iconToRender} className={iconClasses} />
+				<FileUpload
+					ref={el => (this.fileUploadElement = el)}
+					type="file"
+					name="image"
+					accept="image/*"
+					onChange={this.uploadFile}
+				/>
+			</UploadContainer>
+		);
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UploadButton);
+const mapStateToProps = state => ({
+	activeRoomId: getActiveRoomId(state)
+});
+
+const mapDispatchToProps = {
+	appendText
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(UploadButton);
