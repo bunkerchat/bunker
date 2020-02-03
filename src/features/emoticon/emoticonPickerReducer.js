@@ -7,8 +7,6 @@ const handlers = {
 		x: action.x,
 		y: action.y,
 		direction: action.direction,
-		onPick: action.onPick,
-		onHide: action.onHide,
 		search: "",
 		filteredEmoticons: state.allEmoticons,
 		selected: _.first(state.allEmoticons).name,

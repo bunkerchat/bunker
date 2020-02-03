@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { getSelectedEmoticon } from "./emoticonPickerSelectors";
 import { emoticonPicked } from "./emoticonPickerThunks";
+import { searchEmoticonPicker } from "./emoticonPickerActions";
 
 const EmoticonPickerSearch = ({ searchEmoticonPicker, searchValue, selectedEmoticon, emoticonPicked }) => {
 	function onSearchChange(event) {
@@ -30,10 +31,13 @@ const EmoticonPickerSearch = ({ searchEmoticonPicker, searchValue, selectedEmoti
 };
 
 const mapStateToProps = state => ({
+	searchValue: state.emoticonPicker.search,
 	selectedEmoticon: getSelectedEmoticon(state)
 });
+
 const mapDispatchToProps = {
-	emoticonPicked
+	emoticonPicked,
+	searchEmoticonPicker
 };
 
 export default connect(

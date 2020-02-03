@@ -28,10 +28,7 @@ const MessageControls = ({
 
 	// actions
 	showEmoticonPicker,
-	hideEmoticonPicker,
-	toggleReaction,
 	showMessageControls,
-	hideMessageControls,
 	messageControlEditMessage
 }) => {
 	const onClickEdit = () => {
@@ -40,19 +37,7 @@ const MessageControls = ({
 
 	const onClickReaction = event => {
 		showMessageControls({messageId});
-		showEmoticonPicker(event.clientX, event.clientY, "left", onEmoticonPick, onEmoticonHide, true);
-	};
-
-	const onEmoticonPick = emoticonName => {
-		hideMessageControls();
-		hideEmoticonPicker();
-		if (emoticonName) {
-			toggleReaction(messageId, emoticonName);
-		}
-	};
-
-	const onEmoticonHide = () => {
-		hideMessageControls();
+		showEmoticonPicker(event.clientX, event.clientY, "left", true);
 	};
 
 	const localMessage = localUserId === messageAuthorId;

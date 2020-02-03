@@ -15,18 +15,20 @@ const NoEmoticonsAlert = styled.div`
 	text-align: center;
 `;
 
-const EmoticonCategory = ({ emoticons, selected }) => {
+const EmoticonCategory = ({ filteredEmoticons }) => {
 	return (
 		<Container>
-			{emoticons.length === 0 && <NoEmoticonsAlert>No matching emoticons</NoEmoticonsAlert>}
-			{emoticons.map(emoticon => (
-				<Emoticon key={emoticon.name} emoticon={emoticon} selected={selected} />
+			{filteredEmoticons.length === 0 && <NoEmoticonsAlert>No matching emoticons</NoEmoticonsAlert>}
+			{filteredEmoticons.map(emoticon => (
+				<Emoticon key={emoticon.name} emoticon={emoticon} />
 			))}
 		</Container>
 	);
 };
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
+});
 
 const mapDispatchToProps = {};
 
