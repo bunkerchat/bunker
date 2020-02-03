@@ -65,21 +65,22 @@ export function ChatInput({
 	sendTypingNotification,
 	setNewText
 }) {
-	console.log('>>> newText', newText)
-
 	const ref = useRef();
 	const inputRef = useRef();
 
 	const replaceText = (old, text) => {
 		inputRef.current.value = inputRef.current.value.replace(old, text);
+		inputRef.current.focus();
 	};
 
 	const appendNewText = text => {
 		inputRef.current.value += text;
+		inputRef.current.focus();
 	};
 
 	const setText = text => {
 		inputRef.current.value = text;
+		inputRef.current.focus();
 	};
 
 	useEffect(
