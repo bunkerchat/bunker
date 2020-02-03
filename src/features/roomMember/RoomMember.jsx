@@ -11,7 +11,7 @@ import {
 	getUserPresent,
 	getUserTypingIn
 } from "../users/usersSelectors.js";
-import { appendNick } from "../chatInput/chatInputThunks";
+import { appendText } from "../chatInput/chatInputThunks";
 
 const Container = styled.div`
 	display: flex;
@@ -30,9 +30,9 @@ const Nick = styled.a`
 	cursor: pointer;
 `;
 
-const RoomMember = ({ roomId, nick, connected, typingIn, userId, appendNick }) => {
+const RoomMember = ({ roomId, nick, connected, typingIn, userId, appendText }) => {
 	function onClickNick() {
-		appendNick(nick);
+		appendText(`@${nick}`);
 	}
 
 	return (
@@ -61,7 +61,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = {
-	appendNick
+	appendText
 };
 
 export default connect(

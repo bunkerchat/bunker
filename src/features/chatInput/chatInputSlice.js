@@ -16,11 +16,6 @@ const chatInputSlice = createSlice({
 			ensureRoom(state, roomId);
 			state.byRoom[roomId].appendText = appendText;
 		},
-		appendNickByRoom(state, { payload }) {
-			const { roomId, nick } = payload;
-			ensureRoom(state, roomId);
-			state.byRoom[roomId].appendText = nick ? `@${nick}` : nick;
-		},
 		updateEditedMessageByRoom(state, { payload }) {
 			const { roomId, editedMessage } = payload;
 			ensureRoom(state, roomId);
@@ -34,6 +29,6 @@ const chatInputSlice = createSlice({
 	}
 });
 
-export const { appendTextByRoom, appendNickByRoom, updateEditedMessageByRoom, setNewTextByRoom } = chatInputSlice.actions;
+export const { appendTextByRoom, updateEditedMessageByRoom, setNewTextByRoom } = chatInputSlice.actions;
 
 export default chatInputSlice.reducer;

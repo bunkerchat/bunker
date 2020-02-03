@@ -95,7 +95,7 @@ export function ChatInput({
 		() => {
 			if (!appendText) return;
 			appendNewText(appendText);
-			appendNick("");
+			appendNewText("");
 		},
 		[appendText]
 	);
@@ -108,14 +108,6 @@ export function ChatInput({
 		},
 		[newText]
 	);
-
-	function onEmoticonPick(selected) {
-		if (selected) {
-			replaceText(/:\w*$/, `:${selected}:`);
-		}
-		hideEmoticonPicker();
-		inputRef.current.focus();
-	}
 
 	function sendMessage() {
 		// ios may have changed the text value, so get it right from the dom
@@ -160,7 +152,7 @@ export function ChatInput({
 		}
 		// picker not visible and user isn't already typing an emoticon
 		else if (!/:\w+$/.test(inputRef.current.value)) {
-			showEmoticonPicker(ref.current.offsetLeft, ref.current.offsetTop, onEmoticonPick);
+			showEmoticonPicker(ref.current.offsetLeft, ref.current.offsetTop);
 		}
 	}
 

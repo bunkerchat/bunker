@@ -5,6 +5,7 @@ import styled from "styled-components";
 import EmoticonCategory from "./EmoticonCategory.jsx";
 import EmoticonPickerSearch from "./EmoticonPickerSearch.jsx";
 import Backdrop from "../backdrop/Backdrop.jsx";
+import { getSearchInputVisible, getSelectedEmoticon } from "./emoticonPickerSelectors";
 
 // full screen container that always renders
 // hidden state is off screen
@@ -93,10 +94,9 @@ class EmoticonPicker extends React.Component {
 							searchValue={searchValue}
 							selectedEmoticon={selectedEmoticon}
 							searchEmoticonPicker={searchEmoticonPicker}
-							onPick={onPick}
 						/>
 					)}
-					<EmoticonCategory emoticons={filteredEmoticons} selected={selectedEmoticon} onPick={onPick} />
+					<EmoticonCategory emoticons={filteredEmoticons} selected={selectedEmoticon} />
 				</Picker>
 			</Container>
 		);
@@ -111,9 +111,9 @@ const mapStateToProps = state => ({
 	onPick: state.emoticonPicker.onPick,
 	onHide: state.emoticonPicker.onHide,
 	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
-	selectedEmoticon: state.emoticonPicker.selected,
+	selectedEmoticon: getSelectedEmoticon(state),
 	searchValue: state.emoticonPicker.search,
-	searchInputVisible: state.emoticonPicker.searchInputVisible
+	searchInputVisible: getSearchInputVisible(state)
 });
 
 const mapDispatchToProps = {

@@ -39,7 +39,7 @@ const MessageControls = ({
 	};
 
 	const onClickReaction = event => {
-		showMessageControls(messageId);
+		showMessageControls({messageId});
 		showEmoticonPicker(event.clientX, event.clientY, "left", onEmoticonPick, onEmoticonHide, true);
 	};
 

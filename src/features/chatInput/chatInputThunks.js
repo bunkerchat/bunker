@@ -1,15 +1,10 @@
-import { appendNickByRoom, appendTextByRoom, setNewTextByRoom, updateEditedMessageByRoom } from "./chatInputSlice";
+import { appendTextByRoom, setNewTextByRoom, updateEditedMessageByRoom } from "./chatInputSlice";
 import { getActiveRoomId } from "../room/roomSelectors";
 import { getMessageById } from "../message/messageSelectors";
 
 export const appendText = appendText => (dispatch, getState) => {
 	const roomId = getActiveRoomId(getState());
 	dispatch(appendTextByRoom({ roomId, appendText }));
-};
-
-export const appendNick = nick => (dispatch, getState) => {
-	const roomId = getActiveRoomId(getState());
-	dispatch(appendNickByRoom({ roomId, nick }));
 };
 
 export const updateEditedMessage = editedMessageId => (dispatch, getState) => {
