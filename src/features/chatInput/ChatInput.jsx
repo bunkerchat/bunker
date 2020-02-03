@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import { connect } from "react-redux";
-import { updateEditedMessage } from "./chatInputReducer.js";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
@@ -16,11 +15,12 @@ import {
 	showEmoticonPicker
 } from "../emoticon/emoticonPickerActions";
 import { sendRoomMessage } from "../room/roomsSlice";
-import { appendNick } from "./chatInputReducer";
 import { sendTypingNotification } from "../room/roomsThunks";
 import { getLocalMessages } from "../message/messageSelectors.js";
 import { getAppendTextForCurrentRoom, getEditedMessageForCurrentRoom } from "./chatInputSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
+import { getNewText } from "./chatInputSelectors";
+import { setNewText, updateEditedMessage } from "./chatInputThunks";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -47,6 +47,7 @@ export function ChatInput({
 	localMessages,
 	appendText,
 	editedMessage,
+	newText,
 
 	// actions
 	updateEditedMessage,
@@ -60,22 +61,25 @@ export function ChatInput({
 	selectDownEmoticonPicker,
 	sendRoomMessage,
 	updateMessage,
-	appendNick,
-	sendTypingNotification
+	sendTypingNotification,
+	setNewText
 }) {
 	const ref = useRef();
 	const inputRef = useRef();
 
 	const replaceText = (old, text) => {
 		inputRef.current.value = inputRef.current.value.replace(old, text);
+		inputRef.current.focus();
 	};
 
 	const appendNewText = text => {
 		inputRef.current.value += text;
+		inputRef.current.focus();
 	};
 
 	const setText = text => {
 		inputRef.current.value = text;
+		inputRef.current.focus();
 	};
 
 	useEffect(
@@ -90,18 +94,19 @@ export function ChatInput({
 		() => {
 			if (!appendText) return;
 			appendNewText(appendText);
-			appendNick(roomId, "");
+			appendNewText("");
 		},
 		[appendText]
 	);
 
-	function onEmoticonPick(selected) {
-		if (selected) {
-			replaceText(/:\w*$/, `:${selected}:`);
-		}
-		hideEmoticonPicker();
-		inputRef.current.focus();
-	}
+	useEffect(
+		() => {
+			if (!newText) return;
+			setText(newText);
+			setNewText("");
+		},
+		[newText]
+	);
 
 	function sendMessage() {
 		// ios may have changed the text value, so get it right from the dom
@@ -119,7 +124,7 @@ export function ChatInput({
 
 		setText("");
 
-		updateEditedMessage({ roomId, editedMessage: null });
+		updateEditedMessage(null);
 		hideMessageControls();
 
 		// hack for ios
@@ -146,7 +151,7 @@ export function ChatInput({
 		}
 		// picker not visible and user isn't already typing an emoticon
 		else if (!/:\w+$/.test(inputRef.current.value)) {
-			showEmoticonPicker(ref.current.offsetLeft, ref.current.offsetTop, onEmoticonPick);
+			showEmoticonPicker(ref.current.offsetLeft, ref.current.offsetTop);
 		}
 	}
 
@@ -191,7 +196,7 @@ export function ChatInput({
 		}
 
 		if (newEditedMessage) {
-			updateEditedMessage({ roomId, editedMessage: newEditedMessage });
+			updateEditedMessage(newEditedMessage._id);
 		}
 	}
 
@@ -219,7 +224,7 @@ export function ChatInput({
 			handleEnterKey(event);
 		} else if (key === "Escape") {
 			if (editedMessage) {
-				updateEditedMessage({ roomId, editedMessage: null });
+				updateEditedMessage(null);
 			}
 		} else if (key.length === 1 && /[A-z0-9]/.test(key)) {
 			sendTypingNotification();
@@ -268,7 +273,8 @@ const mapStateToProps = state => ({
 	selectedEmoticon: state.emoticonPicker.selected,
 	localMessages: getLocalMessages(state),
 	appendText: getAppendTextForCurrentRoom(state),
-	editedMessage: getEditedMessageForCurrentRoom(state)
+	editedMessage: getEditedMessageForCurrentRoom(state),
+	newText: getNewText(state)
 });
 
 const mapDispatchToProps = {
@@ -283,8 +289,8 @@ const mapDispatchToProps = {
 	selectDownEmoticonPicker,
 	sendRoomMessage,
 	updateMessage,
-	appendNick,
-	sendTypingNotification
+	sendTypingNotification,
+	setNewText
 };
 
 export default connect(

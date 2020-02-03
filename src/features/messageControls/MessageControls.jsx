@@ -2,13 +2,12 @@ import React from "react";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toggleReaction } from "../message/messageActions";
-import { updateEditedMessage, updateText } from "../chatInput/chatInputReducer";
-import { hideMessageControls, showMessageControls } from "./messageControlsSlice";
+import { hideMessageControls, messageControlEditMessage, showMessageControls } from "./messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
 import { getLocalUserId } from "../users/usersSelectors.js";
-import { getActiveRoomId } from "../room/roomSelectors.js";
+import { getMessageAuthorId, getMessageText } from "../message/messageSelectors";
 
 const Container = styled.div`
 	background-color: ${theme.messageHoverBackground};
@@ -20,41 +19,28 @@ const Container = styled.div`
 `;
 
 const MessageControls = ({
-	message,
-	roomId,
+	// own props
+	messageId,
+
+	// state
 	localUserId,
+	messageAuthorId,
+
+	// actions
 	showEmoticonPicker,
-	hideEmoticonPicker,
-	toggleReaction,
-	updateText,
-	updateEditedMessage,
 	showMessageControls,
-	hideMessageControls
+	messageControlEditMessage
 }) => {
 	const onClickEdit = () => {
-		showMessageControls(message._id);
-		updateText(roomId, message.text);
-		updateEditedMessage({ roomId, editedMessage: message });
+		messageControlEditMessage(messageId);
 	};
 
 	const onClickReaction = event => {
-		showMessageControls(message._id);
-		showEmoticonPicker(event.clientX, event.clientY, "left", onEmoticonPick, onEmoticonHide, true);
+		showMessageControls({messageId});
+		showEmoticonPicker(event.clientX, event.clientY, "left", true);
 	};
 
-	const onEmoticonPick = emoticonName => {
-		hideMessageControls();
-		hideEmoticonPicker();
-		if (emoticonName) {
-			toggleReaction(message._id, emoticonName);
-		}
-	};
-
-	const onEmoticonHide = () => {
-		hideMessageControls();
-	};
-
-	const localMessage = localUserId === message.author;
+	const localMessage = localUserId === messageAuthorId;
 	return (
 		<Container className="border border-primary px-3">
 			{localMessage && (
@@ -69,19 +55,19 @@ const MessageControls = ({
 	);
 };
 
-const mapStateToProps = state => ({
-	roomId: getActiveRoomId(state),
-	localUserId: getLocalUserId(state)
+const mapStateToProps = (state, { messageId }) => ({
+	localUserId: getLocalUserId(state),
+	messageText: getMessageText(messageId)(state),
+	messageAuthorId: getMessageAuthorId(messageId)(state)
 });
 
 const mapDispatchToProps = {
 	showEmoticonPicker,
 	hideEmoticonPicker,
 	toggleReaction,
-	updateText,
-	updateEditedMessage,
 	showMessageControls,
-	hideMessageControls
+	hideMessageControls,
+	messageControlEditMessage
 };
 
 export default connect(

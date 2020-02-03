@@ -59,9 +59,9 @@ const MessageAuthor = ({ authorId, firstInSeries, localUserId, nick }) => {
 	);
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state, { authorId }) => ({
 	localUserId: getLocalUserId(state),
-	nick: getUserNick(ownProps.authorId)(state)
+	nick: getUserNick(authorId)(state)
 });
 
 export default connect(mapStateToProps)(MessageAuthor);

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserImage from "../users/UserImage.jsx";
-import { appendNick } from "../chatInput/chatInputReducer";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 import {
 	getUserConnected,
@@ -12,6 +11,7 @@ import {
 	getUserPresent,
 	getUserTypingIn
 } from "../users/usersSelectors.js";
+import { appendText } from "../chatInput/chatInputThunks";
 
 const Container = styled.div`
 	display: flex;
@@ -30,9 +30,9 @@ const Nick = styled.a`
 	cursor: pointer;
 `;
 
-const RoomMember = ({ roomId, nick, connected, typingIn, userId, appendNick }) => {
+const RoomMember = ({ roomId, nick, connected, typingIn, userId, appendText }) => {
 	function onClickNick() {
-		appendNick(roomId, nick);
+		appendText(`@${nick}`);
 	}
 
 	return (
@@ -61,7 +61,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = {
-	appendNick
+	appendText
 };
 
 export default connect(

@@ -1,21 +1,11 @@
-import { createSelector } from "@reduxjs/toolkit";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 
 const getChatByRoom = state => state.chatInput.byRoom;
 
-export const getChatForCurrentRoom = createSelector(
-	[getActiveRoomId, getChatByRoom],
-	(activeRoomId, chatByRoomId) => chatByRoomId[activeRoomId]
-);
+export const getChatForCurrentRoom = state => getChatByRoom(state)[getActiveRoomId(state)];
 
-export const getAppendTextForCurrentRoom = createSelector(
-	[getChatForCurrentRoom],
-	(getChatForCurrentRoom = {}) => getChatForCurrentRoom.appendText
-);
+export const getAppendTextForCurrentRoom = state => getChatForCurrentRoom(state)?.appendText;
 
-export const getCurrentRoomTextEmpty = createSelector([getAppendTextForCurrentRoom], (text = "") => text.length === 0);
+export const getEditedMessageForCurrentRoom = state => getChatForCurrentRoom(state)?.editedMessage;
 
-export const getEditedMessageForCurrentRoom = createSelector(
-	[getChatForCurrentRoom],
-	(chatForCurrentRoom = {}) => chatForCurrentRoom.editedMessage
-);
+export const getNewText = state => getChatForCurrentRoom(state)?.newText;

@@ -2,6 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import { toggleMessageImagesVisible } from "./messageActions";
 import { connect } from "react-redux";
+import {
+	getImagesVisible,
+	getMessageById,
+	getMessageLinkMetaImage,
+	getMessageLinkMetaTitle,
+	getMessageTokens
+} from "./messageSelectors";
 
 const Image = styled.div`
 	img {
@@ -10,15 +17,16 @@ const Image = styled.div`
 	}
 `;
 
-const MessageImages = ({ message, toggleMessageImagesVisible }) => {
+const MessageImages = ({ tokens, imagesVisible, linkMetaImage, linkMetaTitle, toggleMessageImagesVisible }) => {
 	const toggleVisible = event => {
 		event.stopPropagation();
 		toggleMessageImagesVisible(message);
 	};
 
-	if (!message.imagesVisible) return null;
+	if (!imagesVisible) return null;
 
-	const imageTokens = _.filter(message.tokens, { type: "image" });
+	// todo: move to selector?
+	const imageTokens = _.filter(tokens, { type: "image" });
 	return (
 		<div>
 			{imageTokens.map((token, index) => (
@@ -26,22 +34,30 @@ const MessageImages = ({ message, toggleMessageImagesVisible }) => {
 					<img src={token.value} alt={token.value} onClick={toggleVisible} />
 				</Image>
 			))}
-			{message.linkMeta &&
-				message.linkMeta.image && (
-					<Image>
-						<h3>{message.linkMeta.title}</h3>
-						<img src={message.linkMeta.image} alt={message.linkMeta.title} onClick={toggleVisible} />
-					</Image>
-				)}
+			{linkMetaImage && (
+				<Image>
+					<h3>{linkMetaTitle}</h3>
+					<img src={linkMetaImage} alt={linkMetaTitle} onClick={toggleVisible} />
+				</Image>
+			)}
 		</div>
 	);
 };
+
+const mapStateToProps = (state, { messageId }) => ({
+	// TODO: kill this message prop after toggleMessageImagesVisible doesn't need whole message object
+	message: getMessageById(messageId)(state),
+	tokens: getMessageTokens(messageId)(state),
+	imagesVisible: getImagesVisible(messageId)(state),
+	linkMetaImage: getMessageLinkMetaImage(messageId)(state),
+	linkMetaTitle: getMessageLinkMetaTitle(messageId)(state)
+});
 
 const mapDispatchToProps = {
 	toggleMessageImagesVisible
 };
 
 export default connect(
-	null,
+	mapStateToProps,
 	mapDispatchToProps
 )(MessageImages);

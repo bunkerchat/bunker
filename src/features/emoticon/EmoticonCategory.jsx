@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Emoticon from "./Emoticon.jsx";
+import { connect } from "react-redux";
 
 const Container = styled.div`
 	display: flex;
@@ -14,16 +15,24 @@ const NoEmoticonsAlert = styled.div`
 	text-align: center;
 `;
 
-export default class EmoticonCategory extends React.PureComponent {
-	render() {
-		const { emoticons, selected, onPick } = this.props;
-		return (
-			<Container>
-				{emoticons.length === 0 && <NoEmoticonsAlert>No matching emoticons</NoEmoticonsAlert>}
-				{emoticons.map(emoticon => (
-					<Emoticon key={emoticon.name} emoticon={emoticon} selected={selected} onPick={onPick} />
-				))}
-			</Container>
-		);
-	}
-}
+const EmoticonCategory = ({ filteredEmoticons }) => {
+	return (
+		<Container>
+			{filteredEmoticons.length === 0 && <NoEmoticonsAlert>No matching emoticons</NoEmoticonsAlert>}
+			{filteredEmoticons.map(emoticon => (
+				<Emoticon key={emoticon.name} emoticonName={emoticon.name} />
+			))}
+		</Container>
+	);
+};
+
+const mapStateToProps = state => ({
+	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
+});
+
+const mapDispatchToProps = {};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(EmoticonCategory);

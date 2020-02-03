@@ -1,10 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
-import { hideEmoticonPicker, searchEmoticonPicker } from "./emoticonPickerActions";
+import { hideEmoticonPicker } from "./emoticonPickerActions";
 import styled from "styled-components";
 import EmoticonCategory from "./EmoticonCategory.jsx";
 import EmoticonPickerSearch from "./EmoticonPickerSearch.jsx";
 import Backdrop from "../backdrop/Backdrop.jsx";
+import { getSearchInputVisible } from "./emoticonPickerSelectors";
+import { hideMessageControls } from "../messageControls/messageControlsSlice";
 
 // full screen container that always renders
 // hidden state is off screen
@@ -48,24 +50,11 @@ class EmoticonPicker extends React.Component {
 
 	hide = () => {
 		this.props.hideEmoticonPicker();
-		if (typeof this.props.onHide === "function") {
-			this.props.onHide();
-		}
+		this.props.hideMessageControls();
 	};
 
 	render() {
-		const {
-			visible,
-			x,
-			y,
-			direction,
-			filteredEmoticons,
-			selectedEmoticon,
-			searchEmoticonPicker,
-			onPick,
-			searchValue,
-			searchInputVisible
-		} = this.props;
+		const { visible, x, y, direction, searchInputVisible } = this.props;
 
 		const style = {};
 
@@ -88,15 +77,8 @@ class EmoticonPicker extends React.Component {
 			<Container className={`${!visible ? "hidden" : ""}`}>
 				<Backdrop onClick={this.hide} />
 				<Picker ref={this.ref} className="card p-1" style={style}>
-					{searchInputVisible && (
-						<EmoticonPickerSearch
-							searchValue={searchValue}
-							selectedEmoticon={selectedEmoticon}
-							searchEmoticonPicker={searchEmoticonPicker}
-							onPick={onPick}
-						/>
-					)}
-					<EmoticonCategory emoticons={filteredEmoticons} selected={selectedEmoticon} onPick={onPick} />
+					{searchInputVisible && <EmoticonPickerSearch />}
+					<EmoticonCategory />
 				</Picker>
 			</Container>
 		);
@@ -108,17 +90,12 @@ const mapStateToProps = state => ({
 	x: state.emoticonPicker.x,
 	y: state.emoticonPicker.y,
 	direction: state.emoticonPicker.direction,
-	onPick: state.emoticonPicker.onPick,
-	onHide: state.emoticonPicker.onHide,
-	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
-	selectedEmoticon: state.emoticonPicker.selected,
-	searchValue: state.emoticonPicker.search,
-	searchInputVisible: state.emoticonPicker.searchInputVisible
+	searchInputVisible: getSearchInputVisible(state)
 });
 
 const mapDispatchToProps = {
 	hideEmoticonPicker,
-	searchEmoticonPicker
+	hideMessageControls
 };
 
 export default connect(

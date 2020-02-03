@@ -1,11 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { updateEditedMessage } from "../chatInput/chatInputThunks";
+
+export const messageControlEditMessage = messageId => (dispatch, getState) => {
+	dispatch(showMessageControls(messageId));
+	dispatch(updateEditedMessage(messageId));
+};
 
 const messageSlice = createSlice({
 	name: "messageControls",
 	initialState: {},
 	reducers: {
-		showMessageControls(state, action) {
-			state.messageId = action.payload.messageId;
+		showMessageControls(state, { payload }) {
+			state.messageId = payload.messageId;
 		},
 		hideMessageControls(state) {
 			state.messageId = null;

@@ -1,6 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import theme from "../../constants/theme";
+import { connect } from "react-redux";
+import { emoticonPicked } from "./emoticonPickerThunks";
+import { getSearchInputVisible, getSelectedEmoticon } from "./emoticonPickerSelectors";
+import emoticons from "../../constants/emoticons.js";
 
 const Container = styled.div`
 	flex: 0 0 50px;
@@ -21,19 +25,32 @@ const EmoticonImage = styled.span`
 	cursor: pointer;
 `;
 
-export default class Emoticon extends React.PureComponent {
-	onClick = () => {
-		if (_.isFunction(this.props.onPick)) {
-			this.props.onPick(this.props.emoticon.name);
-		}
-	};
-
-	render() {
-		const { emoticon, selected } = this.props;
-		return (
-			<Container className={`p-1 ${selected === emoticon.name ? "selected" : ""}`} onClick={this.onClick}>
-				<EmoticonImage style={{ backgroundImage: `url(/assets/images/emoticons/${emoticon.file})` }} />
-			</Container>
-		);
+const Emoticon = ({ emoticonName, selectedEmoticon, emoticonPicked }) => {
+	function onClick() {
+		emoticonPicked(emoticonName);
 	}
-}
+
+	const file = emoticons.emoticonNameHash[emoticonName].file;
+
+	return (
+		<Container className={`p-1 ${selectedEmoticon === emoticonName ? "selected" : ""}`} onClick={onClick}>
+			<EmoticonImage style={{ backgroundImage: `url(/assets/images/emoticons/${file})` }} />
+		</Container>
+	);
+};
+
+const mapStateToProps = state => ({
+	selectedEmoticon: getSelectedEmoticon(state),
+
+	// todo: switch this to be something like "message emoticon open" or something
+	searchInputVisible: getSearchInputVisible(state)
+});
+
+const mapDispatchToProps = {
+	emoticonPicked
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Emoticon);
