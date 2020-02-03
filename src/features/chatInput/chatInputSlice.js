@@ -1,25 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getActiveRoomId } from "../room/roomSelectors";
-
-export const appendText = appendText => (dispatch, getState) => {
-	const roomId = getActiveRoomId(getState());
-	dispatch(appendTextByRoom({ roomId, appendText }));
-};
-
-export const appendNick = nick => (dispatch, getState) => {
-	const roomId = getActiveRoomId(getState());
-	dispatch(appendNickByRoom({ roomId, nick }));
-};
-
-export const updateEditedMessage = editedMessage => (dispatch, getState) => {
-	const roomId = getActiveRoomId(getState());
-	dispatch(updateEditedMessageByRoom({ roomId, editedMessage }));
-};
-
-export const setNewText = newText => (dispatch, getState) => {
-	const roomId = getActiveRoomId(getState());
-	dispatch(setNewTextByRoom({ roomId, newText }));
-};
 
 const ensureRoom = (state, roomId) => {
 	if (!state.byRoom[roomId]) {

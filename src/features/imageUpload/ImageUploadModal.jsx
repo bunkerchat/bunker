@@ -5,8 +5,7 @@ import styled from "styled-components";
 import { useImagePasteWatcher } from "./useImagePasteWatcher.js";
 import { loadImage } from "./imageLoader";
 import { doSingleImageUpload } from "./imageUpload";
-import { appendText } from "../chatInput/chatInputSlice.js";
-import { getActiveRoomId } from "../room/roomSelectors.js";
+import { appendText } from "../chatInput/chatInputThunks";
 
 const FixedHeightImage = styled.img`
 	max-width: 100%;

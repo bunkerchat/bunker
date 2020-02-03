@@ -1,5 +1,4 @@
-import { appendText } from "../chatInput/chatInputSlice.js";
-import { getActiveRoomId } from "../room/roomSelectors.js";
+import { appendText } from "../chatInput/chatInputThunks";
 
 export const imagePickSelectionsReceived = (message, images) => ({
 	type: "images/received",

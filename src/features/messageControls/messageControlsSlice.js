@@ -1,4 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { updateEditedMessage } from "../chatInput/chatInputThunks";
+
+export const messageControlEditMessage = messageId => (dispatch, getState) => {
+	dispatch(showMessageControls(messageId));
+	dispatch(updateEditedMessage(messageId));
+};
 
 const messageSlice = createSlice({
 	name: "messageControls",

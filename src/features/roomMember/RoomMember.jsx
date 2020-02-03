@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserImage from "../users/UserImage.jsx";
-import { appendNick } from "../chatInput/chatInputSlice.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 import {
 	getUserConnected,
@@ -12,6 +11,7 @@ import {
 	getUserPresent,
 	getUserTypingIn
 } from "../users/usersSelectors.js";
+import { appendNick } from "../chatInput/chatInputThunks";
 
 const Container = styled.div`
 	display: flex;

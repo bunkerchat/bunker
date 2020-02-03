@@ -1,12 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { appendText } from "../chatInput/chatInputSlice.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { loadImage } from "./imageLoader.js";
 import { doSingleImageUpload } from "./imageUpload.js";
 import theme from "../../constants/theme";
 import { getActiveRoomId } from "../room/roomSelectors.js";
+import { appendText } from "../chatInput/chatInputThunks";
 
 const UploadContainer = styled.span`
 	display: inline-block;

@@ -2,8 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toggleReaction } from "../message/messageActions";
-import { updateEditedMessage, setNewText } from "../chatInput/chatInputSlice.js";
-import { hideMessageControls, showMessageControls } from "./messageControlsSlice";
+import { hideMessageControls, messageControlEditMessage, showMessageControls } from "./messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme";
 import { hideEmoticonPicker, showEmoticonPicker } from "../emoticon/emoticonPickerActions";
@@ -25,22 +24,18 @@ const MessageControls = ({
 
 	// state
 	localUserId,
-	messageText,
 	messageAuthorId,
 
 	// actions
 	showEmoticonPicker,
 	hideEmoticonPicker,
 	toggleReaction,
-	updateText,
-	updateEditedMessage,
 	showMessageControls,
-	hideMessageControls
+	hideMessageControls,
+	messageControlEditMessage
 }) => {
 	const onClickEdit = () => {
-		showMessageControls(messageId);
-		updateText(messageText);
-		updateEditedMessage(messageText);
+		messageControlEditMessage(messageId);
 	};
 
 	const onClickReaction = event => {
@@ -85,10 +80,9 @@ const mapDispatchToProps = {
 	showEmoticonPicker,
 	hideEmoticonPicker,
 	toggleReaction,
-	updateText: setNewText,
-	updateEditedMessage,
 	showMessageControls,
-	hideMessageControls
+	hideMessageControls,
+	messageControlEditMessage
 };
 
 export default connect(

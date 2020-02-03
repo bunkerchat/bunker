@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import { connect } from "react-redux";
-import { updateEditedMessage } from "./chatInputSlice.js";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
@@ -16,13 +15,12 @@ import {
 	showEmoticonPicker
 } from "../emoticon/emoticonPickerActions";
 import { sendRoomMessage } from "../room/roomsSlice";
-import { appendNick } from "./chatInputSlice.js";
 import { sendTypingNotification } from "../room/roomsThunks";
 import { getLocalMessages } from "../message/messageSelectors.js";
 import { getAppendTextForCurrentRoom, getEditedMessageForCurrentRoom } from "./chatInputSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 import { getNewText } from "./chatInputSelectors";
-import { setNewText } from "./chatInputSlice";
+import { appendNick, setNewText, updateEditedMessage } from "./chatInputThunks";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -206,7 +204,7 @@ export function ChatInput({
 		}
 
 		if (newEditedMessage) {
-			updateEditedMessage(newEditedMessage);
+			updateEditedMessage(newEditedMessage._id);
 		}
 	}
 
