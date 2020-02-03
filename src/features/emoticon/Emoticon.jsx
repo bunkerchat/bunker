@@ -4,6 +4,7 @@ import theme from "../../constants/theme";
 import { connect } from "react-redux";
 import { emoticonPicked } from "./emoticonPickerThunks";
 import { getSearchInputVisible, getSelectedEmoticon } from "./emoticonPickerSelectors";
+import emoticons from "../../constants/emoticons.js";
 
 const Container = styled.div`
 	flex: 0 0 50px;
@@ -24,18 +25,16 @@ const EmoticonImage = styled.span`
 	cursor: pointer;
 `;
 
-const Emoticon = ({
-	emoticon,
-	selectedEmoticon,
-	emoticonPicked,
-}) => {
+const Emoticon = ({ emoticonName, selectedEmoticon, emoticonPicked }) => {
 	function onClick() {
-		emoticonPicked(emoticon.name);
+		emoticonPicked(emoticonName);
 	}
 
+	const file = emoticons.emoticonNameHash[emoticonName].file;
+
 	return (
-		<Container className={`p-1 ${selectedEmoticon === emoticon.name ? "selected" : ""}`} onClick={onClick}>
-			<EmoticonImage style={{ backgroundImage: `url(/assets/images/emoticons/${emoticon.file})` }} />
+		<Container className={`p-1 ${selectedEmoticon === emoticonName ? "selected" : ""}`} onClick={onClick}>
+			<EmoticonImage style={{ backgroundImage: `url(/assets/images/emoticons/${file})` }} />
 		</Container>
 	);
 };
@@ -48,7 +47,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-	emoticonPicked,
+	emoticonPicked
 };
 
 export default connect(

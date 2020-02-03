@@ -90,7 +90,6 @@ const mapStateToProps = state => ({
 	x: state.emoticonPicker.x,
 	y: state.emoticonPicker.y,
 	direction: state.emoticonPicker.direction,
-	onHide: state.emoticonPicker.onHide,
 	searchInputVisible: getSearchInputVisible(state)
 });
 

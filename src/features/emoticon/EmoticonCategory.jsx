@@ -20,7 +20,7 @@ const EmoticonCategory = ({ filteredEmoticons }) => {
 		<Container>
 			{filteredEmoticons.length === 0 && <NoEmoticonsAlert>No matching emoticons</NoEmoticonsAlert>}
 			{filteredEmoticons.map(emoticon => (
-				<Emoticon key={emoticon.name} emoticon={emoticon} />
+				<Emoticon key={emoticon.name} emoticonName={emoticon.name} />
 			))}
 		</Container>
 	);
