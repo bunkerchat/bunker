@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import theme from "../../constants/theme";
 import MessageControls from "../messageControls/MessageControls.jsx";
 import { getMessageText } from "./messageSelectors";
+import { getMessageControlsMessageId } from "../messageControls/messageControlsSelectors";
 
 const Container = styled.div`
 	position: relative;
@@ -55,7 +56,7 @@ const MessageBodyContainer = ({ children, messageId, messageText, firstInSeries,
 const mapStateToProps = (state, { messageId }) => ({
 	localNick: state.localUser.nick,
 	messageText: getMessageText(messageId)(state),
-	isSelectedMessage: state.messageControls.messageId === messageId
+	isSelectedMessage: getMessageControlsMessageId(state) === messageId
 });
 
 export default connect(mapStateToProps)(MessageBodyContainer);

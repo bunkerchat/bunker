@@ -20,7 +20,7 @@ import { getLocalMessages } from "../message/messageSelectors.js";
 import { getAppendTextForCurrentRoom, getEditedMessageForCurrentRoom } from "./chatInputSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 import { getNewText } from "./chatInputSelectors";
-import { appendNick, setNewText, updateEditedMessage } from "./chatInputThunks";
+import { setNewText, updateEditedMessage } from "./chatInputThunks";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -61,7 +61,6 @@ export function ChatInput({
 	selectDownEmoticonPicker,
 	sendRoomMessage,
 	updateMessage,
-	appendNick,
 	sendTypingNotification,
 	setNewText
 }) {
@@ -290,7 +289,6 @@ const mapDispatchToProps = {
 	selectDownEmoticonPicker,
 	sendRoomMessage,
 	updateMessage,
-	appendNick,
 	sendTypingNotification,
 	setNewText
 };
