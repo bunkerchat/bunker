@@ -6,7 +6,8 @@ import { connect } from "react-redux";
 import MessageList from "./MessageList.jsx";
 import theme from "../../constants/theme";
 import { isIOS } from "../../constants/browserInfo.js";
-import { clearRoomMessages, loadRoomMessages } from "../room/roomsSlice";
+import { loadRoomMessages } from "../rooms/roomsSlice";
+import { clearRoomMessages } from "./messageSlice";
 
 const MessageListContainer = styled.div`
 	flex: 1;
@@ -127,7 +128,7 @@ const mapStateToProps = (state, ownProps) => {
 	return {
 		loading: room.loading,
 		fullHistoryLoaded: room.fullHistoryLoaded,
-		messages: state.messages.byRoom[ownProps.roomId]
+		messages: state.message.byRoom[ownProps.roomId]
 	};
 };
 

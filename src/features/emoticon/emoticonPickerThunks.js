@@ -1,9 +1,9 @@
 import { hideEmoticonPicker } from "./emoticonPickerActions";
 import { appendText } from "../chatInput/chatInputThunks";
-import { toggleReaction } from "../message/messageActions";
 import { getMessageControlsMessageId } from "../messageControls/messageControlsSelectors";
 import { getSearchInputVisible } from "./emoticonPickerSelectors";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
+import { toggleReaction } from "../message/messageThunks";
 
 export const emoticonPicked = emoticonName => (dispatch, getState) => {
 	const state = getState();

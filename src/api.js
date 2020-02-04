@@ -1,19 +1,13 @@
 import io from "socket.io-client";
 import { dispatch } from "./store";
-import { init } from "./features/init/initActions";
+import { init } from "./features/init/initThunks";
 import { ping } from "./features/users/localUserActions";
 import { localRoomMemberUpdated } from "./features/users/localRoomMembersSlice";
 import { imagePickSelectionsReceived } from "./features/imagePick/imagePickActions";
-import { messageReceived, messageUpdated, roomUpdated } from "./features/room/roomsSlice";
-import {
-	connected,
-	disconnected,
-	emitEndpoint,
-	errorResponse,
-	reconnected,
-	successResponse
-} from "./features/socket/socketSlice";
+import { roomUpdated } from "./features/rooms/roomsSlice";
+import { connected, disconnected, errorResponse, reconnected, successResponse } from "./features/socket/socketSlice";
 import { userUpdated } from "./features/users/usersSlice";
+import { messageReceived, messageUpdated } from "./features/message/messageSlice";
 
 const socket = io(window.url);
 
@@ -32,16 +26,16 @@ socket.on("room", socketMessage => {
 		case "messaged":
 			const message = socketMessage.data;
 			if (message.edited) {
-				dispatch(messageUpdated(message));
+				dispatch(messageUpdated({ message }));
 			} else {
-				dispatch(messageReceived(message));
+				dispatch(messageReceived({ message }));
 			}
 			break;
 		case "reacted":
-			dispatch(messageUpdated(socketMessage.data));
+			dispatch(messageUpdated({ message: socketMessage.data }));
 			break;
 		case "updated":
-			dispatch(roomUpdated({ ...socketMessage.data, _id: socketMessage._id }));
+			dispatch(roomUpdated({ room: { ...socketMessage.data, _id: socketMessage._id } }));
 			break;
 	}
 });
@@ -78,8 +72,6 @@ setInterval(() => {
 // only accepts data as a JSON object
 // returns a promise
 export function emit(endpoint, data) {
-	// dispatch(emitEndpoint(endpoint));
-
 	const payload = _.isObject(data) ? data : undefined;
 	return new Promise((resolve, reject) => {
 		socket.emit(endpoint, payload, response => {

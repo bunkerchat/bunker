@@ -45,21 +45,19 @@ const tokenMap = {
 	emoji: Word
 };
 
-const mapToMessage = (message, token, index) => {
+const mapToMessage = (messageId, token, index) => {
 	const TokenType = tokenMap[token.type];
-	return <TokenType message={message} value={token.value} key={index + token.type + token.value} />;
+	return <TokenType messageId={messageId} value={token.value} key={index + token.type + token.value} />;
 };
 
-const MessageTokens = ({ message, tokens, text }) => {
+const MessageTokens = ({ messageId, tokens, text }) => {
 	tokens = tokens || [{ type: "unknown", value: text }];
 	return (
-		<MessageTextContainer>{tokens.map((token, index) => mapToMessage(message, token, index))}</MessageTextContainer>
+		<MessageTextContainer>{tokens.map((token, index) => mapToMessage(messageId, token, index))}</MessageTextContainer>
 	);
 };
 
 const mapStateToProps = (state, { messageId }) => ({
-	// TODO: remove this once toggleMessageImagesVisible is fixed
-	message: getMessageById(messageId)(state),
 	text: getMessageText(messageId)(state),
 	tokens: getMessageTokens(messageId)(state)
 });

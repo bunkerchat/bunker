@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
-import { updateMessage } from "../message/messageActions.js";
 import { isMobile } from "../../constants/browserInfo.js";
 import {
 	hideEmoticonPicker,
@@ -14,13 +13,13 @@ import {
 	selectUpEmoticonPicker,
 	showEmoticonPicker
 } from "../emoticon/emoticonPickerActions";
-import { sendRoomMessage } from "../room/roomsSlice";
-import { sendTypingNotification } from "../room/roomsThunks";
+import { sendRoomMessage, sendTypingNotification } from "../rooms/roomsThunks";
 import { getLocalMessages } from "../message/messageSelectors.js";
 import { getAppendTextForCurrentRoom, getEditedMessageForCurrentRoom } from "./chatInputSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 import { getNewText } from "./chatInputSelectors";
 import { setNewText, updateEditedMessage } from "./chatInputThunks";
+import { updateMessage } from "../message/messageThunks";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 

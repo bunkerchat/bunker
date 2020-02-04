@@ -23,7 +23,7 @@ export const getSortedRoomMemberUsers = createSelector([getUsers, getRoomMembers
 	);
 });
 
-export const getSortedRoomMemberUserIds = createSelector([getSortedRoomMemberUsers], roomMemberUsers =>
+export const getSortedRoomMemberUserIds = createSelector([getSortedRoomMemberUsers], (roomMemberUsers = []) =>
 	roomMemberUsers.map(roomMemberUser => roomMemberUser.user)
 );
 
