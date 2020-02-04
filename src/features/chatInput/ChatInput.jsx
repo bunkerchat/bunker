@@ -219,6 +219,8 @@ export function ChatInput({
 		const { key } = event;
 		if (key === ":") {
 			handleOpenCloseEmoticon();
+		} else if (key === "Backspace" && _.last(inputRef.current.value) === ":" && emoticonPickerVisible) {
+			hideEmoticonPicker();
 		} else if (/Arrow|Tab/.test(key) && emoticonPickerVisible) {
 			handleEmoticonTabArrow(event);
 		} else if (/ArrowUp|ArrowDown/.test(key)) {
@@ -277,7 +279,7 @@ const mapStateToProps = state => ({
 	localMessages: getLocalMessages(state),
 	appendText: getAppendTextForCurrentRoom(state),
 	editedMessage: getEditedMessageForCurrentRoom(state),
-	newText: getNewText(state),
+	newText: getNewText(state)
 });
 
 const mapDispatchToProps = {
