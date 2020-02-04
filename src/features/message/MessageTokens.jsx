@@ -50,7 +50,7 @@ const mapToMessage = (messageId, token, index) => {
 	return <TokenType messageId={messageId} value={token.value} key={index + token.type + token.value} />;
 };
 
-const MessageTokens = ({ messageId, tokens, text }) => {
+export const MessageTokens = ({ messageId, tokens, text }) => {
 	tokens = tokens || [{ type: "unknown", value: text }];
 	return (
 		<MessageTextContainer>{tokens.map((token, index) => mapToMessage(messageId, token, index))}</MessageTextContainer>

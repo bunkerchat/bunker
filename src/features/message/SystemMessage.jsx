@@ -1,12 +1,12 @@
 import React from "react";
-import MessageTokens from "./MessageTokens.jsx";
+import { MessageTokens } from "./MessageTokens.jsx";
 
 export default class SystemMessage extends React.PureComponent {
 	render() {
 		const { message } = this.props;
 		return (
 			<div className="p-2">
-				<MessageTokens message={message} />
+				<MessageTokens messageId={message._id} text={message.text} />
 			</div>
 		);
 	}
