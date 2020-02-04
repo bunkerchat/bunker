@@ -6,7 +6,7 @@ import { loadImage } from "./imageLoader.js";
 import { doSingleImageUpload } from "./imageUpload.js";
 import theme from "../../constants/theme";
 import { getActiveRoomId } from "../room/roomSelectors.js";
-import { appendText } from "../chatInput/chatInputThunks";
+import { setAppendText } from "../chatInput/chatInputThunks";
 
 const UploadContainer = styled.span`
 	display: inline-block;
@@ -52,7 +52,7 @@ class UploadButton extends React.Component {
 				return doSingleImageUpload(loadedData.data.split(",")[1]);
 			})
 			.then(imageUrl => {
-				this.props.appendText(imageUrl);
+				this.props.setAppendText(imageUrl);
 				this.fileUploadElement.value = "";
 			})
 			.finally(() => this.setState({ uploading: false }));
@@ -86,7 +86,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-	appendText
+	setAppendText
 };
 
 export default connect(

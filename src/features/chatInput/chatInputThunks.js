@@ -2,7 +2,7 @@ import { appendTextByRoom, setNewTextByRoom, updateEditedMessageByRoom } from ".
 import { getActiveRoomId } from "../room/roomSelectors";
 import { getMessageById } from "../message/messageSelectors";
 
-export const appendText = appendText => (dispatch, getState) => {
+export const setAppendText = appendText => (dispatch, getState) => {
 	const roomId = getActiveRoomId(getState());
 	dispatch(appendTextByRoom({ roomId, appendText }));
 };

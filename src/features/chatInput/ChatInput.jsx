@@ -18,8 +18,9 @@ import { getLocalMessages } from "../message/messageSelectors.js";
 import { getAppendTextForCurrentRoom, getEditedMessageForCurrentRoom } from "./chatInputSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 import { getNewText } from "./chatInputSelectors";
-import { setNewText, updateEditedMessage } from "./chatInputThunks";
+import { setAppendText, setNewText, updateEditedMessage } from "./chatInputThunks";
 import { updateMessage } from "../message/messageThunks";
+import { emoticonPicked } from "../emoticon/emoticonPickerThunks";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -61,7 +62,9 @@ export function ChatInput({
 	sendRoomMessage,
 	updateMessage,
 	sendTypingNotification,
-	setNewText
+	setNewText,
+	setAppendText,
+	emoticonPicked
 }) {
 	const ref = useRef();
 	const inputRef = useRef();
@@ -92,8 +95,9 @@ export function ChatInput({
 	useEffect(
 		() => {
 			if (!appendText) return;
+
 			appendNewText(appendText);
-			appendNewText("");
+			setAppendText("");
 		},
 		[appendText]
 	);
@@ -202,7 +206,7 @@ export function ChatInput({
 	function handleEnterKey(event) {
 		if (emoticonPickerVisible) {
 			event.preventDefault();
-			onEmoticonPick(selectedEmoticon);
+			emoticonPicked(selectedEmoticon);
 		} else {
 			if (!isMobile) {
 				event.preventDefault();
@@ -273,7 +277,7 @@ const mapStateToProps = state => ({
 	localMessages: getLocalMessages(state),
 	appendText: getAppendTextForCurrentRoom(state),
 	editedMessage: getEditedMessageForCurrentRoom(state),
-	newText: getNewText(state)
+	newText: getNewText(state),
 });
 
 const mapDispatchToProps = {
@@ -289,7 +293,9 @@ const mapDispatchToProps = {
 	sendRoomMessage,
 	updateMessage,
 	sendTypingNotification,
-	setNewText
+	setNewText,
+	emoticonPicked,
+	setAppendText
 };
 
 export default connect(
