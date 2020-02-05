@@ -12,7 +12,7 @@ import imagePick from "./features/imagePick/imagePickReducer";
 import socket from "./features/socket/socketSlice";
 import version from "./features/version/versionSlice";
 import room from "./features/room/roomSlice";
-// import log from "./features/chat/logReducer";
+import log from "./features/chat/logReducer";
 
 const rootReducer = combineReducers({
 	localUser,
@@ -27,8 +27,8 @@ const rootReducer = combineReducers({
 	imagePick,
 	socket,
 	version,
-	room
-	// log,
+	room,
+	log,
 });
 
 export default rootReducer;
