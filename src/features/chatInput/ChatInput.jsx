@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import styled from "styled-components";
 import theme from "../../constants/theme.js";
-import { updateMessage } from "../message/messageActions.js";
 import { isMobile } from "../../constants/browserInfo.js";
 import {
 	hideEmoticonPicker,
@@ -14,13 +13,14 @@ import {
 	selectUpEmoticonPicker,
 	showEmoticonPicker
 } from "../emoticon/emoticonPickerActions";
-import { sendRoomMessage } from "../room/roomsSlice";
-import { sendTypingNotification } from "../room/roomsThunks";
+import { sendRoomMessage, sendTypingNotification } from "../rooms/roomsThunks";
 import { getLocalMessages } from "../message/messageSelectors.js";
 import { getAppendTextForCurrentRoom, getEditedMessageForCurrentRoom } from "./chatInputSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
 import { getNewText } from "./chatInputSelectors";
-import { setNewText, updateEditedMessage } from "./chatInputThunks";
+import { setAppendText, setNewText, updateEditedMessage } from "./chatInputThunks";
+import { updateMessage } from "../message/messageThunks";
+import { emoticonPicked } from "../emoticon/emoticonPickerThunks";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -62,7 +62,9 @@ export function ChatInput({
 	sendRoomMessage,
 	updateMessage,
 	sendTypingNotification,
-	setNewText
+	setNewText,
+	setAppendText,
+	emoticonPicked
 }) {
 	const ref = useRef();
 	const inputRef = useRef();
@@ -93,8 +95,9 @@ export function ChatInput({
 	useEffect(
 		() => {
 			if (!appendText) return;
+
 			appendNewText(appendText);
-			appendNewText("");
+			setAppendText("");
 		},
 		[appendText]
 	);
@@ -203,7 +206,7 @@ export function ChatInput({
 	function handleEnterKey(event) {
 		if (emoticonPickerVisible) {
 			event.preventDefault();
-			onEmoticonPick(selectedEmoticon);
+			emoticonPicked(selectedEmoticon);
 		} else {
 			if (!isMobile) {
 				event.preventDefault();
@@ -216,6 +219,8 @@ export function ChatInput({
 		const { key } = event;
 		if (key === ":") {
 			handleOpenCloseEmoticon();
+		} else if (key === "Backspace" && _.last(inputRef.current.value) === ":" && emoticonPickerVisible) {
+			hideEmoticonPicker();
 		} else if (/Arrow|Tab/.test(key) && emoticonPickerVisible) {
 			handleEmoticonTabArrow(event);
 		} else if (/ArrowUp|ArrowDown/.test(key)) {
@@ -290,7 +295,9 @@ const mapDispatchToProps = {
 	sendRoomMessage,
 	updateMessage,
 	sendTypingNotification,
-	setNewText
+	setNewText,
+	emoticonPicked,
+	setAppendText
 };
 
 export default connect(

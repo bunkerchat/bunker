@@ -1,12 +1,13 @@
 import React from "react";
-import { toggleMessageImagesVisible } from "../messageActions";
 import { connect } from "react-redux";
 import ToggleButton from "./ToggleButton.jsx";
+import { getImagesVisible } from "../messageSelectors";
+import { toggleMessageImagesVisible } from "../messageSlice";
 
-const Image = ({ value, message, toggleMessageImagesVisible }) => {
+const Image = ({ messageId, value, imagesVisible, toggleMessageImagesVisible }) => {
 	const toggleVisible = event => {
 		event.stopPropagation();
-		toggleMessageImagesVisible(message);
+		toggleMessageImagesVisible({messageId});
 	};
 
 	const target = _.includes(value, window.location.origin) ? "_self" : "_blank";
@@ -15,16 +16,20 @@ const Image = ({ value, message, toggleMessageImagesVisible }) => {
 			<a href={value} target={target}>
 				{value}
 			</a>
-			<ToggleButton toggled={message.imagesVisible} onToggle={toggleVisible}/>
+			<ToggleButton toggled={imagesVisible} onToggle={toggleVisible} />
 		</div>
 	);
 };
+
+const mapStateToProps = (state, { messageId }) => ({
+	imagesVisible: getImagesVisible(messageId)(state)
+});
 
 const mapDispatchToProps = {
 	toggleMessageImagesVisible
 };
 
 export default connect(
-	null,
+	mapStateToProps,
 	mapDispatchToProps
 )(Image);

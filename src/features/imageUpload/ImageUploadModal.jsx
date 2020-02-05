@@ -5,14 +5,14 @@ import styled from "styled-components";
 import { useImagePasteWatcher } from "./useImagePasteWatcher.js";
 import { loadImage } from "./imageLoader";
 import { doSingleImageUpload } from "./imageUpload";
-import { appendText } from "../chatInput/chatInputThunks";
+import { setAppendText } from "../chatInput/chatInputThunks";
 
 const FixedHeightImage = styled.img`
 	max-width: 100%;
 	max-height: 250px;
 `;
 
-const ImageUploadModal = ({ appendText }) => {
+const ImageUploadModal = ({ setAppendText }) => {
 	const pastedImages = useImagePasteWatcher();
 	const [open, setOpen] = useState(false);
 	const closeImageSelections = () => setOpen(false);
@@ -28,7 +28,7 @@ const ImageUploadModal = ({ appendText }) => {
 	const uploadImageFiles = () => {
 		return loadImage(pastedImages[0])
 			.then(loadedData => doSingleImageUpload(loadedData.data.split(",")[1]))
-			.then(imageUrl => appendText(imageUrl))
+			.then(imageUrl => setAppendText(imageUrl))
 			.finally(() => closeImageSelections());
 	};
 
@@ -57,7 +57,7 @@ const ImageUploadModal = ({ appendText }) => {
 const mapStateToProps = state => ({});
 
 const mapDispatchToProps = {
-	appendText
+	setAppendText
 };
 
 export default connect(

@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { initialDataReceived } from "../init/initActions";
 
 const roomSlice = createSlice({
 	name: "room",

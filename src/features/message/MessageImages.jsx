@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { toggleMessageImagesVisible } from "./messageActions";
 import { connect } from "react-redux";
 import {
 	getImagesVisible,
@@ -9,6 +8,7 @@ import {
 	getMessageLinkMetaTitle,
 	getMessageTokens
 } from "./messageSelectors";
+import { toggleMessageImagesVisible } from "./messageSlice";
 
 const Image = styled.div`
 	img {
@@ -17,10 +17,10 @@ const Image = styled.div`
 	}
 `;
 
-const MessageImages = ({ tokens, imagesVisible, linkMetaImage, linkMetaTitle, toggleMessageImagesVisible }) => {
+const MessageImages = ({ messageId, tokens, imagesVisible, linkMetaImage, linkMetaTitle, toggleMessageImagesVisible }) => {
 	const toggleVisible = event => {
 		event.stopPropagation();
-		toggleMessageImagesVisible(message);
+		toggleMessageImagesVisible({messageId});
 	};
 
 	if (!imagesVisible) return null;

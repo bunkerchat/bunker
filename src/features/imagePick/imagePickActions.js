@@ -1,4 +1,4 @@
-import { appendText } from "../chatInput/chatInputThunks";
+import { setAppendText } from "../chatInput/chatInputThunks";
 
 export const imagePickSelectionsReceived = (message, images) => ({
 	type: "images/received",
@@ -10,7 +10,7 @@ export const selectImage = image => (dispatch, getState) => {
 	const state = getState();
 	const message = state.imagePick.message;
 
-	dispatch(appendText(`${message} ${image} `));
+	dispatch(setAppendText(`${message} ${image} `));
 	dispatch(closeImageSelections());
 };
 
