@@ -123,6 +123,10 @@ class ScrollingMessageList extends React.PureComponent {
 	}
 }
 
+ScrollingMessageList.defaultProps = {
+	messages: []
+};
+
 const mapStateToProps = (state, ownProps) => {
 	const room = state.rooms[ownProps.roomId];
 	return {
