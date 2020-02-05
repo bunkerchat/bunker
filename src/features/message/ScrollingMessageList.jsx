@@ -93,7 +93,7 @@ class ScrollingMessageList extends React.PureComponent {
 				this.ref.current.scrollTop = this.ref.current.scrollHeight;
 
 				// Also, if we're at the bottom, continually prune messages
-				if (this.props.messages.length > maxMessages) {
+				if (this.props.messages?.length > maxMessages) {
 					this.props.clearRoomMessages(this.props.roomId);
 				}
 			}
