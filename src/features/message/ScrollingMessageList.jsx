@@ -75,7 +75,7 @@ class ScrollingMessageList extends React.PureComponent {
 
 		// If we're adding a lot of messages, use prevDocumentHeight to keep scroll at previous top message
 		// This would be triggered when user is loading old messages
-		if (this.props.messages.length - prevProps.messages.length > 1) {
+		if (this.props.messages?.length - prevProps.messages?.length > 1) {
 			// todo magic number "75" here, makes the scrolling hit the right place, could be improved
 			this.ref.current.scrollTop = this.ref.current.scrollHeight - snapshot.previousElementHeight + 75;
 		}

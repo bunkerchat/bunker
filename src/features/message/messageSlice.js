@@ -62,7 +62,7 @@ const messageSlice = createSlice({
 
 		messageUpdated: (state, { payload }) => {
 			const message = parseMessage(payload.message);
-			_.assignIn(state.byRoom[message.room][message._id], message);
+			_.assignIn(state.byRoom[message.room]?.[message._id], message);
 			_.assignIn(state.byKey[message._id], message);
 		},
 
