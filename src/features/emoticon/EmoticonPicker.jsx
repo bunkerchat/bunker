@@ -78,7 +78,8 @@ class EmoticonPicker extends React.Component {
 				<Backdrop onClick={this.hide} />
 				<Picker ref={this.ref} className="card p-1" style={style}>
 					{searchInputVisible && <EmoticonPickerSearch />}
-					<EmoticonCategory />
+					{/*below visible check prevents double rendering*/}
+					{visible && <EmoticonCategory />}
 				</Picker>
 			</Container>
 		);

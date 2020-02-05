@@ -2,6 +2,7 @@ import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { createBrowserHistory } from "history";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import rootReducer from "./rootReducer";
+import { userTiming } from "./middleware/userTiming.js";
 
 const history = createBrowserHistory();
 
@@ -14,7 +15,7 @@ const middleware = getDefaultMiddleware({
 
 const store = configureStore({
 	reducer: connectRouter(history)(rootReducer),
-	middleware: [routerMiddleware(history), ...middleware]
+	middleware: [routerMiddleware(history), userTiming, ...middleware]
 });
 
 if (process.env.NODE_ENV === "development" && module.hot) {
