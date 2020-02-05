@@ -29,14 +29,14 @@ class ScrollingMessageList extends React.PureComponent {
 		this.ref = React.createRef();
 	}
 
-	onLoadMessages = () => {
-		this.props.loadMessages(this.props.roomId, this.props.messages.length);
+	onloadRoomMessages = () => {
+		this.props.loadRoomMessages(this.props.roomId, this.props.messages.length);
 	};
 
 	onScroll = _.throttle(() => {
 		const isSmallScreen = window.outerWidth < 768;
 		if (this.ref.current.scrollTop < 100 && !isSmallScreen && !this.props.loading) {
-			this.onLoadMessages();
+			this.onloadRoomMessages();
 		}
 	}, 500);
 
@@ -94,7 +94,7 @@ class ScrollingMessageList extends React.PureComponent {
 
 				// Also, if we're at the bottom, continually prune messages
 				if (this.props.messages.length > maxMessages) {
-					this.props.clearMessages(this.props.roomId);
+					this.props.clearRoomMessages(this.props.roomId);
 				}
 			}
 		}
@@ -113,7 +113,7 @@ class ScrollingMessageList extends React.PureComponent {
 						<strong>No more messages</strong>
 					</div>
 				) : (
-					<div className="alert alert-info text-center mb-0 rounded-0" onClick={this.onLoadMessages}>
+					<div className="alert alert-info text-center mb-0 rounded-0" onClick={this.onloadRoomMessages}>
 						<a className="alert-link">Load more messages</a>
 					</div>
 				)}
@@ -133,8 +133,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = {
-	loadMessages: loadRoomMessages,
-	clearMessages: clearRoomMessages
+	loadRoomMessages,
+	clearRoomMessages
 };
 
 export default connect(

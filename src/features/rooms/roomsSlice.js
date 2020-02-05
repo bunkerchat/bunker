@@ -18,7 +18,7 @@ export const joinRoom = roomId => dispatch => {
 
 const roomsSlice = createSlice({
 	name: "rooms",
-	initialState: { },
+	initialState: {},
 	extraReducers: {
 		[initialDataReceived]: (state, { payload }) => {
 			payload.rooms.forEach(room => {
@@ -30,7 +30,9 @@ const roomsSlice = createSlice({
 			state[payload.roomId].fullHistoryLoaded = payload.messages.length === 0;
 		},
 		[clearRoomMessages]: (state, { payload }) => {
-			state[payload.roomId].fullHistoryLoaded = false;
+			if (state[payload.roomId]) {
+				state[payload.roomId].fullHistoryLoaded = false;
+			}
 		}
 	},
 	reducers: {
