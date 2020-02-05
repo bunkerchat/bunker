@@ -39,7 +39,9 @@ const messageSlice = createSlice({
 		messageReceived: (state, { payload }) => {
 			const message = parseMessage(payload.message);
 			state.lastMessage = message;
-			state.byRoom[message.room] = _.uniqBy([...state.byRoom[message.room], message], "_id");
+			if (state.byRoom[message.room]) {
+				state.byRoom[message.room] = _.uniqBy([...state.byRoom[message.room], message], "_id");
+			}
 			state.byKey[message._id] = message;
 		},
 
@@ -49,7 +51,10 @@ const messageSlice = createSlice({
 				.map(parseMessage)
 				.value();
 
-			state.byRoom[payload.roomId] = _.uniqBy([...messages, ...state.byRoom[payload.roomId]], "_id");
+			if (state.byRoom[payload.roomId]) {
+				state.byRoom[payload.roomId] = _.uniqBy([...messages, ...state.byRoom[payload.roomId]], "_id");
+			}
+
 			state.byKey = messages.reduce((byKey, message) => {
 				byKey[message._id] = message;
 				return byKey;
