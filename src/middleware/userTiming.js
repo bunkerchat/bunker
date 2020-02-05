@@ -1,5 +1,5 @@
 export const userTiming = () => next => action => {
-	if (performance.mark === undefined) return next(action);
+	if (performance.mark === undefined || !action.type) return next(action);
 	performance.mark(`${action.type}_start`);
 	const result = next(action);
 	performance.mark(`${action.type}_end`);

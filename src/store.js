@@ -15,7 +15,7 @@ const middleware = getDefaultMiddleware({
 
 const store = configureStore({
 	reducer: connectRouter(history)(rootReducer),
-	middleware: [routerMiddleware(history), userTiming, ...middleware]
+	middleware: [routerMiddleware(history), ...middleware]
 });
 
 if (process.env.NODE_ENV === "development" && module.hot) {
