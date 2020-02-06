@@ -62,7 +62,7 @@ const messageSlice = createSlice({
 		},
 
 		clearRoomMessages: (state, { payload }) => {
-			state.byRoom = _.takeRight(state.byRoom[payload.roomId], maxMessages);
+			state.byRoom[payload.roomId] = _.takeRight(state.byRoom[payload.roomId], maxMessages);
 		},
 
 		messageUpdated: (state, { payload }) => {
