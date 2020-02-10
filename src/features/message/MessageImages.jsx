@@ -3,13 +3,14 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import {
 	getImagesVisible,
-	getImageUrls,
 	getMessageById,
 	getMessageLinkMetaImage,
 	getMessageLinkMetaTitle,
 	getMessageTokens
 } from "./messageSelectors";
 import { toggleMessageImagesVisible } from "./messageSlice";
+import { isMobile } from "../../constants/browserInfo";
+import { getBunkerServesImages } from "../settings/userSettingsSelectors";
 
 const Image = styled.div`
 	img {
@@ -18,13 +19,16 @@ const Image = styled.div`
 	}
 `;
 
+const mobileParam = isMobile ? "?small=true" : "";
+
 const MessageImages = ({
 	messageId,
-	imageUrls,
+	tokens,
 	imagesVisible,
 	linkMetaImage,
 	linkMetaTitle,
-	toggleMessageImagesVisible
+	toggleMessageImagesVisible,
+	bunkerServesImages
 }) => {
 	const toggleVisible = event => {
 		event.stopPropagation();
@@ -33,13 +37,22 @@ const MessageImages = ({
 
 	if (!imagesVisible) return null;
 
+	const imageTokens = _.filter(tokens, { type: "image" });
+	const wrapImageForBunkerToServe = isMobile || bunkerServesImages;
+
 	return (
 		<div>
-			{imageUrls.map((url, index) => (
-				<Image key={index}>
-					<img src={url} alt={url} onClick={toggleVisible} />
-				</Image>
-			))}
+			{imageTokens.map((token, index) => {
+				const url = wrapImageForBunkerToServe
+					? `/api/image/${encodeURIComponent(token.value)}${mobileParam}`
+					: token.value;
+
+				return (
+					<Image key={index}>
+						<img src={url} alt={token.value} onClick={toggleVisible} />
+					</Image>
+				);
+			})}
 			{linkMetaImage && (
 				<Image>
 					<h3>{linkMetaTitle}</h3>
@@ -53,10 +66,11 @@ const MessageImages = ({
 const mapStateToProps = (state, { messageId }) => ({
 	// TODO: kill this message prop after toggleMessageImagesVisible doesn't need whole message object
 	message: getMessageById(messageId)(state),
-	imageUrls: getImageUrls(messageId)(state),
+	tokens: getMessageTokens(messageId)(state),
 	imagesVisible: getImagesVisible(messageId)(state),
 	linkMetaImage: getMessageLinkMetaImage(messageId)(state),
-	linkMetaTitle: getMessageLinkMetaTitle(messageId)(state)
+	linkMetaTitle: getMessageLinkMetaTitle(messageId)(state),
+	bunkerServesImages: getBunkerServesImages(state)
 });
 
 const mapDispatchToProps = {

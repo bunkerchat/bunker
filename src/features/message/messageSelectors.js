@@ -34,16 +34,4 @@ export const getMessageLinkMetaTitle = messageId => state => getMessageById(mess
 export const getFirstInSeries = (messageId, previousMessageId) => state =>
 	getMessageAuthorId(messageId)(state) !== getMessageAuthorId(previousMessageId)(state);
 
-export const getMessageImageTokens = messageId => state =>
-	_.filter(getMessageTokens(messageId)(state) || [], { type: "image" });
-
 const mobileParam = isMobile ? "?small=true" : "";
-
-export const getImageUrls = messageId => state => {
-	const bunkerServesImages = getBunkerServesImages(state);
-	const messageImageTokens = getMessageImageTokens(messageId)(state);
-	const wrapImageForBunkerToServe = isMobile || bunkerServesImages;
-	return messageImageTokens.map(
-		token => (wrapImageForBunkerToServe ? `/api/image/${encodeURIComponent(token.value)}${mobileParam}` : token.value)
-	);
-};
