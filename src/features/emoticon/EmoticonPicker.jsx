@@ -79,7 +79,7 @@ class EmoticonPicker extends React.Component {
 				<Picker ref={this.ref} className="card p-1" style={style}>
 					{searchInputVisible && <EmoticonPickerSearch />}
 					{/*below visible check prevents double rendering*/}
-					{visible && <EmoticonCategory />}
+					<EmoticonCategory />
 				</Picker>
 			</Container>
 		);
