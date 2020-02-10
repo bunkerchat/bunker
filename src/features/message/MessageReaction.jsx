@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import emoticons from "../../constants/emoticons";
+import { emoticonNameHash } from "../../constants/emoticons";
 import { connect } from "react-redux";
 
 const Emoticon = styled.span`
@@ -20,7 +20,7 @@ class MessageReaction extends React.PureComponent {
 	render() {
 		const { emoticonName, reactions, nicks } = this.props;
 
-		const emoticon = _.find(emoticons.imageEmoticons, { name: emoticonName });
+		const emoticon = emoticonNameHash[emoticonName];
 		const title = `:${emoticonName}: from ${nicks}`;
 		return (
 			<Emoticon key={emoticonName} className="px-1">

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import emoticons from "../../../constants/emoticons";
+import { emoticonNameHash } from "../../../constants/emoticons";
 import Word from "./Word.jsx";
 
 const EmoticonImg = styled.img`
@@ -8,7 +8,7 @@ const EmoticonImg = styled.img`
 `;
 
 const Emoticon = ({ value }) => {
-	const knownEmoticon = emoticons.emoticonNameHash[value];
+	const knownEmoticon = emoticonNameHash[value];
 
 	if (!knownEmoticon) {
 		console.warn(`unknown emoticon "${value}" (supposed to be handled server side) :\`(`);

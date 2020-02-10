@@ -1,5 +1,5 @@
 import { hideEmoticonPicker } from "./emoticonPickerActions";
-import { setAppendText } from "../chatInput/chatInputThunks";
+import { setReplaceText } from "../chatInput/chatInputThunks";
 import { getMessageControlsMessageId } from "../messageControls/messageControlsSelectors";
 import { getSearchInputVisible, getSearchValueEmoticon } from "./emoticonPickerSelectors";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
@@ -15,8 +15,7 @@ export const emoticonPicked = emoticonName => (dispatch, getState) => {
 	} else {
 		// opened from chat input
 		const searchValue = getSearchValueEmoticon(state);
-		const additionalName = emoticonName.replace(searchValue, "");
-		dispatch(setAppendText(`${additionalName}:`));
+		dispatch(setReplaceText(`:${searchValue}`, `:${emoticonName}:`));
 	}
 
 	dispatch(hideEmoticonPicker());

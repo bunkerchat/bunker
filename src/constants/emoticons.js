@@ -8,10 +8,10 @@ const list = _.map(window.emoticonNames, emoticon => ({
 	isIcon: /^fa-/.test(emoticon)
 }));
 
-export default {
-	all: list,
-	imageEmoticons: _.filter(list, { isIcon: false }),
-	names: _.map(list, "name"),
-	files: _.map(list, "file"),
-	emoticonNameHash: _.keyBy(list, "name")
-};
+export const all = list;
+export const imageEmoticons = _.filter(list, { isIcon: false });
+export const imageEmoticonsNames = _.filter(list, { isIcon: false }).map(emoticon => emoticon.name);
+export const imageEmoticonsFiles = _.filter(list, { isIcon: false }).map(emoticon => emoticon.file);
+export const emoticonNameHash = _.keyBy(list, "name");
+export const names = _.map(list, "name");
+export const files = _.map(list, "file");

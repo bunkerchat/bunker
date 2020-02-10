@@ -1,4 +1,4 @@
-import emoticons from "../../constants/emoticons";
+import { imageEmoticonsNames } from "../../constants/emoticons";
 
 const handlers = {
 	"emoticonPicker/show": (state, action) => ({
@@ -8,8 +8,8 @@ const handlers = {
 		y: action.y,
 		direction: action.direction,
 		search: "",
-		filteredEmoticons: state.allEmoticons,
-		selected: _.first(state.allEmoticons).name,
+		filteredEmoticons: imageEmoticonsNames,
+		selected: imageEmoticonsNames[0],
 		searchInputVisible: action.searchInputVisible
 	}),
 	"emoticonPicker/hide": state => ({
@@ -17,62 +17,57 @@ const handlers = {
 		visible: false
 	}),
 	"emoticonPicker/search": (state, action) => {
-		const filteredEmoticons = _.filter(state.allEmoticons, emoticon =>
-			new RegExp(action.text, "i").test(emoticon.name)
-		);
+		const search = action.text;
+		const filteredEmoticons = imageEmoticonsNames.filter(name => name.includes(search));
 
 		return {
 			...state,
-			search: action.text,
+			search,
 			filteredEmoticons,
-			selected: filteredEmoticons.length > 0 ? _.first(filteredEmoticons).name : ""
+			selected: filteredEmoticons[0]
 		};
 	},
 	"emoticonPicker/selectLeft": state => {
-		let previousIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) - 1;
+		const { filteredEmoticons, selected } = state;
+		let previousIndex = filteredEmoticons.indexOf(selected) - 1;
 		if (previousIndex < 0) {
-			previousIndex = state.filteredEmoticons.length - 1;
+			previousIndex = filteredEmoticons.length - 1;
 		}
-		return {
-			...state,
-			selected: state.filteredEmoticons[previousIndex].name
-		};
+
+		return { ...state, selected: filteredEmoticons[previousIndex] };
 	},
 	"emoticonPicker/selectRight": state => {
-		let nextIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) + 1;
-		if (nextIndex === state.filteredEmoticons.length) {
+		const { filteredEmoticons, selected } = state;
+
+		let nextIndex = filteredEmoticons.indexOf(selected) + 1;
+		if (nextIndex === filteredEmoticons.length) {
 			nextIndex = 0;
 		}
 
-		return {
-			...state,
-			selected: state.filteredEmoticons[nextIndex].name
-		};
+		return { ...state, selected: filteredEmoticons[nextIndex] };
 	},
 	"emoticonPicker/selectUp": state => {
-		let previousIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) - 5;
+		const { filteredEmoticons, selected } = state;
+
+		let previousIndex = filteredEmoticons.indexOf(selected) - 5;
 		if (previousIndex < 0) {
 			previousIndex = 0;
 		}
-		return {
-			...state,
-			selected: state.filteredEmoticons[previousIndex].name
-		};
+		return { ...state, selected: filteredEmoticons[previousIndex] };
 	},
 	"emoticonPicker/selectDown": state => {
-		let nextIndex = _.findIndex(state.filteredEmoticons, { name: state.selected }) + 5;
-		if (nextIndex > state.filteredEmoticons.length) {
-			nextIndex = state.filteredEmoticons.length;
+		const { filteredEmoticons, selected } = state;
+
+		let nextIndex = filteredEmoticons.indexOf(selected) + 5;
+
+		if (nextIndex > filteredEmoticons.length) {
+			nextIndex = filteredEmoticons.length;
 		}
-		return {
-			...state,
-			selected: state.filteredEmoticons[nextIndex].name
-		};
+		return { ...state, selected: filteredEmoticons[nextIndex] };
 	}
 };
 
 const initialState = {
-	allEmoticons: emoticons.imageEmoticons,
 	filteredEmoticons: [], // make picker load with no gifs rendered on load to reduce lag
 	search: ""
 };

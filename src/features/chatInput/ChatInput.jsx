@@ -17,8 +17,8 @@ import { sendRoomMessage, sendTypingNotification } from "../rooms/roomsThunks";
 import { getLocalMessages } from "../message/messageSelectors.js";
 import { getAppendTextForCurrentRoom, getEditedMessageForCurrentRoom } from "./chatInputSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
-import { getNewText } from "./chatInputSelectors";
-import { setAppendText, setNewText, updateEditedMessage } from "./chatInputThunks";
+import { getNewReplaceText, getNewText, getOldReplaceText } from "./chatInputSelectors";
+import { setAppendText, setNewText, setReplaceText, updateEditedMessage } from "./chatInputThunks";
 import { updateMessage } from "../message/messageThunks";
 import { emoticonPicked } from "../emoticon/emoticonPickerThunks";
 
@@ -48,6 +48,8 @@ export function ChatInput({
 	appendText,
 	editedMessage,
 	newText,
+	oldReplaceText,
+	newReplaceText,
 
 	// actions
 	updateEditedMessage,
@@ -109,6 +111,15 @@ export function ChatInput({
 			setNewText("");
 		},
 		[newText]
+	);
+
+	useEffect(
+		() => {
+			if (!newReplaceText) return;
+			replaceText(oldReplaceText, newReplaceText);
+			setReplaceText("", "");
+		},
+		[newReplaceText]
 	);
 
 	function sendMessage() {
@@ -279,7 +290,9 @@ const mapStateToProps = state => ({
 	localMessages: getLocalMessages(state),
 	appendText: getAppendTextForCurrentRoom(state),
 	editedMessage: getEditedMessageForCurrentRoom(state),
-	newText: getNewText(state)
+	newText: getNewText(state),
+	oldReplaceText: getOldReplaceText(state),
+	newReplaceText: getNewReplaceText(state)
 });
 
 const mapDispatchToProps = {
@@ -297,7 +310,8 @@ const mapDispatchToProps = {
 	sendTypingNotification,
 	setNewText,
 	emoticonPicked,
-	setAppendText
+	setAppendText,
+	setReplaceText
 };
 
 export default connect(

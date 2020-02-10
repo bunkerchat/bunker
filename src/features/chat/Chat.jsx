@@ -21,20 +21,6 @@ const Container = styled.div`
 	height: 100vh;
 	padding-top: ${theme.top}px;
 `;
-
-const mapStateToProps = state => ({
-	loaded: state.localUser.loaded,
-	section: getSection(state),
-	rooms: state.rooms,
-	activeRoomId: getActiveRoomId(state),
-	imagePick: state.imagePick
-});
-
-const mapDispatchToProps = {
-	changeActiveRoom,
-	changePresent
-};
-
 class Chat extends React.PureComponent {
 	setActiveRoom() {
 		const { changeActiveRoom, activeRoomId } = this.props;
@@ -79,6 +65,20 @@ class Chat extends React.PureComponent {
 		);
 	}
 }
+
+const mapStateToProps = state => ({
+	loaded: state.localUser.loaded,
+	section: getSection(state),
+	rooms: state.rooms,
+	activeRoomId: getActiveRoomId(state),
+	imagePick: state.imagePick
+});
+
+const mapDispatchToProps = {
+	changeActiveRoom,
+	changePresent
+};
+
 
 export default connect(
 	mapStateToProps,

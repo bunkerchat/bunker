@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Emoticon from "./Emoticon.jsx";
 import { connect } from "react-redux";
+import { imageEmoticons } from "../../constants/emoticons";
 
 const Container = styled.div`
 	display: flex;
@@ -15,20 +16,17 @@ const NoEmoticonsAlert = styled.div`
 	text-align: center;
 `;
 
-const EmoticonCategory = ({ filteredEmoticons }) => {
+const EmoticonCategory = ({}) => {
 	return (
 		<Container>
-			{filteredEmoticons.length === 0 && <NoEmoticonsAlert>No matching emoticons</NoEmoticonsAlert>}
-			{filteredEmoticons.map(emoticon => (
+			{imageEmoticons.map(emoticon => (
 				<Emoticon key={emoticon.name} emoticonName={emoticon.name} />
 			))}
 		</Container>
 	);
 };
 
-const mapStateToProps = state => ({
-	filteredEmoticons: state.emoticonPicker.filteredEmoticons,
-});
+const mapStateToProps = state => ({});
 
 const mapDispatchToProps = {};
 

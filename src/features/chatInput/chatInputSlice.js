@@ -25,10 +25,21 @@ const chatInputSlice = createSlice({
 			const { roomId, newText } = payload;
 			ensureRoom(state, roomId);
 			state.byRoom[roomId].newText = newText;
+		},
+		replaceTextByRoom(state, { payload }) {
+			const { roomId, oldReplaceText, newReplaceText } = payload;
+			ensureRoom(state, roomId);
+			state.byRoom[roomId].oldReplaceText = oldReplaceText;
+			state.byRoom[roomId].newReplaceText = newReplaceText;
 		}
 	}
 });
 
-export const { appendTextByRoom, updateEditedMessageByRoom, setNewTextByRoom } = chatInputSlice.actions;
+export const {
+	appendTextByRoom,
+	updateEditedMessageByRoom,
+	setNewTextByRoom,
+	replaceTextByRoom
+} = chatInputSlice.actions;
 
 export default chatInputSlice.reducer;
