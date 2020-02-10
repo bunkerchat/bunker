@@ -34,4 +34,3 @@ export const getLastMentionAuthorNick = createSelector(
 	(lastMessageMention = {}, users = {}) => users[lastMessageMention.author]?.nick
 );
 
-export const getDesktopMentionNotifications = state => state.userSettings?.desktopMentionNotifications;

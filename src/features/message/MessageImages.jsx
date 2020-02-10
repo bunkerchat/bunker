@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import {
 	getImagesVisible,
+	getImageUrls,
 	getMessageById,
 	getMessageLinkMetaImage,
 	getMessageLinkMetaTitle,
@@ -17,21 +18,26 @@ const Image = styled.div`
 	}
 `;
 
-const MessageImages = ({ messageId, tokens, imagesVisible, linkMetaImage, linkMetaTitle, toggleMessageImagesVisible }) => {
+const MessageImages = ({
+	messageId,
+	imageUrls,
+	imagesVisible,
+	linkMetaImage,
+	linkMetaTitle,
+	toggleMessageImagesVisible
+}) => {
 	const toggleVisible = event => {
 		event.stopPropagation();
-		toggleMessageImagesVisible({messageId});
+		toggleMessageImagesVisible({ messageId });
 	};
 
 	if (!imagesVisible) return null;
 
-	// todo: move to selector?
-	const imageTokens = _.filter(tokens, { type: "image" });
 	return (
 		<div>
-			{imageTokens.map((token, index) => (
+			{imageUrls.map((url, index) => (
 				<Image key={index}>
-					<img src={token.value} alt={token.value} onClick={toggleVisible} />
+					<img src={url} alt={url} onClick={toggleVisible} />
 				</Image>
 			))}
 			{linkMetaImage && (
@@ -47,7 +53,7 @@ const MessageImages = ({ messageId, tokens, imagesVisible, linkMetaImage, linkMe
 const mapStateToProps = (state, { messageId }) => ({
 	// TODO: kill this message prop after toggleMessageImagesVisible doesn't need whole message object
 	message: getMessageById(messageId)(state),
-	tokens: getMessageTokens(messageId)(state),
+	imageUrls: getImageUrls(messageId)(state),
 	imagesVisible: getImagesVisible(messageId)(state),
 	linkMetaImage: getMessageLinkMetaImage(messageId)(state),
 	linkMetaTitle: getMessageLinkMetaTitle(messageId)(state)

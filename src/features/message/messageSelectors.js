@@ -1,6 +1,8 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { getLocalRoomMembersByRoom, getLocalUser } from "../users/usersSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
+import { isMobile } from "../../constants/browserInfo";
+import { getBunkerServesImages } from "../settings/userSettingsSelectors";
 
 export const getMessagesByRoom = state => state.message.byRoom;
 
@@ -31,3 +33,17 @@ export const getMessageLinkMetaTitle = messageId => state => getMessageById(mess
 
 export const getFirstInSeries = (messageId, previousMessageId) => state =>
 	getMessageAuthorId(messageId)(state) !== getMessageAuthorId(previousMessageId)(state);
+
+export const getMessageImageTokens = messageId => state =>
+	_.filter(getMessageTokens(messageId)(state) || [], { type: "image" });
+
+const mobileParam = isMobile ? "?small=true" : "";
+
+export const getImageUrls = messageId => state => {
+	const bunkerServesImages = getBunkerServesImages(state);
+	const messageImageTokens = getMessageImageTokens(messageId)(state);
+	const wrapImageForBunkerToServe = isMobile || bunkerServesImages;
+	return messageImageTokens.map(
+		token => (wrapImageForBunkerToServe ? `/api/image/${encodeURIComponent(token.value)}${mobileParam}` : token.value)
+	);
+};

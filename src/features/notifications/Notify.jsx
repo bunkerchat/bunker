@@ -2,12 +2,12 @@ import React, { useCallback } from "react";
 import { connect } from "react-redux";
 import Notification from "react-web-notification";
 import {
-	getDesktopMentionNotifications,
 	getLastMentionAuthorNick,
 	getLastMentionRoomName,
 	getLastMentionText,
 	getShowNotification
 } from "./notificationsSelectors.js";
+import { getDesktopMentionNotifications } from "../settings/userSettingsSelectors";
 
 function Notify({
 	// state
