@@ -1,8 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { getLocalRoomMembersByRoom, getLocalUser } from "../users/usersSelectors.js";
 import { getActiveRoomId } from "../room/roomSelectors.js";
-import { isMobile } from "../../constants/browserInfo";
-import { getBunkerServesImages } from "../settings/userSettingsSelectors";
 
 export const getMessagesByRoom = state => state.message.byRoom;
 
@@ -33,5 +31,3 @@ export const getMessageLinkMetaTitle = messageId => state => getMessageById(mess
 
 export const getFirstInSeries = (messageId, previousMessageId) => state =>
 	getMessageAuthorId(messageId)(state) !== getMessageAuthorId(previousMessageId)(state);
-
-const mobileParam = isMobile ? "?small=true" : "";
