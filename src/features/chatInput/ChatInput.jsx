@@ -193,6 +193,9 @@ export function ChatInput({
 	function handleMessageNavigation(event) {
 		event.preventDefault();
 
+		// dont allow edit while typing an existing message, thats just dumb
+		if (inputRef.current.value.length) return;
+
 		// updateMessage
 		const currentIndex = editedMessage ? _.findIndex(localMessages, { _id: editedMessage._id }) : -1;
 
