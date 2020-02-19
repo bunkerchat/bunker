@@ -1,4 +1,5 @@
 const path = require("path");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = (env, argv) => {
 	const isProd = argv.mode === "production";
@@ -51,6 +52,7 @@ module.exports = (env, argv) => {
 				}
 			]
 		},
+		plugins: [new CleanWebpackPlugin()]
 		// enable for prod react profiling
 		// resolve: {
 		// 	alias: {
