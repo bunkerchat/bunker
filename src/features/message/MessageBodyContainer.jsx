@@ -40,14 +40,14 @@ const MessageBodyContainer = ({ children, messageId, messageText, firstInSeries,
 	if (isSelectedMessage) {
 		border = "border border-primary";
 	} else if (firstInSeries) {
-		border = "border-top border-light";
+		border = "border-top-light";
 	}
 
 	return (
 		<Container className={`${border} ${isUserMentioned ? "mention" : ""}`}>
 			{children}
 			<div className="right-side-controls px-2">
-				<MessageControls messageId={messageId} />
+				<MessageControls messageId={messageId}/>
 			</div>
 		</Container>
 	);
