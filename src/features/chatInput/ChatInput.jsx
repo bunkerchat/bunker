@@ -72,7 +72,8 @@ export function ChatInput({
 	const inputRef = useRef();
 
 	const replaceText = (old, text) => {
-		inputRef.current.value = inputRef.current.value.replace(old, text);
+		const replaceRegex = new RegExp(old, "ig");
+		inputRef.current.value = inputRef.current.value.replace(replaceRegex, text);
 		inputRef.current.focus();
 	};
 
@@ -192,6 +193,9 @@ export function ChatInput({
 
 	function handleMessageNavigation(event) {
 		event.preventDefault();
+
+		// dont allow edit while typing an existing message, thats just dumb
+		if (inputRef.current.value.length) return;
 
 		// updateMessage
 		const currentIndex = editedMessage ? _.findIndex(localMessages, { _id: editedMessage._id }) : -1;
