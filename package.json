@@ -102,6 +102,7 @@
 		"start": "node app.js",
 		"debug": "node debug app.js",
 		"build": "NODE_ENV=production node node_modules/gulp/bin/gulp.js sass && npm run buildWebpack",
+    "build:dev": "node node_modules/gulp/bin/gulp.js sass && node node_modules/webpack/bin/webpack.js --mode development",
 		"buildWebpack": "rm -rf dist && node node_modules/webpack/bin/webpack.js --mode production",
 		"watch": "rm -rf dist && node node_modules/webpack/bin/webpack.js --mode development --watch",
 		"postinstall": "node node_modules/bower/bin/bower install",
