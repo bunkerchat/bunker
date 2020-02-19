@@ -72,7 +72,8 @@ export function ChatInput({
 	const inputRef = useRef();
 
 	const replaceText = (old, text) => {
-		inputRef.current.value = inputRef.current.value.replace(old, text);
+		const replaceRegex = new RegExp(old, "ig");
+		inputRef.current.value = inputRef.current.value.replace(replaceRegex, text);
 		inputRef.current.focus();
 	};
 

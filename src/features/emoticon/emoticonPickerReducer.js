@@ -17,7 +17,7 @@ const handlers = {
 		visible: false
 	}),
 	"emoticonPicker/search": (state, action) => {
-		const search = action.text;
+		const search = action.text.toLowerCase();
 		const filteredEmoticons = imageEmoticonsNames.filter(name => name.includes(search));
 
 		return {
