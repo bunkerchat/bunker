@@ -14,7 +14,7 @@ var sass = require('gulp-sass');
 var filenames = require("gulp-filenames");
 
 gulp.task('sass', function () {
-	return gulp.src(['./assets/styles/**/*.scss', './assets/themes/*.scss'])
+	return gulp.src(['./assets/styles/**/*.scss', './assets/themes/[!_]*.scss'])
 		.pipe(sourcemaps.init())
 		.pipe(sass().on('error', err => {
 			sass.logError.bind(this,err);
