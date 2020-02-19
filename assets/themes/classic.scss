@@ -1,0 +1,30 @@
+// override bootstrap settings here
+
+$green: #79a736;
+$gray-600: #45494D;
+$navbar-padding-y: 0;
+$navbar-padding-x: 0;
+
+@import "../styles/fonts.scss";
+@import "../../node_modules/bootswatch/dist/sandstone/variables";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "../../node_modules/bootswatch/dist/sandstone/bootswatch";
+
+// override classes here
+
+.navbar {
+  .navbar-brand {
+    padding: 0 1rem;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .nav-item {
+    &.active {
+      background-color: $success;
+    }
+  }
+  .nav-link {
+    font-size: 15px;
+    font-weight: 500;
+  }
+}

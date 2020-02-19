@@ -29,6 +29,7 @@ class Settings extends React.PureComponent {
 						<label>Theme</label>
 						<select className="form-control" onChange={this.onThemeChange} value={this.props.theme}>
 							<option value="cerulean">Cerulean</option>
+							<option value="classic">Classic</option>
 							<option value="cosmo">Cosmo</option>
 							<option value="journal">Journal</option>
 							<option value="simplex">Simplex</option>

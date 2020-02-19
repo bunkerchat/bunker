@@ -9,7 +9,7 @@ if (document && document.styleSheets) {
 	// Parse bootstrap provided styles for the :root which provides all the colors
 	// This allows us access to: blue, cyan, danger, dark, gray, green, indigo, info, light, orange, pink, primary, purple, red, secondary, success, teal, warning, white, yellow
 	// For specific values see _variables.scss in node_modules/bootswatch/dist/<theme name>
-	const bootstrapStyleSheet = _.find(document.styleSheets, sheet => /bootstrap/.test(sheet.href));
+	const bootstrapStyleSheet = _.find(document.styleSheets, sheet => /bundled/.test(sheet.href));
 	if (bootstrapStyleSheet) {
 		const rootCssRule = _.find(bootstrapStyleSheet.cssRules, { selectorText: ":root" });
 		const rootCssAttributes = rootCssRule.cssText.match(/([a-z\-]+):\s*(#\w+)/g);
@@ -29,6 +29,9 @@ if (document && document.styleSheets) {
 
 const overrides = {
 	cerulean: {},
+	classic: {
+		top: 37
+	},
 	cosmo: {
 		inputBox: 36
 	},
