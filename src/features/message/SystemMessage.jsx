@@ -6,7 +6,7 @@ export default class SystemMessage extends React.PureComponent {
 		const { message } = this.props;
 		return (
 			<div className="p-2">
-				<MessageTokens messageId={message._id} text={message.text} />
+				<MessageTokens messageId={message._id} tokens={message.tokens} text={message.text}  />
 			</div>
 		);
 	}
