@@ -20,9 +20,7 @@ $navbar-padding-x: 0;
     font-weight: bold;
   }
   .nav-item {
-    &.active {
-      background-color: $success;
-    }
+    border-radius: 0;
   }
   .nav-link {
     font-size: 15px;

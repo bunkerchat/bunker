@@ -11,12 +11,4 @@
   &.bg-dark {
     background-image: none;
   }
-
-  .nav-item {
-    border-radius: 2px;
-
-    &.active {
-      background-color: $success;
-    }
-  }
 }

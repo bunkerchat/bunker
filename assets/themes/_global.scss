@@ -1,3 +1,13 @@
 .border-top-light {
   border-top-color: $light !important;
 }
+
+.navbar {
+  .nav-item {
+    border-radius: 2px;
+
+    &.active {
+      background-color: $success;
+    }
+  }
+}
