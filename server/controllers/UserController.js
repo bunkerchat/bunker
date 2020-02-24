@@ -56,7 +56,7 @@ module.exports.init = (req, res) => {
 
 			return Promise.join(
 				User.findById(userId).lean(),
-				UserSettings.findOne({ user: userId }).lean(),
+				`UserSettings.findOne({ user: userId }).lean()`,
 				RoomMember.find({ user: userId })
 					.sort("roomOrder")
 					.populate("room")

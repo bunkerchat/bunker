@@ -1,8 +1,10 @@
-var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");
-var auth = require("./auth");
-var config = require("./config");
+const express = require("express");
+const app = express();
+const bodyParser = require("body-parser");
+const { ApolloServer } = require("apollo-server-express");
+const auth = require("./auth");
+const config = require("./config");
+const { typeDefs, resolvers } = require("../graphql");
 
 app.set("env", config.useJavascriptBundle ? "production" : "development");
 app.use("/assets", express.static("assets"));
@@ -23,6 +25,9 @@ app.use(require("../responses/badRequest"));
 
 // setup routes
 require("./routes").http(app);
+
+const server = new ApolloServer({ typeDefs, resolvers });
+server.applyMiddleware({ app });
 
 // Export the app instance for unit testing via supertest
 module.exports = app;
