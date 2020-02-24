@@ -107,7 +107,7 @@
 		"buildWebpack": "webpack --mode production",
 		"watch": "gulp sass && webpack --mode development --watch",
 		"postinstall": "bower install",
-		"deploy": "npm prune && npm ci --production && npm run build && gulp && forever restart app.js",
+		"deploy": "npm prune && npm install --production && npm run build && gulp && forever restart app.js",
 		"pretty": "prettier --write \"./{server,src}/**/*.{js,jsx}\"",
 		"test": "jest"
 	},
