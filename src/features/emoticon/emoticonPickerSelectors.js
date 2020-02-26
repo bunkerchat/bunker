@@ -12,4 +12,3 @@ export const getIsInSearchFilter = emoticonName => state => {
 	if (!searchValue || !searchValue.length) return true;
 	return emoticonName.includes(searchValue);
 };
-

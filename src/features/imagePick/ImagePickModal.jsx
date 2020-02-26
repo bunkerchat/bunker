@@ -9,17 +9,14 @@ const ImagePickModal = ({ images, closeImageSelections }) => (
 		{images.length > 0 && (
 			<div className="modal-header">
 				<h5 className="modal-title">Select an image</h5>
-				<button type="button" className="close" data-dismiss="modal" aria-label="Close"
-								onClick={closeImageSelections}>
+				<button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closeImageSelections}>
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 		)}
 		<div className="modal-body">
 			{images.length > 0 ? (
-				images.map((image, index) => (
-					<Image image={image} key={index}/>
-				))
+				images.map((image, index) => <Image image={image} key={index} />)
 			) : (
 				<div>No images found</div>
 			)}
@@ -40,4 +37,7 @@ const mapDispatchToProps = {
 	closeImageSelections
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ImagePickModal);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(ImagePickModal);

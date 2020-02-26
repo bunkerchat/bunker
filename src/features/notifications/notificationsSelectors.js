@@ -33,4 +33,3 @@ export const getLastMentionAuthorNick = createSelector(
 	[getLastMessageContainsMention, getUsers],
 	(lastMessageMention = {}, users = {}) => users[lastMessageMention.author]?.nick
 );
-

@@ -11,7 +11,6 @@ export const userTiming = () => next => action => {
 	if (duration > 30) {
 		console.log(`-SLOW ACTION- ${action.type}`, { action, duration });
 	} else {
-
 	}
 
 	performance.clearMarks();

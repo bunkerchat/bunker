@@ -36,7 +36,7 @@ const mapStateToProps = (initialState, initialProps) => {
 	return state => ({
 		role: roomMemberRole(state),
 		hasUser: !!state.users[initialProps.userId],
-		connected:  (state.users[initialProps.userId] || {}).connected
+		connected: (state.users[initialProps.userId] || {}).connected
 	});
 };
 

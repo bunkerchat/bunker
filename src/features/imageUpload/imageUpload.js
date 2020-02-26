@@ -19,5 +19,3 @@ export const doSingleImageUpload = base64ImageData => {
 		.then(response => response.json())
 		.then(responseObj => responseObj.data.link);
 };
-
-

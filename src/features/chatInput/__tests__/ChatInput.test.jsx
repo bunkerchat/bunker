@@ -1,5 +1,5 @@
 import React from "react";
-import {ChatInput} from "../ChatInput";
+import { ChatInput } from "../ChatInput";
 import { mount, shallow } from "enzyme";
 jest.useFakeTimers();
 
@@ -19,7 +19,7 @@ describe.skip("ChatInput", () => {
 	};
 
 	test("can render", () => {
-		const wrapper = shallow(<ChatInput {...defaultProps}/>);
+		const wrapper = shallow(<ChatInput {...defaultProps} />);
 		expect(wrapper.exists()).toEqual(true);
 	});
 
@@ -77,9 +77,7 @@ describe.skip("ChatInput", () => {
 				selectedEmotion: "buddy",
 				hideEmoticonPicker
 			};
-			const wrapper = mount(
-				<ChatInput {...props} />
-			);
+			const wrapper = mount(<ChatInput {...props} />);
 
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "Enter" });
@@ -95,9 +93,7 @@ describe.skip("ChatInput", () => {
 				selectedEmotion: "buddy",
 				showEmoticonPicker
 			};
-			const wrapper = mount(
-				<ChatInput {...props} />
-			);
+			const wrapper = mount(<ChatInput {...props} />);
 
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: ":" });
@@ -111,9 +107,7 @@ describe.skip("ChatInput", () => {
 				emoticonPickerVisible: true,
 				selectLeftEmoticonPicker
 			};
-			const wrapper = mount(
-				<ChatInput {...props} />
-			);
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "ArrowLeft" });
 			expect(selectLeftEmoticonPicker).toHaveBeenCalled();
@@ -126,9 +120,7 @@ describe.skip("ChatInput", () => {
 				emoticonPickerVisible: true,
 				selectLeftEmoticonPicker
 			};
-			const wrapper = mount(
-				<ChatInput {...props} />
-			);
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "Tab", shiftKey: true });
 			expect(selectLeftEmoticonPicker).toHaveBeenCalled();
@@ -141,9 +133,7 @@ describe.skip("ChatInput", () => {
 				emoticonPickerVisible: true,
 				selectRightEmoticonPicker
 			};
-			const wrapper = mount(
-				<ChatInput {...props} />
-			);
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "ArrowRight" });
 			expect(selectRightEmoticonPicker).toHaveBeenCalled();
@@ -156,9 +146,7 @@ describe.skip("ChatInput", () => {
 				emoticonPickerVisible: true,
 				selectRightEmoticonPicker
 			};
-			const wrapper = mount(
-				<ChatInput {...props} />
-			);
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "Tab" });
 			expect(selectRightEmoticonPicker).toHaveBeenCalled();
@@ -171,9 +159,7 @@ describe.skip("ChatInput", () => {
 				emoticonPickerVisible: true,
 				selectUpEmoticonPicker
 			};
-			const wrapper = mount(
-				<ChatInput {...props} />
-			);
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "ArrowUp" });
 			expect(selectUpEmoticonPicker).toHaveBeenCalled();
@@ -186,9 +172,7 @@ describe.skip("ChatInput", () => {
 				emoticonPickerVisible: true,
 				selectDownEmoticonPicker
 			};
-			const wrapper = mount(
-				<ChatInput {...props} />
-			);
+			const wrapper = mount(<ChatInput {...props} />);
 			const textarea = wrapper.find("textarea");
 			textarea.simulate("keydown", { key: "ArrowDown" });
 			expect(selectDownEmoticonPicker).toHaveBeenCalled();

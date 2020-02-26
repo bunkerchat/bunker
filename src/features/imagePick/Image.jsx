@@ -13,14 +13,14 @@ const Image = ({ image, selectImage }) => {
 		selectImage(image);
 	};
 
-	return (
-		<FixedHeightImage className="p-2" src={image} onClick={onSelectImage}/>
-	);
+	return <FixedHeightImage className="p-2" src={image} onClick={onSelectImage} />;
 };
-
 
 const mapDispatchToProps = {
 	selectImage
 };
 
-export default connect(null, mapDispatchToProps)(Image);
+export default connect(
+	null,
+	mapDispatchToProps
+)(Image);

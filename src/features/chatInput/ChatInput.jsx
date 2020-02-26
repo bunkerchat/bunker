@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import {decode} from "ent";
+import { decode } from "ent";
 import { connect } from "react-redux";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import styled from "styled-components";
@@ -196,7 +196,11 @@ export function ChatInput({
 		event.preventDefault();
 
 		// dont allow edit while creating or editing a message
-		if (editedMessage && editedMessage.text !== inputRef.current.value || !editedMessage && inputRef.current.value.length > 0) return;
+		if (
+			(editedMessage && editedMessage.text !== inputRef.current.value) ||
+			(!editedMessage && inputRef.current.value.length > 0)
+		)
+			return;
 
 		// updateMessage
 		const currentIndex = editedMessage ? _.findIndex(localMessages, { _id: editedMessage._id }) : -1;

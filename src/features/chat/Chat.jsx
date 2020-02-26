@@ -50,7 +50,7 @@ class Chat extends React.PureComponent {
 		return (
 			<Container>
 				<Header />
-				<Notify/>
+				<Notify />
 				<div className={`${section === "lobby" ? "d-block" : "d-none"}`}>
 					<Lobby />
 				</div>
@@ -78,7 +78,6 @@ const mapDispatchToProps = {
 	changeActiveRoom,
 	changePresent
 };
-
 
 export default connect(
 	mapStateToProps,

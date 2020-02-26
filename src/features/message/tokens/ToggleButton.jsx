@@ -10,6 +10,6 @@ const ToggleButton = styled.button`
 
 export default ({ toggled, onToggle }) => (
 	<ToggleButton className="btn btn-outline-primary ml-2" onClick={onToggle}>
-		<FontAwesomeIcon icon={toggled ? "caret-down" : "caret-right"}/>
+		<FontAwesomeIcon icon={toggled ? "caret-down" : "caret-right"} />
 	</ToggleButton>
 );

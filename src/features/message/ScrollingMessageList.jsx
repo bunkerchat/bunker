@@ -94,7 +94,7 @@ class ScrollingMessageList extends React.PureComponent {
 
 				// Also, if we're at the bottom, continually prune messages
 				if (this.props.messages?.length > maxMessages) {
-					this.props.clearRoomMessages({roomId:this.props.roomId});
+					this.props.clearRoomMessages({ roomId: this.props.roomId });
 				}
 			}
 		}

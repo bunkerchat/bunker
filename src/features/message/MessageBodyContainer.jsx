@@ -47,7 +47,7 @@ const MessageBodyContainer = ({ children, messageId, messageText, firstInSeries,
 		<Container className={`${border} ${isUserMentioned ? "mention" : ""} ml-1 ml-md-0`}>
 			{children}
 			<div className="right-side-controls px-2">
-				<MessageControls messageId={messageId}/>
+				<MessageControls messageId={messageId} />
 			</div>
 		</Container>
 	);

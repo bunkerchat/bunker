@@ -6,6 +6,6 @@ const handlers = {
 	"images/close": () => null
 };
 
-export default function (state = null, action) {
+export default function(state = null, action) {
 	return handlers[action.type] ? handlers[action.type](state, action) : state;
 }

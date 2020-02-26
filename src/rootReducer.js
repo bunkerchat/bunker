@@ -27,7 +27,7 @@ const rootReducer = combineReducers({
 	imagePick,
 	socket,
 	version,
-	room,
+	room
 	// log,
 });
 

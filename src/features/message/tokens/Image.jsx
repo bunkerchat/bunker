@@ -7,7 +7,7 @@ import { toggleMessageImagesVisible } from "../messageSlice";
 const Image = ({ messageId, value, imagesVisible, toggleMessageImagesVisible }) => {
 	const toggleVisible = event => {
 		event.stopPropagation();
-		toggleMessageImagesVisible({messageId});
+		toggleMessageImagesVisible({ messageId });
 	};
 
 	const target = _.includes(value, window.location.origin) ? "_self" : "_blank";

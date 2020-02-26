@@ -1,6 +1,6 @@
 {
 	"name": "bunker",
-	"private": true,
+	"private": false,
 	"version": "2.0.0",
 	"description": "socket.io chat application built on the MERliN stack",
 	"keywords": [],
@@ -71,8 +71,8 @@
 		"passport-google-plus": "0.5.1",
 		"passport-local": "1.0.0",
 		"password-hash": "1.2.2",
-		"react": "16.8.0-alpha.1",
-		"react-dom": "16.8.0-alpha.1",
+		"react": "16.12.0",
+		"react-dom": "16.12.0",
 		"react-favicon": "0.0.14",
 		"react-gravatar": "2.6.3",
 		"react-redux": "5.0.7",
@@ -81,7 +81,7 @@
 		"react-timeago": "4.1.9",
 		"react-use": "13.12.2",
 		"react-web-notification": "0.5.0",
-		"reactstrap": "8.0.0",
+		"reactstrap": "8.4.1",
 		"regenerator-runtime": "0.12.1",
 		"request": "2.69.0",
 		"require-dir": "0.3.0",
@@ -109,8 +109,12 @@
 		"postinstall": "bower install",
 		"deploy": "npm prune && npm install --production && npm run build && gulp && forever restart app.js",
 		"pretty": "prettier --write \"./{server,src}/**/*.{js,jsx}\"",
+		"pretty-staged": "pretty-quick --staged",
 		"test": "jest"
 	},
+	"pre-commit": [
+		"pretty-staged"
+	],
 	"main": "app.js",
 	"repository": {
 		"type": "git",
@@ -127,9 +131,10 @@
 	"author": "many",
 	"license": "",
 	"devDependencies": {
-		"@welldone-software/why-did-you-render": "3.4.2",
+		"@welldone-software/why-did-you-render": "4.0.5",
 		"enzyme": "3.7.0",
 		"enzyme-adapter-react-16": "1.7.0",
-		"prettier": "1.14.3"
+		"prettier": "1.19.1",
+		"pretty-quick": "2.0.1"
 	}
 }

@@ -80,7 +80,7 @@ auth.init = function(app) {
 	app.get("/auth/googleReturn", passport.authenticate("google"), function(req, res) {
 		const session = req.session;
 		session.googleCredentials = req.authInfo;
-		res.render("hi")
+		res.render("hi");
 	});
 
 	// Local login - In Progress
