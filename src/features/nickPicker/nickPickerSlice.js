@@ -26,55 +26,26 @@ const nickPickerSlice = createSlice({
 			state.search = search;
 			state.filteredUsers = filteredUsers;
 			state.selected = _.first(filteredUsers);
+		},
+		selectLeftInNickPicker(state) {
+			const { filteredUsers, selected } = state;
+			let previousIndex = _.findIndex(filteredUsers, selected) - 1;
+			if (previousIndex < 0) {
+				previousIndex = filteredUsers.length - 1;
+			}
+			state.selected = filteredUsers[previousIndex];
+		},
+		selectRightInNickPicker(state) {
+			const { filteredUsers, selected } = state;
+			let nextIndex = _.findIndex(filteredUsers, selected) + 1;
+			if (nextIndex === filteredUsers.length) {
+				nextIndex = 0;
+			}
+			state.selected = filteredUsers[nextIndex];
 		}
 	}
 });
 
-export const { showNickPicker, hideNickPicker, searchNickPicker } = nickPickerSlice.actions;
+export const { showNickPicker, hideNickPicker, searchNickPicker, selectLeftInNickPicker, selectRightInNickPicker } = nickPickerSlice.actions;
 
 export default nickPickerSlice.reducer;
-
-
-//
-// const handlers = {
-// 	"nickPicker/selectLeft": state => {
-// 		const { filteredEmoticons, selected } = state;
-// 		let previousIndex = filteredEmoticons.indexOf(selected) - 1;
-// 		if (previousIndex < 0) {
-// 			previousIndex = filteredEmoticons.length - 1;
-// 		}
-//
-// 		return { ...state, selected: filteredEmoticons[previousIndex] };
-// 	},
-// 	"nickPicker/selectRight": state => {
-// 		const { filteredEmoticons, selected } = state;
-//
-// 		let nextIndex = filteredEmoticons.indexOf(selected) + 1;
-// 		if (nextIndex === filteredEmoticons.length) {
-// 			nextIndex = 0;
-// 		}
-//
-// 		return { ...state, selected: filteredEmoticons[nextIndex] };
-// 	},
-// 	"nickPicker/selectUp": state => {
-// 		const { filteredEmoticons, selected } = state;
-//
-// 		let previousIndex = filteredEmoticons.indexOf(selected) - 5;
-// 		if (previousIndex < 0) {
-// 			previousIndex = 0;
-// 		}
-// 		return { ...state, selected: filteredEmoticons[previousIndex] };
-// 	},
-// 	"nickPicker/selectDown": state => {
-// 		const { filteredEmoticons, selected } = state;
-//
-// 		let nextIndex = filteredEmoticons.indexOf(selected) + 5;
-//
-// 		if (nextIndex > filteredEmoticons.length) {
-// 			nextIndex = filteredEmoticons.length;
-// 		}
-// 		return { ...state, selected: filteredEmoticons[nextIndex] };
-// 	}
-// };
-//
-

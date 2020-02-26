@@ -22,7 +22,12 @@ import { getNewReplaceText, getNewText, getOldReplaceText } from "./chatInputSel
 import { setAppendText, setNewText, setReplaceText, updateEditedMessage } from "./chatInputThunks";
 import { updateMessage } from "../message/messageThunks";
 import { emoticonPicked } from "../emoticon/emoticonPickerThunks";
-import { hideNickPicker, searchNickPicker } from "../nickPicker/nickPickerSlice";
+import {
+	hideNickPicker,
+	searchNickPicker,
+	selectLeftInNickPicker,
+	selectRightInNickPicker
+} from "../nickPicker/nickPickerSlice";
 import { nickPicked, startOpenNickPicker } from "../nickPicker/nickPickerThunks";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
@@ -69,6 +74,8 @@ export function ChatInput({
 	selectRightEmoticonPicker,
 	selectUpEmoticonPicker,
 	selectDownEmoticonPicker,
+	selectLeftInNickPicker,
+	selectRightInNickPicker,
 	sendRoomMessage,
 	updateMessage,
 	sendTypingNotification,
@@ -208,6 +215,27 @@ export function ChatInput({
 		}
 	}
 
+	function handleNickPickerTabArrow(event) {
+		event.preventDefault();
+
+		// Move around within nick picker
+		if (event.key === "ArrowLeft") {
+			selectLeftInNickPicker();
+		} else if (event.key === "ArrowRight") {
+			selectRightInNickPicker();
+		} else if (event.key === "ArrowUp") {
+			// supported?
+		} else if (event.key === "ArrowDown") {
+			// supported?
+		} else if (event.key === "Tab") {
+			if (event.shiftKey) {
+				selectLeftInNickPicker();
+			} else {
+				selectRightInNickPicker();
+			}
+		}
+	}
+
 	function handleMessageNavigation(event) {
 		event.preventDefault();
 
@@ -267,7 +295,7 @@ export function ChatInput({
 		} else if (/Arrow|Tab/.test(key) && emoticonPickerVisible) {
 			handleEmoticonTabArrow(event);
 		} else if (/Arrow|Tab/.test(key) && nickPickerVisible) {
-			console.log("todo handle nick picker arrow and tab selection")
+			handleNickPickerTabArrow(event);
 		} else if (/ArrowUp|ArrowDown/.test(key)) {
 			handleMessageNavigation(event);
 		} else if (key === "Enter") {
@@ -351,6 +379,8 @@ const mapDispatchToProps = {
 	selectRightEmoticonPicker,
 	selectUpEmoticonPicker,
 	selectDownEmoticonPicker,
+	selectLeftInNickPicker,
+	selectRightInNickPicker,
 	sendRoomMessage,
 	updateMessage,
 	sendTypingNotification,
