@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import {decode} from "ent";
 import { connect } from "react-redux";
 import { hideMessageControls } from "../messageControls/messageControlsSlice";
 import styled from "styled-components";
@@ -83,7 +84,7 @@ export function ChatInput({
 	};
 
 	const setText = text => {
-		inputRef.current.value = text;
+		inputRef.current.value = decode(text);
 		inputRef.current.focus();
 	};
 
