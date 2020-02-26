@@ -268,10 +268,10 @@ export function ChatInput({
 	}
 
 	function handleEnterKey(event) {
-		if (emoticonPickerVisible) {
+		if (emoticonPickerVisible && selectedEmoticon) {
 			event.preventDefault();
 			emoticonPicked(selectedEmoticon);
-		} else if (nickPickerVisible) {
+		} else if (nickPickerVisible && selectedUserWithNick) {
 			event.preventDefault();
 			nickPicked(selectedUserWithNick);
 		} else {
@@ -279,6 +279,8 @@ export function ChatInput({
 				event.preventDefault();
 			}
 			onSend();
+			hideEmoticonPicker();
+			hideNickPicker();
 		}
 	}
 
