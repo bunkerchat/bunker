@@ -15,7 +15,7 @@ export const emoticonPicked = emoticonName => (dispatch, getState) => {
 	} else {
 		// opened from chat input
 		const searchValue = getSearchValueEmoticon(state);
-		dispatch(setReplaceText(`:${searchValue}`, `:${emoticonName}:`));
+		dispatch(setReplaceText(`:${searchValue}`, `:${emoticonName}: `));
 	}
 
 	dispatch(hideEmoticonPicker());

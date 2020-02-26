@@ -22,6 +22,8 @@ import { getNewReplaceText, getNewText, getOldReplaceText } from "./chatInputSel
 import { setAppendText, setNewText, setReplaceText, updateEditedMessage } from "./chatInputThunks";
 import { updateMessage } from "../message/messageThunks";
 import { emoticonPicked } from "../emoticon/emoticonPickerThunks";
+import { hideNickPicker, searchNickPicker } from "../nickPicker/nickPickerSlice";
+import { nickPicked, startOpenNickPicker } from "../nickPicker/nickPickerThunks";
 
 const removeNewlines = text => text.replace(/([\n\r])+/, "");
 
@@ -44,7 +46,9 @@ export function ChatInput({
 	// state
 	roomId,
 	emoticonPickerVisible,
+	nickPickerVisible,
 	selectedEmoticon,
+	selectedUserWithNick,
 	localMessages,
 	appendText,
 	editedMessage,
@@ -56,8 +60,11 @@ export function ChatInput({
 	updateEditedMessage,
 	hideMessageControls,
 	searchEmoticonPicker,
+	searchNickPicker,
 	showEmoticonPicker,
 	hideEmoticonPicker,
+	startOpenNickPicker,
+	hideNickPicker,
 	selectLeftEmoticonPicker,
 	selectRightEmoticonPicker,
 	selectUpEmoticonPicker,
@@ -67,7 +74,8 @@ export function ChatInput({
 	sendTypingNotification,
 	setNewText,
 	setAppendText,
-	emoticonPicked
+	emoticonPicked,
+	nickPicked
 }) {
 	const ref = useRef();
 	const inputRef = useRef();
@@ -171,6 +179,14 @@ export function ChatInput({
 		}
 	}
 
+	function handleOpenCloseNick() {
+		if (!nickPickerVisible) {
+			startOpenNickPicker();
+		} else {
+			hideNickPicker();
+		}
+	}
+
 	function handleEmoticonTabArrow(event) {
 		event.preventDefault();
 
@@ -227,6 +243,9 @@ export function ChatInput({
 		if (emoticonPickerVisible) {
 			event.preventDefault();
 			emoticonPicked(selectedEmoticon);
+		} else if (nickPickerVisible) {
+			event.preventDefault();
+			nickPicked(selectedUserWithNick);
 		} else {
 			if (!isMobile) {
 				event.preventDefault();
@@ -239,10 +258,16 @@ export function ChatInput({
 		const { key } = event;
 		if (key === ":") {
 			handleOpenCloseEmoticon();
+		} else if (key === "@") {
+			handleOpenCloseNick();
 		} else if (key === "Backspace" && _.last(inputRef.current.value) === ":" && emoticonPickerVisible) {
 			hideEmoticonPicker();
+		} else if (key === "Backspace" && _.last(inputRef.current.value) === "@" && nickPickerVisible) {
+			hideNickPicker();
 		} else if (/Arrow|Tab/.test(key) && emoticonPickerVisible) {
 			handleEmoticonTabArrow(event);
+		} else if (/Arrow|Tab/.test(key) && nickPickerVisible) {
+			console.log("todo handle nick picker arrow and tab selection")
 		} else if (/ArrowUp|ArrowDown/.test(key)) {
 			handleMessageNavigation(event);
 		} else if (key === "Enter") {
@@ -264,6 +289,13 @@ export function ChatInput({
 			const match = /:([A-z0-9\s]*)$/.exec(cleanText);
 			if (match) {
 				searchEmoticonPicker(match[1]);
+			}
+		}
+
+		if (nickPickerVisible) {
+			const match = /@([A-z0-9\s]*)$/.exec(cleanText);
+			if (match) {
+				searchNickPicker({ text: match[1] });
 			}
 		}
 
@@ -295,7 +327,9 @@ export function ChatInput({
 const mapStateToProps = state => ({
 	roomId: getActiveRoomId(state),
 	emoticonPickerVisible: !!state.emoticonPicker.visible,
+	nickPickerVisible: !!state.nickPicker.visible,
 	selectedEmoticon: state.emoticonPicker.selected,
+	selectedUserWithNick: state.nickPicker.selected,
 	localMessages: getLocalMessages(state),
 	appendText: getAppendTextForCurrentRoom(state),
 	editedMessage: getEditedMessageForCurrentRoom(state),
@@ -308,8 +342,11 @@ const mapDispatchToProps = {
 	updateEditedMessage,
 	hideMessageControls,
 	searchEmoticonPicker,
+	searchNickPicker,
 	showEmoticonPicker,
 	hideEmoticonPicker,
+	startOpenNickPicker,
+	hideNickPicker,
 	selectLeftEmoticonPicker,
 	selectRightEmoticonPicker,
 	selectUpEmoticonPicker,
@@ -319,6 +356,7 @@ const mapDispatchToProps = {
 	sendTypingNotification,
 	setNewText,
 	emoticonPicked,
+	nickPicked,
 	setAppendText,
 	setReplaceText
 };

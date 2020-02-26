@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
+import NickPicker from "../nickPicker/NickPicker.jsx";
 import ImagePickModal from "../imagePick/ImagePickModal.jsx";
 import ImageUploadModal from "../imageUpload/ImageUploadModal.jsx";
 import theme from "../../constants/theme.js";
@@ -59,6 +60,7 @@ class Chat extends React.PureComponent {
 				</div>
 				<Room />
 				<EmoticonPicker />
+				<NickPicker />
 				{imagePick && <ImagePickModal />}
 				<ImageUploadModal />
 			</Container>

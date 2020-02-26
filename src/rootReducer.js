@@ -7,6 +7,7 @@ import rooms from "./features/rooms/roomsSlice";
 import message from "./features/message/messageSlice";
 import chatInput from "./features/chatInput/chatInputSlice";
 import emoticonPicker from "./features/emoticon/emoticonPickerReducer";
+import nickPicker from "./features/nickPicker/nickPickerSlice";
 import messageControls from "./features/messageControls/messageControlsSlice";
 import imagePick from "./features/imagePick/imagePickReducer";
 import socket from "./features/socket/socketSlice";
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
 	message,
 	chatInput,
 	emoticonPicker,
+	nickPicker,
 	messageControls,
 	imagePick,
 	socket,

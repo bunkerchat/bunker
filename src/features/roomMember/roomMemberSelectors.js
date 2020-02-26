@@ -7,7 +7,7 @@ export const getRoomMembers = createSelector(
 	(activeRoomId, rooms = {}) => (rooms[activeRoomId] || {}).$members
 );
 
-export const getSortedRoomMemberUsers = createSelector([getUsers, getRoomMembers], (users, roomMembers) => {
+export const getSortedRoomMembers = createSelector([getUsers, getRoomMembers], (users, roomMembers) => {
 	if (!roomMembers) return;
 
 	const emptyUser = { connected: false, present: false, nick: "", empty: true };
@@ -23,8 +23,24 @@ export const getSortedRoomMemberUsers = createSelector([getUsers, getRoomMembers
 	);
 });
 
-export const getSortedRoomMemberUserIds = createSelector([getSortedRoomMemberUsers], (roomMemberUsers = []) =>
-	roomMemberUsers.map(roomMemberUser => roomMemberUser.user)
+export const getSortedRoomMemberUsers = createSelector([getUsers, getRoomMembers], (users, roomMembers) => {
+	return _(roomMembers)
+		.map(roomMember => users[roomMember.user])
+		.compact()
+		.orderBy(
+			users,
+			[
+				"connected",
+				"present",
+				user => user.nick.toLowerCase()
+			],
+			["desc", "desc", "asc"]
+		)
+		.value();
+});
+
+export const getSortedRoomMemberUserIds = createSelector([getSortedRoomMembers], (roomMembers = []) =>
+	roomMembers.map(roomMembers => roomMembers.user)
 );
 
 export const getRoomMembersForCurrentRoomHash = createSelector([getRoomMembers], roomMembers =>
