@@ -80,15 +80,16 @@ export function ChatInput({
 	updateMessage,
 	sendTypingNotification,
 	setNewText,
-	setAppendText,
 	emoticonPicked,
-	nickPicked
+	nickPicked,
+	setAppendText,
+	setReplaceText
 }) {
 	const ref = useRef();
 	const inputRef = useRef();
 
 	const replaceText = (old, text) => {
-		const replaceRegex = new RegExp(old, "ig");
+		const replaceRegex = new RegExp(old + "$", "ig");
 		inputRef.current.value = inputRef.current.value.replace(replaceRegex, text);
 		inputRef.current.focus();
 	};
@@ -103,41 +104,29 @@ export function ChatInput({
 		inputRef.current.focus();
 	};
 
-	useEffect(
-		() => {
-			if (!editedMessage?.text) return;
-			setText(editedMessage?.text);
-		},
-		[editedMessage?.text]
-	);
+	useEffect(() => {
+		if (!editedMessage?.text) return;
+		setText(editedMessage?.text);
+	}, [editedMessage?.text]);
 
-	useEffect(
-		() => {
-			if (!appendText) return;
+	useEffect(() => {
+		if (!appendText) return;
 
-			appendNewText(appendText);
-			setAppendText("");
-		},
-		[appendText]
-	);
+		appendNewText(appendText);
+		setAppendText("");
+	}, [appendText]);
 
-	useEffect(
-		() => {
-			if (!newText) return;
-			setText(newText);
-			setNewText("");
-		},
-		[newText]
-	);
+	useEffect(() => {
+		if (!newText) return;
+		setText(newText);
+		setNewText("");
+	}, [newText]);
 
-	useEffect(
-		() => {
-			if (!newReplaceText) return;
-			replaceText(oldReplaceText, newReplaceText);
-			setReplaceText("", "");
-		},
-		[newReplaceText]
-	);
+	useEffect(() => {
+		if (!newReplaceText) return;
+		replaceText(oldReplaceText, newReplaceText);
+		setReplaceText("", "");
+	}, [newReplaceText]);
 
 	function sendMessage() {
 		// ios may have changed the text value, so get it right from the dom
@@ -393,7 +382,4 @@ const mapDispatchToProps = {
 	setReplaceText
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ChatInput);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatInput);
