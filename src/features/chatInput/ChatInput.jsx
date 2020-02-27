@@ -281,6 +281,8 @@ export function ChatInput({
 			handleOpenCloseNick();
 		} else if (key === "Backspace" && _.last(inputRef.current.value) === ":" && emoticonPickerVisible) {
 			hideEmoticonPicker();
+		} else if (key === " " && emoticonPickerVisible) {
+			hideEmoticonPicker();
 		} else if (key === "Backspace" && _.last(inputRef.current.value) === "@" && nickPickerVisible) {
 			hideNickPicker();
 		} else if (/Arrow|Tab/.test(key) && emoticonPickerVisible) {
