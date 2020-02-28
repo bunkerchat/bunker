@@ -1,87 +1,49 @@
-import React from "react";
+import React, { useEffect, useCallback } from "react";
 import Room from "../room/Room.jsx";
-import Lobby from "../lobby/Lobby.jsx";
-import Settings from "../settings/Settings.jsx";
-import Header from "../header/Header.jsx";
-import { connect } from "react-redux";
-import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
 import { changeActiveRoom, changePresent } from "../users/localUserActions";
 import EmoticonPicker from "../emoticon/EmoticonPicker.jsx";
 import NickPicker from "../nickPicker/NickPicker.jsx";
 import ImagePickModal from "../imagePick/ImagePickModal.jsx";
 import ImageUploadModal from "../imageUpload/ImageUploadModal.jsx";
-import theme from "../../constants/theme.js";
-import Notify from "../notifications/Notify.jsx";
 import { getActiveRoomId } from "../room/roomSelectors.js";
-import { getSection } from "./chatSelectors.js";
+import { useParams } from "react-router";
+import { getImagePickImages } from "../imagePick/imagePickSelectors";
+import { useUnmount } from "react-use";
 
-const Container = styled.div`
-	display: flex;
-	flex-direction: column;
-	width: 100vw;
-	height: 100vh;
-	padding-top: ${theme.top}px;
-`;
-class Chat extends React.PureComponent {
-	setActiveRoom() {
-		const { changeActiveRoom, activeRoomId } = this.props;
-		changeActiveRoom(activeRoomId);
-	}
+const Chat = () => {
+	const { roomId } = useParams();
+	const dispatch = useDispatch();
+	const activeRoomId = useSelector(getActiveRoomId);
+	const imagePickImages = useSelector(getImagePickImages);
 
-	componentDidMount() {
-		this.setActiveRoom();
-		window.document.addEventListener("visibilitychange", () => {
-			this.props.changePresent(document.visibilityState === "visible");
-		});
-	}
+	const visibilityChanged = useCallback(() => {
+		dispatch(changePresent(document.visibilityState === "visible"));
+	}, []);
 
-	componentDidUpdate(prevProps) {
-		if (prevProps.activeRoomId !== this.props.activeRoomId) {
-			this.setActiveRoom();
-		}
-	}
+	useEffect(() => {
+		window.document.addEventListener("visibilitychange", visibilityChanged);
+		return () => {
+			window.document.removeEventListener("visibilitychange", visibilityChanged);
+		};
+	}, []);
 
-	render() {
-		const { loaded, section, imagePick } = this.props;
+	useEffect(() => {
+		if (activeRoomId === roomId) return;
+		dispatch(changeActiveRoom(roomId));
+	}, [activeRoomId, roomId]);
 
-		if (!loaded) {
-			return <div>Loading...</div>;
-		}
+	useUnmount(() => dispatch(changeActiveRoom(null)));
 
-		return (
-			<Container>
-				<Header />
-				<Notify />
-				<div className={`${section === "lobby" ? "d-block" : "d-none"}`}>
-					<Lobby />
-				</div>
-				<div className={`${section === "settings" ? "d-block" : "d-none"}`}>
-					<Settings />
-				</div>
-				<Room />
-				<EmoticonPicker />
-				<NickPicker />
-				{imagePick && <ImagePickModal />}
-				<ImageUploadModal />
-			</Container>
-		);
-	}
-}
-
-const mapStateToProps = state => ({
-	loaded: state.localUser.loaded,
-	section: getSection(state),
-	rooms: state.rooms,
-	activeRoomId: getActiveRoomId(state),
-	imagePick: state.imagePick
-});
-
-const mapDispatchToProps = {
-	changeActiveRoom,
-	changePresent
+	return (
+		<>
+			<Room />
+			<EmoticonPicker />
+			<NickPicker />
+			{imagePickImages && <ImagePickModal />}
+			<ImageUploadModal />
+		</>
+	);
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(Chat);
+export default Chat;

@@ -1,8 +1,9 @@
 import { emit } from "../../api";
+import { setActiveRoom } from "../room/roomSlice.js";
 
-export function activeRoomChanged(roomId) {
-	return { type: "localUser/activeRoom", roomId };
-}
+// export function activeRoomChanged(roomId) {
+// 	return { type: "localUser/activeRoom", roomId };
+// }
 
 export function presentChanged(present) {
 	return { type: "localUser/present", present };
@@ -10,11 +11,10 @@ export function presentChanged(present) {
 
 export const ping = () => () => emit("/user/current/ping");
 
-export function changeActiveRoom(roomId) {
-	return dispatch => {
-		return emit("/user/current/activity", { room: roomId }).then(() => dispatch(activeRoomChanged(roomId)));
-	};
-}
+export const changeActiveRoom = roomId => dispatch => {
+	dispatch(setActiveRoom(roomId));
+	return emit("/user/current/activity", { room: roomId });
+};
 
 export function changePresent(present) {
 	return dispatch => {

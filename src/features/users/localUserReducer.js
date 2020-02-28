@@ -4,10 +4,10 @@ const handlers = {
 		...action.payload.user,
 		loaded: true
 	}),
-	"localUser/activeRoom": (state, action) => ({
-		...state,
-		activeRoom: action.roomId
-	}),
+	// "localUser/activeRoom": (state, action) => ({
+	// 	...state,
+	// 	activeRoom: action.roomId
+	// }),
 	"localUser/present": (state, action) => ({
 		...state,
 		present: action.present

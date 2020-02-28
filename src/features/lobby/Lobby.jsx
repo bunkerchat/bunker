@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import LobbyRoomLink from "./LobbyRoomLink.jsx";
 import { getReadRoomIds, getUnreadRoomIds } from "../room/roomSelectors.js";
+import { useTitle } from "react-use";
 
 const Container = styled.div`
 	flex: 1;
@@ -10,8 +11,15 @@ const Container = styled.div`
 `;
 
 function Lobby({ unreadRoomIds, readRoomIds }) {
+	useTitle("Lobby - Bunker");
+
+	const ref = useRef(null);
+
+	useEffect(() => {
+		ref.current.scrollTop = 0;
+	}, []);
 	return (
-		<Container className="container-fluid mt-3">
+		<Container ref={ref} className="container-fluid mt-3">
 			<ul className="list-group mb-3">
 				{unreadRoomIds.map(roomId => (
 					<LobbyRoomLink key={roomId} roomId={roomId} />

@@ -1,16 +1,10 @@
-import BunkerFavicon from "./features/chat/BunkerFavicon.jsx";
-
 window._ = require("lodash");
 
 import React from "react";
 import ReactDOM from "react-dom";
-import Chat from "./features/chat/Chat.jsx";
-import DocumentTitle from "./features/chat/DocumentTitle.jsx";
-import EmoticonPreLoad from "./features/init/EmoticonPreLoad.jsx";
-import { history, store } from "./store.js";
-import { ConnectedRouter } from "connected-react-router";
-import { Route, Redirect } from "react-router";
+import { store } from "./store.js";
 import { Provider } from "react-redux";
+import App from "./app";
 
 import { library } from "@fortawesome/fontawesome-svg-core"; // Configure font-awesome
 import {
@@ -48,15 +42,7 @@ if (process.env.NODE_ENV !== "production") {
 
 ReactDOM.render(
 	<Provider store={store}>
-		<ConnectedRouter history={history}>
-			<>
-				<DocumentTitle />
-				<BunkerFavicon />
-				<EmoticonPreLoad />
-				<Route exact path="/2" render={() => <Redirect to="/2/lobby" />} />
-				<Route path="/" component={Chat} />
-			</>
-		</ConnectedRouter>
+		<App />
 	</Provider>,
 	document.getElementById("index")
 );
