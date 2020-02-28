@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { getTotalUnreadMessageCount } from "../message/messageSelectors.js";
-import { getActiveRoom } from "../room/roomSelectors.js";
+import { getActiveRoomName } from "../room/roomSelectors.js";
 import { getLocalRoomMembersByRoom } from "../users/usersSelectors.js";
 
 export const hasAnyUnreadMention = createSelector([getLocalRoomMembersByRoom], localRoomMembersByRoom =>
@@ -8,11 +8,10 @@ export const hasAnyUnreadMention = createSelector([getLocalRoomMembersByRoom], l
 );
 
 export const getDocumentTitle = createSelector(
-	[getTotalUnreadMessageCount, hasAnyUnreadMention, getActiveRoom],
-	(totalUnreadMessageCount, anyUnreadMention, activeRoom = {}) => {
+	[getTotalUnreadMessageCount, hasAnyUnreadMention, getActiveRoomName],
+	(totalUnreadMessageCount, anyUnreadMention, activeRoomName = "Lobby") => {
 		const unread = totalUnreadMessageCount > 0 ? `${anyUnreadMention ? "*" : ""}(${totalUnreadMessageCount}) ` : "";
-		const roomName = activeRoom.name;
-		const leading = `${unread}${roomName}`;
+		const leading = `${unread}${activeRoomName}`;
 		const leadingBreak = leading ? " - " : "";
 		return `${leading}${leadingBreak}Bunker`;
 	}

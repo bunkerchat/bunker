@@ -24,6 +24,7 @@ const Room = () => {
 	const rooms = useSelector(getRooms);
 
 	useTitle(title);
+
 	const isDesktop = useMedia("(min-width: 720px)");
 
 	return (

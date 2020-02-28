@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { useTitle } from "react-use";
 import theme from "./constants/theme";
 import BunkerFavicon from "./features/chat/BunkerFavicon.jsx";
 import EmoticonPreLoad from "./features/init/EmoticonPreLoad.jsx";
@@ -10,6 +12,7 @@ import { Switch } from "react-router";
 import Chat from "./features/chat/Chat.jsx";
 import Lobby from "./features/lobby/Lobby.jsx";
 import Settings from "./features/settings/Settings.jsx";
+import { localUserLoaded } from "./features/users/localUserSelectors.js";
 
 const Container = styled.div`
 	display: flex;
@@ -20,6 +23,11 @@ const Container = styled.div`
 `;
 
 const App = () => {
+	useTitle("Bunker");
+	const isLoaded = useSelector(localUserLoaded);
+
+	if (!isLoaded) return <span>Loading...</span>;
+
 	return (
 		<Container>
 			<Router>

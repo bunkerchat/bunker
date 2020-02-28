@@ -11,12 +11,13 @@ export const getActiveRoom = state => getRooms(state)[getActiveRoomId(state)];
 
 export const getRoomName = roomId => state => getRooms(state)[roomId]?.name;
 
+export const getActiveRoomName = state => getActiveRoom(state)?.name;
+
 export const getRoomIsCurrent = roomId => state => getActiveRoomId(state) === roomId;
 
-export const getRoomIsLoading = state => getActiveRoom(state)?.loading
+export const getRoomIsLoading = state => getActiveRoom(state)?.loading;
 
-export const getRoomFullHistoryLoaded = state => getActiveRoom(state)?.fullHistoryLoaded
-
+export const getRoomFullHistoryLoaded = state => getActiveRoom(state)?.fullHistoryLoaded;
 
 export const getUnreadRoomIds = createSelector([getLocalRoomMembersByRoom], localRoomMembersByRoom =>
 	_(localRoomMembersByRoom)
