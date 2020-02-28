@@ -22,12 +22,12 @@ const Room = () => {
 	const title = useSelector(getDocumentTitle);
 	const activeRoomId = useSelector(getActiveRoomId);
 	const rooms = useSelector(getRooms);
-	
+
 	useTitle(title);
 	const isDesktop = useMedia("(min-width: 720px)");
 
 	return (
-		<Container className="d-flex">
+		<Container className={activeRoomId ? "d-flex" : "d-none"}>
 			<MessagingContainer>
 				<RoomTopic />
 

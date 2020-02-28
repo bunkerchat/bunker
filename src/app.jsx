@@ -31,10 +31,12 @@ const App = () => {
 					<Switch>
 						<Redirect exact from="/2" to="/2/lobby" />
 						<Route path="/2/room/:roomId">
+							<Lobby />
 							<Chat />
 						</Route>
 						<Route path="/2/lobby">
 							<Lobby />
+							<Chat />
 						</Route>
 						<Route path="/2/settings">
 							<Settings />

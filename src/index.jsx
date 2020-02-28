@@ -4,7 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { store } from "./store.js";
 import { Provider } from "react-redux";
-import App from "./app";
+import App from "./app.jsx";
 
 import { library } from "@fortawesome/fontawesome-svg-core"; // Configure font-awesome
 import {
