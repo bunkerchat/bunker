@@ -1,10 +1,6 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import { createBrowserHistory } from "history";
-import { connectRouter, routerMiddleware } from "connected-react-router";
 import rootReducer from "./rootReducer";
 import { userTiming } from "./middleware/userTiming.js";
-
-const history = createBrowserHistory();
 
 const middleware = getDefaultMiddleware({
 	// TODO: a few reducers are not correctly immutable or serializable. Fix those and turn this back on
@@ -14,8 +10,8 @@ const middleware = getDefaultMiddleware({
 });
 
 const store = configureStore({
-	reducer: connectRouter(history)(rootReducer),
-	middleware: [routerMiddleware(history), ...middleware]
+	reducer: rootReducer,
+	middleware
 });
 
 if (process.env.NODE_ENV === "development" && module.hot) {
@@ -27,4 +23,4 @@ if (process.env.NODE_ENV === "development" && module.hot) {
 
 const dispatch = store.dispatch;
 
-export { store, history, dispatch };
+export { store, dispatch };

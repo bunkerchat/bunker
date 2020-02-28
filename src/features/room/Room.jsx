@@ -1,12 +1,13 @@
 import React from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { useMedia } from "react-use";
+import { useMedia, useTitle } from "react-use";
 import ScrollingMessageList from "../message/ScrollingMessageList.jsx";
 import RoomMemberList from "../roomMember/RoomMemberList.jsx";
 import RoomTopic from "./RoomTopic.jsx";
 import ChatInput from "../chatInput/ChatInput.jsx";
-import { getActiveRoomId } from "./roomSelectors.js";
+import { getDocumentTitle } from "../chat/chatSelectors.js";
+import { getActiveRoomId, getRooms } from "./roomSelectors.js";
 
 const Container = styled.div`
 	overflow: hidden;
@@ -17,13 +18,16 @@ const MessagingContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 `;
-const Room = ({ rooms, activeRoomId }) => {
+const Room = () => {
+	const title = useSelector(getDocumentTitle);
+	const activeRoomId = useSelector(getActiveRoomId);
+	const rooms = useSelector(getRooms);
+
+	useTitle(title);
 	const isDesktop = useMedia("(min-width: 720px)");
 
-	if (!activeRoomId) return null;
-
 	return (
-		<Container className="d-flex">
+		<Container className={activeRoomId ? "d-flex" : "d-none"}>
 			<MessagingContainer>
 				<RoomTopic />
 
@@ -37,9 +41,4 @@ const Room = ({ rooms, activeRoomId }) => {
 	);
 };
 
-const mapStateToProps = state => ({
-	activeRoomId: getActiveRoomId(state),
-	rooms: state.rooms
-});
-
-export default connect(mapStateToProps)(Room);
+export default Room;

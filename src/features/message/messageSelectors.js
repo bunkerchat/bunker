@@ -4,6 +4,8 @@ import { getActiveRoomId } from "../room/roomSelectors.js";
 
 export const getMessagesByRoom = state => state.message.byRoom;
 
+export const getMessages = state => getMessagesByRoom(state)[getActiveRoomId(state)];
+
 export const getLastMessage = state => state.message?.lastMessage;
 
 export const getTotalUnreadMessageCount = createSelector([getLocalRoomMembersByRoom], localRoomMembersByRoom =>

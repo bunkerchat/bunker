@@ -3,6 +3,7 @@ import { Modal } from "reactstrap";
 import { connect } from "react-redux";
 import { closeImageSelections } from "./imagePickActions";
 import Image from "./Image.jsx";
+import { getImagePickImages } from "./imagePickSelectors.js";
 
 const ImagePickModal = ({ images, closeImageSelections }) => (
 	<Modal isOpen={true} size="lg" toggle={closeImageSelections}>
@@ -30,14 +31,11 @@ const ImagePickModal = ({ images, closeImageSelections }) => (
 );
 
 const mapStateToProps = state => ({
-	images: state.imagePick.images
+	images: getImagePickImages(state)
 });
 
 const mapDispatchToProps = {
 	closeImageSelections
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ImagePickModal);
+export default connect(mapStateToProps, mapDispatchToProps)(ImagePickModal);
