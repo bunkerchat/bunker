@@ -27,35 +27,33 @@ const App = () => {
 	useTitle("Bunker");
 	const isLoaded = useSelector(localUserLoaded);
 
+	if (!isLoaded) return <span>Loading...</span>;
+
 	return (
 		<Container>
-			<Theme />
-			{isLoaded ? (
-				<Router>
-					<>
-						<BunkerFavicon />
-						<EmoticonPreLoad />
-						<Notify />
-						<Header />
-						<Switch>
-							<Redirect exact from="/" to="/lobby" />
-							<Route path="/room/:roomId">
-								<Lobby />
-								<Chat />
-							</Route>
-							<Route path="/lobby">
-								<Lobby />
-								<Chat />
-							</Route>
-							<Route path="/settings">
-								<Settings />
-							</Route>
-						</Switch>
-					</>
-				</Router>
-			) : (
-				<span>Loading...</span>
-			)}
+			<Router>
+				<>
+					<Theme />
+					<BunkerFavicon />
+					<EmoticonPreLoad />
+					<Notify />
+					<Header />
+					<Switch>
+						<Redirect exact from="/" to="/lobby" />
+						<Route path="/room/:roomId">
+							<Lobby />
+							<Chat />
+						</Route>
+						<Route path="/lobby">
+							<Lobby />
+							<Chat />
+						</Route>
+						<Route path="/settings">
+							<Settings />
+						</Route>
+					</Switch>
+				</>
+			</Router>
 		</Container>
 	);
 };

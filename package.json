@@ -127,5 +127,5 @@
 		"prettier": "1.19.1",
 		"pretty-quick": "2.0.1"
 	},
-  "proxy": "http://localhost:9002"
+	"proxy": "http://localhost:9002"
 }
