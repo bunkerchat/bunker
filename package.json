@@ -5,20 +5,12 @@
 	"description": "socket.io chat application built on the MERliN stack",
 	"keywords": [],
 	"dependencies": {
-		"@babel/core": "7.1.0",
-		"@babel/plugin-proposal-class-properties": "7.1.0",
-		"@babel/plugin-proposal-optional-chaining": "7.2.0",
-		"@babel/preset-env": "7.1.0",
-		"@babel/preset-react": "7.0.0",
 		"@fortawesome/fontawesome-svg-core": "1.2.4",
 		"@fortawesome/free-regular-svg-icons": "5.4.1",
 		"@fortawesome/free-solid-svg-icons": "5.3.1",
 		"@fortawesome/react-fontawesome": "0.1.3",
 		"@reduxjs/toolkit": "1.2.5",
 		"angular": "1.5.11",
-		"babel-core": "7.0.0-bridge.0",
-		"babel-jest": "23.6.0",
-		"babel-loader": "8.0.2",
 		"bluebird": "3.2.1",
 		"body-parser": "1.14.1",
 		"bootstrap": "4.4.1",
@@ -57,7 +49,6 @@
 		"gulp-usemin": "0.3.16",
 		"history": "4.7.2",
 		"hookshot": "0.1.0",
-		"jest": "23.6.0",
 		"jquery": "2.2.0",
 		"lodash": "4.1.0",
 		"moment": "2.24.0",
@@ -70,8 +61,6 @@
 		"passport-google-plus": "0.5.1",
 		"passport-local": "1.0.0",
 		"password-hash": "1.2.2",
-		"react": "16.12.0",
-		"react-dom": "16.12.0",
 		"react-favicon": "0.0.14",
 		"react-gravatar": "2.6.3",
 		"react-redux": "7.2.0",
@@ -91,9 +80,10 @@
 		"socket.io-redis": "0.2.0",
 		"styled-components": "4.2.0",
 		"tinycolor2": "1.4.1",
-		"webpack": "4.19.0",
-		"webpack-cli": "3.1.0",
-		"winston": "2.1.1"
+		"winston": "2.1.1",
+		"react": "16.13.0",
+		"react-dom": "16.13.0",
+		"react-scripts": "3.4.0"
 	},
 	"comments": {
 		"socket.io": "bunker breaks >= version 2"
@@ -101,15 +91,15 @@
 	"scripts": {
 		"start": "node app.js",
 		"debug": "node debug app.js",
-		"build": "NODE_ENV=production gulp sass && npm run buildWebpack",
 		"build:dev": "gulp sass && webpack --mode development",
 		"buildWebpack": "webpack --mode production",
-		"watch": "gulp sass && webpack --mode development --watch",
+		"watch": "gulp sass && react-scripts start",
+		"build": "gulp sass && react-scripts build",
 		"postinstall": "bower install",
 		"deploy": "npm ci --production && npm run build && gulp && forever restart app.js",
 		"pretty": "prettier --write \"./{server,src}/**/*.{js,jsx}\"",
 		"pretty-staged": "pretty-quick --staged",
-		"test": "jest"
+		"test": "react-scripts test"
 	},
 	"pre-commit": [
 		"pretty-staged"
