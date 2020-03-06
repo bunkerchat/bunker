@@ -24,6 +24,8 @@ module.exports.http = function(app) {
 	// Internal views
 	app.get("/", isLoggedIn, viewController.index);
 
+	app.get("/1", isLoggedIn, viewController.version1);
+
 	// Version 2 (react) available on /2
 	// Note it uses a catchall route to enable route params without #
 	app.get("/v2*", (req, res) => res.redirect("/2"));

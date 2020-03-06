@@ -92,10 +92,10 @@
 	"scripts": {
 		"start": "node app.js",
 		"debug": "node debug app.js",
-		"build:dev": "gulp sass && webpack --mode development",
 		"buildWebpack": "webpack --mode production",
 		"watch": "gulp sass && react-scripts start",
-		"build": "gulp sass && react-scripts build",
+		"build": "gulp sass && PUBLIC_URL=https://bunkerchat.net react-scripts build",
+		"build:dev": "gulp sass && PUBLIC_URL=http://localhost:9002 react-scripts build",
 		"postinstall": "bower install",
 		"deploy": "npm ci --production && npm run build && gulp && forever restart app.js",
 		"pretty": "prettier --write \"./{server,src}/**/*.{js,jsx}\"",

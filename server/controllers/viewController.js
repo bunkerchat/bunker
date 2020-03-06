@@ -45,6 +45,19 @@ viewController.index = function(req, res) {
 	});
 };
 
+viewController.version1 = (req, res) => {
+	UserSettings.findOne({ user: req.session.userId })
+		.then(settings => {
+			settings.useV2 = false;
+			return settings.save();
+		})
+		.then(() => {
+			res.redirect("/");
+		})
+		.catch(res.serverError);
+};
+
+
 viewController.version2 = (req, res) => {
 	UserSettings.findOne({ user: req.session.userId })
 		.then(settings => {
