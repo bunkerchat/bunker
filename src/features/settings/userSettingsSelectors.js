@@ -2,4 +2,4 @@ export const getDesktopMentionNotifications = state => state.userSettings?.deskt
 
 export const getBunkerServesImages = state => state.userSettings?.bunkerServesImages;
 
-export const getUserTheme = state => state.userSettings.theme
+export const getUserTheme = state => state.userSettings.theme;

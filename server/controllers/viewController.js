@@ -2,6 +2,7 @@ var Promise = require("bluebird");
 //var fs = Promise.promisifyAll(require('fs'));
 const request = require("request");
 const sharp = require("sharp");
+const path = require("path");
 
 var config = require("../config/config");
 var UserSettings = require("../models/UserSettings");
@@ -10,7 +11,7 @@ var versionService = require("../services/versionService");
 
 var viewController = module.exports;
 
-viewController.index = function(req, res) {
+const loadV1 = (req, res) => {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
 
 	Promise.join(emoticonService.getEmoticonNamesFromDisk(), UserSettings.findOne({ user: userId }))
@@ -26,22 +27,34 @@ viewController.index = function(req, res) {
 		.catch(res.serverError);
 };
 
-viewController.version2 = (req, res) => {
-	const userId = req.session.userId;
-
-	return Promise.join(
-		UserSettings.findOne({ user: userId }),
-		emoticonService.getEmoticonNamesFromDisk(),
-		versionService.getBundleV2()
-	).spread((userSettings, emoticons, javascript) => {
-		res.render("v2", {
-			config,
-			userId,
-			userSettings,
-			emoticons,
-			javascript
-		});
+const loadV2 = (req, res) => {
+	res.sendFile("index.html", {
+		root: path.join(process.cwd(), "build")
 	});
+};
+
+viewController.index = function(req, res) {
+	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
+
+	UserSettings.findOne({ user: userId }).then(settings => {
+		if (settings.useV2) {
+			loadV2(req, res);
+		} else {
+			loadV1(req, res);
+		}
+	});
+};
+
+viewController.version2 = (req, res) => {
+	UserSettings.findOne({ user: req.session.userId })
+		.then(settings => {
+			settings.useV2 = true;
+			return settings.save();
+		})
+		.then(() => {
+			res.redirect("/");
+		})
+		.catch(res.serverError);
 };
 
 viewController.debug = function(req, res) {

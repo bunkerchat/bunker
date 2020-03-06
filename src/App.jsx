@@ -13,6 +13,7 @@ import Chat from "./features/chat/Chat.jsx";
 import Lobby from "./features/lobby/Lobby.jsx";
 import Settings from "./features/settings/Settings.jsx";
 import { localUserLoaded } from "./features/users/localUserSelectors.js";
+import Theme from "./features/settings/Theme.jsx";
 
 const Container = styled.div`
 	display: flex;
@@ -26,32 +27,35 @@ const App = () => {
 	useTitle("Bunker");
 	const isLoaded = useSelector(localUserLoaded);
 
-	if (!isLoaded) return <span>Loading...</span>;
-
 	return (
 		<Container>
-			<Router>
-				<>
-					<BunkerFavicon />
-					<EmoticonPreLoad />
-					<Notify />
-					<Header />
-					<Switch>
-						<Redirect exact from="/2" to="/2/lobby" />
-						<Route path="/2/room/:roomId">
-							<Lobby />
-							<Chat />
-						</Route>
-						<Route path="/2/lobby">
-							<Lobby />
-							<Chat />
-						</Route>
-						<Route path="/2/settings">
-							<Settings />
-						</Route>
-					</Switch>
-				</>
-			</Router>
+			<Theme />
+			{isLoaded ? (
+				<Router>
+					<>
+						<BunkerFavicon />
+						<EmoticonPreLoad />
+						<Notify />
+						<Header />
+						<Switch>
+							<Redirect exact from="/" to="/lobby" />
+							<Route path="/room/:roomId">
+								<Lobby />
+								<Chat />
+							</Route>
+							<Route path="/lobby">
+								<Lobby />
+								<Chat />
+							</Route>
+							<Route path="/settings">
+								<Settings />
+							</Route>
+						</Switch>
+					</>
+				</Router>
+			) : (
+				<span>Loading...</span>
+			)}
 		</Container>
 	);
 };

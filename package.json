@@ -61,11 +61,15 @@
 		"passport-google-plus": "0.5.1",
 		"passport-local": "1.0.0",
 		"password-hash": "1.2.2",
+		"react": "16.13.0",
+		"react-dom": "16.13.0",
 		"react-favicon": "0.0.14",
 		"react-gravatar": "2.6.3",
+		"react-helmet": "5.2.1",
 		"react-redux": "7.2.0",
 		"react-router": "5.1.2",
 		"react-router-dom": "5.1.2",
+		"react-scripts": "3.4.0",
 		"react-timeago": "4.1.9",
 		"react-use": "13.12.2",
 		"react-web-notification": "0.5.0",
@@ -80,10 +84,7 @@
 		"socket.io-redis": "0.2.0",
 		"styled-components": "4.2.0",
 		"tinycolor2": "1.4.1",
-		"winston": "2.1.1",
-		"react": "16.13.0",
-		"react-dom": "16.13.0",
-		"react-scripts": "3.4.0"
+		"winston": "2.1.1"
 	},
 	"comments": {
 		"socket.io": "bunker breaks >= version 2"
@@ -125,5 +126,6 @@
 		"enzyme-adapter-react-16": "1.7.0",
 		"prettier": "1.19.1",
 		"pretty-quick": "2.0.1"
-	}
+	},
+  "proxy": "http://localhost:9002"
 }

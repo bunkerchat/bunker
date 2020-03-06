@@ -29,7 +29,7 @@ function HeaderRoomLink({
 }) {
 	return (
 		<RoomListItem className={`nav-item px-lg-3 ${current ? "active" : ""}`}>
-			<Link className="nav-link" to={`/2/room/${roomId}`}>
+			<Link className="nav-link" to={`/room/${roomId}`}>
 				{roomName}{" "}
 				{unreadMessageCount > 0 && (
 					<FloatingRightBadge>

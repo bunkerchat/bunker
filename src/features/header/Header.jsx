@@ -15,7 +15,7 @@ const Header = ({ roomIds, totalUnreadMessageCount, anyUnreadMention, isDisconne
 	return (
 		<div>
 			<nav className="navbar navbar-expand fixed-top navbar-dark bg-dark">
-				<Link className="navbar-brand" to="/2/lobby">
+				<Link className="navbar-brand" to="/lobby">
 					Bunker{" "}
 					{totalUnreadMessageCount > 0 && (
 						<UnreadMessageBadge className={`badge badge-primary d-md-none ${anyUnreadMention ? "mention" : ""}`}>
@@ -30,7 +30,7 @@ const Header = ({ roomIds, totalUnreadMessageCount, anyUnreadMention, isDisconne
 				</ul>
 				<div className="ml-auto navbar-nav text-right">
 					<UploadButton />
-					<Link className="nav-item nav-link" to={`/2/settings`}>
+					<Link className="nav-item nav-link" to={`/settings`}>
 						<FontAwesomeIcon icon="cog" spin={isDisconnected} color={isVersionV2Deployed ? "orange" : "white"} />
 					</Link>
 				</div>

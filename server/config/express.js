@@ -24,5 +24,7 @@ app.use(require("../responses/badRequest"));
 // setup routes
 require("./routes").http(app);
 
+app.use("/", express.static("build"));
+
 // Export the app instance for unit testing via supertest
 module.exports = app;

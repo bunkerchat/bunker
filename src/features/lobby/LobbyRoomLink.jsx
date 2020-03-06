@@ -24,7 +24,7 @@ function LobbyRoomLink({
 	unreadMention
 }) {
 	return (
-		<Link className="list-group-item p-3 d-flex justify-content-between align-items-center" to={`/2/room/${roomId}`}>
+		<Link className="list-group-item p-3 d-flex justify-content-between align-items-center" to={`/room/${roomId}`}>
 			{name}
 			{unreadMessageCount > 0 && (
 				<UnreadMessageBadge className={`badge badge-primary ${unreadMention ? "mention" : ""}`}>

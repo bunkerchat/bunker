@@ -9,8 +9,8 @@ import { connected, disconnected, errorResponse, reconnected, successResponse } 
 import { userUpdated } from "./features/users/usersSlice";
 import { messageReceived, messageUpdated } from "./features/message/messageSlice";
 
-// const socket = io(window.url);
-const socket = io('http://localhost:9002');
+const socket = io(window.url);
+// const socket = io('http://localhost:9002');
 
 socket.on("connect", () => {
 	dispatch(connected());
