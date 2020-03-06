@@ -23,13 +23,9 @@ module.exports.http = function(app) {
 
 	// Internal views
 	app.get("/", isLoggedIn, viewController.index);
-
 	app.get("/1", isLoggedIn, viewController.version1);
+	app.get("/2", isLoggedIn, viewController.version2);
 
-	// Version 2 (react) available on /2
-	// Note it uses a catchall route to enable route params without #
-	app.get("/v2*", (req, res) => res.redirect("/2"));
-	app.get("/2*", isLoggedIn, viewController.version2);
 	app.get("/debug", isLoggedIn, viewController.debug);
 
 	// External Notifications
@@ -44,6 +40,13 @@ module.exports.http = function(app) {
 
 	// proxy images
 	app.get("/api/image/:imgurl", viewController.image);
+
+
+	// v2 routes. Not sure how to really handle this :-/
+	app.get("/lobby", isLoggedIn, viewController.index);
+	app.get("/room/*", isLoggedIn, viewController.index);
+	app.get("/settings", isLoggedIn, viewController.index);
+
 };
 
 module.exports.socketio = function(socket) {

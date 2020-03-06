@@ -33,6 +33,7 @@ function Lobby({ unreadRoomIds, readRoomIds }) {
 					<LobbyRoomLink key={roomId} roomId={roomId} />
 				))}
 			</ul>
+			<a href="/1">Back to V1</a>
 		</Container>
 	);
 }
