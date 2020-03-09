@@ -33,12 +33,17 @@ const loadV2 = (req, res) => {
 	});
 };
 
+const loadV2Dev = (req, res) => {
+	// todo: something fancier? not sure i'm sorry jpro
+	res.redirect("http://localhost:3000");
+};
+
 viewController.index = function(req, res) {
 	var userId = _.isString(req.session.userId) ? req.session.userId.toObjectId() : req.session.userId;
 
 	UserSettings.findOne({ user: userId }).then(settings => {
 		if (settings.useV2) {
-			loadV2(req, res);
+			config.useJavascriptBundle ? loadV2(req, res) : loadV2Dev(req, res);
 		} else {
 			loadV1(req, res);
 		}
