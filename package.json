@@ -93,7 +93,8 @@
 		"tinycolor2": "1.4.1",
 		"webpack": "4.19.0",
 		"webpack-cli": "3.1.0",
-		"winston": "2.1.1"
+		"winston": "2.1.1",
+		"yarn": "1.22.4"
 	},
 	"comments": {
 		"socket.io": "bunker breaks >= version 2"
@@ -106,10 +107,11 @@
 		"buildWebpack": "webpack --mode production",
 		"watch": "gulp sass && webpack --mode development --watch",
 		"postinstall": "bower install",
-		"deploy": "npm ci --production && npm run build && gulp && forever restart app.js",
+		"deploy": "yarn && yarn build && gulp && forever restart app.js",
 		"pretty": "prettier --write \"./{server,src}/**/*.{js,jsx}\"",
 		"pretty-staged": "pretty-quick --staged",
-		"test": "jest"
+		"test": "jest",
+		"preinstall": "npx use-yarn"
 	},
 	"pre-commit": [
 		"pretty-staged"
@@ -135,5 +137,8 @@
 		"enzyme-adapter-react-16": "1.7.0",
 		"prettier": "1.19.1",
 		"pretty-quick": "2.0.1"
+	},
+	"engines": {
+		"node": "8.17.0"
 	}
 }
