@@ -260,16 +260,16 @@ export function ChatInput({
 		if (emoticonPickerVisible && selectedEmoticon) {
 			event.preventDefault();
 			emoticonPicked(selectedEmoticon);
+			hideEmoticonPicker();
 		} else if (nickPickerVisible && selectedUserWithNick) {
 			event.preventDefault();
 			nickPicked(selectedUserWithNick);
+			hideNickPicker();
 		} else {
 			if (!isMobile) {
 				event.preventDefault();
 			}
 			onSend();
-			hideEmoticonPicker();
-			hideNickPicker();
 		}
 	}
 
