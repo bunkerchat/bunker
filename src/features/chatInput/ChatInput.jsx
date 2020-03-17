@@ -269,6 +269,10 @@ export function ChatInput({
 			if (!isMobile) {
 				event.preventDefault();
 			}
+			//TODO: add dragon ascii art here
+			// putting redux actions here breaks things on ios
+			// ...
+			// plz dont
 			onSend();
 		}
 	}
