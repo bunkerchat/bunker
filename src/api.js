@@ -8,6 +8,7 @@ import { roomUpdated } from "./features/rooms/roomsSlice";
 import { connected, disconnected, errorResponse, reconnected, successResponse } from "./features/socket/socketSlice";
 import { userUpdated } from "./features/users/usersSlice";
 import { messageReceived, messageUpdated } from "./features/message/messageSlice";
+import {playMusic} from "./features/music/musicActions";
 
 const socket = io(window.url);
 
@@ -29,6 +30,9 @@ socket.on("room", socketMessage => {
 				dispatch(messageUpdated({ message }));
 			} else {
 				dispatch(messageReceived({ message }));
+				if(message.type === "music") {
+					dispatch(playMusic(message))
+				}
 			}
 			break;
 		case "reacted":

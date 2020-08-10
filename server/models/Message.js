@@ -31,7 +31,8 @@ const messageSchema = new mongoose.Schema({
 			"fight",
 			"code",
 			"stats",
-			"link"
+			"link",
+			"music"
 		],
 		default: "standard"
 	},
