@@ -26,7 +26,7 @@ const Settings = () => {
 			<form>
 				<div className="form-group">
 					<label>Play Music</label>
-					<input type="checkbox" className="form-control" value={playMusic} onChange={onPlayMusicChange}/>
+					<input type="checkbox" className="form-control" checked={playMusic} onChange={onPlayMusicChange}/>
 				</div>
 				<div className="form-group">
 					<label>Theme</label>

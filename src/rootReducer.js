@@ -1,7 +1,7 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import localUser from "./features/users/localUserReducer";
 import localRoomMembers from "./features/users/localRoomMembersSlice";
-import userSettings from "./features/settings/userSettingsReducer";
+import userSettings from "./features/settings/settingsSlice";
 import users from "./features/users/usersSlice";
 import rooms from "./features/rooms/roomsSlice";
 import message from "./features/message/messageSlice";

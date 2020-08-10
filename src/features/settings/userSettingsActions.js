@@ -1,9 +1,10 @@
 import {emit} from "../../api";
+import {updateSettings} from "./settingsSlice";
 
 export function setPlayMusic(playMusic) {
 	return (dispatch, getState) => {
 		const userSettings = getState().userSettings;
-		return saveUserSettings(userSettings, {playMusic})
+		return saveUserSettings(userSettings, {playMusic});
 	};
 }
 
@@ -25,4 +26,7 @@ function saveUserSettings(userSettings, update) {
 		userSettingsId,
 		settings: update
 	})
+		.then(() => {
+			dispatch(updateSettings(update))
+		});
 }
