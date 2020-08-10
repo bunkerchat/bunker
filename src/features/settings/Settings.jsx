@@ -23,23 +23,36 @@ const Settings = () => {
 
 	return (
 		<Container className="container-fluid mt-3">
+			<h2>Settings</h2>
 			<form>
-				<div className="form-group">
-					<label>Play Music</label>
-					<input type="checkbox" className="form-control" checked={playMusic} onChange={onPlayMusicChange}/>
+				<div className="form-group row">
+					<div className="col-sm-2">
+						<label className="form-check-label">
+							Play music in Music room
+						</label>
+					</div>
+					<div className="col-sm-10">
+						<div className="form-check">
+							<input type="checkbox" className="form-check-input" checked={playMusic} onChange={onPlayMusicChange}/>
+						</div>
+					</div>
 				</div>
-				<div className="form-group">
-					<label>Theme</label>
-					<select className="form-control" onChange={onThemeChange} value={theme}>
-						<option value="cerulean">Cerulean</option>
-						<option value="classic">Classic</option>
-						<option value="cosmo">Cosmo</option>
-						<option value="journal">Journal</option>
-						<option value="simplex">Simplex</option>
-						<option value="sketchy">Sketchy</option>
-						<option value="spacelab">Spacelab</option>
-						<option value="superhero">Superhero</option>
-					</select>
+				<div className="form-group row">
+					<div className="col-sm-2">
+						<label>Theme</label>
+					</div>
+					<div className="col-sm-10">
+						<select className="form-control" onChange={onThemeChange} value={theme}>
+							<option value="cerulean">Cerulean</option>
+							<option value="classic">Classic</option>
+							<option value="cosmo">Cosmo</option>
+							<option value="journal">Journal</option>
+							<option value="simplex">Simplex</option>
+							<option value="sketchy">Sketchy</option>
+							<option value="spacelab">Spacelab</option>
+							<option value="superhero">Superhero</option>
+						</select>
+					</div>
 				</div>
 			</form>
 		</Container>
