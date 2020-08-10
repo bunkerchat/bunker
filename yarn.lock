@@ -1130,10 +1130,10 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-angular@1.5.11:
-  version "1.5.11"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.5.11.tgz#8c5ba7386f15965c9acf3429f6881553aada30d6"
-  integrity sha1-jFunOG8VllyazzQp9ogVU6raMNY=
+angular@1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.8.0.tgz#b1ec179887869215cab6dfd0df2e42caa65b1b51"
+  integrity sha512-VdaMx+Qk0Skla7B5gw77a8hzlcOakwF8mjlW13DpIWIDlfqwAbSSLfd8N/qZnzEmQF4jC4iofInd3gE7vL8ZZg==
 
 ansi-colors@^1.0.1:
   version "1.1.0"
@@ -10114,8 +10114,9 @@ socket.io-adapter@0.5.0:
     debug "2.3.3"
     socket.io-parser "2.3.1"
 
-"socket.io-adapter@github:automattic/socket.io-adapter#de5cba":
+socket.io-adapter@automattic/socket.io-adapter#de5cba:
   version "0.3.1"
+  uid de5cba46ce3e21bac3bccae011d81a7b5caad1ba
   resolved "https://codeload.github.com/automattic/socket.io-adapter/tar.gz/de5cba46ce3e21bac3bccae011d81a7b5caad1ba"
   dependencies:
     debug "1.0.2"
