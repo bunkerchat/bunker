@@ -1,15 +1,28 @@
-import { emit } from "../../api";
+import {emit} from "../../api";
+
+export function setPlayMusic(playMusic) {
+	return (dispatch, getState) => {
+		const userSettings = getState().userSettings;
+		return saveUserSettings(userSettings, {playMusic})
+	};
+}
 
 export function setTheme(theme) {
 	return (dispatch, getState) => {
-		// FYI: Weird code here, just following existing server logic
-
-		const userSettingsId = getState().userSettings._id;
-		return emit("/usersettings/save", {
-			userSettingsId,
-			settings: { theme }
-		}).then(() => {
-			window.location.reload();
-		});
+		const userSettings = getState().userSettings;
+		return saveUserSettings(userSettings, {theme})
+			.then(() => {
+				window.location.reload();
+			});
 	};
+}
+
+
+function saveUserSettings(userSettings, update) {
+	// FYI: Weird code here, just following existing server logic
+	const userSettingsId = userSettings._id;
+	return emit("/usersettings/save", {
+		userSettingsId,
+		settings: update
+	})
 }
