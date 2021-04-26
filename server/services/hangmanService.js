@@ -199,10 +199,10 @@ function buildResponse(game, roomMember, guess) {
 	} else {
 		// otherwise create word mask
 		var maskedWord = _.map(game.word, function(letter) {
-			if (letter.length == 1 && _.includes(game.hits, letter)) {
+			if (letter.length === 1 && _.includes(game.hits, letter)) {
 				return letter;
 			}
-			return "_";
+			return "─";
 		}).join(" ");
 		responseString.push(maskedWord);
 	}
