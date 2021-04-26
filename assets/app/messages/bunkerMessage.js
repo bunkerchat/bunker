@@ -111,7 +111,7 @@ app.directive('bunkerMessage', function ($sce, $compile, emoticons, bunkerData) 
 					var word = makeDictionaryLink[1].split(' ').join('').toLowerCase();
 					text = text.replace(/\|(.*)\|/i, `<a href="https://www.wordnik.com/words/${word}" target="_blank">$1</a>`);
 				}
-				return text.replace(/:hangman(\d):/, '<img class="emoticon" ng-src="/assets/images/hangman$1.png"/>');
+				return text;
 			}
 
 			function parseFight(text) {
