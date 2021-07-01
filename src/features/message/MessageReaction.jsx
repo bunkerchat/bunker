@@ -11,7 +11,7 @@ const Emoticon = styled.span`
 
 const mapStateToProps = (state, props) => ({
 	nicks: _(props.reactions)
-		.map(reaction => state.users[reaction.author].nick)
+		.map(reaction => state.users[reaction.author]?.nick)
 		.orderBy()
 		.join(", ")
 });
