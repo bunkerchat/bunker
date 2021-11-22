@@ -20,6 +20,7 @@ app.use(require("../responses/serverError"));
 app.use(require("../responses/ok"));
 app.use(require("../responses/notFound"));
 app.use(require("../responses/badRequest"));
+app.use(require("../responses/forbidden"));
 
 // setup routes
 require("./routes").http(app);
