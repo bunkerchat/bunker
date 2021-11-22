@@ -7,6 +7,7 @@ var config = require("../config/config");
 var UserSettings = require("../models/UserSettings");
 var emoticonService = require("../services/emoticonService");
 var versionService = require("../services/versionService");
+const socketio = require("../config/socketio");
 
 var viewController = module.exports;
 
@@ -59,6 +60,12 @@ viewController.debug = function(req, res) {
 		})
 		.catch(res.serverError);
 };
+
+viewController.health = function(req, res)  {
+	return res.json({
+		websocketClientsCount: socketio.io.engine.clientsCount
+	})
+}
 
 viewController.login = function(req, res) {
 	// If we don't have a userId and we haven't already made this loop, keep them here on the login page.

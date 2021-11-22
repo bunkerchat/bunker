@@ -16,6 +16,7 @@ var isLoggedIn = require("../policies/isLoggedIn");
 
 module.exports.http = function(app) {
 	// Public
+	app.get("/health", viewController.health);
 	app.get("/login", viewController.login);
 	app.get("/loginBasic", viewController.loginBasic);
 	app.get("/logout", viewController.logout);
