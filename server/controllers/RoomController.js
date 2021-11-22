@@ -22,6 +22,10 @@ const InvalidInputError = require("../errors/InvalidInputError");
 // POST /room/:id/message
 // Create a new message
 module.exports.message = function(req, res) {
+	if (!req.session.userId) {
+		return res.forbidden(`Must be logged in to send a message`)
+	}
+
 	const userId = req.session.userId.toObjectId();
 	const roomId = req.body.roomId.toObjectId();
 	let currentRoomMember;
