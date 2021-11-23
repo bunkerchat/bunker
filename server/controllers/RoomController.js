@@ -23,6 +23,7 @@ const InvalidInputError = require("../errors/InvalidInputError");
 // Create a new message
 module.exports.message = function(req, res) {
 	if (!req.session.userId) {
+		console.log('req.body', req.body)
 		return res.forbidden(`Must be logged in to send a message`)
 	}
 
