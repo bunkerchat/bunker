@@ -84,7 +84,7 @@
 		"regenerator-runtime": "0.12.1",
 		"request": "2.69.0",
 		"require-dir": "0.3.0",
-		"sharp": "0.20.8",
+		"sharp": "0.30.5",
 		"socket.io": "1.7.4",
 		"socket.io-client": "1.7.4",
 		"socket.io-express-session": "0.1.3",
