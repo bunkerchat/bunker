@@ -35,7 +35,7 @@
 		"emoji-regex": "7.0.1",
 		"ent": "2.2.0",
 		"exports-loader": "0.6.2",
-		"express": "4.13.3",
+		"express": "4.17.3",
 		"express-session": "1.12.1",
 		"favico.js": "0.3.10",
 		"flex-js": "git+https://github.com/JasonMore/flex-js.git",
